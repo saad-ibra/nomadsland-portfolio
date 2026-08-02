@@ -1,13 +1,10 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-react";
-import ControlBar from "./ControlBar";
+import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from '../engine/constants';
+import PlayerSprite from '../components/sprites/PlayerSprite';
+import ControlBar from '../components/ui/ControlBar';
 
-const TILE = 32;
-// Fixed viewport (camera follows player — world can be much larger)
-const INTERNAL_W = 384;
-const INTERNAL_H = 288;
-const MOVE_COOLDOWN = 140;
 
 // ============================================================
 //  DYNAMIC LAB LAYOUT GENERATOR
@@ -100,51 +97,6 @@ function isLayoutWalkable(layout, col, row) {
 function canLayoutWalk(layout, col, row) {
   if (layout.stationTiles.has(`${col},${row}`)) return false;
   return isLayoutWalkable(layout, col, row);
-}
-
-// ============================================================
-//  PLAYER SPRITE (lab-coat scientist)
-// ============================================================
-function PlayerSprite({ direction, stepping }) {
-  const frame = stepping ? 1 : 0;
-  const skin = "#fcd8b4", skinS = "#e8b888", hair = "#4a4a4a", hairL = "#6a6a6a";
-  const coat = "#f4f4f6", pants = "#304050", shoe = "#1a1a1a";
-  const eye = "#181818", white = "#ffffff", tube = "#00ffcc";
-  const px = (x, y, w, h, c) => <rect key={`${x}${y}${c}`} x={x} y={y} width={w} height={h} fill={c} />;
-
-  const down = () => { const lL = frame ? 1 : 0, lR = frame ? -1 : 0; return (<>
-    {px(4,0,8,2,hair)}{px(3,1,10,2,hair)}{px(4,4,8,5,skin)}{px(3,4,1,4,skin)}{px(12,4,1,4,skin)}
-    {px(5,5,2,2,white)}{px(9,5,2,2,white)}{px(6,6,1,1,eye)}{px(10,6,1,1,eye)}{px(7,8,2,1,skinS)}
-    {px(3,9,10,4,coat)}{px(2,10,1,3,coat)}{px(13,10,1,3,coat)}{px(7,9,2,4,pants)}
-    {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}{px(6,10,1,1,"#aaa")}{px(6,12,1,1,"#aaa")}
-    {px(4,13,3,2,pants)}{px(9,13,3,2,pants)}{px(4,15+lL,3,1,shoe)}{px(9,15+lR,3,1,shoe)}
-  </>); };
-  const up = () => { const lL = frame ? 1 : 0, lR = frame ? -1 : 0; return (<>
-    {px(4,0,8,2,hair)}{px(3,1,10,6,hair)}{px(4,7,8,2,hairL)}
-    {px(3,9,10,4,coat)}{px(2,10,1,3,coat)}{px(13,10,1,3,coat)}
-    {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}{px(4,13,3,2,pants)}{px(9,13,3,2,pants)}
-    {px(4,15+lL,3,1,shoe)}{px(9,15+lR,3,1,shoe)}
-  </>); };
-  const side = (flip) => { const lo = frame ? 1 : 0; return (
-    <g transform={flip ? "translate(16,0) scale(-1,1)" : undefined}>
-      {px(5,0,7,2,hair)}{px(4,1,9,1,hair)}{px(4,2,9,2,hair)}{px(3,3,2,3,hair)}
-      {px(5,4,7,5,skin)}{px(4,5,1,3,skin)}{px(12,5,1,3,skin)}
-      {px(10,5,2,2,white)}{px(11,6,1,1,eye)}{px(10,8,2,1,skinS)}
-      {px(4,9,9,4,coat)}{px(3,10,1,3,coat)}{px(12,10,2,3,skin)}
-      {px(5,13,3,2,pants)}{px(9,13,3,2,pants)}{px(5,15,3,1+lo,shoe)}{px(9,15,3,1,shoe)}
-      {px(13,11,1,2,white)}{px(13,12,1,1,tube)}
-    </g>
-  ); };
-
-  return (
-    <svg width={TILE} height={TILE+2} viewBox="0 0 16 17" style={{ imageRendering:"pixelated", overflow:"visible" }}>
-      <ellipse cx="8" cy="16.5" rx="5" ry="1.5" fill="rgba(0,0,0,0.3)" />
-      {direction === "down"  && down()}
-      {direction === "up"    && up()}
-      {direction === "left"  && side(true)}
-      {direction === "right" && side(false)}
-    </svg>
-  );
 }
 
 // ============================================================
@@ -642,7 +594,7 @@ export default function ChemistryLab({ onBackToLibrary }) {
               zIndex: pos.row * 10 + 5,
               transition: `left ${tt}s linear, top ${tt}s linear`,
             }}>
-              <PlayerSprite direction={facing} stepping={stepping} />
+              <PlayerSprite direction={facing} stepping={stepping} costume="labcoat" />
             </div>
 
             {/* Vignette */}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import LibraryOverworld from '../library_overworld.jsx';
-import ChemistryLab from '../chemistry_lab.jsx';
-import Newsroom from '../newsroom.jsx';
+import LibraryScene from './scenes/LibraryScene.jsx';
+import ChemistryLabScene from './scenes/ChemistryLabScene.jsx';
+import NewsroomScene from './scenes/NewsroomScene.jsx';
 import './App.css';
 
 function App() {
@@ -19,13 +19,13 @@ function App() {
       boxSizing: 'border-box'
     }}>
       {scene === 'library' && (
-        <LibraryOverworld onGoToLab={() => setScene('lab')} onGoToNewsroom={() => setScene('newsroom')} />
+        <LibraryScene onGoToLab={() => setScene('lab')} onGoToNewsroom={() => setScene('newsroom')} />
       )}
       {scene === 'lab' && (
-        <ChemistryLab onBackToLibrary={() => setScene('library')} />
+        <ChemistryLabScene onBackToLibrary={() => setScene('library')} />
       )}
       {scene === 'newsroom' && (
-        <Newsroom onBackToLibrary={() => setScene('library')} />
+        <NewsroomScene onBackToLibrary={() => setScene('library')} />
       )}
     </div>
   );
