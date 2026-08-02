@@ -493,13 +493,71 @@ export default function ChemistryLab({ onBackToLibrary }) {
         setRepos(mapped);
         setStats({ public: mapped.filter(r => !r.isPrivate).length, private: mapped.filter(r => r.isPrivate).length });
 
-        // Fetch contributions EKG data
-        fetch("/api/github/contributions")
+        // Fetch contributions EKG data via GraphQL
+        if (token) {
+          const currentYear = new Date().getFullYear();
+          const yearQueries = Array.from({ length: 5 }).map((_, i) => {
+            const year = currentYear - i;
+            return `y${year}: contributionsCollection(from: "${year}-01-01T00:00:00Z", to: "${year}-12-31T23:59:59Z") { 
+              contributionCalendar { 
+                totalContributions 
+                weeks { contributionDays { contributionCount date } } 
+              } 
+            }`;
+          }).join("\n");
+
+          const query = `
+            query {
+              user(login: "${username}") {
+                ${yearQueries}
+              }
+            }
+          `;
+
+          fetch("https://api.github.com/graphql", {
+            method: "POST",
+            headers: {
+              Authorization: `bearer ${token}`,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ query })
+          })
           .then(res => res.json())
-          .then(data => {
-            if (!data.error) setCommitStats(data);
+          .then(gqlRes => {
+            if (gqlRes.errors) {
+              console.warn("GraphQL Errors:", gqlRes.errors);
+              return;
+            }
+            const collections = gqlRes.data.user;
+            const yearsData = [];
+            let maxMonth = { year: null, monthIndex: -1, commits: 0 };
+
+            for (let i = 0; i < 5; i++) {
+              const year = currentYear - i;
+              const calendar = collections[`y${year}`]?.contributionCalendar;
+              if (!calendar) continue;
+
+              const monthlyTotals = new Array(12).fill(0);
+              calendar.weeks.forEach(week => {
+                week.contributionDays.forEach(day => {
+                  const monthIndex = parseInt(day.date.split("-")[1], 10) - 1;
+                  monthlyTotals[monthIndex] += day.contributionCount;
+                });
+              });
+
+              monthlyTotals.forEach((total, monthIndex) => {
+                if (total > maxMonth.commits) {
+                  maxMonth = { year, monthIndex, commits: total };
+                }
+              });
+
+              yearsData.push({ year, total: calendar.totalContributions, months: monthlyTotals });
+            }
+            
+            setCommitStats({ years: yearsData, maxMonth });
           })
           .catch(err => console.warn("Failed to fetch commit stats", err));
+        }
 
       } catch (e) {
         console.warn("GitHub fetch failed:", e);
