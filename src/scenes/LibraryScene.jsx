@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowRight, Newspaper } from "lucide-react";
+import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from "../engine/constants";
@@ -326,7 +326,7 @@ function PixelChair({ col, row }) {
 // ============================================================
 //  MAIN COMPONENT
 // ============================================================
-export default function LibraryScene({ onGoToLab, onGoToNewsroom }) {
+export default function LibraryScene({ onBackToVillage }) {
   const [pos, setPos] = useState(START_POS);
   const [facing, setFacing] = useState("down");
   const [stepping, setStepping] = useState(false);
@@ -829,41 +829,17 @@ export default function LibraryScene({ onGoToLab, onGoToNewsroom }) {
             background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px)",
           }} />
 
-          {/* Lab navigation button */}
-          {onGoToLab && (
-            <button
-              onClick={onGoToLab}
-              style={{
-                position: "absolute", top: 8, right: 8,
-                fontFamily: "'Press Start 2P', monospace", fontSize: 6,
-                background: "#009688", color: "#fff", border: "2px solid #f4e8d0",
-                padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 650,
-                imageRendering: "pixelated", boxShadow: "0 2px 0 #00695c",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                LAB <ArrowRight size={6} strokeWidth={3} />
-              </div>
-            </button>
-          )}
-
-          {/* Newsroom navigation button */}
-          {onGoToNewsroom && (
-            <button
-              onClick={onGoToNewsroom}
-              style={{
-                position: "absolute", top: 8, right: onGoToLab ? 68 : 8,
-                fontFamily: "'Press Start 2P', monospace", fontSize: 6,
-                background: "#2a3036", color: "#eef7f2", border: "2px solid #eef7f2",
-                padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 650,
-                imageRendering: "pixelated", boxShadow: "0 2px 0 #181a1c",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                PRESS <Newspaper size={6} strokeWidth={3} />
-              </div>
-            </button>
-          )}
+          <button onClick={onBackToVillage} style={{
+            position: "absolute", top: 8, left: 8,
+            fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+            background: "#1a2b1a", color: "#eef7f2", border: "2px solid #eef7f2",
+            padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 500,
+            boxShadow: "0 2px 0 #060e08",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <ArrowLeft size={6} strokeWidth={3} /> VILLAGE
+            </div>
+          </button>
 
           {/* Proximity prompt */}
           {phase === "free" && activeShelf && !openShelf && (

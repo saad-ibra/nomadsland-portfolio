@@ -1,11 +1,14 @@
 import { useState } from 'react';
+import VillageScene from './scenes/VillageScene.jsx';
 import LibraryScene from './scenes/LibraryScene.jsx';
 import ChemistryLabScene from './scenes/ChemistryLabScene.jsx';
 import NewsroomScene from './scenes/NewsroomScene.jsx';
+import NomadshomeScene from './scenes/NomadshomeScene.jsx';
+import MusicRoomScene from './scenes/MusicRoomScene.jsx';
 import './App.css';
 
 function App() {
-  const [scene, setScene] = useState('library');
+  const [scene, setScene] = useState('village');
 
   return (
     <div style={{
@@ -18,14 +21,29 @@ function App() {
       margin: 0,
       boxSizing: 'border-box'
     }}>
+      {scene === 'village' && (
+        <VillageScene
+          onGoToLibrary={() => setScene('library')}
+          onGoToLab={() => setScene('lab')}
+          onGoToNewsroom={() => setScene('newsroom')}
+          onGoToNomadshome={() => setScene('nomadshome')}
+          onGoToMusicRoom={() => setScene('musicroom')}
+        />
+      )}
       {scene === 'library' && (
-        <LibraryScene onGoToLab={() => setScene('lab')} onGoToNewsroom={() => setScene('newsroom')} />
+        <LibraryScene onBackToVillage={() => setScene('village')} />
       )}
       {scene === 'lab' && (
-        <ChemistryLabScene onBackToLibrary={() => setScene('library')} />
+        <ChemistryLabScene onBackToVillage={() => setScene('village')} />
       )}
       {scene === 'newsroom' && (
-        <NewsroomScene onBackToLibrary={() => setScene('library')} />
+        <NewsroomScene onBackToVillage={() => setScene('village')} />
+      )}
+      {scene === 'nomadshome' && (
+        <NomadshomeScene onBackToVillage={() => setScene('village')} />
+      )}
+      {scene === 'musicroom' && (
+        <MusicRoomScene onBackToVillage={() => setScene('village')} />
       )}
     </div>
   );

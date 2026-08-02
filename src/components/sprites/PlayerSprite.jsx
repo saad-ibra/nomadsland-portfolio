@@ -33,6 +33,13 @@ const COSTUMES = {
     shoe: "#1a1a1a",
     accessories: () => null,
   },
+  village: {
+    hair: "#3a1c08", hairLight: "#5a3018",
+    shirt: "#c09060", shirtShade: "#a07040",
+    pants: "#6a4a30", pantsStripe: null,
+    shoe: "#302010",
+    accessories: () => null,
+  },
 };
 
 export default function PlayerSprite({ direction, stepping, costume = "casual" }) {
