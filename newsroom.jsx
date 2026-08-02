@@ -1,0 +1,864 @@
+"use client";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
+import ControlBar from "./ControlBar";
+
+const TILE = 32;
+const INTERNAL_W = 384;
+const INTERNAL_H = 288;
+const MOVE_COOLDOWN = 140;
+
+// ============================================================
+//  FRONT PAGE ISSUES (BLOG POSTS) — newest first
+// ============================================================
+const BLOG_POSTS = [
+  {
+    id: "schopenhauer-cure",
+    title: "Facing mortality through: The Schopenhauer Cure",
+    subtitle: "by Irvin D. Yalom",
+    author: "Saad Ibrahim Khan",
+    date: "Mar 7, 2026",
+    readTime: "3 min read",
+    tags: ["German Philosophy", "Psychotherapy", "Psychology", "Novel", "Book Review"],
+    content: [
+      "Over the past few months, I have been thinking a lot about death. The awareness that my life is finite and could end soon if i do not even attempt to live, has become really intrusive. Instead of paralyzing me, it has had an unexpected effect. It has pushed me to create boundaries around myself and focus more deliberately on the things I truly enjoy and want to do. In a really really strange way, this heightened sense of mortality has pushed me to try becoming the person I always wanted to be but never fully allowed myself to become.",
+      "During this time, I started reading The Schopenhauer Cure by Irvin D. Yalom. When I first read about the book, I was expecting it to provide a new philosophical perspective on death. Given my current state of mind, I almost approached it like it might offer me some kind of resolution.",
+      "Early in the book, I felt uneasy about Julius' decision, the aging psychotherapist who has just received a terminal melanoma diagnosis. His decision to reconnect with Philip, a former patient he considered his greatest professional failure, seemed so confusing and completely wrong and unnecessary. It was difficult to understand why someone facing the end of his life would choose to revisit something so unresolved.",
+      "When Philip proposes teaching Julius about the philosophy of Arthur Schopenhauer, I expected something close to a philosophical breakthrough. I imagined that Schopenhauer's ideas might function as a kind of cure for Julius and, also indirectly, for me, struggling with similar doubts about mortality.",
+      "Instead, my reaction was almost the opposite. As the book explored Schopenhauer's childhood and his worldview, I started hating it. His philosophy was deeply pessimistic and at times, bitter. While suffering and hardship are so universal in nature, turning toward such a nihilistic view felt really unhealthy to me. Instead of comfort, his ideas created a sense of alienation from him.",
+      "However, as Philip gradually began to open up within the therapy group, my opinion started to change. Philip had found solace in a philosopher that had been through similar hardship as him. His emotional guards and difficulty connecting with others revealed something more complex beneath his weird demeanour. \"Schopenhauer has cured you, but now you need to be saved from the Schopenhauer cure\". When Philip truly faces this, is when, I was reminded of my own experiences of slowly facing the parts of myself that have truly kept me from how i want to live.",
+      "This parallel made the story very personal. Throughout the book, I often found myself reflecting on my own moments of running away from vulnerability. These reflections made the reading experience deeply emotional.",
+      "The sudden death of Julius left me stunned for a moment. It felt too abrupt, and disorienting. Yet the after his death, particularly Philip's transformation, became one of the most meaningful parts of the novel.",
+      "I wish that in the last chapter Philip reinterpreted Schopenhauer's philosophy, and it was actually explored in depth and adapted in a way that allows him to connect with others, like he adapts some parts and critiques some. In that process, he would stop appearing as detached, instead as someone who is deeply wounded, and yet trying to change. This part is not explored and is just implied.",
+      "That thought resonated strongly with me.",
+      "This book was one of my earliest serious reading experiences, and it felt immersive in a way I had never felt before. Instead of just presenting its ideas, it forced me to confront my own coping mechanisms. More importantly, it encouraged me to become more open with my friends and slightly changed the way I relate to them.",
+      "In that sense, The Schopenhauer Cure did not provide a cure in the way I initially expected. But it turned out to be much more valuable.",
+    ],
+  },
+];
+
+// ============================================================
+//  DYNAMIC NEWSROOM LAYOUT GENERATOR
+// ============================================================
+function generateNewsroomLayout(posts) {
+  const count = posts.length;
+
+  const roomWidth = 14; 
+  // Room grows vertically: 2 rows per post + base room
+  const baseHeight = 8;
+  const extraRows = Math.max(0, (count - 1) * 2);
+  const totalRows = baseHeight + extraRows;
+  const totalCols = roomWidth;
+
+  // Build tile map
+  const map = Array.from({ length: totalRows }, () => Array(totalCols).fill(0));
+
+  // Top wall (row 1)
+  for (let c = 1; c < totalCols - 1; c++) map[1][c] = 2; // Standard office wall
+  // Left wall gets a giant corkboard texture
+  for (let r = 2; r < totalRows - 1; r++) map[r][1] = 4; // Corkboard wall
+  
+  // Floor
+  for (let r = 2; r < totalRows - 1; r++)
+    for (let c = 2; c < totalCols - 1; c++) map[r][c] = 1;
+  // Desks/drafting area (carpet)
+  for (let r = 3; r < totalRows - 2; r++)
+    for (let c = 4; c < totalCols - 3; c++)
+      if (map[r][c] === 1) map[r][c] = 3;
+
+  // Place articles on the corkboard wall — newest at top (row 2), each 2 rows apart
+  const articles = posts.map((post, i) => ({
+    id: post.id,
+    col: 1, // On the left wall
+    row: 2 + i * 2,
+    label: post.title.length > 22 ? post.title.slice(0, 20) + "…" : post.title,
+    post,
+  }));
+
+  // Printing press tiles
+  const pressTiles = new Set(["7,2", "8,2", "9,2", "10,2"]);
+  const articleTiles = new Set(articles.map(r => `${r.col},${r.row}`));
+  
+  // Desk Telephone (Tip Line) location
+  const phonePos = { col: 12, row: 4 };
+  const phoneTiles = new Set([`${phonePos.col},${phonePos.row}`]);
+
+  const startPos = { col: Math.floor(totalCols / 2), row: Math.min(4, totalRows - 3) };
+
+  return { map, totalCols, totalRows, articles, articleTiles, pressTiles, phoneTiles, phonePos, startPos };
+}
+
+function isLayoutWalkable(layout, col, row) {
+  if (row < 0 || row >= layout.totalRows || col < 0 || col >= layout.totalCols) return false;
+  const t = layout.map[row][col];
+  return t === 1 || t === 3;
+}
+function canLayoutWalk(layout, col, row) {
+  const coord = `${col},${row}`;
+  if (layout.articleTiles.has(coord) || layout.pressTiles.has(coord) || layout.phoneTiles.has(coord)) return false;
+  return isLayoutWalkable(layout, col, row);
+}
+
+// ============================================================
+//  PLAYER SPRITE — casual look
+// ============================================================
+function PlayerSprite({ direction, stepping }) {
+  const frame = stepping ? 1 : 0;
+  const skin = "#fcd8b4", skinS = "#e8b888", hair = "#2c1b18", hairL = "#4a3828";
+  const shirt = "#8b4513", pants = "#2a2a3a", shoe = "#1a1a1a";
+  const eye = "#181818", white = "#ffffff";
+  const px = (x, y, w, h, c) => <rect key={`${x}${y}${c}`} x={x} y={y} width={w} height={h} fill={c} />;
+
+  const down = () => { const lL = frame ? 1 : 0, lR = frame ? -1 : 0; return (<>
+    {px(4,0,8,2,hair)}{px(3,1,10,2,hair)}{px(4,4,8,5,skin)}{px(3,4,1,4,skin)}{px(12,4,1,4,skin)}
+    {px(5,5,2,2,white)}{px(9,5,2,2,white)}{px(6,6,1,1,eye)}{px(10,6,1,1,eye)}{px(7,8,2,1,skinS)}
+    {px(3,9,10,4,shirt)}{px(2,10,1,3,shirt)}{px(13,10,1,3,shirt)}
+    {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}
+    {px(4,13,3,2,pants)}{px(9,13,3,2,pants)}{px(4,15+lL,3,1,shoe)}{px(9,15+lR,3,1,shoe)}
+  </>); };
+  const up = () => { const lL = frame ? 1 : 0, lR = frame ? -1 : 0; return (<>
+    {px(4,0,8,2,hair)}{px(3,1,10,6,hair)}{px(4,7,8,2,hairL)}
+    {px(3,9,10,4,shirt)}{px(2,10,1,3,shirt)}{px(13,10,1,3,shirt)}
+    {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}{px(4,13,3,2,pants)}{px(9,13,3,2,pants)}
+    {px(4,15+lL,3,1,shoe)}{px(9,15+lR,3,1,shoe)}
+  </>); };
+  const side = (flip) => { const lo = frame ? 1 : 0; return (
+    <g transform={flip ? "translate(16,0) scale(-1,1)" : undefined}>
+      {px(5,0,7,2,hair)}{px(4,1,9,1,hair)}{px(4,2,9,2,hair)}{px(3,3,2,3,hair)}
+      {px(5,4,7,5,skin)}{px(4,5,1,3,skin)}{px(12,5,1,3,skin)}
+      {px(10,5,2,2,white)}{px(11,6,1,1,eye)}{px(10,8,2,1,skinS)}
+      {px(4,9,9,4,shirt)}{px(3,10,1,3,shirt)}{px(12,10,2,3,skin)}
+      {px(5,13,3,2,pants)}{px(9,13,3,2,pants)}{px(5,15,3,1+lo,shoe)}{px(9,15,3,1,shoe)}
+    </g>
+  ); };
+
+  return (
+    <svg width={TILE} height={TILE+2} viewBox="0 0 16 17" style={{ imageRendering:"pixelated", overflow:"visible" }}>
+      <ellipse cx="8" cy="16.5" rx="5" ry="1.5" fill="rgba(0,0,0,0.3)" />
+      {direction === "down"  && down()}
+      {direction === "up"    && up()}
+      {direction === "left"  && side(true)}
+      {direction === "right" && side(false)}
+    </svg>
+  );
+}
+
+// ============================================================
+//  PIXEL ARTICLE — pinned to the corkboard
+// ============================================================
+function PixelArticle({ article, isNear, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  const active = isNear || hovered;
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "absolute",
+        left: article.col * TILE,
+        top: article.row * TILE - 8,
+        width: TILE, height: TILE + 8,
+        display: "flex", alignItems: "flex-end", justifyContent: "center",
+        cursor: "pointer",
+        filter: active
+          ? "brightness(1.2) drop-shadow(0 0 8px rgba(255,255,255,0.8))"
+          : "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
+        transition: "filter 0.15s",
+        zIndex: article.row * 10,
+      }}
+    >
+      <svg width="32" height="40" viewBox="0 0 16 20" style={{ imageRendering: "pixelated", overflow: "visible" }}>
+        {/* Paper */}
+        <rect x="3" y="6" width="10" height="12" fill="#eef7f2" />
+        <rect x="2" y="7" width="12" height="10" fill="#eef7f2" />
+        {/* Header/Photo */}
+        <rect x="4" y="8" width="8" height="3" fill="#889098" />
+        {/* Text lines */}
+        <rect x="4" y="12" width="8" height="1" fill="#222" />
+        <rect x="4" y="14" width="8" height="1" fill="#222" />
+        <rect x="4" y="16" width="6" height="1" fill="#222" />
+        {/* Pin */}
+        <circle cx="8" cy="5.5" r="1.5" fill="#c03030" />
+      </svg>
+    </div>
+  );
+}
+
+// ============================================================
+//  PRINTING PRESS — top wall decor
+// ============================================================
+function PrintingPress({ col }) {
+  return (
+    <div style={{
+      position: "absolute",
+      left: col * TILE, top: 2 * TILE - 16,
+      width: 4 * TILE, height: TILE + 16,
+      zIndex: 25,
+    }}>
+      <svg width={4 * TILE} height={TILE + 16} viewBox="0 0 64 48" style={{ imageRendering: "pixelated", overflow: "visible" }}>
+        {/* Main machine body */}
+        <rect x="0" y="20" width="64" height="20" rx="2" fill="#586068" />
+        <rect x="0" y="24" width="64" height="12" fill="#404850" />
+        {/* Large rollers */}
+        <circle cx="16" cy="16" r="8" fill="#2a3036" />
+        <circle cx="16" cy="16" r="6" fill="#181a1c" />
+        <circle cx="48" cy="16" r="8" fill="#2a3036" />
+        <circle cx="48" cy="16" r="6" fill="#181a1c" />
+        <rect x="12" y="16" width="40" height="4" fill="#eef7f2" /> {/* paper feeding through */}
+        {/* Control panel */}
+        <rect x="24" y="28" width="16" height="8" rx="1" fill="#2a3036" />
+        <rect x="26" y="30" width="3" height="2" fill="#40a040" />
+        <rect x="30" y="30" width="3" height="2" fill="#c03030" />
+        <rect x="34" y="30" width="4" height="2" fill="#e8c888" />
+        {/* Base legs */}
+        <rect x="4" y="40" width="8" height="6" fill="#2a3036" />
+        <rect x="52" y="40" width="8" height="6" fill="#2a3036" />
+      </svg>
+    </div>
+  );
+}
+
+// ============================================================
+//  DESK TELEPHONE (Tip Line) — interactable
+// ============================================================
+function TipLinePhone({ col, row, isNear, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  const active = isNear || hovered;
+
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "absolute",
+        left: col * TILE,
+        top: row * TILE - 4,
+        width: TILE, height: TILE,
+        display: "flex", alignItems: "flex-end", justifyContent: "center",
+        cursor: "pointer",
+        filter: active
+          ? "brightness(1.2) drop-shadow(0 0 8px rgba(0,180,255,0.6))"
+          : "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
+        transition: "filter 0.15s",
+        zIndex: row * 10,
+      }}
+    >
+      <svg width="32" height="32" viewBox="0 0 16 16" style={{ imageRendering: "pixelated", overflow: "visible" }}>
+        {/* Small desk/table for the phone */}
+        <rect x="2" y="8" width="12" height="4" fill="#8b4513" />
+        <rect x="4" y="12" width="2" height="4" fill="#5a2d0a" />
+        <rect x="10" y="12" width="2" height="4" fill="#5a2d0a" />
+        {/* Phone base */}
+        <rect x="4" y="4" width="8" height="4" rx="1" fill="#c03030" />
+        <rect x="5" y="4" width="6" height="3" fill="#a02020" />
+        {/* Rotary dial / buttons */}
+        <circle cx="8" cy="6" r="1.5" fill="#eef7f2" />
+        {/* Handset */}
+        <rect x="3" y="1" width="10" height="2" rx="1" fill="#c03030" />
+        <rect x="2" y="1" width="3" height="3" rx="1" fill="#a02020" />
+        <rect x="11" y="1" width="3" height="3" rx="1" fill="#a02020" />
+      </svg>
+    </div>
+  );
+}
+
+
+// ============================================================
+//  MAIN NEWSROOM COMPONENT
+// ============================================================
+export default function Newsroom({ onBackToLibrary }) {
+  const layout = useMemo(() => generateNewsroomLayout(BLOG_POSTS), []);
+  const layoutRef = useRef(layout);
+  useEffect(() => { layoutRef.current = layout; }, [layout]);
+
+  const [pos, setPos]               = useState(() => layout.startPos);
+  const [facing, setFacing]         = useState("left");
+  const [stepping, setStepping]     = useState(false);
+  const [nearObject, setNearObject] = useState(null); // ID of article or 'phone'
+  const [openPost, setOpenPost]     = useState(null);
+  const [openTipLine, setOpenTipLine] = useState(false);
+  const [phase, setPhase]           = useState("intro");
+  const [scale, setScale]           = useState(1);
+
+  const [speedMultiplier, setSpeedMultiplier] = useState(() => parseFloat(localStorage.getItem("speedMultiplier") || "1"));
+  const [musicPlaying, setMusicPlaying]       = useState(true);
+  const [musicMuted, setMusicMuted]           = useState(() => JSON.parse(localStorage.getItem("musicMuted") || "false"));
+  const [musicVolume, setMusicVolume]         = useState(() => parseFloat(localStorage.getItem("musicVolume") || "0.1"));
+
+  useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
+  useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
+  useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
+
+  const musicRef     = useRef({ audioCtx: null, interval: null });
+  const containerRef = useRef(null);
+  const keysRef      = useRef({});
+  const lastMoveRef  = useRef(0);
+
+  // ---- Synth engine — driving 80s investigative synth ----
+  const playStep = useCallback((idx, vol, muted) => {
+    if (muted || vol === 0) return;
+    try {
+      if (!musicRef.current.audioCtx)
+        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = musicRef.current.audioCtx;
+      if (ctx.state === "suspended") ctx.resume();
+
+      // Driving bassline in Am
+      const baseNote = 110; // A2
+      const t = ctx.currentTime;
+      const si = idx % 16;
+
+      // Pumping bass on every 8th note
+      const bass = ctx.createOscillator(), bG = ctx.createGain();
+      bass.type = "sawtooth";
+      // Slight octave jumps for that 80s feel
+      let bf = baseNote;
+      if (si % 8 === 6 || si % 8 === 7) bf = baseNote * 1.5; // E3
+      
+      // Filter for the bass (plucky)
+      const bFilter = ctx.createBiquadFilter();
+      bFilter.type = "lowpass";
+      bFilter.frequency.setValueAtTime(800, t);
+      bFilter.frequency.exponentialRampToValueAtTime(100, t + 0.1);
+
+      bass.frequency.setValueAtTime(bf, t);
+      bG.gain.setValueAtTime(vol * 0.15, t);
+      bG.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+      
+      bass.connect(bFilter); bFilter.connect(bG); bG.connect(ctx.destination);
+      bass.start(t); bass.stop(t + 0.12);
+
+      // Typewriter clicks / Snare on 2 and 4 (beats 4 and 12 in 16-step)
+      if (si === 4 || si === 12 || si === 15) {
+        const bufSize = ctx.sampleRate * 0.05;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1);
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        
+        const nFilter = ctx.createBiquadFilter();
+        nFilter.type = "highpass";
+        nFilter.frequency.value = 2000;
+
+        const nG = ctx.createGain();
+        let nVol = si === 15 ? vol * 0.05 : vol * 0.12; // quieter ghost note at end
+        nG.gain.setValueAtTime(nVol, t);
+        nG.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+        
+        noise.connect(nFilter); nFilter.connect(nG); nG.connect(ctx.destination);
+        noise.start(t); noise.stop(t + 0.05);
+      }
+      
+      // Tension arpeggio (high notes)
+      if (si % 4 === 2) {
+        const arp = ctx.createOscillator(), aG = ctx.createGain();
+        arp.type = "square";
+        arp.frequency.setValueAtTime(baseNote * 4, t); // A4
+        aG.gain.setValueAtTime(vol * 0.05, t);
+        aG.gain.exponentialRampToValueAtTime(0.005, t + 0.2);
+        arp.connect(aG); aG.connect(ctx.destination);
+        arp.start(t); arp.stop(t + 0.25);
+      }
+
+    } catch (_) {}
+  }, []);
+
+  // Music loop
+  useEffect(() => {
+    if (!musicPlaying) {
+      if (musicRef.current.interval) clearInterval(musicRef.current.interval);
+      return;
+    }
+    let step = 0;
+    const ms = Math.round(130 / speedMultiplier); // faster tempo for urgency
+    musicRef.current.interval = setInterval(() => {
+      playStep(step++, musicVolume, musicMuted);
+    }, ms);
+    return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
+  }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
+
+  // ---- Responsive scale ----
+  useEffect(() => {
+    const resize = () => setScale(Math.min(
+      window.innerWidth / INTERNAL_W,
+      window.innerHeight / (INTERNAL_H + 80)
+    ));
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, []);
+
+  // ---- Proximity detection ----
+  const checkNear = useCallback((col, row) => {
+    for (const r of layoutRef.current.articles) {
+      const dc = Math.abs(r.col - col), dr = Math.abs(r.row - row);
+      if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
+        setNearObject(r.id);
+        return;
+      }
+    }
+    const { phonePos } = layoutRef.current;
+    const dc = Math.abs(phonePos.col - col), dr = Math.abs(phonePos.row - row);
+    if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
+      setNearObject("phone");
+      return;
+    }
+    
+    setNearObject(null);
+  }, []);
+
+  // ---- Keyboard & Audio Resume ----
+  useEffect(() => {
+    const resume = () => {
+      if (!musicRef.current.audioCtx)
+        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (musicRef.current.audioCtx.state === "suspended")
+        musicRef.current.audioCtx.resume();
+    };
+    window.addEventListener("keydown", resume);
+    window.addEventListener("click", resume);
+
+    const onDown = (e) => {
+      keysRef.current[e.key.toLowerCase()] = true;
+
+      if (phase === "intro" && (e.key === " " || e.key === "Enter" || e.key === "Escape")) {
+        e.preventDefault();
+        setPhase("free");
+        return;
+      }
+
+      if (phase !== "free") return;
+      if ((e.key === " " || e.key === "Enter") && nearObject) {
+        e.preventDefault();
+        if (nearObject === "phone") {
+          setOpenTipLine(true);
+        } else {
+          const rec = layoutRef.current.articles.find(r => r.id === nearObject);
+          if (rec) setOpenPost(rec.post);
+        }
+      }
+      if (e.key === "Escape") {
+        setOpenPost(null);
+        setOpenTipLine(false);
+      }
+    };
+    const onUp = (e) => { keysRef.current[e.key.toLowerCase()] = false; };
+
+    window.addEventListener("keydown", onDown);
+    window.addEventListener("keyup", onUp);
+    return () => {
+      window.removeEventListener("keydown", onDown);
+      window.removeEventListener("keyup", onUp);
+      window.removeEventListener("keydown", resume);
+      window.removeEventListener("click", resume);
+    };
+  }, [nearObject, phase]);
+
+  // ---- Movement loop ----
+  useEffect(() => {
+    if (phase !== "free" || openPost || openTipLine) return;
+    const id = setInterval(() => {
+      const now = Date.now();
+      if (now - lastMoveRef.current < MOVE_COOLDOWN / speedMultiplier) return;
+      const k = keysRef.current;
+      let dc = 0, dr = 0, nf = facing;
+      if      (k.w || k.arrowup)    { dr = -1; nf = "up";    }
+      else if (k.s || k.arrowdown)  { dr =  1; nf = "down";  }
+      else if (k.a || k.arrowleft)  { dc = -1; nf = "left";  }
+      else if (k.d || k.arrowright) { dc =  1; nf = "right"; }
+      if (dc !== 0 || dr !== 0) {
+        setFacing(nf);
+        const tc = pos.col + dc, tr = pos.row + dr;
+        if (canLayoutWalk(layoutRef.current, tc, tr)) {
+          setPos({ col: tc, row: tr });
+          setStepping(true);
+          lastMoveRef.current = now;
+          checkNear(tc, tr);
+          setTimeout(() => setStepping(false), 90);
+        }
+      }
+    }, 30);
+    return () => clearInterval(id);
+  }, [pos, facing, phase, openPost, openTipLine, speedMultiplier, checkNear]);
+
+  // ---- Camera (clamped to world bounds) ----
+  const rawCamX = pos.col * TILE + TILE / 2 - INTERNAL_W / 2;
+  const rawCamY = pos.row * TILE + TILE / 2 - INTERNAL_H / 2;
+  const camX = Math.max(0, Math.min(Math.max(0, layout.totalCols * TILE - INTERNAL_W), rawCamX));
+  const camY = Math.max(0, Math.min(Math.max(0, layout.totalRows * TILE - INTERNAL_H), rawCamY));
+  const tt = (0.14 / speedMultiplier).toFixed(2);
+
+  const activeArticle = layout.articles.find(r => r.id === nearObject);
+  const introLine = `Welcome to the Editorial Office. Hot off the presses. Walk up to the bulletin board and press SPACE to read.`;
+
+  // ---- Render ----
+  return (
+    <div ref={containerRef} style={{
+      position: "fixed", inset: 0,
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      background: "#080c10", overflow: "hidden",
+      fontFamily: "'Press Start 2P', monospace", userSelect: "none",
+    }}>
+      <style>{`
+        @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        .news-scroll::-webkit-scrollbar { width:12px; background: #fff; border-left: 2px solid #000; }
+        .news-scroll::-webkit-scrollbar-thumb { background: #000; border: 2px solid #fff; }
+        
+        .contact-btn {
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          background: #fff; color: #000; border: 2px solid #000;
+          padding: 10px; text-decoration: none; font-size: 6px; font-weight: bold;
+          transition: transform 0.1s;
+        }
+        .contact-btn:hover { background: #000; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,0.5); }
+      `}</style>
+
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "center",
+        transform: `scale(${scale})`, transformOrigin: "center",
+        imageRendering: "pixelated",
+      }}>
+
+        {/* ── GAME VIEWPORT ── */}
+        <div style={{
+          position: "relative", width: INTERNAL_W, height: INTERNAL_H,
+          overflow: "hidden", background: "#1a1e24",
+          boxShadow: "0 0 0 4px #2a3036, 0 8px 32px rgba(0,0,0,0.9)",
+          imageRendering: "pixelated",
+        }}>
+
+          {/* Scrolling world */}
+          <div style={{
+            position: "absolute",
+            width: layout.totalCols * TILE, height: layout.totalRows * TILE,
+            left: -camX, top: -camY,
+            transition: `left ${tt}s linear, top ${tt}s linear`,
+          }}>
+
+            {/* Tile layer */}
+            {layout.map.map((row, r) => row.map((tile, c) => {
+              if (tile === 0) return null;
+              let bg, bx = "none";
+              if (tile === 2) {
+                // Top Wall (Concrete/Office)
+                bg = "repeating-linear-gradient(90deg,#4a545e,#4a545e 4px,#586068 4px,#586068 8px)";
+                bx = "inset 0 -3px 0 #2a3036, inset 0 -8px 8px rgba(0,0,0,0.5)";
+              } else if (tile === 4) {
+                // Left Wall (Corkboard)
+                bg = "repeating-linear-gradient(45deg,#8a6442,#8a6442 2px,#9a7452 2px,#9a7452 4px)";
+                bx = "inset -3px 0 0 #5a3c24, inset 0 -8px 8px rgba(0,0,0,0.5)";
+              } else if (tile === 3) {
+                // Drafting Carpet
+                bg = "#2a3a4a";
+                bx = "inset 0 0 0 1px #1a2a3a";
+              } else {
+                // Linoleum Floor
+                bg = (r + c) % 2 === 0 ? "#c4d0d8" : "#a4b0b8";
+                bx = "inset 0 0 0 1px rgba(0,0,0,0.05)";
+              }
+              return (
+                <div key={`${r}-${c}`} style={{
+                  position: "absolute", left: c*TILE, top: r*TILE,
+                  width: TILE, height: TILE, background: bg, boxShadow: bx,
+                }} />
+              );
+            }))}
+
+            {/* Printing Press */}
+            <PrintingPress col={7} />
+
+            {/* Tip Line Phone */}
+            <TipLinePhone 
+              col={layout.phonePos.col} 
+              row={layout.phonePos.row} 
+              isNear={nearObject === "phone"} 
+              onClick={() => {
+                if (phase === "free") setOpenTipLine(true);
+              }}
+            />
+
+            {/* Article objects (Bulletin Board) */}
+            {layout.articles.map(r => (
+              <PixelArticle
+                key={r.id}
+                article={r}
+                isNear={nearObject === r.id}
+                onClick={() => {
+                  if (phase === "free") setOpenPost(r.post);
+                }}
+              />
+            ))}
+
+            {/* Player */}
+            <div style={{
+              position: "absolute",
+              left: pos.col * TILE, top: pos.row * TILE,
+              width: TILE, height: TILE,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              zIndex: pos.row * 10 + 5,
+              transition: `left ${tt}s linear, top ${tt}s linear`,
+            }}>
+              <PlayerSprite direction={facing} stepping={stepping} />
+            </div>
+
+            {/* Vignette */}
+            <div style={{
+              position: "absolute", inset: 0, pointerEvents: "none",
+              background: "radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.6) 100%)",
+            }} />
+          </div>
+
+          {/* CRT scanlines */}
+          <div style={{
+            position: "absolute", inset: 0, pointerEvents: "none", zIndex: 200,
+            background: "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px)",
+          }} />
+
+          {/* ← LIBRARY */}
+          <button onClick={onBackToLibrary} style={{
+            position: "absolute", top: 8, left: 8,
+            fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+            background: "#2a3036", color: "#eef7f2", border: "2px solid #eef7f2",
+            padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 500,
+            boxShadow: "0 2px 0 #181a1c",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <ArrowLeft size={6} strokeWidth={3} /> LIBRARY
+            </div>
+          </button>
+
+          {/* Post count badge */}
+          <div style={{
+            position: "absolute", top: 8, right: 8,
+            fontFamily: "'Press Start 2P', monospace", fontSize: 5,
+            color: "#eef7f2", background: "rgba(0,0,0,0.5)",
+            padding: "4px 6px", borderRadius: 2,
+            zIndex: 500, display: "flex", alignItems: "center", gap: 4,
+          }}>
+            <Newspaper size={7} /> {BLOG_POSTS.length} ISSUE{BLOG_POSTS.length !== 1 ? "S" : ""}
+          </div>
+
+          {/* Proximity prompt */}
+          {phase === "free" && nearObject && !openPost && !openTipLine && (
+            <div style={{
+              position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
+              padding: "4px 8px",
+              background: "rgba(0,0,0,0.9)", border: "2px solid #fff",
+              zIndex: 500, display: "flex", alignItems: "center", gap: 6,
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 6, color: "#fff" }}>
+                {nearObject === "phone" ? (
+                  <><Phone size={8} /><span>TIP LINE</span></>
+                ) : (
+                  <><FileText size={8} /><span>{activeArticle?.label}</span></>
+                )}
+              </div>
+              <div style={{
+                fontSize: 5, color: "#000", background: "#fff",
+                padding: "2px 4px"
+              }}>SPACE</div>
+            </div>
+          )}
+
+          {/* Intro dialogue */}
+          {phase !== "free" && (
+            <div style={{
+              position: "absolute", bottom: 8, left: 8, right: 8,
+              padding: "18px 14px 10px",
+              background: "#fff", border: "4px solid #000", zIndex: 500,
+            }}>
+              <div style={{
+                position: "absolute", top: -12, left: 10,
+                background: "#000", border: "2px solid #fff",
+                padding: "2px 8px", fontSize: 7, color: "#fff",
+              }}>EDITOR</div>
+              <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#000" }}>
+                {introLine}
+                <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
+              </div>
+              <div style={{ marginTop: 8 }}>
+                <button
+                  onClick={() => setPhase("free")}
+                  style={{
+                    fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                    background: "#000", color: "#fff", border: "none",
+                    padding: "8px 14px", cursor: "pointer",
+                    boxShadow: "4px 4px 0 #888", display: "flex", alignItems: "center"
+                  }}
+                >
+                  <span style={{ fontSize: 5, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE</span>
+                  GET TO WORK
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── TIP LINE OVERLAY (Rolodex style) ── */}
+          {openTipLine && (
+            <div
+              onClick={() => setOpenTipLine(false)}
+              style={{
+                position: "absolute", inset: 0,
+                background: "rgba(0,0,0,0.8)",
+                display: "flex", alignItems: "center", justifyContent: "center", zIndex: 600,
+              }}
+            >
+              <div
+                onClick={e => e.stopPropagation()}
+                style={{
+                  background: "#f4e8d0", border: "4px solid #111", borderTopWidth: "12px",
+                  width: 240, maxWidth: "90%",
+                  boxShadow: "8px 8px 0 rgba(0,0,0,0.5)",
+                  display: "flex", flexDirection: "column", padding: "16px",
+                  textAlign: "center", position: "relative"
+                }}
+              >
+                {/* Spiral notebook rings */}
+                <div style={{ position: "absolute", top: -16, left: 20, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, left: 60, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, right: 60, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, right: 20, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
+
+                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -10 }}>
+                  <button onClick={() => setOpenTipLine(false)} style={{
+                    fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+                    background: "#000", color: "#fff", border: "none",
+                    padding: "4px 6px", cursor: "pointer",
+                  }}><X size={8} /></button>
+                </div>
+                
+                <Phone size={24} color="#000" style={{ margin: "0 auto 12px" }} />
+                <h2 style={{ fontSize: 8, color: "#000", margin: "0 0 8px 0", lineHeight: "12px", borderBottom: "2px solid #000", paddingBottom: 8 }}>TIP LINE</h2>
+                <p style={{ fontSize: 5, color: "#333", margin: "0 0 16px 0", lineHeight: "10px", fontFamily: "monospace" }}>
+                  Got a lead? Send a Letter to the Editor.
+                </p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <a href="mailto:hello@example.com" className="contact-btn">
+                    <MessageCircle size={10} /> EMAIL DESK
+                  </a>
+                  <a href="https://linkedin.com/in/saad-ibra" target="_blank" rel="noopener noreferrer" className="contact-btn">
+                    <Briefcase size={10} /> LINKEDIN
+                  </a>
+                  <a href="https://twitter.com/saadibrahimkhan" target="_blank" rel="noopener noreferrer" className="contact-btn">
+                    <Hash size={10} /> TWITTER / X
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── NEWSPAPER READING MODAL ── */}
+          {openPost && (
+            <div
+              onClick={() => setOpenPost(null)}
+              style={{
+                position: "absolute", inset: 0,
+                background: "rgba(0,0,0,0.9)",
+                display: "flex", alignItems: "center", justifyContent: "center", zIndex: 600,
+              }}
+            >
+              <div
+                onClick={e => e.stopPropagation()}
+                className="news-scroll"
+                style={{
+                  background: "#fff", border: "6px solid #000",
+                  width: 350, maxWidth: "95%", maxHeight: INTERNAL_H - 20,
+                  boxShadow: "12px 12px 0 rgba(0,0,0,0.8)",
+                  overflow: "hidden", display: "flex", flexDirection: "column",
+                }}
+              >
+                {/* Header (Newspaper style) */}
+                <div style={{
+                  padding: "16px 14px 10px",
+                  borderBottom: "4px solid #000",
+                  flexShrink: 0, textAlign: "center",
+                }}>
+                  <div style={{ fontSize: 10, color: "#000", lineHeight: "14px", fontWeight: "bold", textTransform: "uppercase" }}>
+                    {openPost.title}
+                  </div>
+                  {openPost.subtitle && (
+                    <div style={{ fontSize: 6, color: "#444", marginTop: 8, fontStyle: "italic", fontFamily: "monospace" }}>
+                      {openPost.subtitle}
+                    </div>
+                  )}
+                </div>
+
+                {/* Author & Meta */}
+                <div style={{
+                  padding: "6px 14px",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  fontSize: 5, color: "#000", background: "#f0f0f0",
+                  borderBottom: "2px solid #000", flexShrink: 0,
+                  fontFamily: "monospace", textTransform: "uppercase"
+                }}>
+                  <div style={{ fontWeight: "bold" }}>BY {openPost.author}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span>{openPost.date}</span>
+                    <span>|</span>
+                    <span>{openPost.readTime}</span>
+                  </div>
+                  <button onClick={() => setOpenPost(null)} style={{
+                      fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+                      background: "#000", color: "#fff", border: "none",
+                      padding: "2px 5px", cursor: "pointer",
+                    }}>CLOSE</button>
+                </div>
+
+                {/* Scrollable content (Columns) */}
+                <div className="news-scroll" style={{
+                  padding: "16px 14px",
+                  overflow: "auto", flex: 1,
+                  fontFamily: "monospace", // Typewriter feel
+                  columnCount: 2, columnGap: "16px", columnRule: "1px solid #ccc"
+                }}>
+                  {openPost.content.map((para, i) => (
+                    <p key={i} style={{
+                      fontSize: 6, lineHeight: "11px", color: "#000",
+                      margin: "0 0 12px 0", textAlign: "justify",
+                    }}>
+                      {i === 0 ? <span style={{ fontSize: 12, float: "left", lineHeight: "12px", paddingRight: 4, fontWeight: "bold" }}>{para.charAt(0)}</span> : null}
+                      {i === 0 ? para.slice(1) : para}
+                    </p>
+                  ))}
+
+                  {/* Tags */}
+                  <div style={{
+                    display: "flex", flexWrap: "wrap", gap: 4, marginTop: 12,
+                    paddingTop: 12, borderTop: "2px solid #000", columnSpan: "all"
+                  }}>
+                    {openPost.tags.map(tag => (
+                      <span key={tag} style={{
+                        fontSize: 5, color: "#fff", background: "#000",
+                        padding: "3px 6px", textTransform: "uppercase"
+                      }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── CONTROL BAR ── */}
+        <ControlBar
+          width={INTERNAL_W}
+          musicPlaying={musicPlaying}
+          musicMuted={musicMuted}
+          musicVolume={musicVolume}
+          speedMultiplier={speedMultiplier}
+          onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)}
+          onChangeVolume={setMusicVolume}
+          onChangeSpeed={setSpeedMultiplier}
+        />
+
+      </div>
+    </div>
+  );
+}
