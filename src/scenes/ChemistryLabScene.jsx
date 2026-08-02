@@ -148,6 +148,121 @@ function Chalkboard({ stats, isNear, chalkCol, onClick }) {
 }
 
 // ============================================================
+//  CHALKBOARD MODAL — EKG GitHub Contributions
+// ============================================================
+function ChalkboardModal({ commitStats, onClose }) {
+  const width = 280;
+  const height = 180;
+  const rowHeight = 32;
+
+  // Render the SVG lines
+  const renderEKG = () => {
+    if (!commitStats || !commitStats.years) return null;
+    
+    const { years, maxMonth } = commitStats;
+    const maxCommits = maxMonth?.commits || 1; // avoid div by 0
+
+    return (
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: "visible" }}>
+        {/* Draw subtle grid lines for months */}
+        {Array.from({ length: 12 }).map((_, i) => (
+          <line key={`grid-${i}`} x1={i * (width / 11)} y1={0} x2={i * (width / 11)} y2={height} stroke="rgba(196,232,188,0.1)" strokeDasharray="2 4" />
+        ))}
+        
+        {years.map((yearData, yearIndex) => {
+          const baseY = (yearIndex * rowHeight) + 30;
+          let points = "";
+          let peakPoint = null;
+
+          yearData.months.forEach((commits, i) => {
+            const x = i * (width / 11);
+            // Spike height relative to max commits, capped at 25px max height
+            const spikeHeight = commits === 0 ? 0 : (commits / maxCommits) * 25;
+            const y = baseY - spikeHeight;
+            points += `${x},${y} `;
+
+            if (yearData.year === maxMonth.year && i === maxMonth.monthIndex) {
+              peakPoint = { x, y };
+            }
+          });
+
+          return (
+            <g key={yearData.year}>
+              {/* Year label */}
+              <text x={0} y={baseY - 2} fill="rgba(196,232,188,0.5)" fontSize={5} fontFamily="'Press Start 2P', monospace">{yearData.year}</text>
+              {/* Heartbeat line */}
+              <polyline points={points} fill="none" stroke="#c4e8bc" strokeWidth={1.5} strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 2px rgba(196,232,188,0.4))" }} />
+              {/* Peak marker */}
+              {peakPoint && (
+                <circle cx={peakPoint.x} cy={peakPoint.y} r={2.5} fill="#ffd060" style={{ filter: "drop-shadow(0 0 4px #ffd060)" }} />
+              )}
+            </g>
+          );
+        })}
+      </svg>
+    );
+  };
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "absolute", inset: 0,
+        background: "rgba(0,0,0,0.92)",
+        display: "flex", alignItems: "center", justifyContent: "center", zIndex: 600,
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: "#162820", border: "4px solid #4a3018", borderRadius: 4,
+          width: 320, maxWidth: "95%",
+          boxShadow: "inset 0 0 10px rgba(0,0,0,0.8), 0 12px 32px rgba(0,0,0,0.95)",
+          padding: 16,
+          display: "flex", flexDirection: "column", alignItems: "center",
+        }}
+      >
+        <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+          <div>
+            <div style={{ color: "#c4e8bc", fontSize: 6, fontFamily: "'Press Start 2P', monospace" }}>GITHUB ACTIVITY</div>
+            <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{ color: "#b0f0b8", fontSize: 4, textDecoration: "underline", fontFamily: "'Press Start 2P', monospace", marginTop: 6, display: "block" }}>
+              github.com/saad-ibra
+            </a>
+          </div>
+          <button onClick={onClose} style={{
+            fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+            background: "#4a3018", color: "#c4e8bc", border: "none",
+            padding: "4px 8px", borderRadius: 2, cursor: "pointer",
+          }}>X</button>
+        </div>
+
+        <div style={{ position: "relative", background: "#0e1813", padding: "10px", borderRadius: 4, border: "2px solid #203828", width: "100%", boxSizing: "border-box" }}>
+          {!commitStats ? (
+            <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#c4e8bc", fontSize: 5, animation: "dialogBlink 1s infinite" }}>
+              ANALYZING COMMITS...
+            </div>
+          ) : (
+            <>
+              {renderEKG()}
+              <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(196,232,188,0.5)", fontSize: 4, fontFamily: "'Press Start 2P', monospace", marginTop: 4 }}>
+                <span>JAN</span>
+                <span>DEC</span>
+              </div>
+            </>
+          )}
+        </div>
+        
+        {commitStats?.maxMonth && (
+          <div style={{ color: "#ffd060", fontSize: 4, fontFamily: "'Press Start 2P', monospace", marginTop: 12, textAlign: "center", opacity: 0.8 }}>
+            ◆ BUSIEST MONTH: {['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][commitStats.maxMonth.monthIndex]} {commitStats.maxMonth.year} ({commitStats.maxMonth.commits} COMMITS)
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 //  REPO TERMINAL  — one per project, colour-coded per type
 // ============================================================
 function RepoTerminal({ station, isNear, onClick }) {
@@ -248,6 +363,7 @@ export default function ChemistryLab({ onBackToLibrary }) {
   const [repos, setRepos]           = useState([]);
   const [stats, setStats]           = useState({ public: 0, private: 0 });
   const [reposLoaded, setReposLoaded] = useState(false);
+  const [commitStats, setCommitStats] = useState(null);
 
   // Layout derived from live repos — regenerates automatically
   const labLayout = useMemo(() => {
@@ -376,6 +492,15 @@ export default function ChemistryLab({ onBackToLibrary }) {
         });
         setRepos(mapped);
         setStats({ public: mapped.filter(r => !r.isPrivate).length, private: mapped.filter(r => r.isPrivate).length });
+
+        // Fetch contributions EKG data
+        fetch("/api/github/contributions")
+          .then(res => res.json())
+          .then(data => {
+            if (!data.error) setCommitStats(data);
+          })
+          .catch(err => console.warn("Failed to fetch commit stats", err));
+
       } catch (e) {
         console.warn("GitHub fetch failed:", e);
       } finally {
@@ -430,12 +555,7 @@ export default function ChemistryLab({ onBackToLibrary }) {
       if (phase !== "free") return;
       if ((e.key === " " || e.key === "Enter") && nearStation) {
         e.preventDefault();
-        if (nearStation === "chalkboard") {
-          // Chalkboard opens GitHub — no separate button needed
-          window.open("https://github.com/saad-ibra", "_blank", "noopener");
-        } else {
-          setOpenStation(nearStation);
-        }
+        setOpenStation(nearStation);
       }
       if (e.key === "Escape") setOpenStation(null);
     };
@@ -566,7 +686,7 @@ export default function ChemistryLab({ onBackToLibrary }) {
               stats={stats}
               isNear={nearStation === "chalkboard"}
               chalkCol={layout.chalkCol}
-              onClick={() => { if (phase === "free") window.open("https://github.com/saad-ibra", "_blank", "noopener"); }}
+              onClick={() => { if (phase === "free") setOpenStation("chalkboard"); }}
             />
 
             {/* Individual repo terminals */}
@@ -686,8 +806,13 @@ export default function ChemistryLab({ onBackToLibrary }) {
             </div>
           )}
 
+          {/* Chalkboard Modal */}
+          {openStation === "chalkboard" && (
+            <ChalkboardModal commitStats={commitStats} onClose={() => setOpenStation(null)} />
+          )}
+
           {/* Repo detail modal — one per repo, focused */}
-          {openStation && openStationData && (
+          {openStation && openStation !== "chalkboard" && openStationData && (
             <div
               onClick={() => setOpenStation(null)}
               style={{
