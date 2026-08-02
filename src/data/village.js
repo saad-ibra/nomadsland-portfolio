@@ -1,118 +1,104 @@
 /**
- * Village Hub — South Indian Market Neighborhood
+ * Village Hub — Pokémon-style Structured Overworld
  *
  * Map Legend:
- *   0 = void (warm sky / distant city beyond map)
- *   1 = lane (walkable dusty concrete path)
- *   2 = building (non-walkable rooftop / facade block)
- *   5 = courtyard (walkable, darker paved texture)
- *
- * The layout is designed to feel organic: narrow winding lanes
- * packed between dense building clusters. No single central hub —
- * the player discovers shops gradually while wandering.
+ *   . = Grass (walkable)
+ *   p = Dirt path (walkable)
+ *   f = Flowers (walkable)
+ *   T = Tree / Forest boundary (solid)
+ *   H = House (solid)
  */
 
-export const MAP_COLS = 24;
-export const MAP_ROWS = 18;
+export const MAP_COLS = 36;
+export const MAP_ROWS = 32;
 
-// prettier-ignore
-export const MAP = [
-//  0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
-  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 0
-  [ 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0], // 1
-  [ 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 0], // 2
-  [ 0, 2, 2, 0, 0, 0, 0, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 2, 2, 0], // 3  ← upper east-west lane
-  [ 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 2, 2, 2, 2, 0], // 4  ← dead-end alley (cols 14-15)
-  [ 0, 2, 2, 2, 2, 0, 2, 2, 2, 0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0], // 5
-  [ 0, 2, 2, 2, 2, 0, 2, 2, 2, 0, 0, 1, 0, 0, 2, 2, 0, 0, 2, 2, 2, 2, 2, 0], // 6
-  [ 0, 2, 2, 2, 2, 0, 0, 2, 0, 0, 1, 1, 0, 0, 2, 2, 2, 0, 0, 0, 0, 2, 2, 0], // 7
-  [ 0, 2, 2, 2, 2, 1, 1, 1, 1, 1, 5, 5, 5, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 0], // 8  ← main east-west lane + courtyard
-  [ 0, 0, 2, 2, 0, 0, 1, 2, 2, 0, 5, 5, 5, 0, 2, 2, 0, 0, 1, 2, 2, 2, 0, 0], // 9  ← south side alley
-  [ 0, 0, 2, 2, 0, 0, 1, 2, 2, 0, 0, 1, 0, 0, 2, 2, 0, 0, 1, 2, 2, 2, 0, 0], // 10
-  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 2, 0, 0, 0, 2, 2, 2, 0, 0], // 11
-  [ 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0], // 12
-  [ 0, 0, 2, 2, 0, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 0, 0, 0], // 13 ← fork lane (Library ← → Music Room)
-  [ 0, 0, 0, 0, 0, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0, 0, 0], // 14
-  [ 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0, 0, 0], // 15
-  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 16
-  [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 17
+const layout = [
+  "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+  "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+  "TT................................TT",
+  "TT..HHHHH................HHHHH....TT",
+  "TT..HHHHH................HHHHH....TT",
+  "TT..HHHHH................HHHHH....TT",
+  "TT....p....................p......TT",
+  "TT....p......TTTTTTTT......p......TT",
+  "TT....pppppppppppppppppppppp......TT",
+  "TT...........p......p.............TT",
+  "TTT..........p..ff..p............TTT",
+  "TTT...HHHHH..p.f..f.p..HHHHH.....TTT",
+  "TTT...HHHHH..p..ff..p..HHHHH.....TTT",
+  "TT....HHHHH..p......p..HHHHH......TT",
+  "TT......p....pppppppp....p........TT",
+  "TT......p.......p........p........TT",
+  "TT......ppppppppp........p........TT",
+  "TT..............p........p........TT",
+  "TTT.............p........p.......TTT",
+  "TTT..TTTTTTT....p....pppppppp....TTT",
+  "TTT..TTTTTTT....p....p......p....TTT",
+  "TT..............p....p..ff..p.....TT",
+  "TT..............p....p.f..f.p.....TT",
+  "TT..........HHHHH....p..ff..p.....TT",
+  "TT..........HHHHH....p......p.....TT",
+  "TT..........HHHHH....pppppppp.....TT",
+  "TT............p...................TT",
+  "TT............p...................TT",
+  "TT............p...................TT",
+  "TT................................TT",
+  "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+  "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
 ];
 
+const charToType = {
+  '.': 0, // grass
+  'p': 1, // path
+  'T': 2, // tree
+  'H': 3, // house
+  'f': 6, // flowers
+};
+
+export const MAP = layout.map(row => row.split('').map(char => charToType[char]));
+
 /**
- * Shop definitions.
- * Each shop door sits on a building tile (non-walkable).
- * The player triggers entry by standing on the adjacent lane tile and pressing Space.
- *
- * `facing` is the direction the door faces — determines where the player stands to interact.
+ * Shop Definitions
  */
 export const SHOPS = [
   {
-    id: "newsroom", col: 14, row: 2,
+    id: "newsroom", col: 6, row: 5,
     label: "THE PRESS", scene: "newsroom",
-    awning: "#c8a030", awningDark: "#a08020",
-    sign: "#3a2810", signText: "#f0e8d0",
-    facing: "south", // player at (14, 3)
+    roof: "#d84040", wall: "#f0e8d0", door: "#8a3030", // Red roof
+    facing: "south", // player stands at (6, 6) facing up
   },
   {
-    id: "nomadshome", col: 4, row: 8,
+    id: "nomadshome", col: 14, row: 25,
     label: "NOMADSHOME", scene: "nomadshome",
-    awning: "#b85a3a", awningDark: "#904828",
-    sign: "#2a1510", signText: "#f8e8d8",
-    facing: "east", // player at (5, 8)
+    roof: "#408ad8", wall: "#e0f0f8", door: "#204a8a", // Blue roof
+    facing: "south", // player stands at (14, 26)
   },
   {
-    id: "lab", col: 19, row: 10,
+    id: "lab", col: 25, row: 13,
     label: "THE LAB", scene: "lab",
-    awning: "#4a8a50", awningDark: "#387040",
-    sign: "#1a2e1a", signText: "#d0f0d0",
-    facing: "west", // player at (18, 10)
+    roof: "#40d860", wall: "#e8f8e0", door: "#208a30", // Green roof
+    facing: "south", // player stands at (25, 14)
   },
   {
-    id: "library", col: 7, row: 14,
+    id: "library", col: 27, row: 5,
     label: "LIBRARY", scene: "library",
-    awning: "#2a7068", awningDark: "#1a5850",
-    sign: "#0a2824", signText: "#c8e8e0",
-    facing: "east", // player at (8, 14)
+    roof: "#8a40d8", wall: "#f0e0f8", door: "#4a208a", // Purple roof
+    facing: "south", // player stands at (27, 6)
   },
   {
-    id: "musicroom", col: 18, row: 14,
+    id: "musicroom", col: 8, row: 13,
     label: "MUSIC ROOM", scene: "musicroom",
-    awning: "#8a2848", awningDark: "#6a1838",
-    sign: "#2a0818", signText: "#f0c8d8",
-    facing: "west", // player at (17, 14)
+    roof: "#d88a40", wall: "#f8efe0", door: "#8a4a20", // Orange roof
+    facing: "south", // player stands at (8, 14)
   },
 ];
 
 export const SHOP_TILES = new Set(SHOPS.map(s => `${s.col},${s.row}`));
+export const START_POS = { col: 17, row: 16 }; // Middle of the central vertical path
 
-/** Player spawns in the courtyard — central, with all lanes reachable. */
-export const START_POS = { col: 11, row: 9 };
-
-/**
- * Decorative elements positioned in world coordinates.
- * Rendered as pixel-art SVG overlays.
- */
-export const DECORATIONS = {
-  rickshaw: { col: 13, row: 8 },  // parked at courtyard edge
-  // Electrical wire endpoints (pairs of building corners)
-  wires: [
-    { x1: 2, y1: 2, x2: 6, y2: 2 },    // upper-left buildings
-    { x1: 13, y1: 1, x2: 18, y2: 1 },   // across Newsroom block
-    { x1: 7, y1: 6, x2: 7, y2: 9 },     // vertical wire
-    { x1: 19, y1: 5, x2: 22, y2: 5 },   // east buildings
-  ],
-};
-
-/**
- * Palette constants for the tile renderer.
- */
 export const PALETTE = {
-  lane:      ["#d4c4a8", "#ccc098"],
-  courtyard: ["#b8a888", "#b0a080"],
-  building:  ["#c09060", "#b88050", "#c8a068", "#a87848", "#b89060"],
-  rooftop:   ["#a87848", "#986838", "#b08050"],
-  facade:    "#c09060",
-  void:      "#d0c8b0",
-  window:    "#4a3020",
-  windowLit: "#e8c860",
+  grass: ["#68c058", "#60b850", "#70c860"],
+  path:  ["#e8c880", "#e0c078"],
+  tree:  ["#307840", "#286838", "#388848"],
+  flowers: ["#f8d8e8", "#f0e060"],
 };
