@@ -144,7 +144,7 @@ export default function VillageScene({
     nomadshome: onGoToNomadshome, musicroom: onGoToMusicRoom,
   };
 
-  // ---- Synth engine: Upbeat 8-bit / Chiptune (Pokémon style) ----
+  // ---- Synth engine: Richer 16-bit RPG Overworld Theme ----
   const playStep = useCallback((idx, vol, muted) => {
     if (muted || vol === 0) return;
     try {
@@ -152,36 +152,68 @@ export default function VillageScene({
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
-      // Cheerful major scale melody
+      // Cheerful major scale melody (C Major Pentatonic + F & B for passing)
       const scale = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // C major
       const t = ctx.currentTime;
 
-      // Bassline (Square wave)
+      // Bassline (Triangle wave - warmer, rounder bass)
       if (idx % 4 === 0 || idx % 4 === 2) {
         const bass = ctx.createOscillator();
         const bG = ctx.createGain();
-        bass.type = "square";
-        const root = idx % 32 < 16 ? 130.81 : 174.61; // C3 -> F3
+        bass.type = "triangle";
+        // Alternating root notes for a walking bass feel
+        const roots = [130.81, 130.81, 174.61, 196.00]; // C, C, F, G
+        const root = roots[Math.floor(idx / 16) % roots.length];
         bass.frequency.setValueAtTime(root, t);
         
-        bG.gain.setValueAtTime(vol * 0.1, t);
-        bG.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+        bG.gain.setValueAtTime(vol * 0.15, t);
+        bG.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
         bass.connect(bG); bG.connect(ctx.destination);
-        bass.start(t); bass.stop(t + 0.2);
+        bass.start(t); bass.stop(t + 0.35);
       }
 
-      // Arpeggiated Melody (Square wave)
+      // Arpeggiated Melody (Square wave with lowpass filter for 16-bit "flute/synth" tone)
       if (idx % 2 === 0) {
         const mel = ctx.createOscillator();
         const mG = ctx.createGain();
-        mel.type = "square";
-        const noteIdx = (idx / 2 + Math.floor(idx / 16)) % scale.length;
-        mel.frequency.setValueAtTime(scale[noteIdx] * 1.5, t);
+        const filter = ctx.createBiquadFilter();
         
-        mG.gain.setValueAtTime(vol * 0.06, t);
-        mG.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-        mel.connect(mG); mG.connect(ctx.destination);
-        mel.start(t); mel.stop(t + 0.15);
+        mel.type = "square";
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(1200, t); // Cut off harsh high frequencies
+        
+        // A slightly more complex, cheerful sequence
+        const pattern = [0, 2, 4, 7, 4, 5, 2, -1];
+        const noteIdx = pattern[(idx / 2) % 8];
+        
+        if (noteIdx !== -1) {
+          // Add some octave variation
+          const octave = (idx % 32 > 16) ? 2 : 1.5;
+          mel.frequency.setValueAtTime(scale[noteIdx] * octave, t);
+          
+          mG.gain.setValueAtTime(vol * 0.05, t);
+          // Slightly longer decay for smoother melody
+          mG.gain.setTargetAtTime(0.001, t + 0.1, 0.05);
+          
+          mel.connect(filter); filter.connect(mG); mG.connect(ctx.destination);
+          mel.start(t); mel.stop(t + 0.25);
+        }
+      }
+      
+      // Counter-melody (Sine wave for a glassy pad sound)
+      if (idx % 8 === 0) {
+        const pad = ctx.createOscillator();
+        const pG = ctx.createGain();
+        pad.type = "sine";
+        const padNote = scale[Math.floor(idx / 16) % scale.length];
+        pad.frequency.setValueAtTime(padNote * 2, t); // High register
+        
+        pG.gain.setValueAtTime(0, t);
+        pG.gain.linearRampToValueAtTime(vol * 0.03, t + 0.2);
+        pG.gain.linearRampToValueAtTime(0, t + 0.6);
+        
+        pad.connect(pG); pG.connect(ctx.destination);
+        pad.start(t); pad.stop(t + 0.65);
       }
     } catch (_) {}
   }, []);
@@ -344,16 +376,27 @@ export default function VillageScene({
         content = <div style={{ position: "absolute", inset: 0, border: "1px solid rgba(0,0,0,0.05)" }} />;
       } else if (tile === 2) { // Tree
         bg = PALETTE.grass[h % PALETTE.grass.length]; // base grass
-        // Render a cute round tree overlapping slightly upwards
+        // Render a detailed pixel-art RPG tree
         content = (
           <div style={{
-            position: "absolute", left: -4, top: -12, width: TILE + 8, height: TILE + 12,
-            background: PALETTE.tree[h % PALETTE.tree.length], border: "2px solid #184820", borderRadius: "50% 50% 10px 10px",
-            boxShadow: "inset 0 -6px 0 rgba(0,0,0,0.2), 0 4px 0 rgba(0,0,0,0.2)",
-            zIndex: r * 10 + 2,
+            position: "absolute", left: -6, top: -16, width: TILE + 12, height: TILE + 16,
+            zIndex: r * 10 + 2, display: "flex", alignItems: "flex-end", justifyContent: "center"
           }}>
-            {/* Tree highlight */}
-            <div style={{ position: "absolute", left: 8, top: 4, width: 12, height: 6, background: "rgba(255,255,255,0.15)", borderRadius: "50%" }} />
+            {/* Trunk shadow */}
+            <div style={{ position: "absolute", bottom: 2, width: 12, height: 6, background: "rgba(0,0,0,0.3)", borderRadius: "50%" }} />
+            {/* Trunk */}
+            <div style={{ position: "absolute", bottom: 6, width: 8, height: 10, background: "#5a3a20", border: "2px solid #302010" }} />
+            {/* Leaves */}
+            <svg width="44" height="40" viewBox="0 0 44 40" style={{ position: "absolute", bottom: 10, imageRendering: "pixelated" }}>
+              <path d="M 22 0 C 10 0 4 10 4 20 C 0 20 0 32 10 36 C 14 38 30 38 34 36 C 44 32 44 20 40 20 C 40 10 34 0 22 0 Z" fill={PALETTE.tree[h % PALETTE.tree.length]} stroke="#184820" strokeWidth="2" />
+              {/* Highlight and texture */}
+              <path d="M 22 4 C 14 4 10 10 10 16" stroke="rgba(255,255,255,0.2)" strokeWidth="3" fill="none" />
+              <path d="M 30 28 C 24 32 16 32 10 28" stroke="rgba(0,0,0,0.2)" strokeWidth="3" fill="none" />
+              {/* Apples/Berries randomly */}
+              {h % 5 === 0 && <circle cx="14" cy="18" r="2" fill="#d84040" />}
+              {h % 7 === 0 && <circle cx="28" cy="24" r="2" fill="#d84040" />}
+              {h % 3 === 0 && <circle cx="24" cy="12" r="2" fill="#d84040" />}
+            </svg>
           </div>
         );
       } else if (tile === 3) { // House Base

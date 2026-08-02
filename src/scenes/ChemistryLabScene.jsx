@@ -4,6 +4,7 @@ import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-rea
 import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from '../engine/constants';
 import PlayerSprite from '../components/sprites/PlayerSprite';
 import ControlBar from '../components/ui/ControlBar';
+import ExitDoor from '../components/sprites/ExitDoor';
 
 
 // ============================================================
@@ -659,6 +660,13 @@ export default function ChemistryLab({ onBackToVillage }) {
       if (dc !== 0 || dr !== 0) {
         setFacing(nf);
         const tc = pos.col + dc, tr = pos.row + dr;
+        
+        // Exit Door check
+        if (tc === layoutRef.current.startPos.col && tr === 1) {
+          onBackToVillage();
+          return;
+        }
+
         if (canLayoutWalk(layoutRef.current, tc, tr)) {
           setPos({ col: tc, row: tr });
           setStepping(true);
@@ -774,6 +782,9 @@ export default function ChemistryLab({ onBackToVillage }) {
                 />
               ))
             }
+
+            {/* Exit Door */}
+            <ExitDoor col={layout.startPos.col} row={1} />
 
             {/* Decorative carts (only in public wing to avoid blocking vault) */}
             <ChemicalCart col={1} row={5} />
