@@ -173,8 +173,14 @@ function ChalkboardModal({ commitStats, onClose }) {
           const baseY = (yearIndex * rowHeight) + 30;
           let points = "";
           let peakPoint = null;
+          
+          const currentYear = new Date().getFullYear();
+          const currentMonth = new Date().getMonth();
 
           yearData.months.forEach((commits, i) => {
+            // Do not draw lines for months in the future
+            if (yearData.year === currentYear && i > currentMonth) return;
+
             const x = i * (width / 11);
             // Spike height relative to max commits, capped at 25px max height
             const spikeHeight = commits === 0 ? 0 : (commits / maxCommits) * 25;
@@ -225,7 +231,7 @@ function ChalkboardModal({ commitStats, onClose }) {
         <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
           <div>
             <div style={{ color: "#c4e8bc", fontSize: 6, fontFamily: "'Press Start 2P', monospace" }}>GITHUB ACTIVITY</div>
-            <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{ color: "#b0f0b8", fontSize: 4, textDecoration: "underline", fontFamily: "'Press Start 2P', monospace", marginTop: 6, display: "block" }}>
+            <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{ color: "#b0f0b8", fontSize: 6, textDecoration: "underline", fontFamily: "'Press Start 2P', monospace", marginTop: 6, display: "block" }}>
               github.com/saad-ibra
             </a>
           </div>
