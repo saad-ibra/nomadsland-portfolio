@@ -236,10 +236,14 @@ function ChalkboardModal({ commitStats, onClose }) {
           }}>X</button>
         </div>
 
-        <div style={{ position: "relative", background: "#0e1813", padding: "10px", borderRadius: 4, border: "2px solid #203828", width: "100%", boxSizing: "border-box" }}>
+          <div style={{ position: "relative", background: "#0e1813", padding: "10px", borderRadius: 4, border: "2px solid #203828", width: "100%", boxSizing: "border-box" }}>
           {!commitStats ? (
             <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#c4e8bc", fontSize: 5, animation: "dialogBlink 1s infinite" }}>
               ANALYZING COMMITS...
+            </div>
+          ) : commitStats.error ? (
+            <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#ff8888", fontSize: 4, textAlign: "center", lineHeight: "8px" }}>
+              VITE_GITHUB_TOKEN REQUIRED<br/><br/>(ADD TO .env FOR EKG)
             </div>
           ) : (
             <>
@@ -252,7 +256,7 @@ function ChalkboardModal({ commitStats, onClose }) {
           )}
         </div>
         
-        {commitStats?.maxMonth && (
+        {commitStats && !commitStats.error && commitStats.maxMonth && (
           <div style={{ color: "#ffd060", fontSize: 4, fontFamily: "'Press Start 2P', monospace", marginTop: 12, textAlign: "center", opacity: 0.8 }}>
             ◆ BUSIEST MONTH: {['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][commitStats.maxMonth.monthIndex]} {commitStats.maxMonth.year} ({commitStats.maxMonth.commits} COMMITS)
           </div>
@@ -556,7 +560,12 @@ export default function ChemistryLab({ onBackToLibrary }) {
             
             setCommitStats({ years: yearsData, maxMonth });
           })
-          .catch(err => console.warn("Failed to fetch commit stats", err));
+          .catch(err => {
+            console.warn("Failed to fetch commit stats", err);
+            setCommitStats({ error: true });
+          });
+        } else {
+          setCommitStats({ error: true });
         }
 
       } catch (e) {
