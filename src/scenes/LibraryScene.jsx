@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
+import ExitDoor from "../components/sprites/ExitDoor";
 import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from "../engine/constants";
 import { MAP, MAP_COLS, MAP_ROWS, SHELF_LAYOUT, SHELF_TILES, DECOR_TILES, TOUR_MOVE_MS, TOUR_PAUSE_MS, TYPE_COLORS, BOOK_SPINE_PALETTES, START_POS } from "../data/library";
 
@@ -592,6 +593,13 @@ export default function LibraryScene({ onBackToVillage }) {
       setPos((p) => {
         const nc = p.col + dc;
         const nr = p.row + dr;
+        
+        // Exit door check
+        if (nc === 9 && nr === 14) {
+          onBackToVillage();
+          return p;
+        }
+
         if (canWalk(nc, nr)) {
           setStepping((s) => !s);
           lastMoveRef.current = now;
@@ -803,6 +811,9 @@ export default function LibraryScene({ onBackToVillage }) {
                 onClick={() => { if (phase === "free") setOpenShelf(s.id); }}
               />
             ))}
+
+            {/* Exit Door */}
+            <ExitDoor col={9} row={14} />
 
             {/* Player - always at grid position */}
              <div style={{

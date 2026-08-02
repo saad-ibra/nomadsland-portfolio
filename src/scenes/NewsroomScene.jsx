@@ -5,6 +5,7 @@ import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Br
 import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from '../engine/constants';
 import PlayerSprite from '../components/sprites/PlayerSprite';
 import ControlBar from '../components/ui/ControlBar';
+import ExitDoor from '../components/sprites/ExitDoor';
 import { BLOG_POSTS } from '../data/posts';
 
 // ============================================================
@@ -399,6 +400,13 @@ export default function NewsroomScene({ onBackToVillage }) {
       if (dc !== 0 || dr !== 0) {
         setFacing(nf);
         const tc = pos.col + dc, tr = pos.row + dr;
+        
+        // Exit Door check
+        if (tc === 3 && tr === 1) {
+          onBackToVillage();
+          return;
+        }
+
         if (canLayoutWalk(layoutRef.current, tc, tr)) {
           setPos({ col: tc, row: tr });
           setStepping(true);
@@ -518,6 +526,9 @@ export default function NewsroomScene({ onBackToVillage }) {
                 }}
               />
             ))}
+
+            {/* Exit Door */}
+            <ExitDoor col={3} row={1} />
 
             {/* Player */}
             <div style={{
