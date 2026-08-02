@@ -1,7 +1,10 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowRight, Newspaper } from "lucide-react";
-import ControlBar from "./ControlBar";
+import ControlBar from "../components/ui/ControlBar";
+import PlayerSprite from "../components/sprites/PlayerSprite";
+import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from "../engine/constants";
+import { MAP, MAP_COLS, MAP_ROWS, SHELF_LAYOUT, SHELF_TILES, DECOR_TILES, TOUR_MOVE_MS, TOUR_PAUSE_MS, TYPE_COLORS, BOOK_SPINE_PALETTES, START_POS } from "../data/library";
 
 const getShelfIcon = (id, size=10) => {
   switch (id) {
@@ -14,142 +17,16 @@ const getShelfIcon = (id, size=10) => {
   }
 };
 
-// ============================================================
-//  TILE MAP - L-shaped library
-//  Legend:  0 = void (black), 1 = floor, 2 = wall-top, 3 = rug
-//  Shelves, decorations, and player sit ON floor tiles.
-// ============================================================
-const TILE = 32; // px per tile
-const MAP_COLS = 20;
-const MAP_ROWS = 18;
-
-// prettier-ignore
-const MAP = [
-// 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 0
-  [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0], // 1
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // 2
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // 3
-  [0, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // 4
-  [0, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // 5
-  [0, 1, 1, 1, 3, 3, 3, 3, 3, 3, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // 6
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0], // 7
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 0], // 8
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], // 9
-  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], // 10
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 3, 3, 3, 1, 1, 0], // 11
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 3, 3, 3, 1, 1, 0], // 12
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 3, 3, 3, 1, 1, 0], // 13
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], // 14
-  [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], // 15
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 16
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 17
-];
-
 function isWalkable(col, row) {
   if (row < 0 || row >= MAP_ROWS || col < 0 || col >= MAP_COLS) return false;
   const t = MAP[row][col];
   return t === 1 || t === 3;
 }
 
-// ---- Shelf data - positions in tile coords (col, row) ----
-const SHELF_LAYOUT = [
-  { id: "all", col: 2, row: 2, tourCol: 2, tourRow: 3, line: "This is the whole collection, all together." },
-  { id: "currently-reading", col: 2, row: 7, tourCol: 3, tourRow: 7, line: "This one is open right now, a book in progress." },
-  { id: "want-to-read", col: 11, row: 2, tourCol: 11, tourRow: 3, line: "Over here, these are waiting their turn." },
-  { id: "read", col: 17, row: 9, tourCol: 17, tourRow: 10, line: "The finished shelf. Those that made it all the way through." },
-  { id: "did-not-finish", col: 9, row: 14, tourCol: 10, tourRow: 14, line: "And here, those that didn't stick around. No shame in that." },
-];
-
-// Mark shelf and solid decoration tiles as blocked (non-walkable)
-const SHELF_TILES = new Set(SHELF_LAYOUT.map((s) => `${s.col},${s.row}`));
-const DECOR_TILES = new Set(["10,3", "5,7", "3,8"]); // ReadingDesk, Globe, Chair
 function canWalk(col, row) {
   const coord = `${col},${row}`;
   if (SHELF_TILES.has(coord) || DECOR_TILES.has(coord)) return false;
   return isWalkable(col, row);
-}
-
-const TYPE_COLORS = {
-  normal: { primary: "#a8a878", dark: "#8a8a58", light: "#c8c898", bg: "#d8d8b0" },
-  psychic: { primary: "#f85888", dark: "#c03060", light: "#ff90b0", bg: "#ffc0d0" },
-  fire: { primary: "#f08030", dark: "#c05818", light: "#f8a860", bg: "#f8d0a0" },
-  grass: { primary: "#78c850", dark: "#48a018", light: "#a0e070", bg: "#c8f0a0" },
-  poison: { primary: "#a040a0", dark: "#702070", light: "#c870c8", bg: "#e0a0e0" },
-};
-
-const BOOK_SPINE_PALETTES = {
-  normal: ["#8b4513", "#a0522d", "#d2691e", "#cd853f", "#deb887", "#6b3a1f", "#c4a882", "#947254"],
-  psychic: ["#8b008b", "#9932cc", "#ba55d3", "#da70d6", "#c71585", "#db7093", "#a0486e", "#7a3060"],
-  fire: ["#b22222", "#dc143c", "#ff4500", "#ff6347", "#cd5c5c", "#e25822", "#cc4422", "#993311"],
-  grass: ["#006400", "#228b22", "#2e8b57", "#3cb371", "#556b2f", "#6b8e23", "#4a7c3f", "#2d5a1e"],
-  poison: ["#4b0082", "#6a0dad", "#7b68ee", "#9370db", "#800080", "#663399", "#5a2d82", "#8b3a8b"],
-};
-
-const INTERNAL_W = 384;
-const INTERNAL_H = 288;
-const MOVE_COOLDOWN = 140; // ms between grid moves
-const TOUR_MOVE_MS = 220;
-const TOUR_PAUSE_MS = 2200;
-
-// ============================================================
-//  Player Sprite
-// ============================================================
-function PlayerSprite({ direction, stepping }) {
-  const frame = stepping ? 1 : 0;
-  const skin = "#fcd8b4", skinShade = "#e8b888";
-  const hair = "#3a1c08", hairLight = "#5a3018";
-  const shirt = "#e04040", shirtShade = "#b83030";
-  const pants = "#2850a0";
-  const shoe = "#282828", eye = "#181818", white = "#ffffff";
-  const px = (x, y, w, h, color) => <rect key={`${x}-${y}-${color}`} x={x} y={y} width={w} height={h} fill={color} />;
-
-  const renderDown = () => {
-    const legL = frame === 1 ? 1 : 0, legR = frame === 1 ? -1 : 0;
-    return (<>
-      {px(4,0,8,2,hair)}{px(3,1,10,1,hair)}{px(3,2,10,2,hair)}
-      {px(4,4,8,5,skin)}{px(3,4,1,4,skin)}{px(12,4,1,4,skin)}
-      {px(5,5,2,2,white)}{px(9,5,2,2,white)}{px(6,6,1,1,eye)}{px(10,6,1,1,eye)}
-      {px(7,8,2,1,skinShade)}
-      {px(3,9,10,4,shirt)}{px(2,10,1,3,shirt)}{px(13,10,1,3,shirt)}{px(4,9,8,1,shirtShade)}
-      {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}
-      {px(4,13,3,2,pants)}{px(9,13,3,2,pants)}{px(7,13,2,1,"#183878")}
-      {px(4,15+legL,3,1,shoe)}{px(9,15+legR,3,1,shoe)}
-    </>);
-  };
-  const renderUp = () => {
-    const legL = frame === 1 ? 1 : 0, legR = frame === 1 ? -1 : 0;
-    return (<>
-      {px(4,0,8,2,hair)}{px(3,1,10,1,hair)}{px(3,2,10,6,hair)}{px(4,7,8,2,hairLight)}
-      {px(3,9,10,4,shirt)}{px(2,10,1,3,shirt)}{px(13,10,1,3,shirt)}{px(7,9,2,4,shirtShade)}
-      {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}
-      {px(4,13,3,2,pants)}{px(9,13,3,2,pants)}{px(7,13,2,1,"#183878")}
-      {px(4,15+legL,3,1,shoe)}{px(9,15+legR,3,1,shoe)}
-    </>);
-  };
-  const renderSide = (flip) => {
-    const lo = frame === 1 ? 1 : 0;
-    return (
-      <g transform={flip ? "translate(16,0) scale(-1,1)" : undefined}>
-        {px(5,0,7,2,hair)}{px(4,1,9,1,hair)}{px(4,2,9,2,hair)}{px(3,3,2,3,hair)}
-        {px(5,4,7,5,skin)}{px(4,5,1,3,skin)}{px(12,5,1,3,skin)}
-        {px(10,5,2,2,white)}{px(11,6,1,1,eye)}{px(10,8,2,1,skinShade)}
-        {px(4,9,9,4,shirt)}{px(3,10,1,3,shirt)}{px(5,9,2,1,shirtShade)}
-        {px(12,10,2,3,skin)}
-        {px(5,13,3,2,pants)}{px(9,13,3,2,pants)}
-        {px(5,15,3,1+lo,shoe)}{px(9,15,3,1,shoe)}
-      </g>
-    );
-  };
-  return (
-    <svg width={TILE} height={TILE+2} viewBox="0 0 16 17" style={{ imageRendering: "pixelated", overflow: "visible" }}>
-      <ellipse cx="8" cy="16.5" rx="5" ry="1.5" fill="rgba(0,0,0,0.3)" />
-      {direction === "down" && renderDown()}
-      {direction === "up" && renderUp()}
-      {direction === "left" && renderSide(true)}
-      {direction === "right" && renderSide(false)}
-    </svg>
-  );
 }
 
 // ============================================================
@@ -449,9 +326,8 @@ function PixelChair({ col, row }) {
 // ============================================================
 //  MAIN COMPONENT
 // ============================================================
-export default function LibraryOverworld({ onGoToLab, onGoToNewsroom }) {
-  const START = { col: 6, row: 5 };
-  const [pos, setPos] = useState(START);
+export default function LibraryScene({ onGoToLab, onGoToNewsroom }) {
+  const [pos, setPos] = useState(START_POS);
   const [facing, setFacing] = useState("down");
   const [stepping, setStepping] = useState(false);
   const [nearShelf, setNearShelf] = useState(null);
@@ -803,8 +679,11 @@ export default function LibraryOverworld({ onGoToLab, onGoToNewsroom }) {
     ? SHELF_LAYOUT[tourIndex].id : nearShelf;
 
   // ---- Camera: center on player ----
-  const camX = pos.col * TILE + TILE / 2 - INTERNAL_W / 2;
-  const camY = pos.row * TILE + TILE / 2 - INTERNAL_H / 2;
+  const rawCamX = pos.col * TILE + TILE / 2 - INTERNAL_W / 2;
+  const rawCamY = pos.row * TILE + TILE / 2 - INTERNAL_H / 2;
+  const camX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - INTERNAL_W), rawCamX));
+  const camY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - INTERNAL_H), rawCamY));
+  
   const transitionTime = (0.14 / speedMultiplier).toFixed(2);
 
   return (
@@ -934,7 +813,7 @@ export default function LibraryOverworld({ onGoToLab, onGoToNewsroom }) {
               zIndex: pos.row * 10 + 5,
               transition: `left ${transitionTime}s linear, top ${transitionTime}s linear`,
             }}>
-              <PlayerSprite direction={facing} stepping={stepping} />
+              <PlayerSprite direction={facing} stepping={stepping} costume="casual" />
             </div>
 
             {/* Vignette on world */}

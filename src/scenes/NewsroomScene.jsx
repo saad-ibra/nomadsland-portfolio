@@ -1,41 +1,11 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
-import ControlBar from "./ControlBar";
 
-const TILE = 32;
-const INTERNAL_W = 384;
-const INTERNAL_H = 288;
-const MOVE_COOLDOWN = 140;
-
-// ============================================================
-//  FRONT PAGE ISSUES (BLOG POSTS) — newest first
-// ============================================================
-const BLOG_POSTS = [
-  {
-    id: "schopenhauer-cure",
-    title: "Facing mortality through: The Schopenhauer Cure",
-    subtitle: "by Irvin D. Yalom",
-    author: "Saad Ibrahim Khan",
-    date: "Mar 7, 2026",
-    readTime: "3 min read",
-    tags: ["German Philosophy", "Psychotherapy", "Psychology", "Novel", "Book Review"],
-    content: [
-      "Over the past few months, I have been thinking a lot about death. The awareness that my life is finite and could end soon if i do not even attempt to live, has become really intrusive. Instead of paralyzing me, it has had an unexpected effect. It has pushed me to create boundaries around myself and focus more deliberately on the things I truly enjoy and want to do. In a really really strange way, this heightened sense of mortality has pushed me to try becoming the person I always wanted to be but never fully allowed myself to become.",
-      "During this time, I started reading The Schopenhauer Cure by Irvin D. Yalom. When I first read about the book, I was expecting it to provide a new philosophical perspective on death. Given my current state of mind, I almost approached it like it might offer me some kind of resolution.",
-      "Early in the book, I felt uneasy about Julius' decision, the aging psychotherapist who has just received a terminal melanoma diagnosis. His decision to reconnect with Philip, a former patient he considered his greatest professional failure, seemed so confusing and completely wrong and unnecessary. It was difficult to understand why someone facing the end of his life would choose to revisit something so unresolved.",
-      "When Philip proposes teaching Julius about the philosophy of Arthur Schopenhauer, I expected something close to a philosophical breakthrough. I imagined that Schopenhauer's ideas might function as a kind of cure for Julius and, also indirectly, for me, struggling with similar doubts about mortality.",
-      "Instead, my reaction was almost the opposite. As the book explored Schopenhauer's childhood and his worldview, I started hating it. His philosophy was deeply pessimistic and at times, bitter. While suffering and hardship are so universal in nature, turning toward such a nihilistic view felt really unhealthy to me. Instead of comfort, his ideas created a sense of alienation from him.",
-      "However, as Philip gradually began to open up within the therapy group, my opinion started to change. Philip had found solace in a philosopher that had been through similar hardship as him. His emotional guards and difficulty connecting with others revealed something more complex beneath his weird demeanour. \"Schopenhauer has cured you, but now you need to be saved from the Schopenhauer cure\". When Philip truly faces this, is when, I was reminded of my own experiences of slowly facing the parts of myself that have truly kept me from how i want to live.",
-      "This parallel made the story very personal. Throughout the book, I often found myself reflecting on my own moments of running away from vulnerability. These reflections made the reading experience deeply emotional.",
-      "The sudden death of Julius left me stunned for a moment. It felt too abrupt, and disorienting. Yet the after his death, particularly Philip's transformation, became one of the most meaningful parts of the novel.",
-      "I wish that in the last chapter Philip reinterpreted Schopenhauer's philosophy, and it was actually explored in depth and adapted in a way that allows him to connect with others, like he adapts some parts and critiques some. In that process, he would stop appearing as detached, instead as someone who is deeply wounded, and yet trying to change. This part is not explored and is just implied.",
-      "That thought resonated strongly with me.",
-      "This book was one of my earliest serious reading experiences, and it felt immersive in a way I had never felt before. Instead of just presenting its ideas, it forced me to confront my own coping mechanisms. More importantly, it encouraged me to become more open with my friends and slightly changed the way I relate to them.",
-      "In that sense, The Schopenhauer Cure did not provide a cure in the way I initially expected. But it turned out to be much more valuable.",
-    ],
-  },
-];
+import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from '../engine/constants';
+import PlayerSprite from '../components/sprites/PlayerSprite';
+import ControlBar from '../components/ui/ControlBar';
+import { BLOG_POSTS } from '../data/posts';
 
 // ============================================================
 //  DYNAMIC NEWSROOM LAYOUT GENERATOR
@@ -97,50 +67,6 @@ function canLayoutWalk(layout, col, row) {
   const coord = `${col},${row}`;
   if (layout.articleTiles.has(coord) || layout.pressTiles.has(coord) || layout.phoneTiles.has(coord)) return false;
   return isLayoutWalkable(layout, col, row);
-}
-
-// ============================================================
-//  PLAYER SPRITE — casual look
-// ============================================================
-function PlayerSprite({ direction, stepping }) {
-  const frame = stepping ? 1 : 0;
-  const skin = "#fcd8b4", skinS = "#e8b888", hair = "#2c1b18", hairL = "#4a3828";
-  const shirt = "#8b4513", pants = "#2a2a3a", shoe = "#1a1a1a";
-  const eye = "#181818", white = "#ffffff";
-  const px = (x, y, w, h, c) => <rect key={`${x}${y}${c}`} x={x} y={y} width={w} height={h} fill={c} />;
-
-  const down = () => { const lL = frame ? 1 : 0, lR = frame ? -1 : 0; return (<>
-    {px(4,0,8,2,hair)}{px(3,1,10,2,hair)}{px(4,4,8,5,skin)}{px(3,4,1,4,skin)}{px(12,4,1,4,skin)}
-    {px(5,5,2,2,white)}{px(9,5,2,2,white)}{px(6,6,1,1,eye)}{px(10,6,1,1,eye)}{px(7,8,2,1,skinS)}
-    {px(3,9,10,4,shirt)}{px(2,10,1,3,shirt)}{px(13,10,1,3,shirt)}
-    {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}
-    {px(4,13,3,2,pants)}{px(9,13,3,2,pants)}{px(4,15+lL,3,1,shoe)}{px(9,15+lR,3,1,shoe)}
-  </>); };
-  const up = () => { const lL = frame ? 1 : 0, lR = frame ? -1 : 0; return (<>
-    {px(4,0,8,2,hair)}{px(3,1,10,6,hair)}{px(4,7,8,2,hairL)}
-    {px(3,9,10,4,shirt)}{px(2,10,1,3,shirt)}{px(13,10,1,3,shirt)}
-    {px(1,10,2,3,skin)}{px(13,10,2,3,skin)}{px(4,13,3,2,pants)}{px(9,13,3,2,pants)}
-    {px(4,15+lL,3,1,shoe)}{px(9,15+lR,3,1,shoe)}
-  </>); };
-  const side = (flip) => { const lo = frame ? 1 : 0; return (
-    <g transform={flip ? "translate(16,0) scale(-1,1)" : undefined}>
-      {px(5,0,7,2,hair)}{px(4,1,9,1,hair)}{px(4,2,9,2,hair)}{px(3,3,2,3,hair)}
-      {px(5,4,7,5,skin)}{px(4,5,1,3,skin)}{px(12,5,1,3,skin)}
-      {px(10,5,2,2,white)}{px(11,6,1,1,eye)}{px(10,8,2,1,skinS)}
-      {px(4,9,9,4,shirt)}{px(3,10,1,3,shirt)}{px(12,10,2,3,skin)}
-      {px(5,13,3,2,pants)}{px(9,13,3,2,pants)}{px(5,15,3,1+lo,shoe)}{px(9,15,3,1,shoe)}
-    </g>
-  ); };
-
-  return (
-    <svg width={TILE} height={TILE+2} viewBox="0 0 16 17" style={{ imageRendering:"pixelated", overflow:"visible" }}>
-      <ellipse cx="8" cy="16.5" rx="5" ry="1.5" fill="rgba(0,0,0,0.3)" />
-      {direction === "down"  && down()}
-      {direction === "up"    && up()}
-      {direction === "left"  && side(true)}
-      {direction === "right" && side(false)}
-    </svg>
-  );
 }
 
 // ============================================================
@@ -269,7 +195,7 @@ function TipLinePhone({ col, row, isNear, onClick }) {
 // ============================================================
 //  MAIN NEWSROOM COMPONENT
 // ============================================================
-export default function Newsroom({ onBackToLibrary }) {
+export default function NewsroomScene({ onBackToLibrary }) {
   const layout = useMemo(() => generateNewsroomLayout(BLOG_POSTS), []);
   const layoutRef = useRef(layout);
   useEffect(() => { layoutRef.current = layout; }, [layout]);
@@ -602,7 +528,7 @@ export default function Newsroom({ onBackToLibrary }) {
               zIndex: pos.row * 10 + 5,
               transition: `left ${tt}s linear, top ${tt}s linear`,
             }}>
-              <PlayerSprite direction={facing} stepping={stepping} />
+              <PlayerSprite direction={facing} stepping={stepping} costume="newsroom" />
             </div>
 
             {/* Vignette */}
