@@ -39,9 +39,9 @@ const layout = [
   "TT..........HHHHH....p..ff..p.....TT",
   "TT..........HHHHH....p......p.....TT",
   "TT..........HHHHH....pppppppp.....TT",
-  "TT............p...................TT",
-  "TT............p...................TT",
-  "TT............p...................TT",
+  "TT............pppppppp............TT",
+  "TT................................TT",
+  "TT................................TT",
   "TT................................TT",
   "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
   "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"

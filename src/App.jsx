@@ -8,7 +8,16 @@ import MusicRoomScene from './scenes/MusicRoomScene.jsx';
 import './App.css';
 
 function App() {
-  const [scene, setScene] = useState('village');
+  const [scene, setScene] = useState('nomadshome');
+  const [fading, setFading] = useState(false);
+
+  const changeScene = (newScene) => {
+    setFading(true);
+    setTimeout(() => {
+      setScene(newScene);
+      setFading(false);
+    }, 400); // 400ms fade transition
+  };
 
   return (
     <div style={{
@@ -19,31 +28,38 @@ function App() {
       background: '#0a0a14',
       padding: 0,
       margin: 0,
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      position: 'relative'
     }}>
+      {/* Global Fade Overlay */}
+      <div style={{
+        position: 'fixed', inset: 0, background: '#000', zIndex: 9999, pointerEvents: 'none',
+        opacity: fading ? 1 : 0, transition: 'opacity 0.4s ease-in-out'
+      }} />
+
       {scene === 'village' && (
         <VillageScene
-          onGoToLibrary={() => setScene('library')}
-          onGoToLab={() => setScene('lab')}
-          onGoToNewsroom={() => setScene('newsroom')}
-          onGoToNomadshome={() => setScene('nomadshome')}
-          onGoToMusicRoom={() => setScene('musicroom')}
+          onGoToLibrary={() => changeScene('library')}
+          onGoToLab={() => changeScene('lab')}
+          onGoToNewsroom={() => changeScene('newsroom')}
+          onGoToNomadshome={() => changeScene('nomadshome')}
+          onGoToMusicRoom={() => changeScene('musicroom')}
         />
       )}
       {scene === 'library' && (
-        <LibraryScene onBackToVillage={() => setScene('village')} />
+        <LibraryScene onBackToVillage={() => changeScene('village')} />
       )}
       {scene === 'lab' && (
-        <ChemistryLabScene onBackToVillage={() => setScene('village')} />
+        <ChemistryLabScene onBackToVillage={() => changeScene('village')} />
       )}
       {scene === 'newsroom' && (
-        <NewsroomScene onBackToVillage={() => setScene('village')} />
+        <NewsroomScene onBackToVillage={() => changeScene('village')} />
       )}
       {scene === 'nomadshome' && (
-        <NomadshomeScene onBackToVillage={() => setScene('village')} />
+        <NomadshomeScene onBackToVillage={() => changeScene('village')} />
       )}
       {scene === 'musicroom' && (
-        <MusicRoomScene onBackToVillage={() => setScene('village')} />
+        <MusicRoomScene onBackToVillage={() => changeScene('village')} />
       )}
     </div>
   );
