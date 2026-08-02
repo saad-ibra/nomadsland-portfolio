@@ -195,7 +195,7 @@ function TipLinePhone({ col, row, isNear, onClick }) {
 // ============================================================
 //  MAIN NEWSROOM COMPONENT
 // ============================================================
-export default function NewsroomScene({ onBackToLibrary }) {
+export default function NewsroomScene({ onBackToVillage }) {
   const layout = useMemo(() => generateNewsroomLayout(BLOG_POSTS), []);
   const layoutRef = useRef(layout);
   useEffect(() => { layoutRef.current = layout; }, [layout]);
@@ -544,8 +544,8 @@ export default function NewsroomScene({ onBackToLibrary }) {
             background: "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px)",
           }} />
 
-          {/* ← LIBRARY */}
-          <button onClick={onBackToLibrary} style={{
+          {/* ← VILLAGE */}
+          <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
             fontFamily: "'Press Start 2P', monospace", fontSize: 6,
             background: "#2a3036", color: "#eef7f2", border: "2px solid #eef7f2",
@@ -553,7 +553,7 @@ export default function NewsroomScene({ onBackToLibrary }) {
             boxShadow: "0 2px 0 #181a1c",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <ArrowLeft size={6} strokeWidth={3} /> LIBRARY
+              <ArrowLeft size={6} strokeWidth={3} /> VILLAGE
             </div>
           </button>
 

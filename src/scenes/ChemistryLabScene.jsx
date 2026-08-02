@@ -369,7 +369,7 @@ function ChemicalCart({ col, row }) {
 // ============================================================
 //  MAIN CHEMISTRY LAB COMPONENT
 // ============================================================
-export default function ChemistryLab({ onBackToLibrary }) {
+export default function ChemistryLab({ onBackToVillage }) {
   const [repos, setRepos]           = useState([]);
   const [stats, setStats]           = useState({ public: 0, private: 0 });
   const [reposLoaded, setReposLoaded] = useState(false);
@@ -804,7 +804,7 @@ export default function ChemistryLab({ onBackToLibrary }) {
           }} />
 
           {/* ← LIBRARY button */}
-          <button onClick={onBackToLibrary} style={{
+          <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
             fontFamily: "'Press Start 2P', monospace", fontSize: 6,
             background: "#111e2a", color: "#eef7f2", border: "2px solid #eef7f2",
@@ -812,7 +812,7 @@ export default function ChemistryLab({ onBackToLibrary }) {
             boxShadow: "0 2px 0 #060e18",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-              <ArrowLeft size={6} strokeWidth={3} /> LIBRARY
+              <ArrowLeft size={6} strokeWidth={3} /> VILLAGE
             </div>
           </button>
 
