@@ -27,7 +27,7 @@ export const MAP = [
   [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 3, 3, 3, 1, 1, 0], // 13
   [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], // 14
   [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], // 15
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 16
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 16 ← door opening
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 17
 ];
 
@@ -37,7 +37,7 @@ export const SHELF_LAYOUT = [
   { id: "currently-reading", col: 2, row: 7, tourCol: 3, tourRow: 7, line: "This one is open right now, a book in progress." },
   { id: "want-to-read", col: 11, row: 2, tourCol: 11, tourRow: 3, line: "Over here, these are waiting their turn." },
   { id: "read", col: 17, row: 9, tourCol: 17, tourRow: 10, line: "The finished shelf. Those that made it all the way through." },
-  { id: "did-not-finish", col: 9, row: 14, tourCol: 10, tourRow: 14, line: "And here, those that didn't stick around. No shame in that." },
+  { id: "did-not-finish", col: 13, row: 14, tourCol: 14, tourRow: 14, line: "And here, those that didn't stick around. No shame in that." },
 ];
 
 export const SHELF_TILES = new Set(SHELF_LAYOUT.map((s) => `${s.col},${s.row}`));
@@ -64,5 +64,7 @@ export const BOOK_SPINE_PALETTES = {
   poison: ["#4b0082", "#6a0dad", "#7b68ee", "#9370db", "#800080", "#663399", "#5a2d82", "#8b3a8b"],
 };
 
-// Player start position
-export const START_POS = { col: 6, row: 5 };
+// Player start position — spawns just inside the door
+export const START_POS = { col: 9, row: 15 };
+export const EXIT_DOOR_COL = 9;
+export const EXIT_DOOR_ROW = 16;
