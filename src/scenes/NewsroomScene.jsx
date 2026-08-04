@@ -2,7 +2,9 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
 
-import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from '../engine/constants';
+import { TILE } from '../engine/constants';
+import { usePlayerMovement } from '../hooks/usePlayerMovement';
+import { playTileStep } from '../engine/sfx';
 import PlayerSprite from '../components/sprites/PlayerSprite';
 import ControlBar from '../components/ui/ControlBar';
 import ExitDoor from '../components/sprites/ExitDoor';
@@ -196,33 +198,49 @@ function TipLinePhone({ col, row, isNear, onClick }) {
 // ============================================================
 //  MAIN NEWSROOM COMPONENT
 // ============================================================
-export default function NewsroomScene({ onBackToVillage }) {
+export default function NewsroomScene({ isLandscape, onBackToVillage , speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
   const layout = useMemo(() => generateNewsroomLayout(BLOG_POSTS), []);
   const layoutRef = useRef(layout);
   useEffect(() => { layoutRef.current = layout; }, [layout]);
 
-  const [pos, setPos]               = useState(() => layout.startPos);
-  const [facing, setFacing]         = useState("left");
-  const [stepping, setStepping]     = useState(false);
   const [nearObject, setNearObject] = useState(null); // ID of article or 'phone'
   const [openPost, setOpenPost]     = useState(null);
   const [openTipLine, setOpenTipLine] = useState(false);
   const [phase, setPhase]           = useState("intro");
-  const [scale, setScale]           = useState(1);
+  const [scale, setScale] = useState(1);
+  const [internalW, setInternalW] = useState(384);
+  const [internalH, setInternalH] = useState(288);
 
-  const [speedMultiplier, setSpeedMultiplier] = useState(() => parseFloat(localStorage.getItem("speedMultiplier") || "1"));
-  const [musicPlaying, setMusicPlaying]       = useState(true);
-  const [musicMuted, setMusicMuted]           = useState(() => JSON.parse(localStorage.getItem("musicMuted") || "false"));
-  const [musicVolume, setMusicVolume]         = useState(() => parseFloat(localStorage.getItem("musicVolume") || "0.1"));
-
+        
   useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
   useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
   useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
 
   const musicRef     = useRef({ audioCtx: null, interval: null });
   const containerRef = useRef(null);
-  const keysRef      = useRef({});
-  const lastMoveRef  = useRef(0);
+
+  const { pos, facing, stepping } = usePlayerMovement({
+    initialPos: layout.startPos,
+    canWalk: (c, r) => {
+      if (c === 3 && r === 1) { onBackToVillage(); return false; }
+      return canLayoutWalk(layoutRef.current, c, r);
+    },
+    speedMultiplier,
+    isActive: phase === "free" && !openPost && !openTipLine,
+    onMove: (c, r) => { checkNear(c, r); playTileStep(); return false; },
+    onAction: () => {
+      if (!nearObject) return;
+      if (nearObject === "phone") { setOpenTipLine(true); }
+      else {
+        const rec = layoutRef.current.articles.find(a => a.id === nearObject);
+        if (rec) setOpenPost(rec.post);
+      }
+    },
+    onCancel: () => { setOpenPost(null); setOpenTipLine(false); }
+  });
+
+  // Also keep a ref to facing so keyboard handler can read it without triggering re-renders
+  const keysRef = useRef({});
 
   // ---- Synth engine — driving 80s investigative synth ----
   const playStep = useCallback((idx, vol, muted) => {
@@ -310,10 +328,12 @@ export default function NewsroomScene({ onBackToVillage }) {
 
   // ---- Responsive scale ----
   useEffect(() => {
-    const resize = () => setScale(Math.min(
-      window.innerWidth / INTERNAL_W,
-      window.innerHeight / (INTERNAL_H + 80)
-    ));
+    const resize = () => {
+      const isMobile = window.innerWidth < 768;
+      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
+      const availableHeight = window.innerHeight - consoleHeight;
+      setScale(Math.max(1, Math.floor(Math.min(window.innerWidth / INTERNAL_W, availableHeight / INTERNAL_H))));
+    }
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
@@ -385,45 +405,12 @@ export default function NewsroomScene({ onBackToVillage }) {
     };
   }, [nearObject, phase]);
 
-  // ---- Movement loop ----
-  useEffect(() => {
-    if (phase !== "free" || openPost || openTipLine) return;
-    const id = setInterval(() => {
-      const now = Date.now();
-      if (now - lastMoveRef.current < MOVE_COOLDOWN / speedMultiplier) return;
-      const k = keysRef.current;
-      let dc = 0, dr = 0, nf = facing;
-      if      (k.w || k.arrowup)    { dr = -1; nf = "up";    }
-      else if (k.s || k.arrowdown)  { dr =  1; nf = "down";  }
-      else if (k.a || k.arrowleft)  { dc = -1; nf = "left";  }
-      else if (k.d || k.arrowright) { dc =  1; nf = "right"; }
-      if (dc !== 0 || dr !== 0) {
-        setFacing(nf);
-        const tc = pos.col + dc, tr = pos.row + dr;
-        
-        // Exit Door check
-        if (tc === 3 && tr === 1) {
-          onBackToVillage();
-          return;
-        }
-
-        if (canLayoutWalk(layoutRef.current, tc, tr)) {
-          setPos({ col: tc, row: tr });
-          setStepping(true);
-          lastMoveRef.current = now;
-          checkNear(tc, tr);
-          setTimeout(() => setStepping(false), 90);
-        }
-      }
-    }, 30);
-    return () => clearInterval(id);
-  }, [pos, facing, phase, openPost, openTipLine, speedMultiplier, checkNear]);
 
   // ---- Camera (clamped to world bounds) ----
-  const rawCamX = pos.col * TILE + TILE / 2 - INTERNAL_W / 2;
-  const rawCamY = pos.row * TILE + TILE / 2 - INTERNAL_H / 2;
-  const camX = Math.max(0, Math.min(Math.max(0, layout.totalCols * TILE - INTERNAL_W), rawCamX));
-  const camY = Math.max(0, Math.min(Math.max(0, layout.totalRows * TILE - INTERNAL_H), rawCamY));
+  const rawCamX = pos.col * TILE + TILE / 2 - internalW / 2;
+  const rawCamY = pos.row * TILE + TILE / 2 - internalH / 2;
+  const camX = Math.max(0, Math.min(Math.max(0, layout.totalCols * TILE - internalW), rawCamX));
+  const camY = Math.max(0, Math.min(Math.max(0, layout.totalRows * TILE - internalH), rawCamY));
   const tt = (0.14 / speedMultiplier).toFixed(2);
 
   const activeArticle = layout.articles.find(r => r.id === nearObject);
@@ -433,10 +420,10 @@ export default function NewsroomScene({ onBackToVillage }) {
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
-      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#080c10", overflow: "hidden",
-      fontFamily: "'Press Start 2P', monospace", userSelect: "none",
-    }}>
+      fontFamily: "'Press Start 2P', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
         .news-scroll::-webkit-scrollbar { width:12px; background: #fff; border-left: 2px solid #000; }
@@ -459,7 +446,7 @@ export default function NewsroomScene({ onBackToVillage }) {
 
         {/* ── GAME VIEWPORT ── */}
         <div style={{
-          position: "relative", width: INTERNAL_W, height: INTERNAL_H,
+          position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#1a1e24",
           boxShadow: "0 0 0 4px #2a3036, 0 8px 32px rgba(0,0,0,0.9)",
           imageRendering: "pixelated",
@@ -470,7 +457,7 @@ export default function NewsroomScene({ onBackToVillage }) {
             position: "absolute",
             width: layout.totalCols * TILE, height: layout.totalRows * TILE,
             left: -camX, top: -camY,
-            transition: `left ${tt}s linear, top ${tt}s linear`,
+            
           }}>
 
             {/* Tile layer */}
@@ -537,7 +524,7 @@ export default function NewsroomScene({ onBackToVillage }) {
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,
-              transition: `left ${tt}s linear, top ${tt}s linear`,
+              
             }}>
               <PlayerSprite direction={facing} stepping={stepping} costume="newsroom" />
             </div>
@@ -784,8 +771,12 @@ export default function NewsroomScene({ onBackToVillage }) {
         </div>
 
         {/* ── CONTROL BAR ── */}
-        <ControlBar
-          width={INTERNAL_W}
+        
+
+      </div>
+    </div>
+      <ControlBar
+          
           musicPlaying={musicPlaying}
           musicMuted={musicMuted}
           musicVolume={musicVolume}
@@ -794,8 +785,6 @@ export default function NewsroomScene({ onBackToVillage }) {
           onChangeVolume={setMusicVolume}
           onChangeSpeed={setSpeedMultiplier}
         />
-
-      </div>
     </div>
   );
 }

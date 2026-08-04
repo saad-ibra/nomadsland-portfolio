@@ -4,8 +4,10 @@ import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucid
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import ExitDoor from "../components/sprites/ExitDoor";
-import { TILE, INTERNAL_W, INTERNAL_H, MOVE_COOLDOWN } from "../engine/constants";
-import { MAP, MAP_COLS, MAP_ROWS, SHELF_LAYOUT, SHELF_TILES, DECOR_TILES, TOUR_MOVE_MS, TOUR_PAUSE_MS, TYPE_COLORS, BOOK_SPINE_PALETTES, START_POS } from "../data/library";
+import { TILE } from "../engine/constants";
+import { usePlayerMovement } from "../hooks/usePlayerMovement";
+import { playWoodStep } from "../engine/sfx";
+import { MAP, MAP_COLS, MAP_ROWS, SHELF_LAYOUT, SHELF_TILES, DECOR_TILES, TOUR_MOVE_MS, TOUR_PAUSE_MS, TYPE_COLORS, BOOK_SPINE_PALETTES, START_POS, EXIT_DOOR_COL, EXIT_DOOR_ROW } from "../data/library";
 
 const getShelfIcon = (id, size=10) => {
   switch (id) {
@@ -327,19 +329,12 @@ function PixelChair({ col, row }) {
 // ============================================================
 //  MAIN COMPONENT
 // ============================================================
-export default function LibraryScene({ onBackToVillage }) {
-  const [pos, setPos] = useState(START_POS);
-  const [facing, setFacing] = useState("down");
-  const [stepping, setStepping] = useState(false);
+export default function LibraryScene({ isLandscape, onBackToVillage , speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
   const [nearShelf, setNearShelf] = useState(null);
   const [openShelf, setOpenShelf] = useState(null);
 
   const [phase, setPhase] = useState("intro");
-  const [musicPlaying, setMusicPlaying] = useState(true);
-  const [musicMuted, setMusicMuted] = useState(() => JSON.parse(localStorage.getItem("musicMuted") || "false"));
-  const [musicVolume, setMusicVolume] = useState(() => parseFloat(localStorage.getItem("musicVolume") || "0.1"));
-  const [speedMultiplier, setSpeedMultiplier] = useState(() => parseFloat(localStorage.getItem("speedMultiplier") || "1"));
-
+        
   useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
   useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
   useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
@@ -347,6 +342,8 @@ export default function LibraryScene({ onBackToVillage }) {
   const [tourIndex, setTourIndex] = useState(-1);
   const [arrived, setArrived] = useState(true);
   const [scale, setScale] = useState(1);
+  const [internalW, setInternalW] = useState(384);
+  const [internalH, setInternalH] = useState(288);
   const musicRef = useRef({ audioCtx: null, interval: null });
 
   // Web Audio Synth melody player callback
@@ -445,7 +442,6 @@ export default function LibraryScene({ onBackToVillage }) {
   const containerRef = useRef(null);
   const moveTimerRef = useRef(0);
   const keysRef = useRef({});
-  const lastMoveRef = useRef(0);
   const tourTimerRef = useRef(null);
   const arriveTimeoutRef = useRef(null);
 
@@ -503,16 +499,31 @@ export default function LibraryScene({ onBackToVillage }) {
     setNearShelf(null);
   }, []);
 
+  const { pos, setPos, facing, stepping } = usePlayerMovement({
+    initialPos: START_POS,
+    canWalk: (c, r) => {
+      if (c === EXIT_DOOR_COL && r === EXIT_DOOR_ROW) { onBackToVillage(); return false; }
+      return canWalk(c, r);
+    },
+    speedMultiplier,
+    isActive: phase === "free" && !openShelf,
+    onMove: (c, r) => { checkNear(c, r); playWoodStep(); return false; },
+    onAction: () => { if (nearShelf) setOpenShelf(nearShelf); },
+    onCancel: () => setOpenShelf(null)
+  });
+
   // ---- Responsive Scaling ----
   useEffect(() => {
     const handleResize = () => {
-      if (!containerRef.current) return;
-      const clientWidth = window.innerWidth;
-      const clientHeight = window.innerHeight;
-      const scaleX = clientWidth / INTERNAL_W;
-      // Reserve 80px (unscaled) of height for the control bar to guarantee it fits
-      const scaleY = clientHeight / (INTERNAL_H + 80);
-      setScale(Math.min(scaleX, scaleY));
+      const isMobile = window.innerWidth < 768;
+      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
+      const availableHeight = window.innerHeight - consoleHeight;
+      const availableWidth = isLandscape ? (window.innerWidth - 320) : window.innerWidth;
+      
+      const newScale = Math.max(1, Math.floor(Math.min(availableWidth, availableHeight) / 240));
+      setScale(newScale);
+      setInternalW(availableWidth / newScale);
+      setInternalH(availableHeight / newScale);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -575,42 +586,6 @@ export default function LibraryScene({ onBackToVillage }) {
     };
   }, [nearShelf, phase]);
 
-  // ---- Grid movement tick (player input) ----
-  useEffect(() => {
-    if (phase !== "free" || openShelf) return;
-    const id = setInterval(() => {
-      const now = Date.now();
-      if (now - lastMoveRef.current < (MOVE_COOLDOWN / speedMultiplier)) return;
-      const k = keysRef.current;
-      let dc = 0, dr = 0;
-      if (k["arrowup"] || k["w"]) dr = -1;
-      else if (k["arrowdown"] || k["s"]) dr = 1;
-      else if (k["arrowleft"] || k["a"]) dc = -1;
-      else if (k["arrowright"] || k["d"]) dc = 1;
-      if (dc === 0 && dr === 0) { setStepping(false); return; }
-      const dir = dr < 0 ? "up" : dr > 0 ? "down" : dc < 0 ? "left" : "right";
-      setFacing(dir);
-      setPos((p) => {
-        const nc = p.col + dc;
-        const nr = p.row + dr;
-        
-        // Exit door check
-        if (nc === 9 && nr === 14) {
-          onBackToVillage();
-          return p;
-        }
-
-        if (canWalk(nc, nr)) {
-          setStepping((s) => !s);
-          lastMoveRef.current = now;
-          checkNear(nc, nr);
-          return { col: nc, row: nr };
-        }
-        return p;
-      });
-    }, 30);
-    return () => clearInterval(id);
-  }, [phase, openShelf, checkNear, speedMultiplier]);
 
   // ---- Tour auto-advance ----
   useEffect(() => {
@@ -687,21 +662,22 @@ export default function LibraryScene({ onBackToVillage }) {
     ? SHELF_LAYOUT[tourIndex].id : nearShelf;
 
   // ---- Camera: center on player ----
-  const rawCamX = pos.col * TILE + TILE / 2 - INTERNAL_W / 2;
-  const rawCamY = pos.row * TILE + TILE / 2 - INTERNAL_H / 2;
-  const camX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - INTERNAL_W), rawCamX));
-  const camY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - INTERNAL_H), rawCamY));
+  const rawCamX = pos.col * TILE + TILE / 2 - internalW / 2;
+  const rawCamY = pos.row * TILE + TILE / 2 - internalH / 2;
+  const camX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), rawCamX));
+  const camY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), rawCamY));
   
   const transitionTime = (0.14 / speedMultiplier).toFixed(2);
 
   return (
     <div ref={containerRef} style={{
-      position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
-      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      position: "fixed", inset: 0,
+      display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#05050a", overflow: "hidden", margin: 0, padding: 0,
-      fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0",
-      userSelect: "none",
-    }}>
+      fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0", userSelect: "none",
+      
+      boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         body { margin: 0; padding: 0; overflow: hidden; background: #05050a; }
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
@@ -722,7 +698,7 @@ export default function LibraryScene({ onBackToVillage }) {
       }}>
         {/* Scaled Game Container (4:3) */}
         <div style={{
-          position: "relative", width: INTERNAL_W, height: INTERNAL_H,
+          position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#000",
           boxShadow: "0 0 0 4px #1a1a28, 0 8px 32px rgba(0,0,0,0.8)",
           imageRendering: "pixelated",
@@ -732,7 +708,7 @@ export default function LibraryScene({ onBackToVillage }) {
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
             left: -camX, top: -camY,
-            transition: `left ${transitionTime}s linear, top ${transitionTime}s linear`,
+            
           }}>
             {/* Render tiles */}
             {MAP.map((row, r) => row.map((tile, c) => {
@@ -813,7 +789,7 @@ export default function LibraryScene({ onBackToVillage }) {
             ))}
 
             {/* Exit Door */}
-            <ExitDoor col={9} row={14} />
+            <ExitDoor col={EXIT_DOOR_COL} row={EXIT_DOOR_ROW} />
 
             {/* Player - always at grid position */}
              <div style={{
@@ -822,7 +798,7 @@ export default function LibraryScene({ onBackToVillage }) {
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,
-              transition: `left ${transitionTime}s linear, top ${transitionTime}s linear`,
+              
             }}>
               <PlayerSprite direction={facing} stepping={stepping} costume="casual" />
             </div>
@@ -833,12 +809,6 @@ export default function LibraryScene({ onBackToVillage }) {
               background: "radial-gradient(circle at 50% 50%, transparent 40%, rgba(0,0,0,0.4) 100%)",
             }} />
           </div>
-
-          {/* CRT scanlines over viewport */}
-          <div style={{
-            position: "absolute", inset: 0, pointerEvents: "none", zIndex: 600,
-            background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px)",
-          }} />
 
           <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
@@ -930,19 +900,19 @@ export default function LibraryScene({ onBackToVillage }) {
             </div>
           )}
         </div>
-        
-        {/* ── CONTROL BAR ── */}
-        <ControlBar
-          width={INTERNAL_W}
-          musicPlaying={musicPlaying}
-          musicMuted={musicMuted}
-          musicVolume={musicVolume}
-          speedMultiplier={speedMultiplier}
-          onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)}
-          onChangeVolume={setMusicVolume}
-          onChangeSpeed={setSpeedMultiplier}
-        />
       </div>
+        
+      {/* ── CONTROL BAR ── */}
+      </div>
+      <ControlBar
+        musicPlaying={musicPlaying}
+        musicMuted={musicMuted}
+        musicVolume={musicVolume}
+        speedMultiplier={speedMultiplier}
+        onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)}
+        onChangeVolume={setMusicVolume}
+        onChangeSpeed={setSpeedMultiplier}
+      />
     </div>
   );
 }
