@@ -666,10 +666,10 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                 </p>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <a href="mailto:hello@example.com" className="contact-btn">
+                  <a href="mailto:saadibrahimkhan@outlook.com" className="contact-btn">
                     <MessageCircle size={10} /> EMAIL DESK
                   </a>
-                  <a href="https://linkedin.com/in/saad-ibra" target="_blank" rel="noopener noreferrer" className="contact-btn">
+                  <a href="https://www.linkedin.com/in/saadibrahimkhan/" target="_blank" rel="noopener noreferrer" className="contact-btn">
                     <Briefcase size={10} /> LINKEDIN
                   </a>
                   <a href="https://twitter.com/saadibrahimkhan" target="_blank" rel="noopener noreferrer" className="contact-btn">
