@@ -473,31 +473,22 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
   useEffect(() => {
     async function load() {
       try {
-        const username = "saad-ibra";
-        let url = `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`;
-        let headers = {};
-        const res  = await fetch(url, { headers });
-        if (!res.ok) throw new Error(`GitHub ${res.status}`);
+        const res = await fetch("/github.json");
+        if (!res.ok) throw new Error(`Failed to fetch github.json: ${res.status}`);
         const data = await res.json();
 
-        const mapped = data
-          .filter(r => r.name.toLowerCase() !== username.toLowerCase())
-          .map(r => r.private
-            ? { name: r.name, isPrivate: true }
-            : { name: r.name, description: r.description || "", language: r.language || null, stars: r.stargazers_count || 0, url: r.html_url, isPrivate: false }
-          );
-        mapped.sort((a, b) => {
-          if (a.isPrivate !== b.isPrivate) return a.isPrivate ? 1 : -1;
-          return (b.stars || 0) - (a.stars || 0);
-        });
-        setRepos(mapped);
-        setStats({ public: mapped.filter(r => !r.isPrivate).length, private: mapped.filter(r => r.isPrivate).length });
-
-        // Fetch contributions EKG data via GraphQL (disabled because it requires a token)
-        setCommitStats({ error: true });
+        setRepos(data.repos || []);
+        setStats(data.stats || { public: 0, private: 0 });
+        
+        if (data.commitStats) {
+          setCommitStats(data.commitStats);
+        } else {
+          setCommitStats({ error: true });
+        }
 
       } catch (e) {
-        console.warn("GitHub fetch failed:", e);
+        console.warn("Local GitHub fetch failed:", e);
+        setCommitStats({ error: true });
       } finally {
         setReposLoaded(true);
       }
