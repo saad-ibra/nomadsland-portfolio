@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import GameBoyBezel from '../components/ui/GameBoyBezel';
 import { DoorOpen } from "lucide-react";
-import { TILE, MOVE_COOLDOWN } from "../engine/constants";
+import { TILE, MOVE_COOLDOWN, INTERNAL_W, INTERNAL_H } from "../engine/constants";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { playWaterSlosh, playGrassStep, playDirtStep, playWoodStep } from "../engine/sfx";
 import PlayerSprite from "../components/sprites/PlayerSprite";
