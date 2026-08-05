@@ -1461,8 +1461,8 @@ export default function VillageScene({ isLandscape, previousScene,
                         if (shop.id === "dock") {
                           setPos({ col: 27, row: 27 });
                         } else if (shop.id === "musicroom") {
-                          // Place player just south of the "Under Construction" bridge sign
-                          setPos({ col: 16, row: 9 });
+                          // Place player at the entrance of the bridge on the left
+                          setPos({ col: 13, row: 8 });
                         } else {
                           setPos({ col: shop.col, row: shop.row + 1 });
                         }
