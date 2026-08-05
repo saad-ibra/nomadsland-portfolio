@@ -679,7 +679,7 @@ export default function VillageScene({ isLandscape, previousScene,
       if (!isSailing) {
         const t = MAP[pos.row]?.[pos.col];
         if (t === 11 || (pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1)) {
-          setPos({ col: boatPos.col, row: boatPos.row });
+          setPos({ col: boatPos.col + 0.5, row: boatPos.row });
           setIsSailing(true);
           setSailStartTime(Date.now());
           return;
