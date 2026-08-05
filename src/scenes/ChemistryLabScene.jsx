@@ -253,7 +253,7 @@ function ChalkboardModal({ commitStats, onClose }) {
             </div>
           ) : commitStats.error ? (
             <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#ff8888", fontSize: 4, textAlign: "center", lineHeight: "8px" }}>
-              VITE_GITHUB_TOKEN REQUIRED<br/><br/>(ADD TO .env FOR EKG)
+              EKG DATA UNAVAILABLE<br/><br/>(RUN FETCH SCRIPT)
             </div>
           ) : (
             <>
@@ -461,117 +461,30 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
       return;
     }
     let step = 0;
-    const ms = Math.round(240 / speedMultiplier); // faster at 2x, slower at 1x
+const ms = Math.round(240 / speedMultiplier); // faster at 2x, slower at 1x
     musicRef.current.interval = setInterval(() => {
       playStep(step++, musicVolume, musicMuted);
     }, ms);
     return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
 
-  // ---- Live GitHub fetch ----
+  // ---- Fetch pre-compiled Github data ----
   useEffect(() => {
     async function load() {
       try {
-        const token    = import.meta.env.VITE_GITHUB_TOKEN;
-        const username = import.meta.env.VITE_GITHUB_USERNAME || "saad-ibra";
-        const headers  = { Accept: "application/vnd.github.v3+json" };
-        let url;
-        if (token) {
-          url = "https://api.github.com/user/repos?per_page=100&type=owner&sort=updated";
-          headers.Authorization = `token ${token}`;
-        } else {
-          url = `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`;
-        }
-        const res  = await fetch(url, { headers });
-        if (!res.ok) throw new Error(`GitHub ${res.status}`);
+        const res = await fetch("/github.json");
+        if (!res.ok) throw new Error(`GitHub JSON ${res.status}`);
         const data = await res.json();
-
-        const mapped = data
-          .filter(r => r.name.toLowerCase() !== username.toLowerCase())
-          .map(r => r.private
-            ? { name: r.name, isPrivate: true }
-            : { name: r.name, description: r.description || "", language: r.language || null, stars: r.stargazers_count || 0, url: r.html_url, isPrivate: false }
-          );
-        mapped.sort((a, b) => {
-          if (a.isPrivate !== b.isPrivate) return a.isPrivate ? 1 : -1;
-          return (b.stars || 0) - (a.stars || 0);
-        });
-        setRepos(mapped);
-        setStats({ public: mapped.filter(r => !r.isPrivate).length, private: mapped.filter(r => r.isPrivate).length });
-
-        // Fetch contributions EKG data via GraphQL
-        if (token) {
-          const currentYear = new Date().getFullYear();
-          const yearQueries = Array.from({ length: 5 }).map((_, i) => {
-            const year = currentYear - i;
-            return `y${year}: contributionsCollection(from: "${year}-01-01T00:00:00Z", to: "${year}-12-31T23:59:59Z") { 
-              contributionCalendar { 
-                totalContributions 
-                weeks { contributionDays { contributionCount date } } 
-              } 
-            }`;
-          }).join("\n");
-
-          const query = `
-            query {
-              user(login: "${username}") {
-                ${yearQueries}
-              }
-            }
-          `;
-
-          fetch("https://api.github.com/graphql", {
-            method: "POST",
-            headers: {
-              Authorization: `bearer ${token}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ query })
-          })
-          .then(res => res.json())
-          .then(gqlRes => {
-            if (gqlRes.errors) {
-              console.warn("GraphQL Errors:", gqlRes.errors);
-              return;
-            }
-            const collections = gqlRes.data.user;
-            const yearsData = [];
-            let maxMonth = { year: null, monthIndex: -1, commits: 0 };
-
-            for (let i = 0; i < 5; i++) {
-              const year = currentYear - i;
-              const calendar = collections[`y${year}`]?.contributionCalendar;
-              if (!calendar) continue;
-
-              const monthlyTotals = new Array(12).fill(0);
-              calendar.weeks.forEach(week => {
-                week.contributionDays.forEach(day => {
-                  const monthIndex = parseInt(day.date.split("-")[1], 10) - 1;
-                  monthlyTotals[monthIndex] += day.contributionCount;
-                });
-              });
-
-              monthlyTotals.forEach((total, monthIndex) => {
-                if (total > maxMonth.commits) {
-                  maxMonth = { year, monthIndex, commits: total };
-                }
-              });
-
-              yearsData.push({ year, total: calendar.totalContributions, months: monthlyTotals });
-            }
-            
-            setCommitStats({ years: yearsData, maxMonth });
-          })
-          .catch(err => {
-            console.warn("Failed to fetch commit stats", err);
-            setCommitStats({ error: true });
-          });
+        setRepos(data.repos || []);
+        setStats(data.stats || { public: 0, private: 0 });
+        if (data.commitStats) {
+          setCommitStats(data.commitStats);
         } else {
           setCommitStats({ error: true });
         }
-
-      } catch (e) {
-        console.warn("GitHub fetch failed:", e);
+      } catch (err) {
+        console.error("Failed to load GitHub repos:", err);
+        setCommitStats({ error: true });
       } finally {
         setReposLoaded(true);
       }
