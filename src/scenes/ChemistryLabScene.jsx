@@ -552,7 +552,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
     window.addEventListener("touchstart", resume);
     window.addEventListener("pointerdown", resume);
 
-    const down = (e) => {
+    const onDown = (e) => {
       const k = e.key.toLowerCase();
       keysRef.current[k] = true;
 
