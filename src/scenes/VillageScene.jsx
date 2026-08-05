@@ -1182,8 +1182,8 @@ export default function VillageScene({ isLandscape, previousScene,
       if (r === 8 && c === 14) {
         visibleTiles.push(
           <div key="bridge-sign" style={{
-            position: "absolute", left: 14 * TILE + 4, top: 8 * TILE + 4,
-            width: TILE * 6 - 8, height: TILE - 8, 
+            position: "absolute", left: 16 * TILE - TILE, top: 8 * TILE + 2,
+            width: TILE * 3, height: TILE - 6,
             background: "repeating-linear-gradient(45deg, #ffcc00, #ffcc00 4px, #222 4px, #222 8px)",
             border: "2px solid #111",
             borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center",
@@ -1191,9 +1191,9 @@ export default function VillageScene({ isLandscape, previousScene,
             zIndex: 8 * 10 + 5,
           }}>
             <div style={{
-              background: "#111", color: "#ffcc00", fontSize: 4,
-              fontFamily: "'Press Start 2P', monospace", padding: "2px 4px",
-              border: "1px solid #ffcc00", borderRadius: 2
+              background: "#111", color: "#ffcc00", fontSize: 3,
+              fontFamily: "'Press Start 2P', monospace", padding: "1px 3px",
+              border: "1px solid #ffcc00", borderRadius: 2, whiteSpace: "nowrap",
             }}>
               UNDER CONSTRUCTION
             </div>
@@ -1400,10 +1400,11 @@ export default function VillageScene({ isLandscape, previousScene,
                           setIsSailing(false);
                           setBoatPos({ col: 27.5, row: 28 });
                         }
-                        if (shop.id === "musicroom") {
-                          setPos({ col: 13, row: 8 });
-                        } else if (shop.id === "dock") {
+                        if (shop.id === "dock") {
                           setPos({ col: 27, row: 27 });
+                        } else if (shop.id === "musicroom") {
+                          // Place player just south of the "Under Construction" bridge sign
+                          setPos({ col: 16, row: 9 });
                         } else {
                           setPos({ col: shop.col, row: shop.row + 1 });
                         }
