@@ -534,11 +534,10 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       const isMobile = window.innerWidth < 768;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
       const availableHeight = window.innerHeight - consoleHeight;
-      const availableWidth = isLandscape ? (window.innerWidth - 320) : window.innerWidth;
       const baseW = 384;
       const baseH = 288;
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(availableWidth / newScale));
+      const newScale = Math.max(1, Math.floor(Math.min(window.innerWidth / baseW, availableHeight / baseH)));
+      setInternalW(Math.floor(window.innerWidth / newScale));
       setInternalH(Math.floor(availableHeight / newScale));
       setScale(newScale);
     };
