@@ -625,7 +625,7 @@ export default function VillageScene({ isLandscape, previousScene,
 
     const t = MAP[r][c];
     if (isSailing) {
-      return t === 4 || t === 10 || t === 11; // Allow water, bridge, and dock while sailing
+      return t === 4 || t === 10; // Allow water and bridge while sailing
     } else {
       if (t === 0 || t === 1 || t === 6 || t === 9 || t === 10 || t === 11) return true;
       if (r === boatPos.row && Math.abs(c - boatPos.col) <= 1) return true; // Walk on parked boat
@@ -679,6 +679,7 @@ export default function VillageScene({ isLandscape, previousScene,
       if (!isSailing) {
         const t = MAP[pos.row]?.[pos.col];
         if (t === 11 || (pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1)) {
+          setPos({ col: boatPos.col, row: boatPos.row });
           setIsSailing(true);
           setSailStartTime(Date.now());
           return;
@@ -709,6 +710,7 @@ export default function VillageScene({ isLandscape, previousScene,
         for (const adj of adjs) {
           if (MAP[adj.r]?.[adj.c] === 11) {
             setBoatPos({ col: pos.col - 0.5, row: pos.row });
+            setPos({ col: adj.c, row: adj.r }); // Step player onto dock
             setIsSailing(false);
             return;
           }
@@ -1203,7 +1205,7 @@ export default function VillageScene({ isLandscape, previousScene,
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
           width: TILE, height: TILE, background: bg,
-          zIndex: (isSailing && (tile === 10 || tile === 11)) ? r * 10 + 20 : undefined,
+          zIndex: (isSailing && (tile === 10 || tile === 11)) ? r * 10 + 6 : undefined,
         }}>
           {content}
         </div>
