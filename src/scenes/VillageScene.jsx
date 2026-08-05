@@ -625,9 +625,9 @@ export default function VillageScene({ isLandscape, previousScene,
 
     const t = MAP[r][c];
     if (isSailing) {
-      return t === 4 || t === 10; // Allow water and bridge while sailing
+      return t === 4 || t === 10 || t === 11; // Allow water, bridge, and dock while sailing
     } else {
-      if (t === 0 || t === 1 || t === 6 || t === 9 || t === 10) return true;
+      if (t === 0 || t === 1 || t === 6 || t === 9 || t === 10 || t === 11) return true;
       if (r === boatPos.row && Math.abs(c - boatPos.col) <= 1) return true; // Walk on parked boat
       return false;
     }
@@ -661,7 +661,7 @@ export default function VillageScene({ isLandscape, previousScene,
         if (tile === 4) playWoodStep();
         else if (tile === 0 || tile === 6) playGrassStep(); // Grass & flowers
         else if (tile === 1 || tile === 9) playDirtStep(); // Trail & stairs
-        else if (tile === 10) playWoodStep(); // Bridge
+        else if (tile === 10 || tile === 11) playWoodStep(); // Bridge/Dock
       }
       let isNear = null;
       for (const shop of SHOPS) {
@@ -677,7 +677,8 @@ export default function VillageScene({ isLandscape, previousScene,
     },
     onAction: () => {
       if (!isSailing) {
-        if (pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1) {
+        const t = MAP[pos.row]?.[pos.col];
+        if (t === 11 || (pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1)) {
           setIsSailing(true);
           setSailStartTime(Date.now());
           return;
@@ -720,7 +721,7 @@ export default function VillageScene({ isLandscape, previousScene,
   // Rescue player if they reload the page while sailing (which leaves them stranded in water with isSailing=false)
   useEffect(() => {
     const tile = MAP[pos.row]?.[pos.col];
-    if (tile === 4 || tile === 10) { // Water or Bridge
+    if (tile === 4 || tile === 10 || tile === 11) { // Water, Bridge, Dock
       setPos({ col: 27, row: 27 }); // Place them right outside the dock
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1138,7 +1139,7 @@ export default function VillageScene({ isLandscape, previousScene,
             ))}
           </>
         );
-      } else if (tile === 10) { // Bridge
+      } else if (tile === 10 || tile === 11) { // Bridge / Dock
         bg = PALETTE.bridge[h % PALETTE.bridge.length];
         // Pixel wooden planks — vertical slat lines
         content = (
@@ -1202,7 +1203,7 @@ export default function VillageScene({ isLandscape, previousScene,
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
           width: TILE, height: TILE, background: bg,
-          zIndex: (isSailing && tile === 10) ? r * 10 + 20 : undefined,
+          zIndex: (isSailing && (tile === 10 || tile === 11)) ? r * 10 + 20 : undefined,
         }}>
           {content}
         </div>
@@ -1372,7 +1373,7 @@ export default function VillageScene({ isLandscape, previousScene,
                   else if (t === 4) fill = "#2060a0";
                   else if (t === 8) fill = "#5a4030";
                   else if (t === 9) fill = "#8a8a8a";
-                  else if (t === 10) fill = "#8a5a2a";
+                  else if (t === 10 || t === 11) fill = "#8a5a2a";
                   else fill = "#2060a0";
                   return <rect key={`${ry}-${cx}`} x={cx} y={ry} width={1} height={1} fill={fill} />;
                 }))}
