@@ -217,19 +217,10 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, onGoToMu
                 width: TILE, height: TILE,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 zIndex: NPC_POS.row * 10,
-                filter: isNearNpc ? "drop-shadow(0 0 6px rgba(244,232,208,0.6))" : "none",
+                filter: isNearNpc && phase === "free" ? "drop-shadow(0 0 6px rgba(244,232,208,0.6))" : "none",
                 transition: "filter 0.2s",
               }}>
                 <SaadSprite direction="down" />
-                {/* Speech indicator when near */}
-                {isNearNpc && phase === "free" && (
-                  <div style={{
-                    position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
-                    background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "1px 4px",
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 5, color: "#000",
-                    animation: "npcBounce 1s infinite", zIndex: 100,
-                  }}>!</div>
-                )}
               </div>
 
               {/* Player */}

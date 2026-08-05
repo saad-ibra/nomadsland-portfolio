@@ -1158,22 +1158,17 @@ export default function VillageScene({ isLandscape, previousScene,
 
       // Saad NPC
       if (r === 21 && c === 8) {
+        const isNearNpc = Math.abs(8 - pos.col) <= 1 && Math.abs(21 - pos.row) <= 1;
         content = (
           <>
             {content}
-            <div style={{ position: "absolute", bottom: 4, left: 0 }}>
+            <div style={{
+              position: "absolute", bottom: 4, left: 0,
+              filter: isNearNpc && phase === "free" ? "drop-shadow(0 0 6px rgba(255,255,255,0.6))" : "none",
+              transition: "filter 0.2s",
+            }}>
               <SaadSprite direction="down" />
             </div>
-            {pos.col === 8 && pos.row === 22 && facing === "up" && (
-              <div style={{
-                position: "absolute", top: -8, left: "50%", transform: "translateX(-50%)",
-                background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "2px 4px",
-                fontFamily: "'Press Start 2P', monospace", fontSize: 4, color: "#000",
-                animation: "bounce 1s infinite", zIndex: 100
-              }}>
-                ?
-              </div>
-            )}
           </>
         );
       }
