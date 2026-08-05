@@ -552,13 +552,25 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
     window.addEventListener("touchstart", resume);
     window.addEventListener("pointerdown", resume);
 
-    const onDown = (e) => {
-      keysRef.current[e.key.toLowerCase()] = true;
-      
-      if (phase === "intro" && (e.key === " " || e.key === "Enter" || e.key === "Escape")) {
-        e.preventDefault();
-        setPhase("free");
-        return;
+    const down = (e) => {
+      const k = e.key.toLowerCase();
+      keysRef.current[k] = true;
+
+      // Allow movement keys to exit intro mode
+      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) {
+        if (phase === "intro") {
+          e.preventDefault();
+          setPhase("free");
+          return;
+        }
+      }
+
+      if (phase === "intro") {
+        if (e.key === " " || e.key === "Enter" || e.key === "Escape") {
+          e.preventDefault();
+          setPhase("free");
+          return;
+        }
       }
       
       if (phase !== "free") return;

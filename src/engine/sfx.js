@@ -143,11 +143,11 @@ export function playWaterSlosh(volume = 0.05) {
   osc.stop(audioCtx.currentTime + 0.2);
 }
 
-export function playGrassStep(volume = 0.004) {
+export function playGrassStep(volume = 0.0015) {
   playNoise(volume, 0.08, 4000, 6000);
 }
 
-export function playDirtStep(volume = 0.006) {
+export function playDirtStep(volume = 0.002) {
   playNoise(volume, 0.06, 1500, 2500);
 }
 

@@ -534,12 +534,12 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       const isMobile = window.innerWidth < 768;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
       const availableHeight = window.innerHeight - consoleHeight;
-      const availableWidth = isLandscape ? (window.innerWidth - 320) : window.innerWidth;
-      
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth, availableHeight) / 240));
+      const baseW = 384;
+      const baseH = 288;
+      const newScale = Math.max(1, Math.floor(Math.min(window.innerWidth / baseW, availableHeight / baseH)));
+      setInternalW(Math.floor(window.innerWidth / newScale));
+      setInternalH(Math.floor(availableHeight / newScale));
       setScale(newScale);
-      setInternalW(availableWidth / newScale);
-      setInternalH(availableHeight / newScale);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -563,6 +563,17 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
     const down = (e) => {
       const k = e.key.toLowerCase();
       keysRef.current[k] = true;
+
+      // Allow movement keys to exit intro/tour mode
+      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) {
+        if (phase === "intro" || phase === "touring") {
+          e.preventDefault();
+          clearTimeout(arriveTimeoutRef.current);
+          clearInterval(tourTimerRef.current);
+          setPhase("free");
+          return;
+        }
+      }
 
       if (phase === "intro") {
         if (e.key === " " || e.key === "Enter") {
