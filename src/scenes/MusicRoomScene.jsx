@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowDown } from "lucide-react";
-import { TILE } from "../engine/constants";
+import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import ControlBar from "../components/ui/ControlBar";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";

@@ -35,10 +35,11 @@ export default function ControlBar({
 
   const DpadBtn = ({ gridArea, keyName }) => (
     <button
-      onPointerDown={(e) => { e.preventDefault(); simulateKey(keyName, "keydown"); }}
-      onPointerUp={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onPointerDown={(e) => { e.preventDefault(); e.target.setPointerCapture(e.pointerId); simulateKey(keyName, "keydown"); }}
+      onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(err){} simulateKey(keyName, "keyup"); }}
       onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
       onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onContextMenu={(e) => e.preventDefault()}
       style={{
         gridArea,
         background: "#1c1c1c",
@@ -57,13 +58,14 @@ export default function ControlBar({
   const ActionBtn = ({ label, keyName }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
       <button
-        onPointerDown={(e) => { e.preventDefault(); simulateKey(keyName, "keydown"); }}
-        onPointerUp={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onPointerDown={(e) => { e.preventDefault(); e.target.setPointerCapture(e.pointerId); simulateKey(keyName, "keydown"); }}
+        onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(err){} simulateKey(keyName, "keyup"); }}
         onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
         onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onContextMenu={(e) => e.preventDefault()}
         style={{
-          width: isMobile ? 56 : 56,
-          height: isMobile ? 56 : 56,
+          width: isMobile ? 48 : 56,
+          height: isMobile ? 48 : 56,
           borderRadius: "50%",
           background: "#9a2a3e",
           border: "none",
@@ -106,7 +108,10 @@ export default function ControlBar({
       padding: isDesktopLandscape ? "48px 32px" : (isMobile ? "24px 16px" : "32px 64px"),
       boxSizing: "border-box",
       zIndex: 10000,
-      overflow: "hidden"
+      overflow: "hidden",
+      userSelect: "none",
+      WebkitUserSelect: "none",
+      WebkitTouchCallout: "none",
     }}>
       
       {/* Decorative Speaker Lines */}

@@ -4,7 +4,7 @@ import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucid
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import ExitDoor from "../components/sprites/ExitDoor";
-import { TILE } from "../engine/constants";
+import { TILE } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { playWoodStep } from "../engine/sfx";
 import { MAP, MAP_COLS, MAP_ROWS, SHELF_LAYOUT, SHELF_TILES, DECOR_TILES, TOUR_MOVE_MS, TOUR_PAUSE_MS, TYPE_COLORS, BOOK_SPINE_PALETTES, START_POS, EXIT_DOOR_COL, EXIT_DOOR_ROW } from "../data/library";
@@ -158,15 +158,28 @@ function PixelShelf({ shelf, isNear, onClick }) {
 // ============================================================
 //  Typewriter hook
 // ============================================================
-function useTypewriter(text, speed = 28) {
+function useTypewriter(text, skip, speed = 28) {
   const [shown, setShown] = useState("");
   useEffect(() => {
     setShown("");
     if (!text) return;
+    if (skip) {
+      setShown(text);
+      return;
+    }
     let i = 0;
-    const id = setInterval(() => { i++; setShown(text.slice(0, i)); if (i >= text.length) clearInterval(id); }, speed);
+    const id = setInterval(() => { 
+      i++; 
+      setShown(text.slice(0, i)); 
+      if (i >= text.length) clearInterval(id); 
+    }, speed);
     return () => clearInterval(id);
-  }, [text, speed]);
+  }, [text, speed, skip]);
+
+  useEffect(() => {
+    if (skip && text) setShown(text);
+  }, [skip, text]);
+
   return shown;
 }
 
@@ -480,7 +493,10 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
   const currentLine = phase === "intro" ? introLine
     : phase === "touring" ? (tourIndex >= 0 && tourIndex < SHELF_LAYOUT.length ? `[${shelves[tourIndex].label.toUpperCase()}]: ${SHELF_LAYOUT[tourIndex].line}` : outroLine)
     : "";
-  const dialogueText = useTypewriter(phase !== "free" ? currentLine : "");
+  const [skipTyping, setSkipTyping] = useState(false);
+  const dialogueText = useTypewriter(phase !== "free" ? currentLine : "", skipTyping);
+
+  useEffect(() => { setSkipTyping(false); }, [currentLine, phase]);
 
   const startTour = () => { setPhase("touring"); setTourIndex(0); setArrived(false); };
   const skipIntro = () => setPhase("free");
@@ -542,6 +558,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
     };
     window.addEventListener("keydown", resumeAudio);
     window.addEventListener("click", resumeAudio);
+    window.addEventListener("touchstart", resumeAudio);
+    window.addEventListener("pointerdown", resumeAudio);
     const down = (e) => {
       const k = e.key.toLowerCase();
       keysRef.current[k] = true;
@@ -549,6 +567,10 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       if (phase === "intro") {
         if (e.key === " " || e.key === "Enter") {
           e.preventDefault();
+          if (dialogueText.length < introLine.length) {
+            setSkipTyping(true);
+            return;
+          }
           setPhase("touring");
           setTourIndex(0);
           setArrived(false);
@@ -562,6 +584,10 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       }
       if (phase === "touring" && (e.key === " " || e.key === "Enter" || e.key === "Escape")) {
         e.preventDefault();
+        if (e.key !== "Escape" && dialogueText.length < currentLine.length) {
+          setSkipTyping(true);
+          return;
+        }
         clearTimeout(arriveTimeoutRef.current);
         clearInterval(tourTimerRef.current);
         setPhase("free");
@@ -583,6 +609,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       window.removeEventListener("keyup", up); 
       window.removeEventListener("keydown", resumeAudio);
       window.removeEventListener("click", resumeAudio);
+      window.removeEventListener("touchstart", resumeAudio);
+      window.removeEventListener("pointerdown", resumeAudio);
     };
   }, [nearShelf, phase]);
 
@@ -610,51 +638,50 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
     const target = SHELF_LAYOUT[tourIndex];
     const tc = target.tourCol, tr = target.tourRow;
 
-    const moveOneStep = () => {
-      setPos((p) => {
-        if (p.col === tc && p.row === tr) {
-          setArrived(true);
-          setStepping(false);
-          checkNear(p.col, p.row);
-          return p;
-        }
-        // Simple greedy step toward target
-        const dc = Math.sign(tc - p.col);
-        const dr = Math.sign(tr - p.row);
-        // Try horizontal first, then vertical
-        if (dc !== 0 && canWalk(p.col + dc, p.row)) {
-          setFacing(dc > 0 ? "right" : "left");
-          setStepping((s) => !s);
-          const np = { col: p.col + dc, row: p.row };
-          checkNear(np.col, np.row);
-          return np;
-        }
-        if (dr !== 0 && canWalk(p.col, p.row + dr)) {
-          setFacing(dr > 0 ? "down" : "up");
-          setStepping((s) => !s);
-          const np = { col: p.col, row: p.row + dr };
-          checkNear(np.col, np.row);
-          return np;
-        }
-        // If blocked, try the other axis
-        if (dr !== 0 && canWalk(p.col, p.row + dr)) {
-          setFacing(dr > 0 ? "down" : "up");
-          setStepping((s) => !s);
-          return { col: p.col, row: p.row + dr };
-        }
-        if (dc !== 0 && canWalk(p.col + dc, p.row)) {
-          setFacing(dc > 0 ? "right" : "left");
-          setStepping((s) => !s);
-          return { col: p.col + dc, row: p.row };
-        }
-        setArrived(true);
-        return p;
-      });
-    };
+    if (pos.col === tc && pos.row === tr) {
+      setArrived(true);
+      setStepping(false);
+      if (target.id === "did-not-finish") {
+        setFacing("up");
+      } else {
+        setFacing("up"); // default facing when reading shelf
+      }
+      checkNear(pos.col, pos.row);
+      return;
+    }
 
-    tourTimerRef.current = setInterval(moveOneStep, TOUR_MOVE_MS / speedMultiplier);
-    return () => clearInterval(tourTimerRef.current);
-  }, [phase, tourIndex, arrived, checkNear, speedMultiplier]);
+    const timer = setTimeout(() => {
+      // Simple greedy step toward target
+      const dc = Math.sign(tc - pos.col);
+      const dr = Math.sign(tr - pos.row);
+      
+      let nc = pos.col, nr = pos.row;
+      let moved = false;
+      let newFacing = facing;
+
+      // Try horizontal first, then vertical
+      if (dc !== 0 && canWalk(pos.col + dc, pos.row)) {
+        nc += dc;
+        newFacing = dc > 0 ? "right" : "left";
+        moved = true;
+      } else if (dr !== 0 && canWalk(pos.col, pos.row + dr)) {
+        nr += dr;
+        newFacing = dr > 0 ? "down" : "up";
+        moved = true;
+      }
+
+      if (moved) {
+        setFacing(newFacing);
+        setStepping(s => !s);
+        setPos({ col: nc, row: nr });
+        checkNear(nc, nr);
+      } else {
+        setArrived(true);
+      }
+    }, TOUR_MOVE_MS / speedMultiplier);
+
+    return () => clearTimeout(timer);
+  }, [phase, tourIndex, arrived, pos, speedMultiplier]);
 
   const activeShelf = shelves.find((s) => s.id === nearShelf);
   const modalShelf = shelves.find((s) => s.id === openShelf);

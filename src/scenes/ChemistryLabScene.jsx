@@ -144,7 +144,7 @@ function Chalkboard({ stats, isNear, chalkCol, onClick }) {
         transition: "color 0.4s",
         letterSpacing: "0.2px",
       }}>
-        {active ? "▲ SPACE — open github" : "github / saad-ibra"}
+        {active ? "▲ SPACE/A — open github" : "github / saad-ibra"}
       </div>
     </div>
   );
@@ -471,16 +471,9 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
   useEffect(() => {
     async function load() {
       try {
-        const token    = import.meta.env.VITE_GITHUB_TOKEN;
-        const username = import.meta.env.VITE_GITHUB_USERNAME || "saad-ibra";
-        const headers  = { Accept: "application/vnd.github.v3+json" };
-        let url;
-        if (token) {
-          url = "https://api.github.com/user/repos?per_page=100&type=owner&sort=updated";
-          headers.Authorization = `token ${token}`;
-        } else {
-          url = `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`;
-        }
+        const username = "saad-ibra";
+        let url = `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`;
+        let headers = {};
         const res  = await fetch(url, { headers });
         if (!res.ok) throw new Error(`GitHub ${res.status}`);
         const data = await res.json();
@@ -498,76 +491,8 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
         setRepos(mapped);
         setStats({ public: mapped.filter(r => !r.isPrivate).length, private: mapped.filter(r => r.isPrivate).length });
 
-        // Fetch contributions EKG data via GraphQL
-        if (token) {
-          const currentYear = new Date().getFullYear();
-          const yearQueries = Array.from({ length: 5 }).map((_, i) => {
-            const year = currentYear - i;
-            return `y${year}: contributionsCollection(from: "${year}-01-01T00:00:00Z", to: "${year}-12-31T23:59:59Z") { 
-              contributionCalendar { 
-                totalContributions 
-                weeks { contributionDays { contributionCount date } } 
-              } 
-            }`;
-          }).join("\n");
-
-          const query = `
-            query {
-              user(login: "${username}") {
-                ${yearQueries}
-              }
-            }
-          `;
-
-          fetch("https://api.github.com/graphql", {
-            method: "POST",
-            headers: {
-              Authorization: `bearer ${token}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ query })
-          })
-          .then(res => res.json())
-          .then(gqlRes => {
-            if (gqlRes.errors) {
-              console.warn("GraphQL Errors:", gqlRes.errors);
-              return;
-            }
-            const collections = gqlRes.data.user;
-            const yearsData = [];
-            let maxMonth = { year: null, monthIndex: -1, commits: 0 };
-
-            for (let i = 0; i < 5; i++) {
-              const year = currentYear - i;
-              const calendar = collections[`y${year}`]?.contributionCalendar;
-              if (!calendar) continue;
-
-              const monthlyTotals = new Array(12).fill(0);
-              calendar.weeks.forEach(week => {
-                week.contributionDays.forEach(day => {
-                  const monthIndex = parseInt(day.date.split("-")[1], 10) - 1;
-                  monthlyTotals[monthIndex] += day.contributionCount;
-                });
-              });
-
-              monthlyTotals.forEach((total, monthIndex) => {
-                if (total > maxMonth.commits) {
-                  maxMonth = { year, monthIndex, commits: total };
-                }
-              });
-
-              yearsData.push({ year, total: calendar.totalContributions, months: monthlyTotals });
-            }
-            
-            setCommitStats({ years: yearsData, maxMonth });
-          })
-          .catch(err => {
-            console.warn("Failed to fetch commit stats", err);
-            setCommitStats({ error: true });
-          });
-        } else {
-          setCommitStats({ error: true });
-        }
+        // Fetch contributions EKG data via GraphQL (disabled because it requires a token)
+        setCommitStats({ error: true });
 
       } catch (e) {
         console.warn("GitHub fetch failed:", e);
@@ -584,7 +509,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
       const isMobile = window.innerWidth < 768;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
       const availableHeight = window.innerHeight - consoleHeight;
-      setScale(Math.max(1, Math.floor(Math.min(window.innerWidth / INTERNAL_W, availableHeight / INTERNAL_H))));
+      setScale(Math.max(1, Math.floor(Math.min(window.innerWidth / internalW, availableHeight / internalH))));
     }
     resize();
     window.addEventListener("resize", resize);
@@ -626,11 +551,13 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
     };
     window.addEventListener("keydown", resume);
     window.addEventListener("click",   resume);
+    window.addEventListener("touchstart", resume);
+    window.addEventListener("pointerdown", resume);
 
     const onDown = (e) => {
       keysRef.current[e.key.toLowerCase()] = true;
       
-      if (phase === "intro" && (e.key === " " || e.key === "Enter")) {
+      if (phase === "intro" && (e.key === " " || e.key === "Enter" || e.key === "Escape")) {
         e.preventDefault();
         setPhase("free");
         return;
@@ -652,6 +579,8 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
       window.removeEventListener("keyup",   onUp);
       window.removeEventListener("keydown", resume);
       window.removeEventListener("click",   resume);
+      window.removeEventListener("touchstart", resume);
+      window.removeEventListener("pointerdown", resume);
     };
   }, [nearStation, phase]);
 
@@ -829,7 +758,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
               <div style={{
                 fontSize: 5, color: "#a8e8a8", background: "rgba(0,0,0,0.4)",
                 padding: "2px 4px", borderRadius: 2
-              }}>SPACE</div>
+              }}>SPACE/A</div>
             </div>
           )}
 
@@ -860,7 +789,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
                     boxShadow: "0 3px 0 #0a3020", display: "flex", alignItems: "center"
                   }}
                 >
-                  <span style={{ fontSize: 5, color: "#a8e8a8", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE</span>
+                  <span style={{ fontSize: 5, color: "#a8e8a8", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
                   ENTER LAB
                 </button>
               </div>

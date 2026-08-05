@@ -21,6 +21,11 @@ function App() {
   const [isLandscape, setIsLandscape] = useState(() => window.innerWidth > window.innerHeight && window.innerWidth >= 1024);
 
   useEffect(() => {
+    if (scene === 'village') document.body.style.backgroundColor = '#2060a0';
+    else document.body.style.backgroundColor = '#000';
+  }, [scene]);
+
+  useEffect(() => {
     const handleResize = () => {
       setIsLandscape(window.innerWidth > window.innerHeight && window.innerWidth >= 1024);
     };
