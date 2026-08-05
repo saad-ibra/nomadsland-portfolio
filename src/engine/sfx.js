@@ -1,5 +1,5 @@
 let audioCtx = null;
-let isSfxMuted = false;
+let isSfxMuted = JSON.parse(localStorage.getItem("sfxMuted") || "false");
 
 export function toggleSfxMuted() {
   isSfxMuted = !isSfxMuted;

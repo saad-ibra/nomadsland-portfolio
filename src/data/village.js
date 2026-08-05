@@ -44,9 +44,9 @@ const layout = [
   "~C..f..p.....CTTT~~~OOOOOOpOOOOOOO~~",
   "~C...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
   "~C...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
-  "~C...HHHHH...C~~~~~~~~~~~~BBBB~~~~~~",
-  "~C...........C~~~~~~~~~~~~B..B~~~~~~",
-  "~C...........C~~~~~~~~~~~~BBBB~~~~~~",
+  "~C...HHHHH...C~~~~~~~~~~~~DDDD~~~~~~",
+  "~C...........C~~~~~~~~~~~~D..D~~~~~~",
+  "~C...........C~~~~~~~~~~~~DDDD~~~~~~",
   "~CCCCCCCCCCCCC~~~~~~~~~~~~~~~~~~~~~~",
   "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
   "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
@@ -65,9 +65,10 @@ const charToType = {
   'C': 8,  // cliff
   'S': 9,  // stairs
   'B': 10, // bridge
+  'D': 11, // dock
 };
 
-export const MAP = layout.map(row => row.split('').map(char => charToType[char] ?? 4));
+export const MAP = layout.map(row => row.split('').map(char => charToType[char] ?? (char === 'D' ? 11 : 4)));
 
 /**
  * Shop Definitions — each door sits at the bottom-center tile of the 5×3 H block

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { MOVE_COOLDOWN } from "../engine/constants";
 
 export function usePlayerMovement({
+  sceneId,
   initialPos,
   canWalk,
   speedMultiplier = 1,
@@ -11,7 +12,14 @@ export function usePlayerMovement({
   onAction,
   onCancel
 }) {
-  const [pos, setPos] = useState(() => initialPos);
+  const [pos, setPos] = useState(() => {
+    if (sceneId) {
+      const saved = localStorage.getItem(`pos_${sceneId}`);
+      if (saved) return JSON.parse(saved);
+    }
+    return initialPos;
+  });
+
   const [facing, setFacing] = useState("down");
   const [stepping, setStepping] = useState(false);
 
@@ -30,11 +38,26 @@ export function usePlayerMovement({
   }, [onMove, onAction, onCancel]);
 
   useEffect(() => {
+    if (sceneId && pos) {
+      localStorage.setItem(`pos_${sceneId}`, JSON.stringify(pos));
+    }
+  }, [pos, sceneId]);
+
+  useEffect(() => {
     const down = (e) => {
       const k = e.key.toLowerCase();
       keysRef.current[k] = true;
 
-      if (!isActive) return;
+      if (!isActive) {
+        // Even if inactive (e.g. dialogue open), allow escape/b to trigger onCancel
+        if (k === "escape") {
+          if (onCancelRef.current) {
+            e.preventDefault();
+            onCancelRef.current();
+          }
+        }
+        return;
+      }
 
       if (k === " " || k === "enter") {
         if (onActionRef.current) {
@@ -61,6 +84,9 @@ export function usePlayerMovement({
       window.removeEventListener("keyup", up);
     };
   }, [isActive]);
+
+  const posRef = useRef(pos);
+  useEffect(() => { posRef.current = pos; }, [pos]);
 
   useEffect(() => {
     if (!isActive) {
@@ -100,29 +126,27 @@ export function usePlayerMovement({
       const dir = dr < 0 ? "up" : dr > 0 ? "down" : dc < 0 ? "left" : "right";
       setFacing(dir);
 
-      setPos((p) => {
-        const nc = p.col + dc;
-        const nr = p.row + dr;
+      const p = posRef.current;
+      const nc = p.col + dc;
+      const nr = p.row + dr;
 
-        if (canWalk(nc, nr)) {
-          setStepping(true);
-          lastMoveRef.current = now;
-          const newPos = { col: nc, row: nr };
-          
-          // Clear stepping flag shortly after
-          setTimeout(() => setStepping(false), 90);
-          
-          if (onMoveRef.current) {
-            // onMove can return a boolean to cancel the state update if it triggers a scene transition
-            const cancelMove = onMoveRef.current(nc, nr);
-            if (cancelMove) return p;
-          }
-          return newPos;
-        } else {
-          momentumRef.current.stepsLeft = 0; // stop gliding on wall bump
+      if (canWalk(nc, nr)) {
+        setStepping(true);
+        lastMoveRef.current = now;
+        const newPos = { col: nc, row: nr };
+        
+        // Clear stepping flag shortly after
+        setTimeout(() => setStepping(false), 90);
+        
+        if (onMoveRef.current) {
+          const cancelMove = onMoveRef.current(nc, nr);
+          if (cancelMove) return;
         }
-        return p;
-      });
+        
+        setPos(newPos);
+      } else {
+        momentumRef.current.stepsLeft = 0; // stop gliding on wall bump
+      }
     }, 30);
 
     return () => clearInterval(id);
