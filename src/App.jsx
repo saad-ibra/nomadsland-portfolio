@@ -149,7 +149,11 @@ function App() {
         <NomadshomeScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
       )}
       {scene === 'musicroom' && (
-        <MusicRoomScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
+        <MusicRoomScene 
+          onBackToVillage={() => changeScene('village')} 
+          onGoToNomadshome={() => changeScene('nomadshome')}
+          {...sceneProps} 
+        />
       )}
     </div>
   );
