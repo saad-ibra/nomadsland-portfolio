@@ -902,10 +902,10 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
             </div>
           )}
         </div>
+        </GameBoyBezel>
       </div>
-        
+
       {/* ── CONTROL BAR ── */}
-      </div>
       <ControlBar
         musicPlaying={musicPlaying}
         musicMuted={musicMuted}
@@ -915,6 +915,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         onChangeVolume={setMusicVolume}
         onChangeSpeed={setSpeedMultiplier}
       />
+    </div>
     </div>
   );
 }
