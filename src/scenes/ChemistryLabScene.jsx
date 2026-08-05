@@ -534,7 +534,17 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
     speedMultiplier,
     isActive: phase === "free" && !openStation,
     onMove: (c, r) => { checkNear(c, r); playTileStep(); return false; },
-    onAction: () => { if (nearStation) setOpenStation(nearStation); },
+    onAction: () => {
+      const npcCol = layoutRef.current.startPos.col + 2;
+      const npcRow = 3;
+      const dc = Math.abs(npcCol - pos.col);
+      const dr = Math.abs(npcRow - pos.row);
+      if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
+        setPhase("intro");
+      } else if (nearStation) {
+        setOpenStation(nearStation);
+      }
+    },
     onCancel: () => setOpenStation(null)
   });
 
