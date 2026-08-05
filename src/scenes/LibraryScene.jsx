@@ -785,7 +785,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
               return (
                 <div key={`${r}-${c}`} style={{
                   position: "absolute", left: c * TILE, top: r * TILE,
-                  width: TILE, height: TILE, background: bg,
+                  width: TILE + 1, height: TILE + 1, background: bg,
                   boxShadow: boxS,
                 }} />
               );
