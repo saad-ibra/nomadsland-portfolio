@@ -47,6 +47,9 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, onGoToMu
 
   // Object hitboxes
   const isWalkable = (c, r) => {
+    // Allow exit door
+    if (c === Math.floor(MAP_COLS / 2) && r === MAP_ROWS - 1) return true;
+    
     if (c < 1 || c >= MAP_COLS - 1 || r < 1 || r >= MAP_ROWS - 1) return false;
     // Bed (left side)
     if (c >= 2 && c <= 4 && r >= 2 && r <= 5) return false;
