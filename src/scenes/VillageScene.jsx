@@ -1180,7 +1180,7 @@ export default function VillageScene({ isLandscape, previousScene,
 
       // Render a road construction barricade on the bridge entrance
       if (r === 8 && c === 14) {
-        const BX = 15 * TILE; // center x of barricade group
+        const BX = 16 * TILE; // center x of barricade group
         const BY = 8 * TILE;  // top y
         const Z  = 8 * 10 + 5;
         const coneColor = "#ff6600";
