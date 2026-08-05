@@ -1,0 +1,229 @@
+{
+  "repos": [
+    {
+      "name": "nomadsland-portfolio",
+      "description": "",
+      "language": "JavaScript",
+      "stars": 0,
+      "url": "https://github.com/saad-ibra/nomadsland-portfolio",
+      "isPrivate": false
+    },
+    {
+      "name": "gray-matter",
+      "description": "",
+      "language": "Kotlin",
+      "stars": 0,
+      "url": "https://github.com/saad-ibra/gray-matter",
+      "isPrivate": false
+    },
+    {
+      "name": "integration-failure-classification-api",
+      "description": "",
+      "language": "Python",
+      "stars": 0,
+      "url": "https://github.com/saad-ibra/integration-failure-classification-api",
+      "isPrivate": false
+    },
+    {
+      "name": "prime-hs",
+      "isPrivate": true
+    },
+    {
+      "name": "wings-business-consulting-website",
+      "isPrivate": true
+    },
+    {
+      "name": "dsa-practice",
+      "isPrivate": true
+    },
+    {
+      "name": "BingeOn",
+      "isPrivate": true
+    },
+    {
+      "name": "Phone",
+      "isPrivate": true
+    },
+    {
+      "name": "Verdictus",
+      "isPrivate": true
+    },
+    {
+      "name": "anonymous",
+      "isPrivate": true
+    },
+    {
+      "name": "samplegithub",
+      "isPrivate": true
+    }
+  ],
+  "stats": {
+    "public": 3,
+    "private": 8
+  },
+  "ekg": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "commitStats": {
+    "years": [
+      {
+        "year": 2026,
+        "total": 264,
+        "months": [
+          0,
+          0,
+          79,
+          52,
+          26,
+          23,
+          5,
+          79,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "year": 2025,
+        "total": 13,
+        "months": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          13
+        ]
+      },
+      {
+        "year": 2024,
+        "total": 0,
+        "months": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "year": 2023,
+        "total": 0,
+        "months": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "year": 2022,
+        "total": 1,
+        "months": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    ],
+    "maxMonth": {
+      "year": 2026,
+      "monthIndex": 2,
+      "commits": 79
+    }
+  }
+}
