@@ -233,6 +233,12 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
     isActive: phase === "free" && !openPost && !openTipLine,
     onMove: (c, r) => { checkNear(c, r); playTileStep(); return false; },
     onAction: () => {
+      const dc = Math.abs(NPC_POS.col - pos.col);
+      const dr = Math.abs(NPC_POS.row - pos.row);
+      if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
+        setPhase("intro");
+        return;
+      }
       if (!nearObject) return;
       if (nearObject === "phone") { setOpenTipLine(true); }
       else {

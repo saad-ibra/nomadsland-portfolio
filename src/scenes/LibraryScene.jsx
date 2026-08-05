@@ -528,7 +528,15 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
     speedMultiplier,
     isActive: phase === "free" && !openShelf,
     onMove: (c, r) => { checkNear(c, r); playWoodStep(); return false; },
-    onAction: () => { if (nearShelf) setOpenShelf(nearShelf); },
+    onAction: () => {
+      const dc = Math.abs(NPC_POS.col - pos.col);
+      const dr = Math.abs(NPC_POS.row - pos.row);
+      if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
+        setPhase("intro");
+      } else if (nearShelf) {
+        setOpenShelf(nearShelf);
+      }
+    },
     onCancel: () => setOpenShelf(null)
   });
 
