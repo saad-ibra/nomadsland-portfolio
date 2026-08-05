@@ -7,6 +7,7 @@ import { playTileStep } from '../engine/sfx';
 import PlayerSprite from '../components/sprites/PlayerSprite';
 import ControlBar from '../components/ui/ControlBar';
 import ExitDoor from '../components/sprites/ExitDoor';
+import SaadSprite from '../components/sprites/SaadSprite';
 
 
 // ============================================================
@@ -527,6 +528,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
     initialPos: labLayout.startPos,
     canWalk: (c, r) => {
       if (c === layoutRef.current.startPos.col && r === 1) { onBackToVillage(); return false; }
+      if (c === layoutRef.current.startPos.col + 2 && r === 3) return false;
       return canLayoutWalk(layoutRef.current, c, r);
     },
     speedMultiplier,
@@ -606,8 +608,8 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
   const activeStation    = layout.stations.find(s => s.id === nearStation);
   const openStationData  = layout.stations.find(s => s.id === openStation);
   const introLine        = reposLoaded
-    ? `Welcome to my Laboratory! I'm Saad Ibra. My GitHub auto-syncs here: ${stats.public} public & ${stats.private} classified projects.`
-    : "Connecting to GitHub…";
+    ? `My lab. Every terminal connects to a GitHub repo. ${stats.public} public, ${stats.private} private. Walk up to one and press SPACE.`
+    : "Pulling data from GitHub...";
 
   // ---- Render ----
   return (
@@ -704,6 +706,20 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
 
             {/* Decorative carts (only in public wing to avoid blocking vault) */}
             <ChemicalCart col={1} row={5} />
+
+            {/* NPC Saad */}
+            <div style={{
+              position: "absolute",
+              left: (layout.startPos.col + 2) * TILE,
+              top: 3 * TILE,
+              width: TILE, height: TILE,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              zIndex: 3 * 10,
+              filter: (Math.abs((layout.startPos.col + 2) - pos.col) <= 1 && Math.abs(3 - pos.row) <= 1 && phase === "free") ? "drop-shadow(0 0 6px rgba(128,200,160,0.5))" : "none",
+              transition: "filter 0.2s",
+            }}>
+              <SaadSprite direction="left" />
+            </div>
 
             {/* Player — Y-depth sorted */}
             <div style={{

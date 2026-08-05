@@ -8,6 +8,7 @@ import { playTileStep } from '../engine/sfx';
 import PlayerSprite from '../components/sprites/PlayerSprite';
 import ControlBar from '../components/ui/ControlBar';
 import ExitDoor from '../components/sprites/ExitDoor';
+import SaadSprite from '../components/sprites/SaadSprite';
 import { BLOG_POSTS } from '../data/posts';
 
 // ============================================================
@@ -67,10 +68,13 @@ function isLayoutWalkable(layout, col, row) {
   return t === 1 || t === 3;
 }
 function canLayoutWalk(layout, col, row) {
+  if (col === 5 && row === 3) return false;
   const coord = `${col},${row}`;
   if (layout.articleTiles.has(coord) || layout.pressTiles.has(coord) || layout.phoneTiles.has(coord)) return false;
   return isLayoutWalkable(layout, col, row);
 }
+
+const NPC_POS = { col: 5, row: 3 };
 
 // ============================================================
 //  PIXEL ARTICLE — pinned to the corkboard
@@ -432,7 +436,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
   const tt = (0.14 / speedMultiplier).toFixed(2);
 
   const activeArticle = layout.articles.find(r => r.id === nearObject);
-  const introLine = `Welcome to the Editorial Office. Hot off the presses. Walk up to the bulletin board and press SPACE/A to read.`;
+  const introLine = `The newsroom. Every article on that corkboard is something I wrote. The red phone on the desk has my contact info.`;
 
   // ---- Render ----
   return (
@@ -535,6 +539,20 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
             {/* Exit Door */}
             <ExitDoor col={3} row={1} />
 
+            {/* NPC Saad */}
+            <div style={{
+              position: "absolute",
+              left: 5 * TILE,
+              top: 3 * TILE,
+              width: TILE, height: TILE,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              zIndex: 3 * 10,
+              filter: (Math.abs(5 - pos.col) <= 1 && Math.abs(3 - pos.row) <= 1 && phase === "free") ? "drop-shadow(0 0 6px rgba(255,255,255,0.5))" : "none",
+              transition: "filter 0.2s",
+            }}>
+              <SaadSprite direction="down" />
+            </div>
+
             {/* Player */}
             <div style={{
               position: "absolute",
@@ -617,7 +635,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                 position: "absolute", top: -12, left: 10,
                 background: "#000", border: "2px solid #fff",
                 padding: "2px 8px", fontSize: 7, color: "#fff",
-              }}>EDITOR</div>
+              }}>SAAD IBRA</div>
               <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#000" }}>
                 {introLine}
                 <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
