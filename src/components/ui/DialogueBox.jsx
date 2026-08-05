@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 /**
  * DialogueBox - Reusable retro RPG dialogue overlay.
@@ -142,7 +142,7 @@ export default function DialogueBox({
   const isLastLine = lineIndex >= lines.length - 1;
   const { shown, done, skipToEnd } = useTypewriter(currentLine);
 
-  const handleAction = () => {
+  const handleAction = useCallback(() => {
     if (!done) {
       skipToEnd();
       return;
@@ -152,7 +152,25 @@ export default function DialogueBox({
     } else {
       if (onAdvance) onAdvance();
     }
-  };
+  }, [done, isLastLine, onDismiss, onAdvance, skipToEnd]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const k = e.key.toLowerCase();
+      if (k === " " || k === "enter") {
+        e.preventDefault();
+        e.stopPropagation();
+        handleAction();
+      } else if (k === "escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        if (onDismiss) onDismiss();
+      }
+    };
+    // Use capture phase to prevent other elements (like player movement) from handling the event
+    window.addEventListener("keydown", handleKeyDown, { capture: true });
+    return () => window.removeEventListener("keydown", handleKeyDown, { capture: true });
+  }, [handleAction, onDismiss]);
 
   return (
     <div style={{
@@ -180,8 +198,25 @@ export default function DialogueBox({
         }}>&#x258A;</span>
       </div>
 
-      {/* Action button */}
-      <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
+      {/* Action buttons */}
+      <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end", gap: 12 }}>
+        {!isLastLine && (
+          <button
+            onPointerDown={(e) => { e.preventDefault(); if (onDismiss) onDismiss(); }}
+            style={{
+              fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+              background: t.btnBg, color: t.btnColor, border: "none",
+              padding: "8px 14px", borderRadius: 2, cursor: "pointer",
+              boxShadow: t.btnShadow, display: "flex", alignItems: "center", opacity: 0.8
+            }}
+          >
+            <span style={{
+              fontSize: 5, color: t.hintColor, marginRight: 8,
+              background: t.hintBg, padding: "2px 4px", borderRadius: 2,
+            }}>ESC/B</span>
+            SKIP
+          </button>
+        )}
         <button
           onPointerDown={(e) => { e.preventDefault(); handleAction(); }}
           style={{
@@ -195,7 +230,7 @@ export default function DialogueBox({
             fontSize: 5, color: t.hintColor, marginRight: 8,
             background: t.hintBg, padding: "2px 4px", borderRadius: 2,
           }}>SPACE/A</span>
-          {done && isLastLine ? lastButtonLabel : done ? "NEXT" : "SKIP"}
+          {done && isLastLine ? lastButtonLabel : done ? "NEXT" : "FAST"}
         </button>
       </div>
     </div>
