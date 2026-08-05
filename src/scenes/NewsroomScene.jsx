@@ -660,10 +660,10 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                 }}
               >
                 {/* Spiral notebook rings */}
-                <div style={{ position: "absolute", top: -16, left: 20, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, left: 60, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, right: 60, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, right: 20, width: 8, height: 16, background: "#silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, left: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, left: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, right: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, right: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
 
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -10 }}>
                   <button onClick={() => setOpenTipLine(false)} style={{
@@ -685,9 +685,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                   </a>
                   <a href="https://www.linkedin.com/in/saadibrahimkhan/" target="_blank" rel="noopener noreferrer" className="contact-btn">
                     <Briefcase size={10} /> LINKEDIN
-                  </a>
-                  <a href="https://twitter.com/saadibrahimkhan" target="_blank" rel="noopener noreferrer" className="contact-btn">
-                    <Hash size={10} /> TWITTER / X
                   </a>
                 </div>
               </div>
