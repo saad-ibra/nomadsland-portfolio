@@ -1178,25 +1178,84 @@ export default function VillageScene({ isLandscape, previousScene,
         );
       }
 
-      // Render a "Construction Sign" on the bridge entrance
+      // Render a road construction barricade on the bridge entrance
       if (r === 8 && c === 14) {
+        const BX = 15 * TILE; // center x of barricade group
+        const BY = 8 * TILE;  // top y
+        const Z  = 8 * 10 + 5;
+        const coneColor = "#ff6600";
+
         visibleTiles.push(
-          <div key="bridge-sign" style={{
-            position: "absolute", left: 16 * TILE - TILE, top: 8 * TILE + 2,
-            width: TILE * 3, height: TILE - 6,
-            background: "repeating-linear-gradient(45deg, #ffcc00, #ffcc00 4px, #222 4px, #222 8px)",
-            border: "2px solid #111",
-            borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.8)",
-            zIndex: 8 * 10 + 5,
-          }}>
-            <div style={{
-              background: "#111", color: "#ffcc00", fontSize: 3,
-              fontFamily: "'Press Start 2P', monospace", padding: "1px 3px",
-              border: "1px solid #ffcc00", borderRadius: 2, whiteSpace: "nowrap",
-            }}>
-              UNDER CONSTRUCTION
+          <div key="bridge-barricade" style={{ position: "absolute", left: 0, top: 0, zIndex: Z, pointerEvents: "none" }}>
+
+            {/* ── LEFT TRAFFIC CONE ── */}
+            <div style={{ position: "absolute", left: BX - TILE * 1.5, top: BY + 4 }}>
+              {/* cone body */}
+              <div style={{ width: 10, height: 14, background: coneColor,
+                clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", margin: "0 auto" }} />
+              {/* white stripe */}
+              <div style={{ position: "absolute", top: 6, left: 1, width: 8, height: 2, background: "#fff", opacity: 0.8 }} />
+              {/* base */}
+              <div style={{ width: 14, height: 3, background: "#cc4400", borderRadius: 1, marginTop: -1 }} />
             </div>
+
+            {/* ── RIGHT TRAFFIC CONE ── */}
+            <div style={{ position: "absolute", left: BX + TILE * 1.5 - 4, top: BY + 4 }}>
+              <div style={{ width: 10, height: 14, background: coneColor,
+                clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", margin: "0 auto" }} />
+              <div style={{ position: "absolute", top: 6, left: 1, width: 8, height: 2, background: "#fff", opacity: 0.8 }} />
+              <div style={{ width: 14, height: 3, background: "#cc4400", borderRadius: 1, marginTop: -1 }} />
+            </div>
+
+            {/* ── SAWHORSE BARRICADE ── */}
+            {/* Striped board - top */}
+            <div style={{
+              position: "absolute", left: BX - TILE * 1.2, top: BY + 5,
+              width: TILE * 2.4, height: 7,
+              background: "repeating-linear-gradient(90deg, #ff6600 0px, #ff6600 8px, #fff 8px, #fff 16px)",
+              border: "1px solid #aa3300", borderRadius: 1,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.7)",
+            }} />
+            {/* Striped board - bottom */}
+            <div style={{
+              position: "absolute", left: BX - TILE * 1.2, top: BY + 14,
+              width: TILE * 2.4, height: 7,
+              background: "repeating-linear-gradient(90deg, #fff 0px, #fff 8px, #ff6600 8px, #ff6600 16px)",
+              border: "1px solid #aa3300", borderRadius: 1,
+              boxShadow: "0 1px 3px rgba(0,0,0,0.7)",
+            }} />
+            {/* Left leg */}
+            <div style={{
+              position: "absolute", left: BX - TILE * 0.8, top: BY + 19,
+              width: 4, height: 10, background: "#8b6200",
+              transform: "rotate(-12deg)", transformOrigin: "top center",
+            }} />
+            {/* Right leg */}
+            <div style={{
+              position: "absolute", left: BX + TILE * 0.7, top: BY + 19,
+              width: 4, height: 10, background: "#8b6200",
+              transform: "rotate(12deg)", transformOrigin: "top center",
+            }} />
+            {/* Center support post */}
+            <div style={{
+              position: "absolute", left: BX - 2, top: BY + 5,
+              width: 4, height: 24, background: "#7a5500",
+            }} />
+
+            {/* ── FLASHING AMBER BEACON ── */}
+            <div style={{
+              position: "absolute", left: BX - 5, top: BY - 6,
+              width: 10, height: 6,
+              background: "#ffcc00",
+              borderRadius: "50% 50% 2px 2px",
+              boxShadow: "0 0 6px 3px rgba(255,204,0,0.7)",
+              animation: "beaconFlash 1.2s step-end infinite",
+            }} />
+            {/* Beacon pole */}
+            <div style={{
+              position: "absolute", left: BX - 1, top: BY - 1,
+              width: 2, height: 7, background: "#555",
+            }} />
           </div>
         );
       }
@@ -1224,6 +1283,7 @@ export default function VillageScene({ isLandscape, previousScene,
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes beaconFlash { 0%,49%{opacity:1;box-shadow:0 0 8px 4px rgba(255,204,0,0.9)} 50%,100%{opacity:0.15;box-shadow:none} }
         @keyframes glowPulse { from { opacity: 0.5; transform: translateX(-50%) scale(1); } to { opacity: 1; transform: translateX(-50%) scale(1.1); } }
         @keyframes floatBoat { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-3px) rotate(2deg); } }
       `}</style>
@@ -1380,20 +1440,23 @@ export default function VillageScene({ isLandscape, previousScene,
                   return <rect key={`${ry}-${cx}`} x={cx} y={ry} width={1} height={1} fill={fill} />;
                 }))}
                 {/* Building markers — clickable */}
-                {SHOPS.filter(s => s.id !== "musicroom").map(shop => {
+                {SHOPS.map(shop => {
                   const colors = {
                     newsroom: "#d84040", library: "#8a40d8",
-                    musicroom: "#d88a40", lab: "#40d860",
+                    musicroom: "#886633", lab: "#40d860",
                     nomadshome: "#408ad8", dock: "#a07040",
                   };
+                  // Music room shows on minimap but greyed out (locked)
+                  const isLocked = shop.id === "musicroom";
                   return (
                     <rect
                       key={shop.id}
                       x={shop.col - 2} y={shop.row - 2}
                       width={5} height={3}
-                      fill={colors[shop.id] || "#fff"}
-                      stroke="#fff" strokeWidth={0.3}
-                      style={{ cursor: "pointer" }}
+                      fill={isLocked ? "#554422" : (colors[shop.id] || "#fff")}
+                      stroke={isLocked ? "#886633" : "#fff"} strokeWidth={0.3}
+                      strokeDasharray={isLocked ? "1 0.5" : undefined}
+                      style={{ cursor: "pointer", opacity: isLocked ? 0.65 : 1 }}
                       onPointerDown={(e) => {
                         e.preventDefault();
                         if (isSailing) {
