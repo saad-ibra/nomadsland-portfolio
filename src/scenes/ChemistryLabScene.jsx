@@ -873,7 +873,6 @@ const ms = Math.round(240 / speedMultiplier); // faster at 2x, slower at 1x
         </div>
 
         {/* ── CONTROL BAR ── */}
-        </div>
       </div>
       </div>
       <ControlBar 
