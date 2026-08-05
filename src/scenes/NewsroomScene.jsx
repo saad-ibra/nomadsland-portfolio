@@ -332,7 +332,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
       const isMobile = window.innerWidth < 768;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
       const availableHeight = window.innerHeight - consoleHeight;
-      setScale(Math.max(1, Math.floor(Math.min(window.innerWidth / INTERNAL_W, availableHeight / INTERNAL_H))));
+      setScale(Math.max(1, Math.floor(Math.min(window.innerWidth / internalW, availableHeight / internalH))));
     }
     resize();
     window.addEventListener("resize", resize);
@@ -368,6 +368,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
     };
     window.addEventListener("keydown", resume);
     window.addEventListener("click", resume);
+    window.addEventListener("touchstart", resume);
+    window.addEventListener("pointerdown", resume);
 
     const onDown = (e) => {
       keysRef.current[e.key.toLowerCase()] = true;
@@ -402,6 +404,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
       window.removeEventListener("keyup", onUp);
       window.removeEventListener("keydown", resume);
       window.removeEventListener("click", resume);
+      window.removeEventListener("touchstart", resume);
+      window.removeEventListener("pointerdown", resume);
     };
   }, [nearObject, phase]);
 
@@ -414,7 +418,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
   const tt = (0.14 / speedMultiplier).toFixed(2);
 
   const activeArticle = layout.articles.find(r => r.id === nearObject);
-  const introLine = `Welcome to the Editorial Office. Hot off the presses. Walk up to the bulletin board and press SPACE to read.`;
+  const introLine = `Welcome to the Editorial Office. Hot off the presses. Walk up to the bulletin board and press SPACE/A to read.`;
 
   // ---- Render ----
   return (
@@ -584,7 +588,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
               <div style={{
                 fontSize: 5, color: "#000", background: "#fff",
                 padding: "2px 4px"
-              }}>SPACE</div>
+              }}>SPACE/A</div>
             </div>
           )}
 
@@ -614,7 +618,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                     boxShadow: "4px 4px 0 #888", display: "flex", alignItems: "center"
                   }}
                 >
-                  <span style={{ fontSize: 5, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE</span>
+                  <span style={{ fontSize: 5, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE/A</span>
                   GET TO WORK
                 </button>
               </div>
@@ -691,7 +695,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                 className="news-scroll"
                 style={{
                   background: "#fff", border: "6px solid #000",
-                  width: 350, maxWidth: "95%", maxHeight: INTERNAL_H - 20,
+                  width: 350, maxWidth: "95%", maxHeight: internalH - 20,
                   boxShadow: "12px 12px 0 rgba(0,0,0,0.8)",
                   overflow: "hidden", display: "flex", flexDirection: "column",
                 }}
