@@ -372,7 +372,16 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
     window.addEventListener("pointerdown", resume);
 
     const onDown = (e) => {
-      keysRef.current[e.key.toLowerCase()] = true;
+      const k = e.key.toLowerCase();
+      keysRef.current[k] = true;
+
+      if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) {
+        if (phase === "intro") {
+          e.preventDefault();
+          setPhase("free");
+          return;
+        }
+      }
 
       if (phase === "intro" && (e.key === " " || e.key === "Enter" || e.key === "Escape")) {
         e.preventDefault();

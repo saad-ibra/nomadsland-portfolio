@@ -158,14 +158,17 @@ export default function ControlBar({
           paddingBottom: isDesktopLandscape ? 0 : 16 
         }}>
           <PillBtn 
-            label={musicMuted || !musicPlaying ? "MUSIC:OFF" : "MUSIC:ON"} 
-            onClick={onTogglePlay} 
+            label={musicMuted || !musicPlaying ? "AUDIO:OFF" : "AUDIO:ON"} 
+            onClick={() => {
+              const audioWasOff = musicMuted || !musicPlaying;
+              onTogglePlay();
+              if (audioWasOff && sfxMuted) {
+                 setSfxMuted(toggleSfxMuted());
+              } else if (!audioWasOff && !sfxMuted) {
+                 setSfxMuted(toggleSfxMuted());
+              }
+            }} 
             active={musicPlaying && !musicMuted}
-          />
-          <PillBtn 
-            label={sfxMuted ? "SFX:OFF" : "SFX:ON"} 
-            onClick={() => setSfxMuted(toggleSfxMuted())} 
-            active={!sfxMuted}
           />
           <PillBtn 
             label={`SPD:${speedMultiplier}X`} 
