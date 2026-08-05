@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import GameBoyBezel from '../components/ui/GameBoyBezel';
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
@@ -697,10 +698,11 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         imageRendering: "pixelated",
       }}>
         {/* Scaled Game Container (4:3) */}
+        <GameBoyBezel>
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#000",
-          boxShadow: "0 0 0 4px #1a1a28, 0 8px 32px rgba(0,0,0,0.8)",
+          boxShadow: "inset 0 0 8px rgba(0,0,0,0.8)",
           imageRendering: "pixelated",
         }}>
           {/* World container - moves opposite to camera */}
@@ -900,10 +902,12 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
             </div>
           )}
         </div>
+        </GameBoyBezel>
+      </div>
       </div>
         
       {/* ── CONTROL BAR ── */}
-      </div>
+      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
       <ControlBar
         musicPlaying={musicPlaying}
         musicMuted={musicMuted}
@@ -913,6 +917,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         onChangeVolume={setMusicVolume}
         onChangeSpeed={setSpeedMultiplier}
       />
+      </div>
     </div>
   );
 }

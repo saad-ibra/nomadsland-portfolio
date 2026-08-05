@@ -448,7 +448,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#1a1e24",
-          boxShadow: "0 0 0 4px #2a3036, 0 8px 32px rgba(0,0,0,0.9)",
+          boxShadow: "0 0 0 4px #222",
           imageRendering: "pixelated",
         }}>
 
@@ -773,8 +773,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
         {/* ── CONTROL BAR ── */}
         
 
+        </div>
       </div>
-    </div>
       <ControlBar
           
           musicPlaying={musicPlaying}

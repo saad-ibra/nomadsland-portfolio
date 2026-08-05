@@ -179,7 +179,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, onGoToMu
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div>
             </button>
           </div>
-        </div>
+          </div>
       </div>
       <ControlBar
         musicPlaying={musicPlaying} musicMuted={musicMuted} musicVolume={musicVolume} speedMultiplier={speedMultiplier}

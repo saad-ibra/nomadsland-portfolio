@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Music, VolumeX } from "lucide-react";
 import { toggleSfxMuted, getSfxMuted } from "../../engine/sfx";
 
 export default function ControlBar({
@@ -37,8 +38,9 @@ export default function ControlBar({
     <button
       onPointerDown={(e) => { e.preventDefault(); simulateKey(keyName, "keydown"); }}
       onPointerUp={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-      onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
       onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onPointerOut={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onContextMenu={(e) => e.preventDefault()}
       style={{
         gridArea,
         background: "#1c1c1c",
@@ -59,11 +61,12 @@ export default function ControlBar({
       <button
         onPointerDown={(e) => { e.preventDefault(); simulateKey(keyName, "keydown"); }}
         onPointerUp={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-        onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
         onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onPointerOut={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onContextMenu={(e) => e.preventDefault()}
         style={{
-          width: isMobile ? 56 : 56,
-          height: isMobile ? 56 : 56,
+          width: isMobile ? 48 : 56,
+          height: isMobile ? 48 : 56,
           borderRadius: "50%",
           background: "#9a2a3e",
           border: "none",
@@ -103,10 +106,13 @@ export default function ControlBar({
       borderLeft: isDesktopLandscape ? "4px solid #b0b0a0" : "none",
       boxShadow: "inset 0 8px 12px rgba(255,255,255,0.5)",
       display: "flex", flexDirection: "column",
-      padding: isDesktopLandscape ? "48px 32px" : (isMobile ? "24px 16px" : "32px 64px"),
+      padding: isDesktopLandscape ? "48px 32px" : (isMobile ? "16px 8px" : "32px 64px"),
       boxSizing: "border-box",
       zIndex: 10000,
-      overflow: "hidden"
+      overflow: "hidden",
+      userSelect: "none",
+      WebkitUserSelect: "none",
+      WebkitTouchCallout: "none",
     }}>
       
       {/* Decorative Speaker Lines */}
@@ -129,8 +135,8 @@ export default function ControlBar({
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
           gridTemplateRows: "1fr 1fr 1fr",
-          width: isMobile ? 120 : 160,
-          height: isMobile ? 120 : 160,
+          width: isMobile ? 100 : 160,
+          height: isMobile ? 100 : 160,
           flexShrink: 0,
           gridTemplateAreas: `
             ". top ."
@@ -148,19 +154,17 @@ export default function ControlBar({
 
         {/* Start / Select Settings */}
         <div style={{ 
-          display: "flex", gap: isMobile ? 8 : 16, 
+          display: "flex", gap: isMobile ? 4 : 16, 
           alignSelf: isDesktopLandscape ? "center" : "flex-end", 
           paddingBottom: isDesktopLandscape ? 0 : 16 
         }}>
           <PillBtn 
-            label={musicMuted || !musicPlaying ? "MUSIC:OFF" : "MUSIC:ON"} 
-            onClick={onTogglePlay} 
+            label={musicMuted || !musicPlaying ? <VolumeX size={12} /> : <Music size={12} />} 
+            onClick={() => {
+              onTogglePlay();
+              setSfxMuted(toggleSfxMuted());
+            }} 
             active={musicPlaying && !musicMuted}
-          />
-          <PillBtn 
-            label={sfxMuted ? "SFX:OFF" : "SFX:ON"} 
-            onClick={() => setSfxMuted(toggleSfxMuted())} 
-            active={!sfxMuted}
           />
           <PillBtn 
             label={`SPD:${speedMultiplier}X`} 
@@ -171,14 +175,14 @@ export default function ControlBar({
 
         {/* A / B Buttons */}
         <div style={{ 
-          display: "flex", gap: 16, transform: "rotate(-15deg)", 
+          display: "flex", gap: isMobile ? 12 : 16, transform: "rotate(-15deg)", 
           alignSelf: isDesktopLandscape ? "center" : "center", 
           marginRight: isDesktopLandscape || isMobile ? 0 : 24, flexShrink: 0 
         }}>
-          <div style={{ marginTop: 32 }}>
+          <div style={{ marginTop: isMobile ? 24 : 32 }}>
             <ActionBtn label="B" keyName="Escape" />
           </div>
-          <div style={{ marginBottom: 32 }}>
+          <div style={{ marginBottom: isMobile ? 24 : 32 }}>
             <ActionBtn label="A" keyName=" " />
           </div>
         </div>
