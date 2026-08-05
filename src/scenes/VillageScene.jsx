@@ -1258,7 +1258,7 @@ export default function VillageScene({ isLandscape, previousScene,
       visibleTiles.push(
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
-          width: TILE, height: TILE, background: bg,
+          width: TILE + 1, height: TILE + 1, background: bg,
           zIndex: (isSailing && (tile === 10 || tile === 11)) ? r * 10 + 6 : undefined,
         }}>
           {content}

@@ -511,8 +511,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
               }
               return (
                 <div key={`${r}-${c}`} style={{
-                  position: "absolute", left: c*TILE, top: r*TILE,
-                  width: TILE, height: TILE, background: bg, boxShadow: bx,
+                  position: "absolute", left: c * TILE, top: r * TILE,
+                  width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,
                 }} />
               );
             }))}
