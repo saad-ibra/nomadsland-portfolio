@@ -119,7 +119,7 @@ code {
 
 
 
-body::after {
+body:not(.no-crt)::after {
   content: "";
   position: fixed;
   inset: 0;

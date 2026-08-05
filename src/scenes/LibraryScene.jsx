@@ -727,7 +727,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#000",
-          boxShadow: "0 0 0 4px #1a1a28, 0 8px 32px rgba(0,0,0,0.8)",
+          boxShadow: "inset 0 0 8px rgba(0,0,0,0.8)",
           imageRendering: "pixelated",
         }}>
           {/* World container - moves opposite to camera */}
@@ -928,9 +928,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
           )}
         </div>
       </div>
-        
+
       {/* ── CONTROL BAR ── */}
-      </div>
       <ControlBar
         musicPlaying={musicPlaying}
         musicMuted={musicMuted}
@@ -940,6 +939,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         onChangeVolume={setMusicVolume}
         onChangeSpeed={setSpeedMultiplier}
       />
+    </div>
     </div>
   );
 }
