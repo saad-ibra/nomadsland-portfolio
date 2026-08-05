@@ -1,11 +1,12 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { DoorOpen } from "lucide-react";
-import { TILE, MOVE_COOLDOWN } from "../engine/constants";
+import { TILE, MOVE_COOLDOWN } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
-import { playWaterSlosh, playGrassStep, playDirtStep, playWoodStep } from "../engine/sfx";
+import { playWaterSlosh, playGrassStep, playDirtStep, playWoodStep, playTileStep } from "../engine/sfx";
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import ControlBar from "../components/ui/ControlBar";
+import SaadSprite from "../components/sprites/SaadSprite";
 import {
   MAP, MAP_COLS, MAP_ROWS, SHOPS, SHOP_TILES, START_POS,
   PALETTE,
@@ -602,8 +603,12 @@ export default function VillageScene({ isLandscape, previousScene,
   const [internalH, setInternalH] = useState(288);
         
   const [isSailing, setIsSailing] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const [boatPos, setBoatPos] = useState({ col: 27.5, row: 28 });
   const [wakes, setWakes] = useState([]);
+  
+  const [mountTime] = useState(() => Date.now());
+  const [sailStartTime, setSailStartTime] = useState(0);
 
   useEffect(() => {
     if (wakes.length > 0) {
@@ -614,6 +619,8 @@ export default function VillageScene({ isLandscape, previousScene,
 
   const canWalk = useCallback((c, r) => {
     if (c < 0 || c >= MAP_COLS || r < 0 || r >= MAP_ROWS) return false;
+    if (c === 11 && r === 26) return false; // Saad NPC
+    if (!isSailing && c >= 14 && c <= 19 && r === 8) return false; // Block top bridge to music room
     if (!isSailing && SHOP_TILES.has(`${c},${r}`)) return false; // doors
 
     const t = MAP[r][c];
@@ -672,20 +679,34 @@ export default function VillageScene({ isLandscape, previousScene,
       if (!isSailing) {
         if (pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1) {
           setIsSailing(true);
+          setSailStartTime(Date.now());
           return;
         }
+        
+        const nx = pos.col + (facing === "right" ? 1 : facing === "left" ? -1 : 0);
+        const ny = pos.row + (facing === "down" ? 1 : facing === "up" ? -1 : 0);
+        
+        if (nx === 11 && ny === 26) {
+          setPhase("intro");
+          return;
+        }
+        if (nx >= 14 && nx <= 19 && ny === 8) {
+          setShowComingSoon(true);
+          return;
+        }
+
         if (nearShop) {
           const shop = SHOPS.find(s => s.id === nearShop);
           if (shop && sceneCallbacks[shop.scene]) sceneCallbacks[shop.scene]();
         }
       } else {
-        // Drop anchor if next to a dock (Bridge = 10)
+        // Drop anchor if next to a dock (Bridge = 10, Dock = 11)
         const adjs = [
           { c: pos.col, r: pos.row - 1 }, { c: pos.col, r: pos.row + 1 },
           { c: pos.col - 1, r: pos.row }, { c: pos.col + 1, r: pos.row },
         ];
         for (const adj of adjs) {
-          if (MAP[adj.r]?.[adj.c] === 10) {
+          if (MAP[adj.r]?.[adj.c] === 11) {
             setBoatPos({ col: pos.col - 0.5, row: pos.row });
             setIsSailing(false);
             return;
@@ -695,6 +716,15 @@ export default function VillageScene({ isLandscape, previousScene,
     },
     onCancel: () => setNearShop(null)
   });
+
+  // Rescue player if they reload the page while sailing (which leaves them stranded in water with isSailing=false)
+  useEffect(() => {
+    const tile = MAP[pos.row]?.[pos.col];
+    if (tile === 4 || tile === 10) { // Water or Bridge
+      setPos({ col: 27, row: 27 }); // Place them right outside the dock
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [cam, setCam] = useState({ x: initialPos.col * TILE - internalW/2, y: initialPos.row * TILE - internalH/2 });
 
@@ -795,11 +825,14 @@ export default function VillageScene({ isLandscape, previousScene,
 
   useEffect(() => {
     const resize = () => {
-      // Force integer scaling (1x, 2x, 3x) for pixel-perfect retro rendering
       const isMobile = window.innerWidth < 768;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
       const availableHeight = window.innerHeight - consoleHeight;
-      const newScale = Math.max(1, Math.floor(Math.min(window.innerWidth / INTERNAL_W, availableHeight / INTERNAL_H)));
+      const baseW = 384;
+      const baseH = 288;
+      const newScale = Math.max(1, Math.floor(Math.min(window.innerWidth / baseW, availableHeight / baseH)));
+      setInternalW(Math.floor(window.innerWidth / newScale));
+      setInternalH(Math.floor(availableHeight / newScale));
       setScale(newScale);
     };
     resize();
@@ -814,22 +847,31 @@ export default function VillageScene({ isLandscape, previousScene,
       if (musicRef.current.audioCtx.state === "suspended") musicRef.current.audioCtx.resume();
     };
     const onIntroDismiss = (e) => {
-      if (phase === "intro" && (e.key === " " || e.key === "Enter")) {
-        e.preventDefault();
-        setPhase("free");
+      if ((e.key === " " || e.key === "Enter")) {
+        if (phase === "intro") {
+          e.preventDefault();
+          setPhase("free");
+        } else if (showComingSoon) {
+          e.preventDefault();
+          setShowComingSoon(false);
+        }
       }
     };
 
     window.addEventListener("keydown", resume);
     window.addEventListener("click", resume);
+    window.addEventListener("touchstart", resume);
+    window.addEventListener("pointerdown", resume);
     window.addEventListener("keydown", onIntroDismiss);
 
     return () => {
       window.removeEventListener("keydown", resume);
       window.removeEventListener("click", resume);
+      window.removeEventListener("touchstart", resume);
+      window.removeEventListener("pointerdown", resume);
       window.removeEventListener("keydown", onIntroDismiss);
     };
-  }, [phase]);
+  }, [phase, showComingSoon]);
 
   // Smooth Camera Lerp
   useEffect(() => {
@@ -859,16 +901,16 @@ export default function VillageScene({ isLandscape, previousScene,
 
   // Virtualization
   const startCol = Math.max(0, Math.floor(cam.x / TILE) - 2);
-  const endCol = Math.min(MAP_COLS, Math.floor((cam.x + INTERNAL_W) / TILE) + 3);
+  const endCol = Math.min(MAP_COLS, Math.floor((cam.x + internalW) / TILE) + 3);
   const startRow = Math.max(0, Math.floor(cam.y / TILE) - 2);
-  const endRow = Math.min(MAP_ROWS, Math.floor((cam.y + INTERNAL_H) / TILE) + 3);
+  const endRow = Math.min(MAP_ROWS, Math.floor((cam.y + internalH) / TILE) + 3);
 
   const activeShop = SHOPS.find(s => s.id === nearShop);
   const isOnBoat = !isSailing && pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
   const isNearDockWhileSailing = isSailing && [
     { c: pos.col, r: pos.row - 1 }, { c: pos.col, r: pos.row + 1 },
     { c: pos.col - 1, r: pos.row }, { c: pos.col + 1, r: pos.row },
-  ].some(adj => MAP[adj.r]?.[adj.c] === 10);
+  ].some(adj => MAP[adj.r]?.[adj.c] === 11);
 
   const getBoatTransform = () => {
     if (!isSailing) return "none";
@@ -1106,7 +1148,53 @@ export default function VillageScene({ isLandscape, previousScene,
             ))}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
             <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
           </>
+        );
+      }
+
+      // Saad NPC
+      if (r === 26 && c === 11) {
+        content = (
+          <>
+            {content}
+            <div style={{ position: "absolute", bottom: 4, left: 0 }}>
+              <SaadSprite direction="down" />
+            </div>
+            {pos.col === 11 && pos.row === 27 && facing === "up" && (
+              <div style={{
+                position: "absolute", top: -8, left: "50%", transform: "translateX(-50%)",
+                background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "2px 4px",
+                fontFamily: "'Press Start 2P', monospace", fontSize: 4, color: "#000",
+                animation: "bounce 1s infinite", zIndex: 100
+              }}>
+                ?
+              </div>
+            )}
+          </>
+        );
+      }
+
+      // Render a "Construction Sign" on the bridge entrance
+      if (r === 8 && c === 14) {
+        visibleTiles.push(
+          <div key="bridge-sign" style={{
+            position: "absolute", left: 14 * TILE + 4, top: 8 * TILE + 4,
+            width: TILE * 6 - 8, height: TILE - 8, 
+            background: "repeating-linear-gradient(45deg, #ffcc00, #ffcc00 4px, #222 4px, #222 8px)",
+            border: "2px solid #111",
+            borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.8)",
+            zIndex: 8 * 10 + 5,
+          }}>
+            <div style={{
+              background: "#111", color: "#ffcc00", fontSize: 4,
+              fontFamily: "'Press Start 2P', monospace", padding: "2px 4px",
+              border: "1px solid #ffcc00", borderRadius: 2
+            }}>
+              UNDER CONSTRUCTION
+            </div>
+          </div>
         );
       }
 
@@ -1170,6 +1258,8 @@ export default function VillageScene({ isLandscape, previousScene,
               position: "absolute", left: pos.col * TILE, top: pos.row * TILE, width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,
+              animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
+              animationDelay: isSailing ? `-${(sailStartTime - mountTime) % 4000}ms` : "0ms",
             }}>
               {/* Pixel drop shadow */}
               <div style={{ position: "absolute", bottom: 2, left: "50%", marginLeft: -7, width: 14, height: 4, background: "rgba(0,0,0,0.25)", zIndex: -1 }} />
@@ -1197,9 +1287,9 @@ export default function VillageScene({ isLandscape, previousScene,
               top: (isSailing ? pos.row : boatPos.row) * TILE,
               width: TILE * 2, height: TILE * 1.5,
               animation: "floatBoat 4s ease-in-out infinite",
-              zIndex: (isSailing ? pos.row : boatPos.row) * 10 + 2, // Sort behind player on boat (285)
+              zIndex: (isSailing ? pos.row : boatPos.row) * 10 + 8, // Sort in front of player on boat
               pointerEvents: "auto", cursor: "pointer",
-            }} onClick={() => { if (!isSailing) alert("Press SPACE to Sail!"); }}>
+            }} onClick={() => { if (!isSailing) alert("Press SPACE/A to Sail!"); }}>
               <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
                 {(!isSailing || facing === "left" || facing === "right") && (
                   <div style={{ position: "absolute", bottom: 4, left: 4, width: TILE*2 - 8, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 14px 14px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
@@ -1220,7 +1310,7 @@ export default function VillageScene({ isLandscape, previousScene,
               top: (isSailing ? pos.row : boatPos.row) * TILE,
               width: TILE * 2, height: TILE * 1.5,
               animation: "floatBoat 4s ease-in-out infinite",
-              zIndex: (isSailing ? pos.row : boatPos.row) * 10 + 8, // Sort in front of player on boat (285)
+              zIndex: (isSailing ? pos.row : boatPos.row) * 10 + 2, // Sort behind player on boat
               pointerEvents: "none",
             }}>
               <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
@@ -1248,15 +1338,15 @@ export default function VillageScene({ isLandscape, previousScene,
 
           </div>
 
-          {/* ── NIGHT OVERLAY ── */}
+          {/* ── DUSK OVERLAY ── */}
           <div style={{
             position: "absolute", inset: 0,
-            background: "#182040", mixBlendMode: "multiply", opacity: 0.8,
+            background: "#ff8a50", mixBlendMode: "multiply", opacity: 0.4,
             pointerEvents: "none", zIndex: 4000,
           }} />
           <div style={{
             position: "absolute", inset: 0,
-            background: "#08102a", mixBlendMode: "overlay", opacity: 0.4,
+            background: "#603080", mixBlendMode: "overlay", opacity: 0.3,
             pointerEvents: "none", zIndex: 4001,
           }} />
 
@@ -1287,11 +1377,11 @@ export default function VillageScene({ isLandscape, previousScene,
                   return <rect key={`${ry}-${cx}`} x={cx} y={ry} width={1} height={1} fill={fill} />;
                 }))}
                 {/* Building markers — clickable */}
-                {SHOPS.map(shop => {
+                {SHOPS.filter(s => s.id !== "musicroom").map(shop => {
                   const colors = {
                     newsroom: "#d84040", library: "#8a40d8",
                     musicroom: "#d88a40", lab: "#40d860",
-                    nomadshome: "#408ad8",
+                    nomadshome: "#408ad8", dock: "#a07040",
                   };
                   return (
                     <rect
@@ -1301,9 +1391,20 @@ export default function VillageScene({ isLandscape, previousScene,
                       fill={colors[shop.id] || "#fff"}
                       stroke="#fff" strokeWidth={0.3}
                       style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        setPos({ col: shop.col, row: shop.row + 1 });
-                        setNearShop(shop.id);
+                      onPointerDown={(e) => {
+                        e.preventDefault();
+                        if (isSailing) {
+                          setIsSailing(false);
+                          setBoatPos({ col: 27.5, row: 28 });
+                        }
+                        if (shop.id === "musicroom") {
+                          setPos({ col: 13, row: 8 });
+                        } else if (shop.id === "dock") {
+                          setPos({ col: 27, row: 27 });
+                        } else {
+                          setPos({ col: shop.col, row: shop.row + 1 });
+                        }
+                        setNearShop(shop.id === "dock" ? null : shop.id);
                       }}
                     />
                   );
@@ -1327,7 +1428,7 @@ export default function VillageScene({ isLandscape, previousScene,
                 {isOnBoat && <span>SAIL BOAT</span>}
                 {isNearDockWhileSailing && <span>DROP ANCHOR</span>}
               </div>
-              <div style={{ fontSize: 5, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2 }}>SPACE</div>
+              <div style={{ fontSize: 5, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2 }}>SPACE/A</div>
             </div>
           )}
 
@@ -1347,12 +1448,12 @@ export default function VillageScene({ isLandscape, previousScene,
                 <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
               </div>
               <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
-                <button onClick={() => setPhase("free")} style={{
+                <button onPointerDown={(e) => { e.preventDefault(); setPhase("free"); }} style={{
                   fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#408ad8", color: "#fff",
                   border: "2px solid #302820", padding: "6px 12px", borderRadius: 4, cursor: "pointer",
                   boxShadow: "0 2px 0 #302820", display: "flex", alignItems: "center",
                 }}>
-                  <span style={{ fontSize: 5, color: "#302820", marginRight: 8, background: "rgba(255,255,255,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE</span>
+                  <span style={{ fontSize: 5, color: "#302820", marginRight: 8, background: "rgba(255,255,255,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
                   LET'S GO!
                 </button>
               </div>
