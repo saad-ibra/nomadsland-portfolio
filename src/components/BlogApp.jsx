@@ -95,7 +95,7 @@ export default function BlogApp() {
             margin: '0 0 10px',
             lineHeight: 1
           }}>
-            The Nomadsland Gazette
+            The Nomad's Land Gazette
           </h1>
           <div style={{
             display: 'flex',

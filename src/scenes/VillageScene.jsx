@@ -829,19 +829,21 @@ export default function VillageScene({ isLandscape, previousScene,
   useEffect(() => {
     const resize = () => {
       const isMobile = window.innerWidth < 768;
+      const consoleWidth = isLandscape ? 320 : 0;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
+      const availableWidth = window.innerWidth - consoleWidth;
       const availableHeight = window.innerHeight - consoleHeight;
       const baseW = 256;
       const baseH = 192;
-      const newScale = Math.max(1, Math.floor(Math.min(window.innerWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(window.innerWidth / newScale));
+      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
+      setInternalW(Math.floor(availableWidth / newScale));
       setInternalH(Math.floor(availableHeight / newScale));
       setScale(newScale);
     };
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
-  }, []);
+  }, [isLandscape]);
 
 
   useEffect(() => {

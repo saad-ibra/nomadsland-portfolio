@@ -93,6 +93,41 @@ function App() {
     isLandscape
   };
 
+  const renderScene = () => {
+    switch(scene) {
+      case 'village':
+        return (
+          <VillageScene
+            previousScene={previousScene}
+            onGoToLibrary={() => changeScene('library')}
+            onGoToLab={() => changeScene('lab')}
+            onGoToNewsroom={() => changeScene('newsroom')}
+            onGoToNomadshome={() => changeScene('nomadshome')}
+            onGoToMusicRoom={() => changeScene('musicroom')}
+            {...sceneProps}
+          />
+        );
+      case 'library':
+        return <LibraryScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
+      case 'lab':
+        return <ChemistryLabScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
+      case 'newsroom':
+        return <NewsroomScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
+      case 'nomadshome':
+        return <NomadshomeScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
+      case 'musicroom':
+        return (
+          <MusicRoomScene 
+            onBackToVillage={() => changeScene('village')} 
+            onGoToNomadshome={() => changeScene('nomadshome')}
+            {...sceneProps} 
+          />
+        );
+      default:
+        return <NomadshomeScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
+    }
+  };
+
   return (
     <div style={{
       minHeight: '100vh',
