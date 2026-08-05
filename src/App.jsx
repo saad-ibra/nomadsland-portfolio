@@ -5,7 +5,6 @@ import ChemistryLabScene from './scenes/ChemistryLabScene.jsx';
 import NewsroomScene from './scenes/NewsroomScene.jsx';
 import NomadshomeScene from './scenes/NomadshomeScene.jsx';
 import MusicRoomScene from './scenes/MusicRoomScene.jsx';
-import BlogSpace from './components/BlogSpace.jsx';
 import './App.css';
 
 import { getSharedAudioCtx } from './engine/sfx.js';
@@ -50,13 +49,6 @@ document.addEventListener("visibilitychange", () => {
 });
 
 function App() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const isBlog = urlParams.get('view') === 'blog';
-
-  if (isBlog) {
-    return <BlogSpace />;
-  }
-
   const [scene, setScene] = useState(() => localStorage.getItem("currentScene") || 'nomadshome');
   const [previousScene, setPreviousScene] = useState(null);
   const [fading, setFading] = useState(false);

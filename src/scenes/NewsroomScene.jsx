@@ -765,11 +765,18 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                     <span>|</span>
                     <span>{openPost.readTime}</span>
                   </div>
-                  <button onClick={() => setOpenPost(null)} style={{
-                      fontFamily: "'Press Start 2P', monospace", fontSize: 6,
-                      background: "#000", color: "#fff", border: "none",
-                      padding: "2px 5px", cursor: "pointer",
-                    }}>CLOSE</button>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button onClick={() => window.location.href = '/blogs/'} style={{
+                        fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+                        background: "#fff", color: "#000", border: "1px solid #000",
+                        padding: "2px 5px", cursor: "pointer",
+                      }}>READ IN NEWSPAPER</button>
+                    <button onClick={() => setOpenPost(null)} style={{
+                        fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+                        background: "#000", color: "#fff", border: "none",
+                        padding: "2px 5px", cursor: "pointer",
+                      }}>CLOSE</button>
+                  </div>
                 </div>
 
                 {/* Scrollable content (Columns) */}
