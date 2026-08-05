@@ -393,6 +393,8 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
   const [openStation,    setOpenStation]    = useState(null);
   const [phase,          setPhase]          = useState("intro");
   const [scale,          setScale]          = useState(1);
+  const [internalW,      setInternalW]      = useState(384);
+  const [internalH,      setInternalH]      = useState(288);
         
   useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
   useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
@@ -509,7 +511,12 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
       const isMobile = window.innerWidth < 768;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
       const availableHeight = window.innerHeight - consoleHeight;
-      setScale(Math.max(1, Math.floor(Math.min(window.innerWidth / internalW, availableHeight / internalH))));
+      const baseW = 384;
+      const baseH = 288;
+      const newScale = Math.max(1, Math.floor(Math.min(window.innerWidth / baseW, availableHeight / baseH)));
+      setInternalW(Math.floor(window.innerWidth / newScale));
+      setInternalH(Math.floor(availableHeight / newScale));
+      setScale(newScale);
     }
     resize();
     window.addEventListener("resize", resize);
