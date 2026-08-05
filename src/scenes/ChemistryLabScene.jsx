@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import GameBoyBezel from '../components/ui/GameBoyBezel';
 import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-react";
 import { TILE } from '../engine/constants';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
@@ -606,7 +605,6 @@ const ms = Math.round(240 / speedMultiplier); // faster at 2x, slower at 1x
       }}>
 
         {/* ── GAME VIEWPORT ── */}
-        <GameBoyBezel>
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#070e16",
@@ -875,9 +873,7 @@ const ms = Math.round(240 / speedMultiplier); // faster at 2x, slower at 1x
         </div>
 
         {/* ── CONTROL BAR ── */}
-        
-
-        </GameBoyBezel>
+        </div>
       </div>
       </div>
       <ControlBar 

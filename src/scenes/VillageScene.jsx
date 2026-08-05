@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import GameBoyBezel from '../components/ui/GameBoyBezel';
 import { DoorOpen } from "lucide-react";
 import { TILE, MOVE_COOLDOWN, INTERNAL_W, INTERNAL_H } from "../engine/constants";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";

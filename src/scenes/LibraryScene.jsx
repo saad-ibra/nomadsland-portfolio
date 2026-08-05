@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import GameBoyBezel from '../components/ui/GameBoyBezel';
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
@@ -698,7 +697,6 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         imageRendering: "pixelated",
       }}>
         {/* Scaled Game Container (4:3) */}
-        <GameBoyBezel>
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#000",
@@ -902,7 +900,6 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
             </div>
           )}
         </div>
-        </GameBoyBezel>
       </div>
 
       {/* ── CONTROL BAR ── */}
