@@ -619,7 +619,7 @@ export default function VillageScene({ isLandscape, previousScene,
 
   const canWalk = useCallback((c, r) => {
     if (c < 0 || c >= MAP_COLS || r < 0 || r >= MAP_ROWS) return false;
-    if (c === 11 && r === 26) return false; // Saad NPC
+    if (c === 8 && r === 21) return false; // Saad NPC
     if (!isSailing && c >= 14 && c <= 19 && r === 8) return false; // Block top bridge to music room
     if (!isSailing && SHOP_TILES.has(`${c},${r}`)) return false; // doors
 
@@ -688,7 +688,7 @@ export default function VillageScene({ isLandscape, previousScene,
         const nx = pos.col + (facing === "right" ? 1 : facing === "left" ? -1 : 0);
         const ny = pos.row + (facing === "down" ? 1 : facing === "up" ? -1 : 0);
         
-        if (nx === 11 && ny === 26) {
+        if (nx === 8 && ny === 21) {
           setPhase("intro");
           return;
         }
@@ -1157,14 +1157,14 @@ export default function VillageScene({ isLandscape, previousScene,
       }
 
       // Saad NPC
-      if (r === 26 && c === 11) {
+      if (r === 21 && c === 8) {
         content = (
           <>
             {content}
             <div style={{ position: "absolute", bottom: 4, left: 0 }}>
               <SaadSprite direction="down" />
             </div>
-            {pos.col === 11 && pos.row === 27 && facing === "up" && (
+            {pos.col === 8 && pos.row === 22 && facing === "up" && (
               <div style={{
                 position: "absolute", top: -8, left: "50%", transform: "translateX(-50%)",
                 background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "2px 4px",
