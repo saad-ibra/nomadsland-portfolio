@@ -534,17 +534,18 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       const isMobile = window.innerWidth < 768;
       const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
       const availableHeight = window.innerHeight - consoleHeight;
+      const availableWidth = isLandscape ? (window.innerWidth - 320) : window.innerWidth;
       const baseW = 384;
       const baseH = 288;
-      const newScale = Math.max(1, Math.floor(Math.min(window.innerWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(window.innerWidth / newScale));
+      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
+      setInternalW(Math.floor(availableWidth / newScale));
       setInternalH(Math.floor(availableHeight / newScale));
       setScale(newScale);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [isLandscape]);
 
   // ---- Keyboard & Audio Resume ----
   useEffect(() => {
@@ -940,6 +941,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         </div>
       </div>
 
+      </div>
       {/* ── CONTROL BAR ── */}
       <ControlBar
         musicPlaying={musicPlaying}
@@ -950,7 +952,6 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         onChangeVolume={setMusicVolume}
         onChangeSpeed={setSpeedMultiplier}
       />
-    </div>
     </div>
   );
 }
