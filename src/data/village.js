@@ -44,9 +44,9 @@ const layout = [
   "~C..f..p.....CTTT~~~OOOOOOpOOOOOOO~~",
   "~C...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
   "~C...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
-  "~C...HHHHH...C~~~~~~~~~~~~BBBB~~~~~~",
-  "~C...........C~~~~~~~~~~~~B..B~~~~~~",
-  "~C...........C~~~~~~~~~~~~BBBB~~~~~~",
+  "~C...HHHHH...C~~~~~~~~~~~~DDDD~~~~~~",
+  "~C...........C~~~~~~~~~~~~D..D~~~~~~",
+  "~C...........C~~~~~~~~~~~~DDDD~~~~~~",
   "~CCCCCCCCCCCCC~~~~~~~~~~~~~~~~~~~~~~",
   "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
   "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
@@ -65,9 +65,10 @@ const charToType = {
   'C': 8,  // cliff
   'S': 9,  // stairs
   'B': 10, // bridge
+  'D': 11, // dock
 };
 
-export const MAP = layout.map(row => row.split('').map(char => charToType[char] ?? 4));
+export const MAP = layout.map(row => row.split('').map(char => charToType[char] ?? (char === 'D' ? 11 : 4)));
 
 /**
  * Shop Definitions — each door sits at the bottom-center tile of the 5×3 H block
@@ -78,11 +79,11 @@ export const SHOPS = [
     label: "THE PRESS", scene: "newsroom",
   },
   {
-    id: "library", col: 26, row: 5,
+    id: "library", col: 13, row: 14,
     label: "LIBRARY", scene: "library",
   },
   {
-    id: "musicroom", col: 13, row: 14,
+    id: "musicroom", col: 26, row: 5,
     label: "MUSIC ROOM", scene: "musicroom",
   },
   {
@@ -93,9 +94,13 @@ export const SHOPS = [
     id: "nomadshome", col: 7, row: 25,
     label: "NOMADSHOME", scene: "nomadshome",
   },
+  {
+    id: "dock", col: 28, row: 27,
+    label: "THE DOCK", scene: null,
+  },
 ];
 
-export const SHOP_TILES = new Set(SHOPS.map(s => `${s.col},${s.row}`));
+export const SHOP_TILES = new Set(SHOPS.filter(s => s.id !== "dock").map(s => `${s.col},${s.row}`));
 
 // Player spawns just below Nomadshome door
 export const START_POS = { col: 7, row: 26 };

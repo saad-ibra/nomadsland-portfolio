@@ -1,5 +1,5 @@
 let audioCtx = null;
-let isSfxMuted = false;
+let isSfxMuted = JSON.parse(localStorage.getItem("sfxMuted") || "false");
 
 export function toggleSfxMuted() {
   isSfxMuted = !isSfxMuted;
@@ -11,20 +11,21 @@ export function getSfxMuted() {
   return isSfxMuted;
 }
 
-function initAudio() {
+export function getSharedAudioCtx() {
   if (!audioCtx) {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
+  return audioCtx;
 }
 
 // Generate white noise buffer
 let noiseBuffer = null;
 function getNoiseBuffer() {
   if (noiseBuffer) return noiseBuffer;
-  if (!audioCtx) initAudio();
+  if (!audioCtx) getSharedAudioCtx();
   const bufferSize = audioCtx.sampleRate * 2; // 2 seconds of noise
   noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
   const output = noiseBuffer.getChannelData(0);
@@ -36,7 +37,7 @@ function getNoiseBuffer() {
 
 function playNoise(volume = 0.5, duration = 0.1, bandpassFreq = null, lowpassFreq = null) {
   if (isSfxMuted) return;
-  initAudio();
+  getSharedAudioCtx();
   const noiseSource = audioCtx.createBufferSource();
   noiseSource.buffer = getNoiseBuffer();
   
@@ -73,7 +74,7 @@ function playNoise(volume = 0.5, duration = 0.1, bandpassFreq = null, lowpassFre
 
 function playOscillator(type = 'sine', freq = 440, volume = 0.5, duration = 0.1) {
   if (isSfxMuted) return;
-  initAudio();
+  getSharedAudioCtx();
   const osc = audioCtx.createOscillator();
   osc.type = type;
   
@@ -95,7 +96,7 @@ function playOscillator(type = 'sine', freq = 440, volume = 0.5, duration = 0.1)
 
 export function playWaterSlosh(volume = 0.05) {
   if (isSfxMuted) return;
-  initAudio();
+  getSharedAudioCtx();
   
   // 1. The "Splash" (Noise)
   const noiseSource = audioCtx.createBufferSource();
@@ -142,12 +143,12 @@ export function playWaterSlosh(volume = 0.05) {
   osc.stop(audioCtx.currentTime + 0.2);
 }
 
-export function playGrassStep(volume = 0.015) {
-  playNoise(volume, 0.1, 4000, 8000);
+export function playGrassStep(volume = 0.004) {
+  playNoise(volume, 0.08, 4000, 6000);
 }
 
-export function playDirtStep(volume = 0.02) {
-  playNoise(volume, 0.08, 1500, 3000);
+export function playDirtStep(volume = 0.006) {
+  playNoise(volume, 0.06, 1500, 2500);
 }
 
 export function playWoodStep(volume = 0.015) {
