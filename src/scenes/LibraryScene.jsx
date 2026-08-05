@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
+import SaadSprite from "../components/sprites/SaadSprite";
 import ExitDoor from "../components/sprites/ExitDoor";
 import { TILE } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
@@ -26,7 +27,10 @@ function isWalkable(col, row) {
   return t === 1 || t === 3;
 }
 
+const NPC_POS = { col: 8, row: 14 };
+
 function canWalk(col, row) {
+  if (col === NPC_POS.col && row === NPC_POS.row) return false;
   const coord = `${col},${row}`;
   if (SHELF_TILES.has(coord) || DECOR_TILES.has(coord)) return false;
   return isWalkable(col, row);
@@ -488,8 +492,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
     fetchShelves();
   }, []);
 
-  const introLine = "Welcome to my Library! I'm Saad Ibra. I've synced my Goodreads shelf here. Shall I show you around?";
-  const outroLine = "That's the whole collection. Explore freely with the arrow keys or WASD.";
+  const introLine = "This is my library. Every shelf here syncs with my Goodreads. Walk up to one and press SPACE to see what's on it.";
+  const outroLine = "That's all of them. Walk up to any shelf and press SPACE to browse.";
   const currentLine = phase === "intro" ? introLine
     : phase === "touring" ? (tourIndex >= 0 && tourIndex < SHELF_LAYOUT.length ? `[${shelves[tourIndex].label.toUpperCase()}]: ${SHELF_LAYOUT[tourIndex].line}` : outroLine)
     : "";
@@ -828,6 +832,20 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
 
             {/* Exit Door */}
             <ExitDoor col={EXIT_DOOR_COL} row={EXIT_DOOR_ROW} />
+
+            {/* NPC Saad */}
+            <div style={{
+              position: "absolute",
+              left: NPC_POS.col * TILE,
+              top: NPC_POS.row * TILE,
+              width: TILE, height: TILE,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              zIndex: NPC_POS.row * 10,
+              filter: (Math.abs(NPC_POS.col - pos.col) <= 1 && Math.abs(NPC_POS.row - pos.row) <= 1 && phase === "free") ? "drop-shadow(0 0 6px rgba(244,216,120,0.5))" : "none",
+              transition: "filter 0.2s",
+            }}>
+              <SaadSprite direction="right" />
+            </div>
 
             {/* Player - always at grid position */}
              <div style={{

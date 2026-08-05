@@ -1509,10 +1509,10 @@ export default function VillageScene({ isLandscape, previousScene,
               <div style={{
                 position: "absolute", top: -10, left: 10, background: "#d84040", border: "2px solid #302820",
                 padding: "2px 8px", fontSize: 6, color: "#fff", borderRadius: 2,
-              }}>NOMADSLAND</div>
+              }}>SAAD IBRA</div>
               <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#302820" }}>
-                Welcome to Nomadsland! A peaceful town full of ideas and projects.
-                <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
+                This is the village. Each building leads to a different part of my work. Walk up to any door and press SPACE to step inside.
+                <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>&#x258A;</span>
               </div>
               <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
                 <button onPointerDown={(e) => { e.preventDefault(); setPhase("free"); }} style={{
@@ -1521,7 +1521,7 @@ export default function VillageScene({ isLandscape, previousScene,
                   boxShadow: "0 2px 0 #302820", display: "flex", alignItems: "center",
                 }}>
                   <span style={{ fontSize: 5, color: "#302820", marginRight: 8, background: "rgba(255,255,255,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
-                  LET'S GO!
+                  GOT IT
                 </button>
               </div>
             </div>

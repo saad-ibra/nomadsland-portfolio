@@ -3,7 +3,9 @@ import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, ArrowDown } from "lucide-react";
 import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
+import SaadSprite from "../components/sprites/SaadSprite";
 import ControlBar from "../components/ui/ControlBar";
+import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { playWoodStep } from "../engine/sfx";
 
@@ -19,10 +21,17 @@ const MAP = Array.from({ length: MAP_ROWS }, (_, r) =>
   })
 );
 
+const NPC_POS = { col: 6, row: 8 };
+const DIALOGUE_LINES = [
+  "The studio. Not much to mess with yet, but the sound system works. Head back downstairs whenever you want.",
+];
+
 export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
   const [scale, setScale] = useState(1);
   const [internalW, setInternalW] = useState(384);
   const [internalH, setInternalH] = useState(288);
+  const [phase, setPhase] = useState("intro");
+  const [dialogueIndex, setDialogueIndex] = useState(0);
   const containerRef = useRef(null);
 
   useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
@@ -46,6 +55,7 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
 
   // Object hitboxes
   const isWalkable = (c, r) => {
+    if (c === NPC_POS.col && r === NPC_POS.row) return false;
     if (c < 1 || c >= MAP_COLS - 1 || r < 1 || r >= MAP_ROWS - 1) return false;
     // Mixing Desk
     if (c >= 9 && c <= 15 && r >= 4 && r <= 5) return false;
@@ -62,6 +72,7 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
 
   const { pos, facing, stepping } = usePlayerMovement({
     initialPos: { col: 2, row: 2 }, // spawn near stairs
+    isActive: phase === "free",
     canWalk: isWalkable,
     speedMultiplier,
     onMove: (c, r) => {
@@ -72,6 +83,14 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
       }
       playWoodStep();
       return false;
+    },
+    onAction: () => {
+      const dc = Math.abs(NPC_POS.col - pos.col);
+      const dr = Math.abs(NPC_POS.row - pos.row);
+      if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
+        setDialogueIndex(0);
+        setPhase("talking");
+      }
     }
   });
 
@@ -167,6 +186,28 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
                  {Array.from({length: 6}).map((_,i) => <div key={i} style={{ width: 12, height: 24, background: ["#FFD700", "#FF4500", "#1E90FF", "#32CD32"][i%4], border: "1px solid #000" }} />)}
               </div>
 
+              {/* NPC Saad */}
+              <div style={{
+                position: "absolute",
+                left: NPC_POS.col * TILE,
+                top: NPC_POS.row * TILE,
+                width: TILE, height: TILE,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                zIndex: NPC_POS.row * 10,
+                filter: (Math.abs(NPC_POS.col - pos.col) <= 1 && Math.abs(NPC_POS.row - pos.row) <= 1) ? "drop-shadow(0 0 6px rgba(218,165,32,0.6))" : "none",
+                transition: "filter 0.2s",
+              }}>
+                <SaadSprite direction="left" />
+                {(Math.abs(NPC_POS.col - pos.col) <= 1 && Math.abs(NPC_POS.row - pos.row) <= 1) && phase === "free" && (
+                  <div style={{
+                    position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
+                    background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "1px 4px",
+                    fontFamily: "'Press Start 2P', monospace", fontSize: 5, color: "#000",
+                    animation: "npcBounce 1s infinite", zIndex: 100,
+                  }}>!</div>
+                )}
+              </div>
+
               <div style={{
                 position: "absolute", left: pos.col * TILE, top: pos.row * TILE,
                 width: TILE, height: TILE, display: "flex", alignItems: "center", justifyContent: "center",
@@ -181,6 +222,23 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div>
             </button>
+
+            {(phase === "intro" || phase === "talking") && (
+              <DialogueBox
+                lines={DIALOGUE_LINES}
+                lineIndex={dialogueIndex}
+                onAdvance={() => setDialogueIndex(i => i + 1)}
+                onDismiss={() => setPhase("free")}
+                speaker="SAAD IBRA"
+                theme="music"
+                lastButtonLabel="GOT IT"
+              />
+            )}
+            
+            <style>{`
+              @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+              @keyframes npcBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+            `}</style>
           </div>
           </div>
       </div>
