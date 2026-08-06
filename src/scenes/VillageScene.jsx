@@ -1331,7 +1331,7 @@ export default function VillageScene({ isLandscape, previousScene,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 boxShadow: "0 2px 0 rgba(0,0,0,0.2)"
               }}>
-                <div style={{ fontSize: 6, color: "#4a2c10", fontWeight: "bold" }}>🚧</div>
+                <div style={{ fontSize: 6, color: "#4a2c10", fontWeight: "bold" }}>UC</div>
               </div>
               {/* Sign Post */}
               <div style={{ width: 4, height: 12, background: "#8e5c26" }}></div>
