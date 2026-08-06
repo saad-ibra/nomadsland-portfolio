@@ -26,6 +26,8 @@ export function usePlayerMovement({
   const keysRef = useRef({});
   const lastMoveRef = useRef(0);
   const momentumRef = useRef({ dc: 0, dr: 0, stepsLeft: 0 });
+  const turnBlockRef = useRef(false);
+  const facingRef = useRef(facing);
   const onMoveRef = useRef(onMove);
   const onActionRef = useRef(onAction);
   const onCancelRef = useRef(onCancel);
@@ -38,6 +40,10 @@ export function usePlayerMovement({
   }, [onMove, onAction, onCancel]);
 
   useEffect(() => {
+    facingRef.current = facing;
+  }, [facing]);
+
+  useEffect(() => {
     if (sceneId && pos) {
       localStorage.setItem(`pos_${sceneId}`, JSON.stringify(pos));
     }
@@ -46,6 +52,22 @@ export function usePlayerMovement({
   useEffect(() => {
     const down = (e) => {
       const k = e.key.toLowerCase();
+      
+      let isDirKey = false;
+      let pressedDir = null;
+      if (k === "arrowup" || k === "w") { isDirKey = true; pressedDir = "up"; }
+      else if (k === "arrowdown" || k === "s") { isDirKey = true; pressedDir = "down"; }
+      else if (k === "arrowleft" || k === "a") { isDirKey = true; pressedDir = "left"; }
+      else if (k === "arrowright" || k === "d") { isDirKey = true; pressedDir = "right"; }
+
+      if (isDirKey && !keysRef.current[k] && isActive) {
+        if (facingRef.current !== pressedDir) {
+          setFacing(pressedDir);
+          facingRef.current = pressedDir;
+          turnBlockRef.current = true;
+        }
+      }
+
       keysRef.current[k] = true;
 
       if (!isActive) {
@@ -74,7 +96,14 @@ export function usePlayerMovement({
     };
 
     const up = (e) => {
-      keysRef.current[e.key.toLowerCase()] = false;
+      const k = e.key.toLowerCase();
+      keysRef.current[k] = false;
+
+      const krs = keysRef.current;
+      const anyDirPressed = krs["arrowup"] || krs["w"] || krs["arrowdown"] || krs["s"] || krs["arrowleft"] || krs["a"] || krs["arrowright"] || krs["d"];
+      if (!anyDirPressed) {
+        turnBlockRef.current = false;
+      }
     };
 
     window.addEventListener("keydown", down);
@@ -124,6 +153,13 @@ export function usePlayerMovement({
       }
 
       const dir = dr < 0 ? "up" : dr > 0 ? "down" : dc < 0 ? "left" : "right";
+      
+      // If we are blocking movement because we just turned, abort here
+      if (turnBlockRef.current) {
+        setStepping(false);
+        return;
+      }
+
       setFacing(dir);
 
       const p = posRef.current;
