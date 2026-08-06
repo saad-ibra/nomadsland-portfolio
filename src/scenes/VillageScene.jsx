@@ -654,12 +654,12 @@ export default function VillageScene({ isLandscape, previousScene,
     isActive: phase === "free",
     isSailing,
     onMove: (nc, nr) => {
-      const tile = MAP[nr][nc];
       if (isSailing) {
         setBoatPos({ col: nc, row: nr });
-        if (tile === 4) setWakes(prev => [...prev.slice(-8), { c: nc, r: nr, id: Date.now() }]);
+        if (MAP[nr]?.[nc] === 4) setWakes(prev => [...prev.slice(-8), { c: nc, r: nr, id: Math.random() }]);
         playWoodStep();
       } else {
+        const tile = MAP[nr]?.[nc];
         if (tile === 4) playWoodStep();
         else if (tile === 0 || tile === 6) playGrassStep(); // Grass & flowers
         else if (tile === 1 || tile === 9) playDirtStep(); // Trail & stairs
