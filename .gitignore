@@ -3,3 +3,14 @@ node_modules
 .env.local
 dist
 .vite
+# Temp logs and outputs
+*.log
+*.txt
+*.png
+!public/*.png
+!src/**/*.png
+debug*.js
+test*.js
+test*.cjs
+check*.js
+get*.js

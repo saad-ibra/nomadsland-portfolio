@@ -21,15 +21,7 @@ export default function BlogApp() {
   return (
     <div className="blog-app-wrapper">
       
-      {/* Return to Game Banner */}
-      <div className="blog-banner">
-        <button 
-          onClick={() => { window.location.href = '/'; }}
-          className="blog-return-btn"
-        >
-          ← Return to Nomadsland
-        </button>
-      </div>
+
 
       {/* Main Content Area */}
       <main className="blog-main">
