@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
 
 import { TILE } from '../engine/constants';
@@ -257,7 +258,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
     if (muted || vol === 0) return;
     try {
       if (!musicRef.current.audioCtx)
-        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        musicRef.current.audioCtx = getSharedAudioCtx();
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
@@ -379,7 +380,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
   useEffect(() => {
     const resume = () => {
       if (!musicRef.current.audioCtx)
-        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        musicRef.current.audioCtx = getSharedAudioCtx();
       if (musicRef.current.audioCtx.state === "suspended")
         musicRef.current.audioCtx.resume();
     };
@@ -486,7 +487,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
           <div style={{
             position: "absolute",
             width: layout.totalCols * TILE, height: layout.totalRows * TILE,
-            left: -camX, top: -camY,
+            left: -camX, top: -camY, transition: "left 0.14s linear, top 0.14s linear",
             
           }}>
 
@@ -564,7 +565,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
             {/* Player */}
             <div style={{
               position: "absolute",
-              left: pos.col * TILE, top: pos.row * TILE,
+              left: pos.col * TILE, top: pos.row * TILE, transition: "left 0.14s linear, top 0.14s linear",
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,
@@ -768,7 +769,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                     <span>{openPost.readTime}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button onClick={() => window.location.href = '/blogs/'} style={{
+                    <button onClick={() => window.open('blogs/index.html', '_blank')} style={{
                         fontFamily: "'Press Start 2P', monospace", fontSize: 6,
                         background: "#fff", color: "#000", border: "1px solid #000",
                         padding: "2px 5px", cursor: "pointer",

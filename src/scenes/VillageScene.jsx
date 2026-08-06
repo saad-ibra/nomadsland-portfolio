@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { getSharedAudioCtx } from '../engine/sfx.js';
 import { DoorOpen } from "lucide-react";
 import { TILE, MOVE_COOLDOWN } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
@@ -612,7 +613,7 @@ export default function VillageScene({ isLandscape, previousScene,
 
   useEffect(() => {
     if (wakes.length > 0) {
-      const timer = setTimeout(() => setWakes(w => w.slice(1)), 50);
+      const timer = setTimeout(() => setWakes(w => w.slice(1)), 250);
       return () => clearTimeout(timer);
     }
   }, [wakes]);
@@ -655,7 +656,8 @@ export default function VillageScene({ isLandscape, previousScene,
     onMove: (nc, nr) => {
       const tile = MAP[nr][nc];
       if (isSailing) {
-        setWakes(prev => [...prev.slice(-7), { c: nc, r: nr, id: Date.now() }]);
+        setBoatPos({ col: nc, row: nr });
+        if (tile === 4) setWakes(prev => [...prev.slice(-8), { c: nc, r: nr, id: Date.now() }]);
         playWoodStep();
       } else {
         if (tile === 4) playWoodStep();
@@ -743,7 +745,7 @@ export default function VillageScene({ isLandscape, previousScene,
   const playStep = useCallback((idx, vol, muted) => {
     if (muted || vol === 0) return;
     try {
-      if (!musicRef.current.audioCtx) musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!musicRef.current.audioCtx) musicRef.current.audioCtx = getSharedAudioCtx();
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
@@ -848,7 +850,7 @@ export default function VillageScene({ isLandscape, previousScene,
 
   useEffect(() => {
     const resume = () => {
-      if (!musicRef.current.audioCtx) musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (!musicRef.current.audioCtx) musicRef.current.audioCtx = getSharedAudioCtx();
       if (musicRef.current.audioCtx.state === "suspended") musicRef.current.audioCtx.resume();
     };
     const onIntroDismiss = (e) => {
@@ -1339,7 +1341,9 @@ export default function VillageScene({ isLandscape, previousScene,
 
             {/* Player */}
             <div style={{
-              position: "absolute", left: pos.col * TILE, top: pos.row * TILE, width: TILE, height: TILE,
+              position: "absolute", left: pos.col * TILE, top: pos.row * TILE, 
+              transition: isSailing ? "none" : "left 0.14s linear, top 0.14s linear", 
+              width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,
               animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
@@ -1353,12 +1357,15 @@ export default function VillageScene({ isLandscape, previousScene,
             {/* Wakes */}
             {wakes.map((w, i) => {
               const age = wakes.length - i;
+              const tileType = MAP[w.r]?.[w.c];
+              if (tileType !== 4) return null; // Only show on water tiles
+              
               return (
                 <div key={w.id} style={{
                   position: "absolute", left: (w.c + 0.5) * TILE - 3, top: (w.r + 0.5) * TILE - 3,
                   width: 6, height: 6, background: "#fff", borderRadius: "50%",
-                  opacity: Math.max(0, 0.25 - (age / 7) * 0.25),
-                  transform: `scale(${1 + (age / 7) * 1.5})`,
+                  opacity: Math.max(0, 0.4 - (age / 8) * 0.4),
+                  transform: `scale(${1 + (age / 8) * 1.5})`,
                   zIndex: 1, pointerEvents: "none"
                 }} />
               );

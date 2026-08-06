@@ -65,6 +65,11 @@ export function usePlayerMovement({
           setFacing(pressedDir);
           facingRef.current = pressedDir;
           turnBlockRef.current = true;
+          setTimeout(() => {
+            if (keysRef.current[k]) {
+              turnBlockRef.current = false;
+            }
+          }, 120); // 120ms long press delay
         }
       }
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { getSharedAudioCtx } from '../engine/sfx.js';
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
 import PlayerSprite from "../components/sprites/PlayerSprite";
@@ -368,7 +369,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
     if (muted || vol === 0) return;
     try {
       if (!musicRef.current.audioCtx) {
-        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        musicRef.current.audioCtx = getSharedAudioCtx();
       }
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") {
@@ -564,7 +565,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
   useEffect(() => {
     const resumeAudio = () => {
       if (!musicRef.current.audioCtx) {
-        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        musicRef.current.audioCtx = getSharedAudioCtx();
       }
       if (musicRef.current.audioCtx.state === "suspended") {
         musicRef.current.audioCtx.resume();
@@ -759,7 +760,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
           <div style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            left: -camX, top: -camY,
+            left: -camX, top: -camY, transition: "left 0.14s linear, top 0.14s linear",
             
           }}>
             {/* Render tiles */}
@@ -860,7 +861,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
             {/* Player - always at grid position */}
              <div style={{
               position: "absolute",
-              left: pos.col * TILE, top: pos.row * TILE,
+              left: pos.col * TILE, top: pos.row * TILE, transition: "left 0.14s linear, top 0.14s linear",
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,

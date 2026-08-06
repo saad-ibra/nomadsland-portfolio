@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, ArrowUp } from "lucide-react";
 import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
@@ -149,7 +150,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, onGoToMu
         <div style={{ transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#111", boxShadow: "0 0 0 4px #222" }}>
             
-            <div style={{ position: "absolute", left: -camX, top: -camY, width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
+            <div style={{ position: "absolute", left: -camX, top: -camY, transition: "left 0.14s linear, top 0.14s linear", width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
               {/* Floor */}
               <div style={{ position: "absolute", left: TILE, top: TILE, width: (MAP_COLS-2)*TILE, height: (MAP_ROWS-2)*TILE, background: "#8B5A2B" }}>
                  {/* Floorboards */}
@@ -227,7 +228,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, onGoToMu
 
               {/* Player */}
               <div style={{
-                position: "absolute", left: pos.col * TILE, top: pos.row * TILE,
+                position: "absolute", left: pos.col * TILE, top: pos.row * TILE, transition: "left 0.14s linear, top 0.14s linear",
                 width: TILE, height: TILE, display: "flex", alignItems: "center", justifyContent: "center",
                 zIndex: pos.row * 10 + 5,
               }}>

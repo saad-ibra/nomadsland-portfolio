@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-react";
 import { TILE } from '../engine/constants';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
@@ -417,7 +418,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
     if (muted || vol === 0) return;
     try {
       if (!musicRef.current.audioCtx)
-        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        musicRef.current.audioCtx = getSharedAudioCtx();
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
@@ -555,7 +556,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
   useEffect(() => {
     const resume = () => {
       if (!musicRef.current.audioCtx) {
-        musicRef.current.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        musicRef.current.audioCtx = getSharedAudioCtx();
       }
       if (musicRef.current.audioCtx.state === "suspended") {
         musicRef.current.audioCtx.resume();
@@ -656,7 +657,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
           <div style={{
             position: "absolute",
             width: layout.totalCols * TILE, height: layout.totalRows * TILE,
-            left: -camX, top: -camY,
+            left: -camX, top: -camY, transition: "left 0.14s linear, top 0.14s linear",
             
           }}>
 
@@ -736,7 +737,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
             {/* Player — Y-depth sorted */}
             <div style={{
               position: "absolute",
-              left: pos.col * TILE, top: pos.row * TILE,
+              left: pos.col * TILE, top: pos.row * TILE, transition: "left 0.14s linear, top 0.14s linear",
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,
