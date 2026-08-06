@@ -1,0 +1,31 @@
+diff --git a/src/data/village.js b/src/data/village.js
+index dd69018..58e33ab 100644
+--- a/src/data/village.js
++++ b/src/data/village.js
+@@ -23,7 +23,7 @@ const layout = [
+   "~TTTTTTTTTTTTT~~~~~~PPPPPPPPPPPPPP~~",
+   "~T...f.......T~~~~~~P......f.....P~~",
+   "~T...HHHHH...T~~~~~~P...HHHHH....P~~",
+-  "~T...HHHHH...T~~~~~~P...HHHHH....P~~",
++  "~D...HHHHH...T~~~~~~P...HHHHH....D~~",
+   "~T...HHHHH...T~~~~~~P...HHHHH....P~~",
+   "~T.....p.....T~~~~~~P.....p......P~~",
+   "~T.....p.....T~~~~~~P.....p......P~~",
+@@ -34,7 +34,7 @@ const layout = [
+   "~~~~T..p...HHHHHT~~~OOOOOOOOOOOOOO~~",
+   "~TTTT..p...HHHHHT~~~O............O~~",
+   "~T.....p...HHHHHT~~~O...HHHHH....O~~",
+-  "~T.....ppppppp..T~~~O...HHHHH....O~~",
++  "~T.....ppppppp..T~~~O...HHHHH....D~~",
+   "~T.....p........T~~~O...HHHHH....O~~",
+   "~T.....pppppppppBBBBppppppp...f..O~~",
+   "~T.....p.....T..T~~~O.....p......O~~",
+@@ -43,7 +43,7 @@ const layout = [
+   "~C.....p.....C..T~~~O.....p......O~~",
+   "~C..f..p.....CTTT~~~OOOOOOpOOOOOOO~~",
+   "~C...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
+-  "~C...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
++  "~D...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
+   "~C...HHHHH...C~~~~~~~~~~~~DDDD~~~~~~",
+   "~C...........C~~~~~~~~~~~~DDDD~~~~~~",
+   "~C...........C~~~~~~~~~~~~DDDD~~~~~~",
