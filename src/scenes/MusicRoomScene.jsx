@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, ArrowDown } from "lucide-react";
 import { TILE } from '../engine/constants';
@@ -97,10 +98,7 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
     }
   });
 
-  const rawCamX = pos.col * TILE + TILE / 2 - internalW / 2;
-  const rawCamY = pos.row * TILE + TILE / 2 - internalH / 2;
-  const camX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), rawCamX));
-  const camY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), rawCamY));
+  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier);
 
   return (
     <div ref={containerRef} style={{
@@ -112,7 +110,7 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
         <div style={{ transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#111", boxShadow: "0 0 0 4px #222" }}>
             
-            <div style={{ position: "absolute", left: -camX, top: -camY, transition: "left 0.14s linear, top 0.14s linear", width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
+            <div style={{ position: "absolute", left: -cam.x, top: -cam.y, width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
               {/* Floor - Dark Wood / Studio */}
               <div style={{ position: "absolute", left: TILE, top: TILE, width: (MAP_COLS-2)*TILE, height: (MAP_ROWS-2)*TILE, background: "#2C1B18" }}>
                  {/* Floorboards */}
