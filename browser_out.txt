@@ -1,5 +1,0 @@
-BROWSER: [vite] connecting...
-BROWSER: [vite] connected.
-Timeout during goto
-Root HTML length: 0
-ROOT HTML: 
