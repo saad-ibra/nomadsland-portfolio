@@ -1313,6 +1313,30 @@ export default function VillageScene({ isLandscape, previousScene,
               <Building key={shop.id} shop={shop} isNear={nearShop === shop.id} />
             ))}
 
+            {/* Under Construction Sign for Music Room Dock */}
+            <div style={{
+              position: "absolute",
+              left: 32 * TILE + 4,
+              top: 4 * TILE,
+              width: TILE - 8,
+              height: TILE,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              zIndex: 4 * 10 + 4
+            }}>
+              {/* Sign Board */}
+              <div style={{
+                width: 24, height: 16, background: "#dca750", border: "2px solid #8e5c26",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 2px 0 rgba(0,0,0,0.2)"
+              }}>
+                <div style={{ fontSize: 6, color: "#4a2c10", fontWeight: "bold" }}>🚧</div>
+              </div>
+              {/* Sign Post */}
+              <div style={{ width: 4, height: 12, background: "#8e5c26" }}></div>
+            </div>
+
             {/* Player */}
             <div style={{
               position: "absolute", left: pos.col * TILE, top: pos.row * TILE, width: TILE, height: TILE,

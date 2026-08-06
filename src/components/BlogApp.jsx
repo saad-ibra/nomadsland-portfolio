@@ -19,96 +19,27 @@ export default function BlogApp() {
   const selectedPost = BLOG_POSTS.find(p => p.id === selectedPostId);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#f4f1ea', // Off-white newspaper tone
-      backgroundImage: 'radial-gradient(#e0ddd1 1px, transparent 1px)',
-      backgroundSize: '32px 32px',
-      color: '#1a1a1a',
-      fontFamily: '"Georgia", "Times New Roman", serif',
-      padding: '0 20px 80px',
-      boxSizing: 'border-box',
-      userSelect: 'text',
-      WebkitUserSelect: 'text'
-    }}>
+    <div className="blog-app-wrapper">
       
       {/* Return to Game Banner */}
-      <div style={{
-        background: '#1a1a1a',
-        color: '#f4f1ea',
-        padding: '12px 24px',
-        textAlign: 'center',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-        marginBottom: '40px'
-      }}>
+      <div className="blog-banner">
         <button 
           onClick={() => { window.location.href = '/'; }}
-          style={{
-            background: 'transparent',
-            border: '1px solid #f4f1ea',
-            color: '#f4f1ea',
-            padding: '8px 16px',
-            cursor: 'pointer',
-            fontSize: '12px',
-            fontFamily: '"Inter", "Helvetica Neue", sans-serif',
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = '#f4f1ea';
-            e.currentTarget.style.color = '#1a1a1a';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = '#f4f1ea';
-          }}
+          className="blog-return-btn"
         >
           ← Return to Nomadsland
         </button>
       </div>
 
       {/* Main Content Area */}
-      <main style={{ maxWidth: 900, margin: '0 auto', background: '#f4f1ea', padding: '40px 60px', boxShadow: '0 0 40px rgba(0,0,0,0.05)', border: '1px solid #e0ddd1' }}>
+      <main className="blog-main">
         
         {/* Newspaper Masthead */}
-        <header style={{
-          textAlign: 'center',
-          borderBottom: '4px solid #1a1a1a',
-          paddingBottom: '20px',
-          marginBottom: '40px',
-          borderTop: '1px solid #1a1a1a',
-          paddingTop: '20px'
-        }}>
-          <h1 style={{
-            fontFamily: '"Playfair Display", "Georgia", serif',
-            fontSize: '56px',
-            fontWeight: 900,
-            textTransform: 'uppercase',
-            letterSpacing: '-1px',
-            margin: '0 0 10px',
-            lineHeight: 1
-          }}>
+        <header className="blog-header">
+          <h1 className="blog-title">
             The Nomad's Land Gazette
           </h1>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            borderTop: '1px solid #1a1a1a',
-            borderBottom: '1px solid #1a1a1a',
-            padding: '8px 0',
-            fontFamily: '"Inter", "Helvetica Neue", sans-serif',
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            fontWeight: 600
-          }}>
+          <div className="blog-meta-bar">
             <span>Vol. I, No. 1</span>
             <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
             <span>Free Edition</span>
@@ -118,92 +49,34 @@ export default function BlogApp() {
         {!selectedPostId ? (
           /* --- MENU LIST VIEW (Multi-column Masonry) --- */
           <div>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-              gap: '40px',
-              borderBottom: '2px solid #1a1a1a',
-              paddingBottom: '40px',
-              marginBottom: '40px'
-            }}>
+            <div className="blog-grid">
               {BLOG_POSTS.map((post, index) => (
                 <article 
                   key={post.id} 
                   onClick={() => setSelectedPostId(post.id)}
-                  style={{ 
-                    cursor: 'pointer',
-                    paddingRight: index % 2 === 0 ? '40px' : '0',
-                    borderRight: index % 2 === 0 ? '1px solid #d0ccc1' : 'none',
-                  }}
+                  className={`blog-card ${index % 2 === 0 ? 'even-card' : 'odd-card'}`}
                 >
-                  <h2 style={{
-                    fontSize: '28px',
-                    fontWeight: 700,
-                    margin: '0 0 12px',
-                    lineHeight: 1.1,
-                    fontFamily: '"Playfair Display", "Georgia", serif',
-                    color: '#1a1a1a'
-                  }}>
+                  <h2 className="card-title">
                     {post.title}
                   </h2>
                   
                   {post.subtitle && (
-                    <h3 style={{
-                      fontSize: '16px',
-                      fontWeight: 400,
-                      margin: '0 0 16px',
-                      color: '#444',
-                      fontStyle: 'italic',
-                      lineHeight: 1.4
-                    }}>
+                    <h3 className="card-subtitle">
                       {post.subtitle}
                     </h3>
                   )}
 
-                  <div style={{ 
-                    fontFamily: '"Inter", "Helvetica Neue", sans-serif',
-                    fontSize: '11px',
-                    color: '#555',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    marginBottom: '16px',
-                    borderTop: '1px solid #e0ddd1',
-                    borderBottom: '1px solid #e0ddd1',
-                    padding: '6px 0',
-                    display: 'inline-block'
-                  }}>
+                  <div className="card-meta">
                     By Saad Ibrahim &nbsp; | &nbsp; {post.date}
                   </div>
                   
-                  <p style={{
-                    fontFamily: '"Georgia", serif',
-                    fontSize: '15px',
-                    lineHeight: 1.6,
-                    color: '#333',
-                    margin: '0 0 20px',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 4,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden'
-                  }}>
+                  <p className="card-excerpt">
                     {post.content[0]}
                   </p>
                   
-                  <div style={{ 
-                    display: 'flex', 
-                    gap: '8px',
-                    flexWrap: 'wrap'
-                  }}>
+                  <div className="tags-container">
                     {post.tags.map(tag => (
-                      <span key={tag} style={{
-                        fontFamily: '"Inter", "Helvetica Neue", sans-serif',
-                        fontSize: '10px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px',
-                        background: '#e0ddd1',
-                        padding: '2px 8px',
-                        color: '#1a1a1a'
-                      }}>
+                      <span key={tag} className="tag-pill">
                         {tag}
                       </span>
                     ))}
@@ -214,95 +87,36 @@ export default function BlogApp() {
           </div>
         ) : (
           /* --- FULL POST VIEW --- */
-          <article style={{ animation: 'fadeIn 0.5s ease' }}>
+          <article className="full-post">
             <button 
               onClick={() => setSelectedPostId(null)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                fontSize: '13px',
-                fontFamily: '"Inter", "Helvetica Neue", sans-serif',
-                fontWeight: 600,
-                color: '#1a1a1a',
-                padding: '0 0 20px',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}
+              className="post-return-btn"
             >
               <ArrowLeft size={16} />
               Return to Front Page
             </button>
 
-            <header style={{ marginBottom: '40px', textAlign: 'center' }}>
-              <h1 style={{
-                fontSize: '48px',
-                fontWeight: 900,
-                margin: '0 0 16px',
-                lineHeight: 1.1,
-                fontFamily: '"Playfair Display", "Georgia", serif',
-                color: '#1a1a1a'
-              }}>
+            <header className="post-header">
+              <h1 className="post-title">
                 {selectedPost.title}
               </h1>
               
               {selectedPost.subtitle && (
-                <h2 style={{
-                  fontSize: '24px',
-                  fontWeight: 400,
-                  margin: '0 0 24px',
-                  color: '#444',
-                  fontStyle: 'italic',
-                  fontFamily: '"Playfair Display", "Georgia", serif'
-                }}>
+                <h2 className="post-subtitle">
                   {selectedPost.subtitle}
                 </h2>
               )}
 
-              <div style={{ 
-                fontFamily: '"Inter", "Helvetica Neue", sans-serif',
-                fontSize: '12px',
-                color: '#1a1a1a',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                borderTop: '1px solid #1a1a1a',
-                borderBottom: '1px solid #1a1a1a',
-                padding: '12px 0',
-                display: 'inline-block',
-                minWidth: '50%'
-              }}>
+              <div className="post-meta">
                 <strong>By Saad Ibrahim</strong> &nbsp; | &nbsp; {selectedPost.date} &nbsp; | &nbsp; {selectedPost.readTime}
               </div>
             </header>
 
-            <div style={{
-              fontSize: '18px',
-              lineHeight: 1.8,
-              color: '#222',
-              columnCount: 2,
-              columnGap: '40px',
-              columnRule: '1px solid #d0ccc1',
-              textAlign: 'justify'
-            }}>
+            <div className="post-content">
               {selectedPost.content.map((paragraph, index) => (
-                <p key={index} style={{ 
-                  margin: '0 0 24px', 
-                  textIndent: index > 0 ? '24px' : '0' 
-                }}>
+                <p key={index} className={index === 0 ? "first-paragraph" : ""}>
                   {index === 0 ? (
-                    <span style={{
-                      float: 'left',
-                      fontSize: '64px',
-                      lineHeight: '52px',
-                      paddingTop: '8px',
-                      paddingRight: '8px',
-                      fontFamily: '"Playfair Display", serif',
-                      fontWeight: 900,
-                      color: '#1a1a1a'
-                    }}>
+                    <span className="dropcap">
                       {paragraph.charAt(0)}
                     </span>
                   ) : null}
@@ -311,25 +125,9 @@ export default function BlogApp() {
               ))}
             </div>
 
-            <div style={{ 
-              marginTop: '60px',
-              paddingTop: '32px',
-              borderTop: '2px solid #1a1a1a',
-              display: 'flex', 
-              gap: '8px',
-              flexWrap: 'wrap',
-              justifyContent: 'center'
-            }}>
+            <div className="post-footer">
               {selectedPost.tags.map(tag => (
-                <span key={tag} style={{
-                  fontFamily: '"Inter", "Helvetica Neue", sans-serif',
-                  fontSize: '11px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  padding: '4px 12px',
-                  border: '1px solid #1a1a1a',
-                  color: '#1a1a1a'
-                }}>
+                <span key={tag} className="footer-tag-pill">
                   {tag}
                 </span>
               ))}
@@ -339,23 +137,354 @@ export default function BlogApp() {
       </main>
 
       <style>{`
+        /* Reset and Base Variables */
+        .blog-app-wrapper {
+          min-height: 100vh;
+          background-color: #f4f1ea;
+          background-image: radial-gradient(#e0ddd1 1px, transparent 1px);
+          background-size: 32px 32px;
+          color: #1a1a1a;
+          font-family: "Georgia", "Times New Roman", serif;
+          padding: 0 20px 80px;
+          box-sizing: border-box;
+          user-select: text;
+          -webkit-user-select: text;
+        }
+
+        .blog-banner {
+          background: #1a1a1a;
+          color: #f4f1ea;
+          padding: 12px 24px;
+          text-align: center;
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          margin-bottom: 40px;
+          margin-left: -20px;
+          margin-right: -20px;
+        }
+
+        .blog-return-btn {
+          background: transparent;
+          border: 1px solid #f4f1ea;
+          color: #f4f1ea;
+          padding: 8px 16px;
+          cursor: pointer;
+          font-size: 12px;
+          font-family: "Inter", "Helvetica Neue", sans-serif;
+          text-transform: uppercase;
+          letter-spacing: 2px;
+          transition: all 0.2s ease;
+        }
+        .blog-return-btn:hover {
+          background: #f4f1ea;
+          color: #1a1a1a;
+        }
+
+        .blog-main {
+          max-width: 900px;
+          margin: 0 auto;
+          background: #f4f1ea;
+          padding: 40px 60px;
+          box-shadow: 0 0 40px rgba(0,0,0,0.05);
+          border: 1px solid #e0ddd1;
+        }
+
+        .blog-header {
+          text-align: center;
+          border-bottom: 4px solid #1a1a1a;
+          padding-bottom: 20px;
+          margin-bottom: 40px;
+          border-top: 1px solid #1a1a1a;
+          padding-top: 20px;
+        }
+
+        .blog-title {
+          font-family: "Playfair Display", "Georgia", serif;
+          font-size: 56px;
+          font-weight: 900;
+          text-transform: uppercase;
+          letter-spacing: -1px;
+          margin: 0 0 10px;
+          line-height: 1.1;
+        }
+
+        .blog-meta-bar {
+          display: flex;
+          justify-content: space-between;
+          border-top: 1px solid #1a1a1a;
+          border-bottom: 1px solid #1a1a1a;
+          padding: 8px 0;
+          font-family: "Inter", "Helvetica Neue", sans-serif;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-weight: 600;
+        }
+
+        .blog-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 40px;
+          border-bottom: 2px solid #1a1a1a;
+          padding-bottom: 40px;
+          margin-bottom: 40px;
+        }
+
+        .blog-card {
+          cursor: pointer;
+        }
+        .blog-card.even-card {
+          padding-right: 40px;
+          border-right: 1px solid #d0ccc1;
+        }
+
+        .card-title {
+          font-size: 28px;
+          font-weight: 700;
+          margin: 0 0 12px;
+          line-height: 1.1;
+          font-family: "Playfair Display", "Georgia", serif;
+          color: #1a1a1a;
+        }
+
+        .card-subtitle {
+          font-size: 16px;
+          font-weight: 400;
+          margin: 0 0 16px;
+          color: #444;
+          font-style: italic;
+          line-height: 1.4;
+        }
+
+        .card-meta {
+          font-family: "Inter", "Helvetica Neue", sans-serif;
+          font-size: 11px;
+          color: #555;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 16px;
+          border-top: 1px solid #e0ddd1;
+          border-bottom: 1px solid #e0ddd1;
+          padding: 6px 0;
+          display: inline-block;
+        }
+
+        .card-excerpt {
+          font-family: "Georgia", serif;
+          font-size: 15px;
+          line-height: 1.6;
+          color: #333;
+          margin: 0 0 20px;
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .tags-container {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+
+        .tag-pill {
+          font-family: "Inter", "Helvetica Neue", sans-serif;
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          background: #e0ddd1;
+          padding: 2px 8px;
+          color: #1a1a1a;
+        }
+
+        .full-post {
+          animation: fadeIn 0.5s ease;
+        }
+
+        .post-return-btn {
+          background: transparent;
+          border: none;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          cursor: pointer;
+          font-size: 13px;
+          font-family: "Inter", "Helvetica Neue", sans-serif;
+          font-weight: 600;
+          color: #1a1a1a;
+          padding: 0 0 20px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+
+        .post-header {
+          margin-bottom: 40px;
+          text-align: center;
+        }
+
+        .post-title {
+          font-size: 48px;
+          font-weight: 900;
+          margin: 0 0 16px;
+          line-height: 1.1;
+          font-family: "Playfair Display", "Georgia", serif;
+          color: #1a1a1a;
+        }
+
+        .post-subtitle {
+          font-size: 24px;
+          font-weight: 400;
+          margin: 0 0 24px;
+          color: #444;
+          font-style: italic;
+          font-family: "Playfair Display", "Georgia", serif;
+        }
+
+        .post-meta {
+          font-family: "Inter", "Helvetica Neue", sans-serif;
+          font-size: 12px;
+          color: #1a1a1a;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          border-top: 1px solid #1a1a1a;
+          border-bottom: 1px solid #1a1a1a;
+          padding: 12px 0;
+          display: inline-block;
+          min-width: 50%;
+        }
+
+        .post-content {
+          font-size: 18px;
+          line-height: 1.8;
+          color: #222;
+          column-count: 2;
+          column-gap: 40px;
+          column-rule: 1px solid #d0ccc1;
+          text-align: justify;
+        }
+
+        .post-content p {
+          margin: 0 0 24px;
+          text-indent: 24px;
+        }
+        .post-content p.first-paragraph {
+          text-indent: 0;
+        }
+
+        .dropcap {
+          float: left;
+          font-size: 64px;
+          line-height: 52px;
+          padding-top: 8px;
+          padding-right: 8px;
+          font-family: "Playfair Display", serif;
+          font-weight: 900;
+          color: #1a1a1a;
+        }
+
+        .post-footer {
+          margin-top: 60px;
+          padding-top: 32px;
+          border-top: 2px solid #1a1a1a;
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .footer-tag-pill {
+          font-family: "Inter", "Helvetica Neue", sans-serif;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          padding: 4px 12px;
+          border: 1px solid #1a1a1a;
+          color: #1a1a1a;
+        }
+
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
+
+        /* --- MOBILE STYLES --- */
         @media (max-width: 768px) {
-          div[style*="columnCount: 2"] {
-            columnCount: 1 !important;
+          .blog-app-wrapper {
+            padding: 0 0 40px;
           }
-          div[style*="gridTemplateColumns"] {
-            gridTemplateColumns: 1fr !important;
+          .blog-banner {
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 20px;
           }
-          article[style*="borderRight"] {
-            borderRight: none !important;
-            paddingRight: 0 !important;
-            borderBottom: 1px solid #d0ccc1 !important;
-            paddingBottom: 24px !important;
-            marginBottom: 24px !important;
+          .blog-main {
+            padding: 24px 16px;
+            box-shadow: none;
+            border-left: none;
+            border-right: none;
+          }
+          .blog-header {
+            margin-bottom: 24px;
+          }
+          .blog-title {
+            font-size: 32px;
+          }
+          .blog-meta-bar {
+            flex-direction: column;
+            gap: 8px;
+            font-size: 10px;
+            border-top: none;
+            border-bottom: none;
+            padding: 0;
+          }
+          .blog-meta-bar span {
+            display: block;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 4px;
+          }
+          .blog-meta-bar span:last-child {
+            border-bottom: none;
+          }
+          .blog-grid {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
+          .blog-card.even-card {
+            padding-right: 0;
+            border-right: none;
+            border-bottom: 1px solid #d0ccc1;
+            padding-bottom: 24px;
+          }
+          .card-title {
+            font-size: 24px;
+          }
+          .post-header {
+            margin-bottom: 24px;
+          }
+          .post-title {
+            font-size: 28px;
+          }
+          .post-subtitle {
+            font-size: 18px;
+          }
+          .post-meta {
+            min-width: 100%;
+            font-size: 10px;
+            line-height: 1.6;
+          }
+          .post-content {
+            column-count: 1;
+            font-size: 16px;
+            text-align: left;
+          }
+          .dropcap {
+            font-size: 48px;
+            line-height: 40px;
           }
         }
       `}</style>
