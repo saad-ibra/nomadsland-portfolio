@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
@@ -715,10 +716,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
     ? SHELF_LAYOUT[tourIndex].id : nearShelf;
 
   // ---- Camera: center on player ----
-  const rawCamX = pos.col * TILE + TILE / 2 - internalW / 2;
-  const rawCamY = pos.row * TILE + TILE / 2 - internalH / 2;
-  const camX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), rawCamX));
-  const camY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), rawCamY));
+  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier);
   
   const transitionTime = (0.14 / speedMultiplier).toFixed(2);
 
@@ -760,7 +758,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
           <div style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            left: -camX, top: -camY, transition: "left 0.14s linear, top 0.14s linear",
+            left: -cam.x, top: -cam.y,
             
           }}>
             {/* Render tiles */}
