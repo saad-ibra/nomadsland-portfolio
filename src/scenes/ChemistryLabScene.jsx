@@ -629,6 +629,8 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#060a0e", overflow: "hidden",
       fontFamily: "'Press Start 2P', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      <title>Chemistry Lab | Saad Ibra</title>
+      <meta name="description" content="Welcome to the Chemistry Lab. View my software engineering projects synced directly with GitHub." />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }

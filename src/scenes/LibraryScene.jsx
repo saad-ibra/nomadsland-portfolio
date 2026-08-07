@@ -598,9 +598,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
             setSkipTyping(true);
             return;
           }
-          setPhase("touring");
-          setTourIndex(0);
-          setArrived(false);
+          setPhase("free");
           return;
         }
         if (e.key === "Escape") {
@@ -728,6 +726,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0", userSelect: "none",
       
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      <title>Reading List | Saad Ibra</title>
+      <meta name="description" content="Browse my personal library and reading list, synced directly with my Goodreads profile." />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         body { margin: 0; padding: 0; overflow: hidden; background: #05050a; }
@@ -735,6 +735,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         @keyframes shelfPulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
         @keyframes lanternFlicker { 0%{opacity:0.8; transform: scale(0.95)} 100%{opacity:1; transform: scale(1.05)} }
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes dustParticle { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-20px) scale(0.5); opacity: 0; } }
         .retro-scrollbar::-webkit-scrollbar { width: 12px; }
         .retro-scrollbar::-webkit-scrollbar-track { background: #0a0a18; border-left: 2px solid #1a1a28; }
         .retro-scrollbar::-webkit-scrollbar-thumb { background: #f4e8d0; border: 2px solid #1a1a28; border-radius: 0; }
@@ -808,14 +809,31 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
             <div style={{
               position: "absolute", left: 5*TILE, top: 1*TILE,
               width: TILE*2, height: TILE-4,
-              background: "#182848", border: "2px solid #6b4a2e",
-              boxShadow: "inset 0 0 12px rgba(80,120,200,0.3)",
+              background: "linear-gradient(to bottom, #1a2a4a, #2a3a5a)", border: "2px solid #6b4a2e",
+              boxShadow: "inset 0 0 12px rgba(100,150,255,0.4), 0 0 40px rgba(100,150,255,0.25)",
+              zIndex: 15
             }}>
-              <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 2, background: "#6b4a2e", transform: "translateX(-50%)" }} />
-              <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#6b4a2e", transform: "translateY(-50%)" }} />
+              {/* Sky Elements */}
               <div style={{ position: "absolute", left: 6, top: 4, width: 2, height: 2, background: "#fff", opacity: 0.8 }} />
               <div style={{ position: "absolute", right: 8, top: 6, width: 2, height: 2, background: "#fff", opacity: 0.6 }} />
-              <div style={{ position: "absolute", right: 4, top: 14, width: 6, height: 6, borderRadius: "50%", background: "#e8e0c0", boxShadow: "0 0 4px rgba(232,224,192,0.4)" }} />
+              <div style={{ position: "absolute", right: 4, top: 14, width: 6, height: 6, borderRadius: "50%", background: "#e8e0c0", boxShadow: "0 0 8px rgba(232,224,192,0.6)" }} />
+              
+              {/* Railing */}
+              <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 2, background: "#6b4a2e", transform: "translateX(-50%)" }} />
+              <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#6b4a2e", transform: "translateY(-50%)" }} />
+            </div>
+
+            {/* Moonlight Sunbeam */}
+            <div style={{
+              position: "absolute", top: 2*TILE - 4, left: 5*TILE - 20, width: TILE*2 + 40, height: TILE*6,
+              background: "linear-gradient(to bottom, rgba(100,150,255,0.25), transparent)",
+              clipPath: "polygon(20px 0, calc(100% - 20px) 0, 100% 100%, 0 100%)",
+              mixBlendMode: "screen", pointerEvents: "none", zIndex: 800
+            }}>
+              <div style={{ position: "absolute", left: "30%", top: "40%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 4s infinite linear", opacity: 0 }} />
+              <div style={{ position: "absolute", left: "60%", top: "60%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 5s infinite linear 1.5s", opacity: 0 }} />
+              <div style={{ position: "absolute", left: "40%", top: "20%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 3.5s infinite linear 0.7s", opacity: 0 }} />
+              <div style={{ position: "absolute", left: "70%", top: "30%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 6s infinite linear 2.5s", opacity: 0 }} />
             </div>
 
             {/* Decorations */}
@@ -923,13 +941,9 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
               </div>
               {phase === "intro" && dialogueText.length >= currentLine.length && (
                 <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                  <button onClick={startTour} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, background: "#e04040", color: "#fff", border: "none", padding: "8px 14px", borderRadius: 2, cursor: "pointer", boxShadow: "0 3px 0 #a02020, inset 0 1px 0 rgba(255,255,255,0.2)", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
+                  <button onClick={skipIntro} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, background: "#e04040", color: "#fff", border: "none", padding: "8px 14px", borderRadius: 2, cursor: "pointer", boxShadow: "0 3px 0 #a02020, inset 0 1px 0 rgba(255,255,255,0.2)", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
                     <span style={{ fontSize: 5, color: "#ffbaba", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE</span>
-                    SHOW ME AROUND
-                  </button>
-                  <button onClick={skipIntro} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, background: "transparent", color: "#a8a8b8", border: "2px solid #a8a8b8", padding: "6px 12px", borderRadius: 2, cursor: "pointer", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
-                    <span style={{ fontSize: 5, color: "#888", marginRight: 8, border: "1px solid #888", padding: "1px 3px", borderRadius: 2 }}>ESC</span>
-                    I'LL EXPLORE
+                    GOT IT
                   </button>
                 </div>
               )}

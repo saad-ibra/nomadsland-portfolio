@@ -59,7 +59,7 @@ export default function BlogApp() {
                   )}
 
                   <div className="card-meta">
-                    By Saad Ibrahim &nbsp; | &nbsp; {post.date}
+                    By Saad Ibra &nbsp; | &nbsp; {post.date}
                   </div>
                   
                   <p className="card-excerpt">
@@ -100,7 +100,7 @@ export default function BlogApp() {
               )}
 
               <div className="post-meta">
-                <strong>By Saad Ibrahim</strong> &nbsp; | &nbsp; {selectedPost.date} &nbsp; | &nbsp; {selectedPost.readTime}
+                <strong>By Saad Ibra</strong> &nbsp; | &nbsp; {selectedPost.date} &nbsp; | &nbsp; {selectedPost.readTime}
               </div>
             </header>
 

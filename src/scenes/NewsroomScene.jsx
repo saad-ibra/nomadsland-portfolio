@@ -228,7 +228,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
   const { pos, facing, stepping } = usePlayerMovement({
     initialPos: layout.startPos,
     canWalk: (c, r) => {
-      if (c === 3 && r === 1) { onBackToVillage(); return false; }
+      if (c === 5 && r === 1) { onBackToVillage(); return false; }
       return canLayoutWalk(layoutRef.current, c, r);
     },
     speedMultiplier,
@@ -452,6 +452,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#080c10", overflow: "hidden",
       fontFamily: "'Press Start 2P', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      <title>Newsroom | Saad Ibra</title>
+      <meta name="description" content="Read my latest thoughts and articles on software engineering, game dev, and more in the Newsroom." />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -544,7 +546,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
             ))}
 
             {/* Exit Door */}
-            <ExitDoor col={3} row={1} />
+            <ExitDoor col={5} row={1} />
 
             {/* NPC Saad */}
             <div style={{
