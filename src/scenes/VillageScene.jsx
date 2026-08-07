@@ -648,6 +648,8 @@ export default function VillageScene({ isLandscape, previousScene,
   })();
 
   const { pos, setPos, facing, stepping } = usePlayerMovement({
+    sceneId: "village",
+    ignoreSavedPos: previousScene !== null,
     initialPos,
     canWalk,
     speedMultiplier,
@@ -1279,6 +1281,8 @@ export default function VillageScene({ isLandscape, previousScene,
       fontFamily: "'Press Start 2P', monospace", userSelect: "none",
       
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      <title>Village Hub | Saad Ibra</title>
+      <meta name="description" content="Explore the village hub of Nomadsland. Find the Library, Chemistry Lab, Newsroom, and my Home." />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }

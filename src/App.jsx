@@ -59,6 +59,14 @@ function App() {
   const [musicMuted, setMusicMuted] = useState(() => JSON.parse(localStorage.getItem("musicMuted") || "false"));
   const [musicVolume, setMusicVolume] = useState(() => parseFloat(localStorage.getItem("musicVolume") || "0.1"));
 
+  const [isTabActive, setIsTabActive] = useState(!document.hidden);
+
+  useEffect(() => {
+    const handleVisibility = () => setIsTabActive(!document.hidden);
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, []);
+
   const [isLandscape, setIsLandscape] = useState(() => window.innerWidth > window.innerHeight && window.innerWidth >= 1024);
 
   useEffect(() => {
@@ -87,16 +95,38 @@ function App() {
 
   const sceneProps = {
     speedMultiplier, setSpeedMultiplier,
-    musicPlaying, setMusicPlaying,
+    musicPlaying: musicPlaying && isTabActive, 
+    setMusicPlaying,
     musicMuted, setMusicMuted,
     musicVolume, setMusicVolume,
     isLandscape
   };
 
-  const renderScene = () => {
-    switch(scene) {
-      case 'village':
-        return (
+  return (
+    <div style={{
+      minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#0a0a14',
+        padding: 0,
+        margin: 0,
+        boxSizing: 'border-box',
+        position: 'relative'
+      }}>
+        {/* Global CRT Overlay */}
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9998, pointerEvents: 'none',
+          background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 1px, transparent 1px, transparent 2px)'
+        }} />
+
+        {/* Global Fade Overlay */}
+        <div style={{
+          position: 'fixed', inset: 0, background: '#000', zIndex: 9999, pointerEvents: 'none',
+          opacity: fading ? 1 : 0, transition: 'opacity 0.4s ease-in-out'
+        }} />
+
+        {scene === 'village' && (
           <VillageScene
             previousScene={previousScene}
             onGoToLibrary={() => changeScene('library')}
@@ -106,82 +136,26 @@ function App() {
             onGoToMusicRoom={() => changeScene('musicroom')}
             {...sceneProps}
           />
-        );
-      case 'library':
-        return <LibraryScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
-      case 'lab':
-        return <ChemistryLabScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
-      case 'newsroom':
-        return <NewsroomScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
-      case 'nomadshome':
-        return <NomadshomeScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
-      case 'musicroom':
-        return (
+        )}
+        {scene === 'library' && (
+          <LibraryScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
+        )}
+        {scene === 'lab' && (
+          <ChemistryLabScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
+        )}
+        {scene === 'newsroom' && (
+          <NewsroomScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
+        )}
+        {scene === 'nomadshome' && (
+          <NomadshomeScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
+        )}
+        {scene === 'musicroom' && (
           <MusicRoomScene 
             onBackToVillage={() => changeScene('village')} 
             onGoToNomadshome={() => changeScene('nomadshome')}
             {...sceneProps} 
           />
-        );
-      default:
-        return <NomadshomeScene onBackToVillage={() => changeScene('village')} {...sceneProps} />;
-    }
-  };
-
-  return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: '#0a0a14',
-      padding: 0,
-      margin: 0,
-      boxSizing: 'border-box',
-      position: 'relative'
-    }}>
-      {/* Global CRT Overlay */}
-      <div style={{
-        position: 'fixed', inset: 0, zIndex: 9998, pointerEvents: 'none',
-        background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 1px, transparent 1px, transparent 2px)'
-      }} />
-
-      {/* Global Fade Overlay */}
-      <div style={{
-        position: 'fixed', inset: 0, background: '#000', zIndex: 9999, pointerEvents: 'none',
-        opacity: fading ? 1 : 0, transition: 'opacity 0.4s ease-in-out'
-      }} />
-
-      {scene === 'village' && (
-        <VillageScene
-          previousScene={previousScene}
-          onGoToLibrary={() => changeScene('library')}
-          onGoToLab={() => changeScene('lab')}
-          onGoToNewsroom={() => changeScene('newsroom')}
-          onGoToNomadshome={() => changeScene('nomadshome')}
-          onGoToMusicRoom={() => changeScene('musicroom')}
-          {...sceneProps}
-        />
-      )}
-      {scene === 'library' && (
-        <LibraryScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
-      )}
-      {scene === 'lab' && (
-        <ChemistryLabScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
-      )}
-      {scene === 'newsroom' && (
-        <NewsroomScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
-      )}
-      {scene === 'nomadshome' && (
-        <NomadshomeScene onBackToVillage={() => changeScene('village')} {...sceneProps} />
-      )}
-      {scene === 'musicroom' && (
-        <MusicRoomScene 
-          onBackToVillage={() => changeScene('village')} 
-          onGoToNomadshome={() => changeScene('nomadshome')}
-          {...sceneProps} 
-        />
-      )}
+        )}
     </div>
   );
 }

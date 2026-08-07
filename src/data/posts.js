@@ -7,7 +7,7 @@ export const BLOG_POSTS = [
     id: "schopenhauer-cure",
     title: "Facing mortality through: The Schopenhauer Cure",
     subtitle: "by Irvin D. Yalom",
-    author: "Saad Ibrahim Khan",
+    author: "Saad Ibra",
     date: "Mar 7, 2026",
     readTime: "3 min read",
     tags: ["German Philosophy", "Psychotherapy", "Psychology", "Novel", "Book Review"],
