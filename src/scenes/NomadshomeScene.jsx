@@ -138,23 +138,23 @@ function TipLineForm({ onClose }) {
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 6, textAlign: "left", fontFamily: "monospace" }}>
+    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "monospace" }}>
       <div>
-        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 1, color: "#111" }}>NAME</label>
-        <input name="name" required style={{ width: "100%", padding: "2px 4px", boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
-        <ValidationError field="name" prefix="Name" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 1, display: "block" }} />
+        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>NAME</label>
+        <input name="name" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
+        <ValidationError field="name" prefix="Name" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
       <div>
-        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 1, color: "#111" }}>CONTACT</label>
-        <input name="email" required style={{ width: "100%", padding: "2px 4px", boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
-        <ValidationError field="email" prefix="Email" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 1, display: "block" }} />
+        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>CONTACT</label>
+        <input name="email" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
+        <ValidationError field="email" prefix="Email" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
       <div>
-        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 1, color: "#111" }}>MESSAGE</label>
-        <textarea name="message" required rows={3} style={{ width: "100%", padding: "2px 4px", boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, resize: "none", color: "#111" }} />
-        <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 1, display: "block" }} />
+        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>MESSAGE</label>
+        <textarea name="message" required rows={3} style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, resize: "none", color: "#111" }} />
+        <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
-      <button type="submit" disabled={state.submitting} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "6px", border: "none", cursor: "pointer", marginTop: 2, boxShadow: "2px 2px 0 rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <button type="submit" disabled={state.submitting} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "8px", border: "none", cursor: "pointer", marginTop: 4, boxShadow: "2px 2px 0 rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {state.submitting ? "SENDING..." : "SUBMIT"}
       </button>
       {state.errors && state.errors.length > 0 && <div style={{ fontSize: 5, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
@@ -602,7 +602,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                   background: "#f4e8d0", border: "2px solid #111", borderTopWidth: "8px",
                   width: 240, maxWidth: "90%", maxHeight: internalH - 16, overflowY: "auto",
                   boxShadow: "4px 4px 0 rgba(0,0,0,0.5)",
-                  display: "flex", flexDirection: "column", padding: "8px",
+                  display: "flex", flexDirection: "column", padding: "12px",
                   textAlign: "center", position: "relative"
                 }}
               >
@@ -618,8 +618,8 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                   padding: "4px", cursor: "pointer", zIndex: 10
                 }}>✕</button>
 
-                <h2 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 8, color: "#111", marginBottom: 6, marginTop: 10, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 6 }}>LEAVE A TIP</h2>
-                <div style={{ fontSize: 6, color: "#333", marginBottom: 10, fontFamily: "monospace" }}>I'll get back to you ASAP!</div>
+                <h2 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 8, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 8 }}>LEAVE A TIP</h2>
+                <div style={{ fontSize: 6, color: "#333", marginBottom: 12, fontFamily: "monospace" }}>I'll get back to you ASAP!</div>
                 
                 <TipLineForm onClose={() => setOpenTipLine(false)} />
               </div>

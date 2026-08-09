@@ -594,10 +594,6 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       if (phase === "intro") {
         if (e.key === " " || e.key === "Enter") {
           e.preventDefault();
-          if (dialogueText.length < introLine.length) {
-            setSkipTyping(true);
-            return;
-          }
           setPhase("free");
           return;
         }
