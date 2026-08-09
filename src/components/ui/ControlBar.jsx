@@ -45,11 +45,11 @@ export default function ControlBar({
         background: "#1c1c1c",
         border: "none",
         color: "#1c1c1c", // hidden text
-        cursor: "pointer", touchAction: "none",
-        borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 4 : 0,
-        borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 4 : 0,
-        borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 4 : 0,
-        borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 4 : 0,
+        cursor: "pointer", touchAction: "manipulation",
+        borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
+        borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
+        borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
+        borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 8 : 0,
         boxShadow: "inset 0 2px 4px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)"
       }}
     />
@@ -64,13 +64,13 @@ export default function ControlBar({
         onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
         onContextMenu={(e) => e.preventDefault()}
         style={{
-          width: isMobile ? 48 : 56,
-          height: isMobile ? 48 : 56,
+          width: isMobile ? 64 : 56,
+          height: isMobile ? 64 : 56,
           borderRadius: "50%",
           background: "#9a2a3e",
           border: "none",
           boxShadow: "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
-          cursor: "pointer", touchAction: "none"
+          cursor: "pointer", touchAction: "manipulation"
         }}
       />
       <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 12, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
@@ -87,7 +87,7 @@ export default function ControlBar({
           background: active ? "#5a5a5a" : "#7a7a7a",
           border: "none",
           boxShadow: active ? "inset 0 2px 4px rgba(0,0,0,0.5)" : "inset 0 2px 4px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3)",
-          cursor: "pointer", touchAction: "none"
+          cursor: "pointer", touchAction: "manipulation"
         }}
       />
       <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 10, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
@@ -112,6 +112,7 @@ export default function ControlBar({
       userSelect: "none",
       WebkitUserSelect: "none",
       WebkitTouchCallout: "none",
+      touchAction: "manipulation"
     }}>
       
       {/* Decorative Speaker Lines */}
@@ -134,8 +135,8 @@ export default function ControlBar({
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
           gridTemplateRows: "1fr 1fr 1fr",
-          width: isMobile ? 120 : 160,
-          height: isMobile ? 120 : 160,
+          width: isMobile ? 150 : 160,
+          height: isMobile ? 150 : 160,
           flexShrink: 0,
           gridTemplateAreas: `
             ". top ."

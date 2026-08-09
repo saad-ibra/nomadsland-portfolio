@@ -70,6 +70,88 @@ const FurnitureSprite = ({ item }) => {
   return null;
 };
 
+// ============================================================
+//  DESK TELEPHONE (Tip Line) & CONTACT FORM
+// ============================================================
+function TipLinePhone({ isNear, onClick }) {
+  const [hovered, setHovered] = useState(false);
+  const active = isNear || hovered;
+  return (
+    <div
+      onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{
+        position: "absolute", left: 14 * TILE, top: 9 * TILE - 8,
+        width: TILE, height: TILE,
+        display: "flex", alignItems: "flex-end", justifyContent: "center", cursor: "pointer",
+        filter: active ? "brightness(1.2) drop-shadow(0 0 8px rgba(0,180,255,0.6))" : "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
+        transition: "filter 0.15s", zIndex: 10 * 10 + 2,
+      }}
+    >
+      <svg width="32" height="32" viewBox="0 0 16 16" style={{ imageRendering: "pixelated", overflow: "visible" }}>
+        {/* Phone base */}
+        <rect x="4" y="4" width="8" height="4" rx="1" fill="#c03030" />
+        <rect x="5" y="4" width="6" height="3" fill="#a02020" />
+        {/* Rotary dial / buttons */}
+        <circle cx="8" cy="6" r="1.5" fill="#eef7f2" />
+        {/* Handset */}
+        <rect x="3" y="1" width="10" height="2" rx="1" fill="#c03030" />
+        <rect x="2" y="1" width="3" height="3" rx="1" fill="#a02020" />
+        <rect x="11" y="1" width="3" height="3" rx="1" fill="#a02020" />
+      </svg>
+    </div>
+  );
+}
+
+function TipLineForm({ onClose }) {
+  const [status, setStatus] = useState("idle");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("submitting");
+    const formData = new FormData(e.target);
+    try {
+      // NOTE: User must replace YOUR_FORM_ID with their actual Formspree ID
+      const res = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
+        method: "POST", body: formData, headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) setStatus("success");
+      else setStatus("error");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div style={{ textAlign: "center", padding: 20 }}>
+        <h3 style={{ fontSize: 10, color: "#228b22", marginBottom: 16 }}>SENT!</h3>
+        <p style={{ fontSize: 6, color: "#333", marginBottom: 16 }}>Message received loud and clear.</p>
+        <button onClick={onClose} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "6px 10px", border: "none", cursor: "pointer" }}>CLOSE</button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", fontFamily: "monospace" }}>
+      <div>
+        <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>NAME</label>
+        <input name="name" required style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14 }} />
+      </div>
+      <div>
+        <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>EMAIL / CONTACT</label>
+        <input name="email" type="email" required style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14 }} />
+      </div>
+      <div>
+        <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>MESSAGE / COMPLAINT</label>
+        <textarea name="message" required rows={3} style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14, resize: "none" }} />
+      </div>
+      <button disabled={status === "submitting"} type="submit" style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "10px", border: "none", cursor: "pointer", opacity: status === "submitting" ? 0.5 : 1 }}>
+        {status === "submitting" ? "SENDING..." : "SEND"}
+      </button>
+      {status === "error" && <div style={{ fontSize: 5, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
+    </form>
+  );
+}
+
 export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
   const [scale, setScale] = useState(1);
   const [internalW, setInternalW] = useState(256);
@@ -83,6 +165,8 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const [dynamicDialogue, setDynamicDialogue] = useState(null);
   const [openResume, setOpenResume] = useState(false);
+  const [openTipLine, setOpenTipLine] = useState(false);
+  const [nearPhone, setNearPhone] = useState(false);
   
   const containerRef = useRef(null);
 
@@ -201,7 +285,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
   const { pos, facing, stepping } = usePlayerMovement({
     sceneId: "nomadshome_studio",
     initialPos: START_POS,
-    isActive: phase === "free" && !openResume,
+    isActive: phase === "free" && !openResume && !openTipLine,
     speedMultiplier,
     canWalk: (targetC, targetR) => {
       if (targetR < 0 || targetR >= MAP_ROWS || targetC < 0 || targetC >= MAP_COLS) return false;
@@ -215,12 +299,20 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
     },
     onMove: (nc, nr) => {
       playWoodStep();
+      setNearPhone(nc >= 13 && nc <= 15 && nr >= 8 && nr <= 10);
       if (MAP[nr]?.[nc] === 2) onBackToVillage();
       return false;
     },
     onAction: () => {
       let checkR = pos.row; let checkC = pos.col;
       if (facing === "up") checkR--; else if (facing === "down") checkR++; else if (facing === "left") checkC--; else if (facing === "right") checkC++;
+      
+      if (nearPhone) {
+        playBlip();
+        setOpenTipLine(true);
+        return;
+      }
+      
       const item = FURNITURE.find(f => checkC >= f.col && checkC < f.col + f.w && checkR >= f.row && checkR < f.row + f.h);
       
       if (item) {
@@ -299,6 +391,8 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                   <div key={`furn-${idx}`} style={{ position: "absolute", left: item.col * TILE, top: item.row * TILE, width: item.w * TILE, height: item.h * TILE, zIndex: item.collision ? ((item.row + item.h - 1) * 10 + 1) : 1, pointerEvents: "none", filter: isNear && phase === "free" ? "drop-shadow(0 0 6px rgba(244,232,208,0.8))" : "none", transition: "filter 0.2s" }}><FurnitureSprite item={item} /></div>
                 );
               })}
+
+              <TipLinePhone isNear={nearPhone} onClick={() => { if (phase === "free") setOpenTipLine(true); }} />
               
               <div style={{
                 position: "absolute",
@@ -351,7 +445,6 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                   <div>
                     <div style={{ fontSize: "10px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>Saad Ibra</div>
                     <div style={{ fontSize: "5px", marginTop: "6px", display: "flex", gap: "6px" }}>
-                      <a href="mailto:REDACTED" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>EMAIL</a>
                       <a href="https://linkedin.com/in/saadibrahimkhan" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>LINKEDIN</a>
                       <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>GITHUB</a>
                     </div>
@@ -479,6 +572,46 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                 </div>
               </div>
               <style>{`.resume-scroll::-webkit-scrollbar { width:8px; background: transparent; } .resume-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }`}</style>
+            </div>
+          )}
+
+          {openTipLine && (
+            <div
+              onClick={() => setOpenTipLine(false)}
+              style={{
+                position: "absolute", inset: 0,
+                background: "rgba(0,0,0,0.8)",
+                display: "flex", alignItems: "center", justifyContent: "center", zIndex: 600,
+              }}
+            >
+              <div
+                onClick={e => e.stopPropagation()}
+                style={{
+                  background: "#f4e8d0", border: "4px solid #111", borderTopWidth: "12px",
+                  width: 300, maxWidth: "90%",
+                  boxShadow: "8px 8px 0 rgba(0,0,0,0.5)",
+                  display: "flex", flexDirection: "column", padding: "16px",
+                  textAlign: "center", position: "relative"
+                }}
+              >
+                {/* Spiral notebook rings */}
+                <div style={{ position: "absolute", top: -16, left: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, left: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, right: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -16, right: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+
+                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 0 }}>
+                  <button onClick={() => setOpenTipLine(false)} style={{
+                    fontFamily: "'Press Start 2P', monospace", fontSize: 10,
+                    background: "transparent", color: "#111", border: "none",
+                    padding: "4px 6px", cursor: "pointer",
+                  }}>✕</button>
+                </div>
+                
+                <h2 style={{ fontSize: 8, color: "#000", margin: "0 0 16px 0", lineHeight: "12px", borderBottom: "2px solid #000", paddingBottom: 8 }}>CONTACT / TIP LINE</h2>
+                
+                <TipLineForm onClose={() => setOpenTipLine(false)} />
+              </div>
             </div>
           )}
         </div>

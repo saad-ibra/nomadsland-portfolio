@@ -55,13 +55,7 @@ function generateNewsroomLayout(posts) {
   const pressTiles = new Set(["7,2", "8,2", "9,2", "10,2"]);
   const articleTiles = new Set(articles.map(r => `${r.col},${r.row}`));
   
-  // Desk Telephone (Tip Line) location
-  const phonePos = { col: 12, row: 4 };
-  const phoneTiles = new Set([`${phonePos.col},${phonePos.row}`]);
-
-  const startPos = { col: Math.floor(totalCols / 2), row: Math.min(4, totalRows - 3) };
-
-  return { map, totalCols, totalRows, articles, articleTiles, pressTiles, phoneTiles, phonePos, startPos };
+  return { map, totalCols, totalRows, articles, articleTiles, pressTiles, startPos };
 }
 
 function isLayoutWalkable(layout, col, row) {
@@ -72,7 +66,7 @@ function isLayoutWalkable(layout, col, row) {
 function canLayoutWalk(layout, col, row) {
   if (col === 5 && row === 3) return false;
   const coord = `${col},${row}`;
-  if (layout.articleTiles.has(coord) || layout.pressTiles.has(coord) || layout.phoneTiles.has(coord)) return false;
+  if (layout.articleTiles.has(coord) || layout.pressTiles.has(coord)) return false;
   return isLayoutWalkable(layout, col, row);
 }
 
@@ -156,52 +150,6 @@ function PrintingPress({ col }) {
 }
 
 // ============================================================
-//  DESK TELEPHONE (Tip Line) — interactable
-// ============================================================
-function TipLinePhone({ col, row, isNear, onClick }) {
-  const [hovered, setHovered] = useState(false);
-  const active = isNear || hovered;
-
-  return (
-    <div
-      onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "absolute",
-        left: col * TILE,
-        top: row * TILE - 4,
-        width: TILE, height: TILE,
-        display: "flex", alignItems: "flex-end", justifyContent: "center",
-        cursor: "pointer",
-        filter: active
-          ? "brightness(1.2) drop-shadow(0 0 8px rgba(0,180,255,0.6))"
-          : "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
-        transition: "filter 0.15s",
-        zIndex: row * 10,
-      }}
-    >
-      <svg width="32" height="32" viewBox="0 0 16 16" style={{ imageRendering: "pixelated", overflow: "visible" }}>
-        {/* Small desk/table for the phone */}
-        <rect x="2" y="8" width="12" height="4" fill="#8b4513" />
-        <rect x="4" y="12" width="2" height="4" fill="#5a2d0a" />
-        <rect x="10" y="12" width="2" height="4" fill="#5a2d0a" />
-        {/* Phone base */}
-        <rect x="4" y="4" width="8" height="4" rx="1" fill="#c03030" />
-        <rect x="5" y="4" width="6" height="3" fill="#a02020" />
-        {/* Rotary dial / buttons */}
-        <circle cx="8" cy="6" r="1.5" fill="#eef7f2" />
-        {/* Handset */}
-        <rect x="3" y="1" width="10" height="2" rx="1" fill="#c03030" />
-        <rect x="2" y="1" width="3" height="3" rx="1" fill="#a02020" />
-        <rect x="11" y="1" width="3" height="3" rx="1" fill="#a02020" />
-      </svg>
-    </div>
-  );
-}
-
-
-// ============================================================
 //  MAIN NEWSROOM COMPONENT
 // ============================================================
 export default function NewsroomScene({ isLandscape, onBackToVillage , speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
@@ -209,9 +157,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
   const layoutRef = useRef(layout);
   useEffect(() => { layoutRef.current = layout; }, [layout]);
 
-  const [nearObject, setNearObject] = useState(null); // ID of article or 'phone'
+  const [nearObject, setNearObject] = useState(null); // ID of article
   const [openPost, setOpenPost]     = useState(null);
-  const [openTipLine, setOpenTipLine] = useState(false);
   const [phase, setPhase]           = useState("intro");
   const [scale, setScale] = useState(1);
   const [internalW, setInternalW] = useState(384);
@@ -232,7 +179,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
       return canLayoutWalk(layoutRef.current, c, r);
     },
     speedMultiplier,
-    isActive: phase === "free" && !openPost && !openTipLine,
+    isActive: phase === "free" && !openPost,
     onMove: (c, r) => { checkNear(c, r); playTileStep(); return false; },
     onAction: () => {
       const dc = Math.abs(NPC_POS.col - pos.col);
@@ -242,13 +189,10 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
         return;
       }
       if (!nearObject) return;
-      if (nearObject === "phone") { setOpenTipLine(true); }
-      else {
-        const rec = layoutRef.current.articles.find(a => a.id === nearObject);
-        if (rec) setOpenPost(rec.post);
-      }
+      const rec = layoutRef.current.articles.find(a => a.id === nearObject);
+      if (rec) setOpenPost(rec.post);
     },
-    onCancel: () => { setOpenPost(null); setOpenTipLine(false); }
+    onCancel: () => { setOpenPost(null); }
   });
 
   // Also keep a ref to facing so keyboard handler can read it without triggering re-renders
@@ -367,12 +311,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
         return;
       }
     }
-    const { phonePos } = layoutRef.current;
-    const dc = Math.abs(phonePos.col - col), dr = Math.abs(phonePos.row - row);
-    if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
-      setNearObject("phone");
-      return;
-    }
     
     setNearObject(null);
   }, []);
@@ -411,16 +349,11 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
       if (phase !== "free") return;
       if ((e.key === " " || e.key === "Enter") && nearObject) {
         e.preventDefault();
-        if (nearObject === "phone") {
-          setOpenTipLine(true);
-        } else {
-          const rec = layoutRef.current.articles.find(r => r.id === nearObject);
-          if (rec) setOpenPost(rec.post);
-        }
+        const rec = layoutRef.current.articles.find(r => r.id === nearObject);
+        if (rec) setOpenPost(rec.post);
       }
       if (e.key === "Escape") {
         setOpenPost(null);
-        setOpenTipLine(false);
       }
     };
     const onUp = (e) => { keysRef.current[e.key.toLowerCase()] = false; };
@@ -523,16 +456,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
             {/* Printing Press */}
             <PrintingPress col={7} />
 
-            {/* Tip Line Phone */}
-            <TipLinePhone 
-              col={layout.phonePos.col} 
-              row={layout.phonePos.row} 
-              isNear={nearObject === "phone"} 
-              onClick={() => {
-                if (phase === "free") setOpenTipLine(true);
-              }}
-            />
-
             {/* Article objects (Bulletin Board) */}
             {layout.articles.map(r => (
               <PixelArticle
@@ -612,7 +535,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
           </div>
 
           {/* Proximity prompt */}
-          {phase === "free" && nearObject && !openPost && !openTipLine && (
+          {phase === "free" && nearObject && !openPost && (
             <div style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 8px",
@@ -620,11 +543,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
               zIndex: 500, display: "flex", alignItems: "center", gap: 6,
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 6, color: "#fff" }}>
-                {nearObject === "phone" ? (
-                  <><Phone size={8} /><span>TIP LINE</span></>
-                ) : (
-                  <><FileText size={8} /><span>{activeArticle?.label}</span></>
-                )}
+                <FileText size={8} /><span>{activeArticle?.label}</span>
               </div>
               <div style={{
                 fontSize: 5, color: "#000", background: "#fff",
@@ -662,58 +581,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                   <span style={{ fontSize: 5, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE/A</span>
                   GET TO WORK
                 </button>
-              </div>
-            </div>
-          )}
-
-          {/* ── TIP LINE OVERLAY (Rolodex style) ── */}
-          {openTipLine && (
-            <div
-              onClick={() => setOpenTipLine(false)}
-              style={{
-                position: "absolute", inset: 0,
-                background: "rgba(0,0,0,0.8)",
-                display: "flex", alignItems: "center", justifyContent: "center", zIndex: 600,
-              }}
-            >
-              <div
-                onClick={e => e.stopPropagation()}
-                style={{
-                  background: "#f4e8d0", border: "4px solid #111", borderTopWidth: "12px",
-                  width: 240, maxWidth: "90%",
-                  boxShadow: "8px 8px 0 rgba(0,0,0,0.5)",
-                  display: "flex", flexDirection: "column", padding: "16px",
-                  textAlign: "center", position: "relative"
-                }}
-              >
-                {/* Spiral notebook rings */}
-                <div style={{ position: "absolute", top: -16, left: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, left: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, right: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, right: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
-
-                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: -10 }}>
-                  <button onClick={() => setOpenTipLine(false)} style={{
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 6,
-                    background: "#000", color: "#fff", border: "none",
-                    padding: "4px 6px", cursor: "pointer",
-                  }}><X size={8} /></button>
-                </div>
-                
-                <Phone size={24} color="#000" style={{ margin: "0 auto 12px" }} />
-                <h2 style={{ fontSize: 8, color: "#000", margin: "0 0 8px 0", lineHeight: "12px", borderBottom: "2px solid #000", paddingBottom: 8 }}>TIP LINE</h2>
-                <p style={{ fontSize: 5, color: "#333", margin: "0 0 16px 0", lineHeight: "10px", fontFamily: "monospace" }}>
-                  Got a lead? Send a Letter to the Editor.
-                </p>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  <a href="mailto:saadibrahimkhan@outlook.com" className="contact-btn">
-                    <MessageCircle size={10} /> EMAIL DESK
-                  </a>
-                  <a href="https://www.linkedin.com/in/saadibrahimkhan/" target="_blank" rel="noopener noreferrer" className="contact-btn">
-                    <Briefcase size={10} /> LINKEDIN
-                  </a>
-                </div>
               </div>
             </div>
           )}
