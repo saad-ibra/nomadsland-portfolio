@@ -8,17 +8,30 @@ export function usePlayerMovement({
   speedMultiplier = 1,
   isActive = true,
   isSailing = false,
+  ignoreSavedPos = false,
   onMove,
   onAction,
   onCancel
 }) {
   const [pos, setPos] = useState(() => {
-    if (sceneId) {
+    if (sceneId && !ignoreSavedPos) {
       const saved = localStorage.getItem(`pos_${sceneId}`);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed.col === 'number' && !isNaN(parsed.col) && typeof parsed.row === 'number' && !isNaN(parsed.row)) {
+          return parsed;
+        }
+      }
     }
     return initialPos;
   });
+
+  // Force reset if pos is corrupted in memory due to HMR
+  useEffect(() => {
+    if (!pos || isNaN(pos.col) || isNaN(pos.row)) {
+      setPos(initialPos);
+    }
+  }, [pos, initialPos]);
 
   const [facing, setFacing] = useState("down");
   const [stepping, setStepping] = useState(false);
@@ -31,13 +44,15 @@ export function usePlayerMovement({
   const onMoveRef = useRef(onMove);
   const onActionRef = useRef(onAction);
   const onCancelRef = useRef(onCancel);
+  const canWalkRef = useRef(canWalk);
 
   // Keep refs up to date
   useEffect(() => {
     onMoveRef.current = onMove;
     onActionRef.current = onAction;
     onCancelRef.current = onCancel;
-  }, [onMove, onAction, onCancel]);
+    canWalkRef.current = canWalk;
+  }, [onMove, onAction, onCancel, canWalk]);
 
   useEffect(() => {
     facingRef.current = facing;
@@ -171,7 +186,7 @@ export function usePlayerMovement({
       const nc = p.col + dc;
       const nr = p.row + dr;
 
-      if (canWalk(nc, nr)) {
+      if (canWalkRef.current(nc, nr)) {
         setStepping(true);
         lastMoveRef.current = now;
         const newPos = { col: nc, row: nr };
@@ -191,7 +206,7 @@ export function usePlayerMovement({
     }, 30);
 
     return () => clearInterval(id);
-  }, [isActive, speedMultiplier, canWalk, isSailing]);
+  }, [isActive, speedMultiplier, isSailing]);
 
   return { pos, setPos, facing, setFacing, stepping };
 }

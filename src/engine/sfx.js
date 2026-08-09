@@ -158,3 +158,7 @@ export function playWoodStep(volume = 0.015) {
 export function playTileStep(volume = 0.01) {
   playOscillator('square', 250, volume, 0.05);
 }
+
+export function playBlip(volume = 0.02) {
+  playOscillator('square', 800, volume, 0.05);
+}

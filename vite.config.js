@@ -1,3 +1,4 @@
+// Triggering Vite restart to optimize react-helmet-async
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { defineConfig } from 'vite';
@@ -7,6 +8,9 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    host: true
+  },
   build: {
     rollupOptions: {
       input: {
