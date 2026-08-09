@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ArrowLeft } from "lucide-react";
+import { useForm, ValidationError } from '@formspree/react';
 import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import SaadSprite from "../components/sprites/SaadSprite";
@@ -103,24 +104,9 @@ function TipLinePhone({ isNear, onClick }) {
 }
 
 function TipLineForm({ onClose }) {
-  const [status, setStatus] = useState("idle");
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus("submitting");
-    const formData = new FormData(e.target);
-    try {
-      // NOTE: User must replace YOUR_FORM_ID with their actual Formspree ID
-      const res = await fetch("https://formspree.io/f/YOUR_FORM_ID", {
-        method: "POST", body: formData, headers: { 'Accept': 'application/json' }
-      });
-      if (res.ok) setStatus("success");
-      else setStatus("error");
-    } catch {
-      setStatus("error");
-    }
-  };
+  const [state, handleSubmit] = useForm('mljrjbde');
 
-  if (status === "success") {
+  if (state.succeeded) {
     return (
       <div style={{ textAlign: "center", padding: 20 }}>
         <h3 style={{ fontSize: 10, color: "#228b22", marginBottom: 16 }}>SENT!</h3>
@@ -135,19 +121,22 @@ function TipLineForm({ onClose }) {
       <div>
         <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>NAME</label>
         <input name="name" required style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14 }} />
+        <ValidationError field="name" prefix="Name" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 4, display: "block" }} />
       </div>
       <div>
         <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>EMAIL / CONTACT</label>
         <input name="email" type="email" required style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14 }} />
+        <ValidationError field="email" prefix="Email" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 4, display: "block" }} />
       </div>
       <div>
         <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>MESSAGE / COMPLAINT</label>
         <textarea name="message" required rows={3} style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14, resize: "none" }} />
+        <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 4, display: "block" }} />
       </div>
-      <button disabled={status === "submitting"} type="submit" style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "10px", border: "none", cursor: "pointer", opacity: status === "submitting" ? 0.5 : 1 }}>
-        {status === "submitting" ? "SENDING..." : "SEND"}
+      <button disabled={state.submitting} type="submit" style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "10px", border: "none", cursor: "pointer", opacity: state.submitting ? 0.5 : 1 }}>
+        {state.submitting ? "SENDING..." : "SEND"}
       </button>
-      {status === "error" && <div style={{ fontSize: 5, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
+      {state.errors && state.errors.length > 0 && <div style={{ fontSize: 5, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
     </form>
   );
 }

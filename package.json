@@ -13,6 +13,7 @@
     "deploy": "echo \"saadibra.mooo.com\" > dist/CNAME && gh-pages -d dist"
   },
   "dependencies": {
+    "@formspree/react": "^3.0.0",
     "dotenv": "^17.4.2",
     "lucide-react": "^1.28.0",
     "react": "^19.2.8",
