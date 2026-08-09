@@ -599,11 +599,12 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
               <div
                 onClick={e => e.stopPropagation()}
                 style={{
+                  position: "absolute", top: 16, bottom: 16, left: 16, right: 16,
                   background: "#f4e8d0", border: "2px solid #111", borderTopWidth: "8px",
-                  width: 240, maxWidth: "90%", maxHeight: internalH - 16, overflowY: "auto",
+                  overflowY: "auto",
                   boxShadow: "4px 4px 0 rgba(0,0,0,0.5)",
-                  display: "flex", flexDirection: "column", padding: "12px",
-                  textAlign: "center", position: "relative"
+                  display: "flex", flexDirection: "column", padding: "16px",
+                  textAlign: "center"
                 }}
               >
                 {/* Spiral notebook rings */}
