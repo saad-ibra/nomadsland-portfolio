@@ -81,7 +81,7 @@ function TipLinePhone({ isNear, onClick }) {
     <div
       onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
       style={{
-        position: "absolute", left: 14 * TILE, top: 9 * TILE - 8,
+        position: "absolute", left: 5 * TILE, top: 1 * TILE - 8,
         width: TILE, height: TILE,
         display: "flex", alignItems: "flex-end", justifyContent: "center", cursor: "pointer",
         filter: active ? "brightness(1.2) drop-shadow(0 0 8px rgba(0,180,255,0.6))" : "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
@@ -105,6 +105,27 @@ function TipLinePhone({ isNear, onClick }) {
 
 function TipLineForm({ onClose }) {
   const [state, handleSubmit] = useForm('mljrjbde');
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const activeTag = document.activeElement?.tagName;
+      const isTyping = activeTag === "INPUT" || activeTag === "TEXTAREA";
+      
+      if (e.key === "Escape" || (!isTyping && e.key.toLowerCase() === "b")) {
+        onClose();
+      } else if (!isTyping && (e.key === " " || e.key.toLowerCase() === "a")) {
+        e.preventDefault();
+        if (formRef.current && typeof formRef.current.requestSubmit === "function") {
+          formRef.current.requestSubmit();
+        } else if (formRef.current) {
+          formRef.current.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   if (state.succeeded) {
     return (
@@ -117,7 +138,7 @@ function TipLineForm({ onClose }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", fontFamily: "monospace" }}>
+    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", fontFamily: "monospace" }}>
       <div>
         <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>NAME</label>
         <input name="name" required style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14 }} />
@@ -288,7 +309,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
     },
     onMove: (nc, nr) => {
       playWoodStep();
-      setNearPhone(nc >= 13 && nc <= 15 && nr >= 8 && nr <= 10);
+      setNearPhone(nc >= 4 && nc <= 6 && nr >= 0 && nr <= 2);
       if (MAP[nr]?.[nc] === 2) onBackToVillage();
       return false;
     },
@@ -433,9 +454,10 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #111", paddingBottom: "8px", marginBottom: "12px", position: "sticky", top: "-20px", background: "#fcfaf5", zIndex: 5 }}>
                   <div>
                     <div style={{ fontSize: "10px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>Saad Ibra</div>
-                    <div style={{ fontSize: "5px", marginTop: "6px", display: "flex", gap: "6px" }}>
+                    <div style={{ fontSize: "5px", marginTop: "6px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
                       <a href="https://linkedin.com/in/saadibrahimkhan" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>LINKEDIN</a>
                       <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>GITHUB</a>
+                      <button onClick={() => { setOpenResume(false); setOpenTipLine(true); }} style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px", fontFamily: "'Press Start 2P', monospace", fontSize: "4px", cursor: "pointer"}}>REACH OUT</button>
                     </div>
                   </div>
                   <button onClick={() => setOpenResume(false)} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 5, background: "#111", color: "#fff", border: "none", padding: "6px 8px", cursor: "pointer", flexShrink: 0, boxShadow: "2px 2px 0 rgba(0,0,0,0.3)" }}>CLOSE</button>
@@ -576,18 +598,20 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
               <div
                 onClick={e => e.stopPropagation()}
                 style={{
-                  background: "#f4e8d0", border: "4px solid #111", borderTopWidth: "12px",
-                  width: 300, maxWidth: "90%",
-                  boxShadow: "8px 8px 0 rgba(0,0,0,0.5)",
-                  display: "flex", flexDirection: "column", padding: "16px",
+                  background: "#f4e8d0", border: "2px solid #111", borderTopWidth: "8px",
+                  width: 240, maxWidth: "90%", maxHeight: "90vh", overflowY: "auto",
+                  boxShadow: "4px 4px 0 rgba(0,0,0,0.5)",
+                  display: "flex", flexDirection: "column", padding: "12px",
                   textAlign: "center", position: "relative"
                 }}
               >
                 {/* Spiral notebook rings */}
-                <div style={{ position: "absolute", top: -16, left: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, left: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, right: 60, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
-                <div style={{ position: "absolute", top: -16, right: 20, width: 8, height: 16, background: "silver", borderRadius: 4, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -12, left: 16, width: 6, height: 12, background: "silver", borderRadius: 3, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -12, left: 36, width: 6, height: 12, background: "silver", borderRadius: 3, border: "1px solid #111" }} />
+                <div style={{ position: "absolute", top: -12, left: 56, width: 6, height: 12, background: "silver", borderRadius: 3, border: "1px solid #111" }} />
+                
+                <h2 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 8, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px" }}>LEAVE A TIP</h2>
+                <div style={{ fontSize: 6, color: "#333", marginBottom: 12, fontFamily: "monospace" }}>I'll get back to you ASAP!</div>
 
                 <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 0 }}>
                   <button onClick={() => setOpenTipLine(false)} style={{
