@@ -366,7 +366,8 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
         <style>{`@keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} } @keyframes dustParticle { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-20px) scale(0.5); opacity: 0; } } @keyframes swimRight { 0% { transform: translateX(-5px) scaleX(1); } 100% { transform: translateX(15px) scaleX(1); } } @keyframes swimLeft { 0% { transform: translateX(5px) scaleX(-1); } 100% { transform: translateX(-15px) scaleX(-1); } }`}</style>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#000", boxShadow: "0 0 0 4px #2a1c11, 0 0 30px rgba(0,0,0,1)", imageRendering: "pixelated", borderRadius: 4 }}>
-            <div style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y }}>
+            {/* CAMERA CONTAINER */}
+            <div style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, zIndex: 1 }}>
               {MAP.map((row, r) => row.map((tile, c) => {
                  const key = `${r}_${c}`;
                  if (tile === 1) return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: "#5a3a2a", border: "1px solid #3a1c11", backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,0.1) 4px, rgba(0,0,0,0.1) 6px)", zIndex: r * 10 }} />;
@@ -599,7 +600,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                 onClick={e => e.stopPropagation()}
                 style={{
                   background: "#f4e8d0", border: "2px solid #111", borderTopWidth: "8px",
-                  width: 240, maxWidth: "90%", maxHeight: "90vh", overflowY: "auto",
+                  width: 240, maxWidth: "90%", maxHeight: internalH - 16, overflowY: "auto",
                   boxShadow: "4px 4px 0 rgba(0,0,0,0.5)",
                   display: "flex", flexDirection: "column", padding: "12px",
                   textAlign: "center", position: "relative"

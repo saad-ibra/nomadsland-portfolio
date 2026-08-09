@@ -759,8 +759,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
           <div style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            left: -cam.x, top: -cam.y,
-            
+            left: -cam.x, top: -cam.y, zIndex: 1
           }}>
             {/* Render tiles */}
             {MAP.map((row, r) => row.map((tile, c) => {
