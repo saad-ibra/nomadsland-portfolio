@@ -824,7 +824,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
 
             {/* Moonlight Sunbeam */}
             <div style={{
-              position: "absolute", top: 2*TILE - 4, left: 5*TILE - 20, width: TILE*2 + 40, height: TILE*6,
+              position: "absolute", top: 2*TILE - 2, left: 5*TILE - 18, width: TILE*2 + 40, height: TILE*6,
               background: "linear-gradient(to bottom, rgba(100,150,255,0.25), transparent)",
               clipPath: "polygon(20px 0, calc(100% - 20px) 0, 100% 100%, 0 100%)",
               mixBlendMode: "screen", pointerEvents: "none", zIndex: 400

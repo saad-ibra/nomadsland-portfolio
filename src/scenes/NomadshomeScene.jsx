@@ -138,7 +138,7 @@ function TipLineForm({ onClose }) {
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "monospace" }}>
+    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 6, textAlign: "left", fontFamily: "monospace" }}>
       <div>
         <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>NAME</label>
         <input name="name" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
@@ -602,7 +602,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                   background: "#f4e8d0", border: "2px solid #111", borderTopWidth: "8px",
                   width: 240, maxWidth: "90%", maxHeight: internalH - 16, overflowY: "auto",
                   boxShadow: "4px 4px 0 rgba(0,0,0,0.5)",
-                  display: "flex", flexDirection: "column", padding: "12px",
+                  display: "flex", flexDirection: "column", padding: "8px",
                   textAlign: "center", position: "relative"
                 }}
               >

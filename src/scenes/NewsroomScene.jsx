@@ -55,7 +55,7 @@ function generateNewsroomLayout(posts) {
   const pressTiles = new Set(["7,2", "8,2", "9,2", "10,2"]);
   const articleTiles = new Set(articles.map(r => `${r.col},${r.row}`));
   
-  return { map, totalCols, totalRows, articles, articleTiles, pressTiles, startPos };
+  return { map, totalCols, totalRows, articles, articleTiles, pressTiles, startPos: { col: 5, row: 5 } };
 }
 
 function isLayoutWalkable(layout, col, row) {
