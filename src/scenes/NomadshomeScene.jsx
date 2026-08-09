@@ -85,7 +85,7 @@ function TipLinePhone({ isNear, onClick }) {
         width: TILE, height: TILE,
         display: "flex", alignItems: "flex-end", justifyContent: "center", cursor: "pointer",
         filter: active ? "brightness(1.2) drop-shadow(0 0 8px rgba(0,180,255,0.6))" : "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
-        transition: "filter 0.15s", zIndex: 10 * 10 + 2,
+        transition: "filter 0.15s", zIndex: 11,
       }}
     >
       <svg width="32" height="32" viewBox="0 0 16 16" style={{ imageRendering: "pixelated", overflow: "visible" }}>
@@ -138,24 +138,24 @@ function TipLineForm({ onClose }) {
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12, textAlign: "left", fontFamily: "monospace" }}>
+    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "monospace" }}>
       <div>
-        <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>NAME</label>
-        <input name="name" required style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14 }} />
-        <ValidationError field="name" prefix="Name" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 4, display: "block" }} />
+        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>NAME</label>
+        <input name="name" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
+        <ValidationError field="name" prefix="Name" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
       <div>
-        <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>EMAIL / CONTACT</label>
-        <input name="email" type="email" required style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14 }} />
-        <ValidationError field="email" prefix="Email" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 4, display: "block" }} />
+        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>CONTACT</label>
+        <input name="email" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
+        <ValidationError field="email" prefix="Email" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
       <div>
-        <label style={{ display: "block", fontSize: 10, fontWeight: "bold", marginBottom: 4, color: "#111" }}>MESSAGE / COMPLAINT</label>
-        <textarea name="message" required rows={3} style={{ width: "100%", padding: 6, boxSizing: "border-box", border: "2px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 14, resize: "none" }} />
-        <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 4, display: "block" }} />
+        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>MESSAGE</label>
+        <textarea name="message" required rows={3} style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, resize: "none", color: "#111" }} />
+        <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
-      <button disabled={state.submitting} type="submit" style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "10px", border: "none", cursor: "pointer", opacity: state.submitting ? 0.5 : 1 }}>
-        {state.submitting ? "SENDING..." : "SEND"}
+      <button type="submit" disabled={state.submitting} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 5, background: "#c03030", color: "#fff", border: "none", padding: "8px", cursor: state.submitting ? "not-allowed" : "pointer", marginTop: 4, boxShadow: "2px 2px 0 rgba(0,0,0,0.4)" }}>
+        {state.submitting ? "SENDING..." : "SUBMIT"}
       </button>
       {state.errors && state.errors.length > 0 && <div style={{ fontSize: 5, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
     </form>
@@ -384,7 +384,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
                 position: "absolute", top: TILE - 2, left: TILE * 6 - 8, width: TILE * 3 + 40, height: TILE * 6,
                 background: "linear-gradient(to bottom, rgba(255,220,150,0.4), transparent)",
                 clipPath: "polygon(20px 0, calc(100% - 20px) 0, 100% 100%, 0 100%)",
-                mixBlendMode: "overlay", pointerEvents: "none", zIndex: 800
+                mixBlendMode: "overlay", pointerEvents: "none", zIndex: 300
               }}>
                 <div style={{ position: "absolute", left: "30%", top: "40%", width: 2, height: 2, background: "#fff", animation: "dustParticle 4s infinite linear", opacity: 0 }} />
                 <div style={{ position: "absolute", left: "60%", top: "60%", width: 2, height: 2, background: "#fff", animation: "dustParticle 5s infinite linear 1.5s", opacity: 0 }} />

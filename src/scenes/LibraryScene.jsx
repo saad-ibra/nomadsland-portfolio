@@ -828,7 +828,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
               position: "absolute", top: 2*TILE - 4, left: 5*TILE - 20, width: TILE*2 + 40, height: TILE*6,
               background: "linear-gradient(to bottom, rgba(100,150,255,0.25), transparent)",
               clipPath: "polygon(20px 0, calc(100% - 20px) 0, 100% 100%, 0 100%)",
-              mixBlendMode: "screen", pointerEvents: "none", zIndex: 800
+              mixBlendMode: "screen", pointerEvents: "none", zIndex: 400
             }}>
               <div style={{ position: "absolute", left: "30%", top: "40%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 4s infinite linear", opacity: 0 }} />
               <div style={{ position: "absolute", left: "60%", top: "60%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 5s infinite linear 1.5s", opacity: 0 }} />
