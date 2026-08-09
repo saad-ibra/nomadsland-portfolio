@@ -9,7 +9,8 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true
+    host: true,
+    port: 3000
   },
   build: {
     rollupOptions: {
