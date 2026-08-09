@@ -555,7 +555,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
           {/* Intro dialogue */}
           {phase !== "free" && (
             <div style={{
-              position: "absolute", bottom: 8, left: 8, right: 8,
+              position: "absolute", top: 16, left: 8, right: 8,
               padding: "18px 14px 10px",
               background: "#fff", border: "4px solid #000", zIndex: 500,
             }}>

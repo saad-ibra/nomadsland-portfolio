@@ -927,7 +927,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
           {/* Guide dialogue */}
           {phase !== "free" && (
             <div style={{
-              position: "absolute", bottom: 8, left: 8, right: 8,
+              position: "absolute", top: 16, left: 8, right: 8,
               padding: "18px 14px 10px",
               background: "rgba(10,10,20,0.94)", border: "2px solid #f4e8d0", borderRadius: 2,
               boxShadow: "inset 0 0 0 2px rgba(10,10,20,0.94), inset 0 0 0 4px #888",

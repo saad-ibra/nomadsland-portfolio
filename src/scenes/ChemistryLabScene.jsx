@@ -804,7 +804,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
           {/* Intro dialogue */}
           {phase !== "free" && (
             <div style={{
-              position: "absolute", bottom: 8, left: 8, right: 8,
+              position: "absolute", top: 16, left: 8, right: 8,
               padding: "18px 14px 10px",
               background: "rgba(6,10,14,0.97)", border: "2px solid #eef7f2", borderRadius: 2,
               boxShadow: "inset 0 0 0 4px #162e4c", zIndex: 500,

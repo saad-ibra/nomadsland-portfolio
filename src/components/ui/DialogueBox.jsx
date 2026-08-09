@@ -174,7 +174,7 @@ export default function DialogueBox({
 
   return (
     <div style={{
-      position: "absolute", bottom: 8, left: 8, right: 8,
+      position: "absolute", top: 16, left: 8, right: 8,
       padding: "18px 14px 10px",
       background: t.bg, border: t.border, borderRadius: 2,
       boxShadow: t.innerShadow,

@@ -1534,7 +1534,7 @@ export default function VillageScene({ isLandscape, previousScene,
           {/* Intro dialogue */}
           {phase !== "free" && (
             <div style={{
-              position: "absolute", bottom: 8, left: 8, right: 8, padding: "18px 14px 10px",
+              position: "absolute", top: 16, left: 8, right: 8, padding: "18px 14px 10px",
               background: "#f8f8f8", border: "2px solid #302820", borderRadius: 4,
               boxShadow: "0 6px 0 rgba(0,0,0,0.3)", zIndex: 6000,
             }}>
