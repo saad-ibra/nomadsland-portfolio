@@ -323,6 +323,14 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
         return;
       }
       
+      if (checkC === NPC_POS.col && checkR === NPC_POS.row) {
+        playBlip();
+        setDynamicDialogue(null);
+        setPhase("talking");
+        setDialogueIndex(0);
+        return;
+      }
+
       const item = FURNITURE.find(f => checkC >= f.col && checkC < f.col + f.w && checkR >= f.row && checkR < f.row + f.h);
       
       if (item) {
@@ -338,17 +346,6 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
         else if (item.type === "nightstand") setDynamicDialogue(["My highly secure filing cabinet, code-named 'The Dust-Bin'.", "If a burglar breaks in, they'll just think I'm incredibly messy.", "Joke's on them, that's where my Social Security card is."]);
         else if (item.type === "plant") setDynamicDialogue(["I'm doing my best to keep this thing alive."]);
         else setDynamicDialogue([`You inspect the ${item.label || "object"}.`, "It looks nice."]);
-        setPhase("talking");
-        setDialogueIndex(0);
-        return;
-      }
-
-      // Check NPC interaction
-      const dc = Math.abs(NPC_POS.col - pos.col);
-      const dr = Math.abs(NPC_POS.row - pos.row);
-      if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
-        playBlip();
-        setDynamicDialogue(null);
         setPhase("talking");
         setDialogueIndex(0);
         return;
