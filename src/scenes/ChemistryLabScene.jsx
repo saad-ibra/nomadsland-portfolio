@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
+import { renderControlText } from '../utils/renderControls';
 import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-react";
 import { TILE } from '../engine/constants';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
@@ -618,6 +619,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
 
   const activeStation    = layout.stations.find(s => s.id === nearStation);
   const openStationData  = layout.stations.find(s => s.id === openStation);
+  const labKeycapStyle = { display: "inline-block", background: "#0c2e1e", border: "1px solid #80c8a0", borderBottomWidth: 2, borderBottomColor: "#041810", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#a8e8a8", boxShadow: "0 1px 0 #041810", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" };
   const introLine        = reposLoaded
     ? `My lab. Every terminal connects to a GitHub repo. ${stats.public} public, ${stats.private} private. Walk up to one and press SPACE.`
     : "Pulling data from GitHub...";
@@ -634,6 +636,8 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes keycapGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
         .lab-scroll::-webkit-scrollbar { width:10px }
         .lab-scroll::-webkit-scrollbar-track { background:#0a1218 }
         .lab-scroll::-webkit-scrollbar-thumb { background:#c4e8bc }
@@ -808,14 +812,18 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
               padding: "18px 14px 10px",
               background: "rgba(6,10,14,0.97)", border: "2px solid #eef7f2", borderRadius: 2,
               boxShadow: "inset 0 0 0 4px #162e4c", zIndex: 500,
+              animation: "dialogSlideIn 0.3s ease-out"
             }}>
+              <div style={{ position: "absolute", top: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #eef7f2", borderTop: "2px solid #eef7f2", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #eef7f2", borderBottom: "2px solid #eef7f2", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #eef7f2", borderBottom: "2px solid #eef7f2", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{
                 position: "absolute", top: -12, left: 10,
                 background: "#0c1e2e", border: "2px solid #eef7f2",
                 padding: "2px 8px", fontSize: 7, color: "#80c8a0", borderRadius: 2,
               }}>SAAD IBRA</div>
               <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#eef7f2" }}>
-                {introLine}
+                {renderControlText(introLine, labKeycapStyle)}
                 <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
               </div>
               <div style={{ marginTop: 8 }}>

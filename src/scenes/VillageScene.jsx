@@ -1286,6 +1286,8 @@ export default function VillageScene({ isLandscape, previousScene,
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes keycapGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
         @keyframes beaconFlash { 0%,49%{opacity:1;box-shadow:0 0 8px 4px rgba(255,204,0,0.9)} 50%,100%{opacity:0.15;box-shadow:none} }
         @keyframes glowPulse { from { opacity: 0.5; transform: translateX(-50%) scale(1); } to { opacity: 1; transform: translateX(-50%) scale(1.1); } }
         @keyframes floatBoat { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-3px) rotate(2deg); } }
@@ -1536,14 +1538,19 @@ export default function VillageScene({ isLandscape, previousScene,
             <div style={{
               position: "absolute", top: 16, left: 8, right: 8, padding: "18px 14px 10px",
               background: "#f8f8f8", border: "2px solid #302820", borderRadius: 4,
-              boxShadow: "0 6px 0 rgba(0,0,0,0.3)", zIndex: 6000,
+              boxShadow: "0 6px 0 rgba(0,0,0,0.3)", zIndex: 6000, animation: "dialogSlideIn 0.3s ease-out"
             }}>
+              <div style={{ position: "absolute", top: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #302820", borderTop: "2px solid #302820", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #302820", borderBottom: "2px solid #302820", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #302820", borderBottom: "2px solid #302820", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{
                 position: "absolute", top: -10, left: 10, background: "#d84040", border: "2px solid #302820",
                 padding: "2px 8px", fontSize: 6, color: "#fff", borderRadius: 2,
               }}>SAAD IBRA</div>
               <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#302820" }}>
-                This is the village. Each building leads to a different part of my work. Walk up to any door and press SPACE to step inside.
+                This is the village. Each building leads to a different part of my work. Walk up to any door and press{' '}
+                <span style={{ display: "inline-block", background: "#302820", border: "1px solid #504030", borderBottomWidth: 2, borderBottomColor: "#1a1410", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#fff", boxShadow: "0 1px 0 #1a1410", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" }}>SPACE</span>
+                {' '}to step inside.
                 <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>&#x258A;</span>
               </div>
               <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>

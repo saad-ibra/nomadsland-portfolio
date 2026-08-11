@@ -390,6 +390,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes keycapGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
         .news-scroll::-webkit-scrollbar { width:12px; background: #fff; border-left: 2px solid #000; }
         .news-scroll::-webkit-scrollbar-thumb { background: #000; border: 2px solid #fff; }
         
@@ -558,7 +560,11 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
               position: "absolute", top: 16, left: 8, right: 8,
               padding: "18px 14px 10px",
               background: "#fff", border: "4px solid #000", zIndex: 500,
+              animation: "dialogSlideIn 0.3s ease-out"
             }}>
+              <div style={{ position: "absolute", top: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #000", borderTop: "2px solid #000", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #000", borderBottom: "2px solid #000", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #000", borderBottom: "2px solid #000", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{
                 position: "absolute", top: -12, left: 10,
                 background: "#000", border: "2px solid #fff",

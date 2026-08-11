@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { renderControlText } from '../utils/renderControls';
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
@@ -714,6 +715,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
   
   const transitionTime = (0.14 / speedMultiplier).toFixed(2);
 
+  const libKeycapStyle = { display: "inline-block", background: "#2a2a40", border: "1px solid #f4e8d0", borderBottomWidth: 2, borderBottomColor: "#0a0a18", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#f8d878", boxShadow: "0 1px 0 #0a0a18", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" };
+
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
@@ -731,6 +734,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
         @keyframes shelfPulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
         @keyframes lanternFlicker { 0%{opacity:0.8; transform: scale(0.95)} 100%{opacity:1; transform: scale(1.05)} }
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes keycapGlow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
         @keyframes dustParticle { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-20px) scale(0.5); opacity: 0; } }
         .retro-scrollbar::-webkit-scrollbar { width: 12px; }
         .retro-scrollbar::-webkit-scrollbar-track { background: #0a0a18; border-left: 2px solid #1a1a28; }
@@ -928,10 +933,14 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
               background: "rgba(10,10,20,0.94)", border: "2px solid #f4e8d0", borderRadius: 2,
               boxShadow: "inset 0 0 0 2px rgba(10,10,20,0.94), inset 0 0 0 4px #888",
               zIndex: 650,
+              animation: "dialogSlideIn 0.3s ease-out"
             }}>
+              <div style={{ position: "absolute", top: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #f4e8d0", borderTop: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #f4e8d0", borderBottom: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
+              <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #f4e8d0", borderBottom: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", top: -12, left: 10, background: "#1a1a28", border: "2px solid #f4e8d0", padding: "2px 8px", fontSize: 7, color: "#f8d878", borderRadius: 2 }}>SAAD IBRA</div>
               <div style={{ fontSize: 9, lineHeight: 2.2, minHeight: 32, color: "#f4e8d0" }}>
-                {dialogueText}
+                {renderControlText(dialogueText, libKeycapStyle)}
                 <span style={{ opacity: dialogueText.length < currentLine.length ? 1 : 0, animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
               </div>
               {phase === "intro" && dialogueText.length >= currentLine.length && (

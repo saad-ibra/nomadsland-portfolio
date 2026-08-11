@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { renderControlText, DIALOG_KEYFRAMES } from "../../utils/renderControls";
 
 /**
  * DialogueBox - Reusable retro RPG dialogue overlay.
@@ -8,7 +9,7 @@ import { useState, useEffect, useCallback } from "react";
  *   lineIndex  - current line index
  *   onAdvance  - called when SPACE/A pressed (go to next line)
  *   onDismiss  - called when conversation ends or ESC pressed
- *   speaker    - name badge text (default "SAAD IBRA")
+ *   speaker    - name badge text (default "SAAD IBRA"), null to hide badge
  *   theme      - color theme string: "home"|"village"|"library"|"lab"|"newsroom"|"music"
  *   lastButtonLabel - label for the dismiss button on the final line (default "GOT IT")
  */
@@ -27,6 +28,11 @@ const THEMES = {
     btnShadow: "0 3px 0 #3E2723",
     hintBg: "rgba(0,0,0,0.2)",
     hintColor: "#cdb99c",
+    keycapBg: "#6a4a2e",
+    keycapBorder: "#f4e8d0",
+    keycapText: "#f8d878",
+    keycapShadow: "#3E2723",
+    cornerColor: "#f4e8d0",
   },
   village: {
     bg: "#f8f8f8",
@@ -41,6 +47,11 @@ const THEMES = {
     btnShadow: "0 2px 0 #302820",
     hintBg: "rgba(255,255,255,0.4)",
     hintColor: "#302820",
+    keycapBg: "#302820",
+    keycapBorder: "#504030",
+    keycapText: "#fff",
+    keycapShadow: "#1a1410",
+    cornerColor: "#302820",
   },
   library: {
     bg: "rgba(10,10,20,0.94)",
@@ -55,6 +66,11 @@ const THEMES = {
     btnShadow: "0 3px 0 #201008",
     hintBg: "rgba(0,0,0,0.2)",
     hintColor: "#a8a080",
+    keycapBg: "#2a2a40",
+    keycapBorder: "#f4e8d0",
+    keycapText: "#f8d878",
+    keycapShadow: "#0a0a18",
+    cornerColor: "#f4e8d0",
   },
   lab: {
     bg: "rgba(6,10,14,0.97)",
@@ -69,6 +85,11 @@ const THEMES = {
     btnShadow: "0 3px 0 #0a3020",
     hintBg: "rgba(0,0,0,0.2)",
     hintColor: "#a8e8a8",
+    keycapBg: "#0c2e1e",
+    keycapBorder: "#80c8a0",
+    keycapText: "#a8e8a8",
+    keycapShadow: "#041810",
+    cornerColor: "#eef7f2",
   },
   newsroom: {
     bg: "#fff",
@@ -83,6 +104,11 @@ const THEMES = {
     btnShadow: "4px 4px 0 #888",
     hintBg: "#fff",
     hintColor: "#000",
+    keycapBg: "#000",
+    keycapBorder: "#555",
+    keycapText: "#fff",
+    keycapShadow: "#333",
+    cornerColor: "#000",
   },
   music: {
     bg: "rgba(20,10,10,0.95)",
@@ -97,8 +123,32 @@ const THEMES = {
     btnShadow: "0 3px 0 #4a0000",
     hintBg: "rgba(0,0,0,0.2)",
     hintColor: "#DAA520",
+    keycapBg: "#4a1010",
+    keycapBorder: "#DAA520",
+    keycapText: "#DAA520",
+    keycapShadow: "#2a0808",
+    cornerColor: "#DAA520",
   },
 };
+
+/** Build an inline keycap style from a theme's keycap colors */
+function keycapStyle(t) {
+  return {
+    display: "inline-block",
+    background: t.keycapBg,
+    border: `1px solid ${t.keycapBorder}`,
+    borderBottomWidth: 2,
+    borderBottomColor: t.keycapShadow,
+    padding: "1px 4px",
+    borderRadius: 2,
+    fontFamily: "'Press Start 2P', monospace",
+    color: t.keycapText,
+    boxShadow: `0 1px 0 ${t.keycapShadow}`,
+    margin: "0 2px",
+    whiteSpace: "nowrap",
+    animation: "keycapGlow 2s ease-in-out infinite",
+  };
+}
 
 function useTypewriter(text, speed = 24) {
   const [shown, setShown] = useState("");
@@ -141,6 +191,7 @@ export default function DialogueBox({
   const currentLine = lines[lineIndex] || "";
   const isLastLine = lineIndex >= lines.length - 1;
   const { shown, done, skipToEnd } = useTypewriter(currentLine);
+  const kcStyle = keycapStyle(t);
 
   const handleAction = useCallback(() => {
     if (!done) {
@@ -173,66 +224,77 @@ export default function DialogueBox({
   }, [handleAction, onDismiss]);
 
   return (
-    <div style={{
-      position: "absolute", top: 16, left: 8, right: 8,
-      padding: "18px 14px 10px",
-      background: t.bg, border: t.border, borderRadius: 2,
-      boxShadow: t.innerShadow,
-      zIndex: 650,
-    }}>
-      {/* Speaker badge */}
+    <>
+      <style>{DIALOG_KEYFRAMES}</style>
       <div style={{
-        position: "absolute", top: -12, left: 10,
-        background: t.speakerBg, border: t.speakerBorder,
-        padding: "2px 8px", fontSize: 7, color: t.speakerColor, borderRadius: 2,
+        position: "absolute", top: 16, left: 8, right: 8,
+        padding: "18px 14px 10px",
+        background: t.bg, border: t.border, borderRadius: 2,
+        boxShadow: t.innerShadow,
+        zIndex: 650,
+        animation: "dialogSlideIn 0.3s ease-out",
       }}>
-        {speaker}
-      </div>
+        {/* Corner decorations */}
+        <div style={{ position: "absolute", top: 3, right: 3, width: 4, height: 4, borderRight: `2px solid ${t.cornerColor}`, borderTop: `2px solid ${t.cornerColor}`, opacity: 0.35, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: `2px solid ${t.cornerColor}`, borderBottom: `2px solid ${t.cornerColor}`, opacity: 0.35, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: `2px solid ${t.cornerColor}`, borderBottom: `2px solid ${t.cornerColor}`, opacity: 0.35, pointerEvents: "none" }} />
 
-      {/* Text with typewriter cursor */}
-      <div style={{ fontSize: 8, lineHeight: 2.2, minHeight: 32, color: t.textColor }}>
-        {shown}
-        <span style={{
-          opacity: done ? 0 : 1,
-          animation: "dialogBlink 0.5s step-end infinite",
-        }}>&#x258A;</span>
-      </div>
+        {/* Speaker badge */}
+        {speaker && (
+          <div style={{
+            position: "absolute", top: -12, left: 10,
+            background: t.speakerBg, border: t.speakerBorder,
+            padding: "2px 8px", fontSize: 7, color: t.speakerColor, borderRadius: 2,
+          }}>
+            {speaker}
+          </div>
+        )}
 
-      {/* Action buttons */}
-      <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end", gap: 12 }}>
-        {!isLastLine && (
+        {/* Text with typewriter cursor and styled keycaps */}
+        <div style={{ fontSize: 8, lineHeight: 2.2, minHeight: 32, color: t.textColor }}>
+          {renderControlText(shown, kcStyle)}
+          <span style={{
+            opacity: done ? 0 : 1,
+            animation: "dialogBlink 0.5s step-end infinite",
+          }}>&#x258A;</span>
+        </div>
+
+        {/* Action buttons */}
+        <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end", gap: 12 }}>
+          {!isLastLine && (
+            <button
+              onPointerDown={(e) => { e.preventDefault(); if (onDismiss) onDismiss(); }}
+              style={{
+                fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                background: t.btnBg, color: t.btnColor, border: "none",
+                padding: "8px 14px", borderRadius: 2, cursor: "pointer",
+                boxShadow: t.btnShadow, display: "flex", alignItems: "center", opacity: 0.8
+              }}
+            >
+              <span style={{
+                fontSize: 5, color: t.hintColor, marginRight: 8,
+                background: t.hintBg, padding: "2px 4px", borderRadius: 2,
+              }}>ESC/B</span>
+              SKIP
+            </button>
+          )}
           <button
-            onPointerDown={(e) => { e.preventDefault(); if (onDismiss) onDismiss(); }}
+            onPointerDown={(e) => { e.preventDefault(); handleAction(); }}
             style={{
               fontFamily: "'Press Start 2P', monospace", fontSize: 7,
               background: t.btnBg, color: t.btnColor, border: "none",
               padding: "8px 14px", borderRadius: 2, cursor: "pointer",
-              boxShadow: t.btnShadow, display: "flex", alignItems: "center", opacity: 0.8
+              boxShadow: t.btnShadow, display: "flex", alignItems: "center",
             }}
           >
             <span style={{
               fontSize: 5, color: t.hintColor, marginRight: 8,
               background: t.hintBg, padding: "2px 4px", borderRadius: 2,
-            }}>ESC/B</span>
-            SKIP
+            }}>SPACE/A</span>
+            {done && isLastLine ? lastButtonLabel : done ? "NEXT" : "FAST"}
           </button>
-        )}
-        <button
-          onPointerDown={(e) => { e.preventDefault(); handleAction(); }}
-          style={{
-            fontFamily: "'Press Start 2P', monospace", fontSize: 7,
-            background: t.btnBg, color: t.btnColor, border: "none",
-            padding: "8px 14px", borderRadius: 2, cursor: "pointer",
-            boxShadow: t.btnShadow, display: "flex", alignItems: "center",
-          }}
-        >
-          <span style={{
-            fontSize: 5, color: t.hintColor, marginRight: 8,
-            background: t.hintBg, padding: "2px 4px", borderRadius: 2,
-          }}>SPACE/A</span>
-          {done && isLastLine ? lastButtonLabel : done ? "NEXT" : "FAST"}
-        </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
