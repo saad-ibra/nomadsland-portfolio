@@ -94,13 +94,17 @@ export default function ControlBar({
     </div>
   );
 
+  // On mobile, reduce stagger so rotated A/B buttons don't overflow
+  const btnSize = isMobile ? 56 : 56;
+  const stagger = isMobile ? 20 : 32;
+
   return (
     <div style={{
       position: "relative",
       width: isDesktopLandscape ? "320px" : "100%",
       height: isDesktopLandscape ? "100dvh" : (isMobile ? "40dvh" : "33.33dvh"),
       flexShrink: 0,
-      background: "#d0d0c0", // Classic Gameboy Grey/Beige
+      background: "#d0d0c0",
       borderTop: isDesktopLandscape ? "none" : "4px solid #b0b0a0",
       borderLeft: isDesktopLandscape ? "4px solid #b0b0a0" : "none",
       boxShadow: "inset 0 8px 12px rgba(255,255,255,0.5)",
@@ -115,14 +119,20 @@ export default function ControlBar({
       touchAction: "manipulation"
     }}>
       
-      {/* Decorative Speaker Lines */}
-      {!isMobile && (
-        <div style={{ position: "absolute", bottom: isDesktopLandscape ? 32 : 24, right: isDesktopLandscape ? 32 : 24, display: "flex", gap: 6, transform: "rotate(-15deg)", opacity: 0.4, pointerEvents: "none", zIndex: 1 }}>
-          {[1,2,3,4,5,6].map(i => (
-            <div key={i} style={{ width: 4, height: 48, background: "#a0a090", borderRadius: 2, boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.3)" }} />
-          ))}
-        </div>
-      )}
+      {/* Decorative Speaker Lines — bottom-left on mobile (away from A/B), bottom-right otherwise */}
+      <div style={{
+        position: "absolute",
+        bottom: isMobile ? 16 : (isDesktopLandscape ? 32 : 24),
+        ...(isMobile ? { left: 20 } : { right: isDesktopLandscape ? 32 : 24 }),
+        display: "flex", gap: 6,
+        transform: "rotate(-15deg)",
+        pointerEvents: "none",
+        zIndex: 1,
+      }}>
+        {[1,2,3,4,5,6].map(i => (
+          <div key={i} style={{ width: 4, height: 48, background: "#a0a090", borderRadius: 2, boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.3)" }} />
+        ))}
+      </div>
 
       <div style={{ 
         display: "flex", 
@@ -182,14 +192,14 @@ export default function ControlBar({
 
         {/* A / B Buttons */}
         <div style={{ 
-          display: "flex", gap: 16, transform: "rotate(-15deg)", 
+          display: "flex", gap: isMobile ? 12 : 16, transform: "rotate(-15deg)", 
           alignSelf: isDesktopLandscape ? "center" : "center", 
-          marginRight: isDesktopLandscape ? 0 : (isMobile ? 16 : 24), flexShrink: 0 
+          marginRight: isDesktopLandscape ? 0 : (isMobile ? 24 : 24), flexShrink: 0 
         }}>
-          <div style={{ marginTop: 32 }}>
+          <div style={{ marginTop: stagger }}>
             <ActionBtn label="B" keyName="Escape" />
           </div>
-          <div style={{ marginBottom: 32 }}>
+          <div style={{ marginBottom: stagger }}>
             <ActionBtn label="A" keyName=" " />
           </div>
         </div>
