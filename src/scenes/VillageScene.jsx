@@ -605,7 +605,7 @@ export default function VillageScene({ isLandscape, previousScene,
         
   const [isSailing, setIsSailing] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
-  const [boatPos, setBoatPos] = useState({ col: 27.5, row: 28 });
+  const [boatPos, setBoatPos] = useState({ col: 28.5, row: 29 });
   const [wakes, setWakes] = useState([]);
   
   const [mountTime] = useState(() => Date.now());
@@ -620,8 +620,8 @@ export default function VillageScene({ isLandscape, previousScene,
 
   const canWalk = useCallback((c, r) => {
     if (c < 0 || c >= MAP_COLS || r < 0 || r >= MAP_ROWS) return false;
-    if (c === 8 && r === 21) return false; // Saad NPC
-    if (!isSailing && c >= 14 && c <= 19 && r === 8) return false; // Block top bridge to music room
+    if (c === 9 && r === 22) return false; // Saad NPC
+    if (!isSailing && c >= 15 && c <= 20 && r === 9) return false; // Block top bridge to music room
     if (!isSailing && SHOP_TILES.has(`${c},${r}`)) return false; // doors
 
     const t = MAP[r][c];
@@ -692,11 +692,11 @@ export default function VillageScene({ isLandscape, previousScene,
         const nx = pos.col + (facing === "right" ? 1 : facing === "left" ? -1 : 0);
         const ny = pos.row + (facing === "down" ? 1 : facing === "up" ? -1 : 0);
         
-        if (nx === 8 && ny === 21) {
+        if (nx === 9 && ny === 22) {
           setPhase("intro");
           return;
         }
-        if (nx >= 14 && nx <= 19 && ny === 8) {
+        if (nx >= 15 && nx <= 20 && ny === 9) {
           setShowComingSoon(true);
           return;
         }
@@ -1163,8 +1163,8 @@ export default function VillageScene({ isLandscape, previousScene,
       }
 
       // Saad NPC
-      if (r === 21 && c === 8) {
-        const isNearNpc = Math.abs(8 - pos.col) <= 1 && Math.abs(21 - pos.row) <= 1;
+      if (r === 22 && c === 9) {
+        const isNearNpc = Math.abs(9 - pos.col) <= 1 && Math.abs(22 - pos.row) <= 1;
         content = (
           <>
             {content}
@@ -1180,10 +1180,10 @@ export default function VillageScene({ isLandscape, previousScene,
       }
 
       // Render a road construction barricade on the bridge entrance
-      if (r === 8 && c === 14) {
-        const BX = 16 * TILE; // center x of barricade group
-        const BY = 8 * TILE;  // top y
-        const Z  = 8 * 10 + 5;
+      if (r === 9 && c === 15) {
+        const BX = 17 * TILE; // center x of barricade group
+        const BY = 9 * TILE;  // top y
+        const Z  = 9 * 10 + 5;
         const coneColor = "#ff6600";
 
         visibleTiles.push(
@@ -1321,28 +1321,47 @@ export default function VillageScene({ isLandscape, previousScene,
               <Building key={shop.id} shop={shop} isNear={nearShop === shop.id} />
             ))}
 
-            {/* Under Construction Sign for Music Room Dock */}
+            {/* Under Construction Sign for Music Room Dock — visual hazard icon */}
             <div style={{
               position: "absolute",
-              left: 32 * TILE + 4,
-              top: 4 * TILE,
+              left: 33 * TILE + 4,
+              top: 5 * TILE,
               width: TILE - 8,
-              height: TILE,
+              height: TILE + 4,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              zIndex: 4 * 10 + 4
+              zIndex: 5 * 10 + 4
             }}>
-              {/* Sign Board */}
+              {/* Sign Board with hazard stripes */}
               <div style={{
-                width: 24, height: 16, background: "#dca750", border: "2px solid #8e5c26",
+                width: 26, height: 18, border: "2px solid #8e5c26",
+                background: "repeating-linear-gradient(135deg, #ff9900 0px, #ff9900 4px, #222 4px, #222 8px)",
+                boxShadow: "0 2px 0 rgba(0,0,0,0.3)",
+                position: "relative",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 2px 0 rgba(0,0,0,0.2)"
               }}>
-                <div style={{ fontSize: 6, color: "#4a2c10", fontWeight: "bold" }}>UC</div>
+                {/* Warning triangle */}
+                <div style={{
+                  width: 0, height: 0,
+                  borderLeft: "6px solid transparent",
+                  borderRight: "6px solid transparent",
+                  borderBottom: "10px solid #ffcc00",
+                  filter: "drop-shadow(0 0 2px rgba(0,0,0,0.5))",
+                }} />
+                {/* Exclamation dot */}
+                <div style={{
+                  position: "absolute", top: 11, left: "50%", marginLeft: -1,
+                  width: 2, height: 2, background: "#222",
+                }} />
+                {/* Exclamation line */}
+                <div style={{
+                  position: "absolute", top: 6, left: "50%", marginLeft: -1,
+                  width: 2, height: 4, background: "#222",
+                }} />
               </div>
               {/* Sign Post */}
-              <div style={{ width: 4, height: 12, background: "#8e5c26" }}></div>
+              <div style={{ width: 4, height: 12, background: "#8e5c26" }} />
             </div>
 
             {/* Player */}

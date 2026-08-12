@@ -56,7 +56,7 @@ export default function ControlBar({
   );
 
   const ActionBtn = ({ label, keyName }) => (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
       <button
         onPointerDown={(e) => { e.preventDefault(); e.target.setPointerCapture(e.pointerId); simulateKey(keyName, "keydown"); }}
         onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(err){} simulateKey(keyName, "keyup"); }}
@@ -64,8 +64,8 @@ export default function ControlBar({
         onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
         onContextMenu={(e) => e.preventDefault()}
         style={{
-          width: isMobile ? 64 : 56,
-          height: isMobile ? 64 : 56,
+          width: isMobile ? 56 : 56,
+          height: isMobile ? 56 : 56,
           borderRadius: "50%",
           background: "#9a2a3e",
           border: "none",
@@ -73,7 +73,7 @@ export default function ControlBar({
           cursor: "pointer", touchAction: "manipulation"
         }}
       />
-      <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 12, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
+      <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
     </div>
   );
 
@@ -94,9 +94,8 @@ export default function ControlBar({
     </div>
   );
 
-  // On mobile, reduce stagger so rotated A/B buttons don't overflow
-  const btnSize = isMobile ? 56 : 56;
-  const stagger = isMobile ? 20 : 32;
+  // Per-button stagger for the diagonal A/B layout
+  const stagger = isMobile ? 14 : 18;
 
   return (
     <div style={{
@@ -119,11 +118,11 @@ export default function ControlBar({
       touchAction: "manipulation"
     }}>
       
-      {/* Decorative Speaker Lines — bottom-left on mobile (away from A/B), bottom-right otherwise */}
+      {/* Decorative Speaker Lines — always bottom-right, like a real Gameboy */}
       <div style={{
         position: "absolute",
-        bottom: isMobile ? 16 : (isDesktopLandscape ? 32 : 24),
-        ...(isMobile ? { left: 20 } : { right: isDesktopLandscape ? 32 : 24 }),
+        bottom: isDesktopLandscape ? 32 : (isMobile ? 12 : 24),
+        right: isDesktopLandscape ? 32 : (isMobile ? 16 : 24),
         display: "flex", gap: 6,
         transform: "rotate(-15deg)",
         pointerEvents: "none",
@@ -190,16 +189,16 @@ export default function ControlBar({
           />
         </div>
 
-        {/* A / B Buttons */}
+        {/* A / B Buttons — each button rotated individually, no container rotation */}
         <div style={{ 
-          display: "flex", gap: isMobile ? 12 : 16, transform: "rotate(-15deg)", 
+          display: "flex", gap: isMobile ? 16 : 20,
           alignSelf: isDesktopLandscape ? "center" : "center", 
-          marginRight: isDesktopLandscape ? 0 : (isMobile ? 24 : 24), flexShrink: 0 
+          flexShrink: 0,
         }}>
-          <div style={{ marginTop: stagger }}>
+          <div style={{ transform: `translateY(${stagger}px) rotate(-15deg)` }}>
             <ActionBtn label="B" keyName="Escape" />
           </div>
-          <div style={{ marginBottom: stagger }}>
+          <div style={{ transform: `translateY(-${stagger}px) rotate(-15deg)` }}>
             <ActionBtn label="A" keyName=" " />
           </div>
         </div>

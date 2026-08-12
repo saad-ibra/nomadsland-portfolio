@@ -15,42 +15,44 @@
  *   B = Wooden Bridge / Dock (walkable)
  */
 
-export const MAP_COLS = 36;
-export const MAP_ROWS = 32;
+export const MAP_COLS = 38;
+export const MAP_ROWS = 34;
 
 const layout = [
-  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-  "~TTTTTTTTTTTTT~~~~~~PPPPPPPPPPPPPP~~",
-  "~T...f.......T~~~~~~P......f.....P~~",
-  "~T...HHHHH...T~~~~~~P...HHHHH....P~~",
-  "~D...HHHHH...T~~~~~~P...HHHHH....D~~",
-  "~T...HHHHH...T~~~~~~P...HHHHH....P~~",
-  "~T.....p.....T~~~~~~P.....p......P~~",
-  "~T.....p.....T~~~~~~P.....p......P~~",
-  "~T.....pppppppBBBBBBppppppp......P~~",
-  "~T...f.p.....T~~~~~~P.........f..P~~",
-  "~TTTT..p...TTT~~~~~~PPPPPPPPPPPPPP~~",
-  "~~~~T..p.....TTTT~~~~~~~~~~~~~~~~~~~",
-  "~~~~T..p...HHHHHT~~~OOOOOOOOOOOOOO~~",
-  "~TTTT..p...HHHHHT~~~O............O~~",
-  "~T.....p...HHHHHT~~~O...HHHHH....O~~",
-  "~T.....ppppppp..T~~~O...HHHHH....D~~",
-  "~T.....p........T~~~O...HHHHH....O~~",
-  "~T.....pppppppppBBBBppppppp...f..O~~",
-  "~T.....p.....T..T~~~O.....p......O~~",
-  "~TTTTTTpTTTTTT..T~~~O.....p......O~~",
-  "~CCCCCCSCCCCCC..T~~~O.....p......O~~",
-  "~C.....p.....C..T~~~O.....p......O~~",
-  "~C..f..p.....CTTT~~~OOOOOOpOOOOOOO~~",
-  "~C...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
-  "~D...HHHHH...C~~~~~~~~~~~~p~~~~~~~~~",
-  "~C...HHHHH...C~~~~~~~~~~~~DDDD~~~~~~",
-  "~C...........C~~~~~~~~~~~~DDDD~~~~~~",
-  "~C...........C~~~~~~~~~~~~DDDD~~~~~~",
-  "~CCCCCCCCCCCCC~~~~~~~~~~~~~~~~~~~~~~",
-  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
-  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  "~~TTTTTTTTTTTTT~~~~~~PPPPPPPPPPPPPP~~~",
+  "~~T...f.......T~~~~~~P......f.....P~~~",
+  "~~T...HHHHH...T~~~~~~P...HHHHH....P~~~",
+  "~~D...HHHHH...T~~~~~~P...HHHHH....D~~~",
+  "~~T...HHHHH...T~~~~~~P...HHHHH....P~~~",
+  "~~T.....p.....T~~~~~~P.....p......P~~~",
+  "~~T.....p.....T~~~~~~P.....p......P~~~",
+  "~~T.....pppppppBBBBBBppppppp......P~~~",
+  "~~T...f.p.....T~~~~~~P.........f..P~~~",
+  "~~TTTT..p...TTT~~~~~~PPPPPPPPPPPPPP~~~",
+  "~~~~~T..p.....TTTT~~~~~~~~~~~~~~~~~~~~",
+  "~~~~~T..p...HHHHHT~~~~OOOOOOOOOOOOOO~~",
+  "~~TTTT..p...HHHHHT~~~~O............O~~",
+  "~~T.....p...HHHHHT~~~~O...HHHHH....O~~",
+  "~~T.....ppppppp..T~~~~O...HHHHH....D~~",
+  "~~T.....p........T~~~~O...HHHHH....O~~",
+  "~~T.....pppppppppBBBBBppppppp...f..O~~",
+  "~~T.....p.....T..T~~~~O.....p......O~~",
+  "~~TTTTTTpTTTTTT..T~~~~O.....p......O~~",
+  "~~CCCCCCSCCCCCC..T~~~~O.....p......O~~",
+  "~~C.....p.....C..T~~~~O.....p......O~~",
+  "~~C..f..p.....CTTT~~~~OOOOOOpOOOOOOO~~",
+  "~~C...HHHHH...C~~~~~~~~~~~~~p~~~~~~~~~~",
+  "~~D...HHHHH...C~~~~~~~~~~~~~p~~~~~~~~~~",
+  "~~C...HHHHH...C~~~~~~~~~~~~~DDDD~~~~~~~",
+  "~~C...........C~~~~~~~~~~~~~DDDD~~~~~~~",
+  "~~C...........C~~~~~~~~~~~~~DDDD~~~~~~~",
+  "~~CCCCCCCCCCCCC~~~~~~~~~~~~~~~~~~~~~~~",
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
+  "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~",
 ];
 
 const charToType = {
@@ -68,34 +70,39 @@ const charToType = {
   'D': 11, // dock
 };
 
-export const MAP = layout.map(row => row.split('').map(char => charToType[char] ?? (char === 'D' ? 11 : 4)));
+export const MAP = layout.map(row => {
+  // Pad or trim each row to exactly MAP_COLS width
+  const padded = row.padEnd(MAP_COLS, '~');
+  return padded.slice(0, MAP_COLS).split('').map(char => charToType[char] ?? 4);
+});
 
 /**
  * Shop Definitions — each door sits at the bottom-center tile of the 5×3 H block
+ * All positions shifted +1 col, +1 row from original due to water border expansion
  */
 export const SHOPS = [
   {
-    id: "newsroom", col: 7, row: 5,
+    id: "newsroom", col: 8, row: 6,
     label: "THE PRESS", scene: "newsroom",
   },
   {
-    id: "library", col: 13, row: 14,
+    id: "library", col: 14, row: 15,
     label: "LIBRARY", scene: "library",
   },
   {
-    id: "musicroom", col: 26, row: 5,
+    id: "musicroom", col: 27, row: 6,
     label: "MUSIC ROOM", scene: "musicroom",
   },
   {
-    id: "lab", col: 26, row: 16,
+    id: "lab", col: 27, row: 17,
     label: "THE LAB", scene: "lab",
   },
   {
-    id: "nomadshome", col: 7, row: 25,
+    id: "nomadshome", col: 8, row: 26,
     label: "NOMADSHOME", scene: "nomadshome",
   },
   {
-    id: "dock", col: 28, row: 27,
+    id: "dock", col: 29, row: 28,
     label: "THE DOCK", scene: null,
   },
 ];
@@ -103,7 +110,7 @@ export const SHOPS = [
 export const SHOP_TILES = new Set(SHOPS.filter(s => s.id !== "dock").map(s => `${s.col},${s.row}`));
 
 // Player spawns just below Nomadshome door
-export const START_POS = { col: 7, row: 26 };
+export const START_POS = { col: 8, row: 27 };
 
 export const PALETTE = {
   grass:   ["#68c058", "#60b850", "#70c860"],
