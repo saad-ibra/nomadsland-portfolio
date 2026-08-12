@@ -116,11 +116,13 @@ export default function ControlBar({
     }}>
       
       {/* Decorative Speaker Lines */}
-      <div style={{ position: "absolute", bottom: 24, right: 24, display: "flex", gap: 6, transform: "rotate(-15deg)" }}>
-        {[1,2,3,4,5,6].map(i => (
-          <div key={i} style={{ width: 4, height: 48, background: "#a0a090", borderRadius: 2, boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.3)" }} />
-        ))}
-      </div>
+      {!isMobile && (
+        <div style={{ position: "absolute", bottom: isDesktopLandscape ? 32 : 24, right: isDesktopLandscape ? 32 : 24, display: "flex", gap: 6, transform: "rotate(-15deg)", opacity: 0.4, pointerEvents: "none", zIndex: 1 }}>
+          {[1,2,3,4,5,6].map(i => (
+            <div key={i} style={{ width: 4, height: 48, background: "#a0a090", borderRadius: 2, boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.3)" }} />
+          ))}
+        </div>
+      )}
 
       <div style={{ 
         display: "flex", 
@@ -182,7 +184,7 @@ export default function ControlBar({
         <div style={{ 
           display: "flex", gap: 16, transform: "rotate(-15deg)", 
           alignSelf: isDesktopLandscape ? "center" : "center", 
-          marginRight: isDesktopLandscape || isMobile ? 0 : 24, flexShrink: 0 
+          marginRight: isDesktopLandscape ? 0 : (isMobile ? 16 : 24), flexShrink: 0 
         }}>
           <div style={{ marginTop: 32 }}>
             <ActionBtn label="B" keyName="Escape" />
