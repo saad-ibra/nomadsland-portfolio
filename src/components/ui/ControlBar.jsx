@@ -111,7 +111,7 @@ export default function ControlBar({
       padding: isDesktopLandscape ? "48px 32px" : (isMobile ? "24px 16px" : "32px 64px"),
       boxSizing: "border-box",
       zIndex: 10000,
-      overflow: "hidden",
+      overflow: "visible",
       userSelect: "none",
       WebkitUserSelect: "none",
       WebkitTouchCallout: "none",
