@@ -1277,7 +1277,7 @@ export default function VillageScene({ isLandscape, previousScene,
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
-      background: "#000", overflow: "hidden",
+      background: "#000",
       fontFamily: "'Press Start 2P', monospace", userSelect: "none",
       
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>

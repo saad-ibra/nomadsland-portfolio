@@ -33,10 +33,10 @@ const layout = [
   "~~TTTT..p...TTT~~~~~~PPPPPPPPPPPPPP~~~",
   "~~~~~T..p.....TTTT~~~~~~~~~~~~~~~~~~~~",
   "~~~~~T..p...HHHHHT~~~~OOOOOOOOOOOOOO~~",
-  "~~TTTT..p...HHHHHT~~~~O............O~~",
-  "~~T.....p...HHHHHT~~~~O...HHHHH....O~~",
-  "~~T.....ppppppp..T~~~~O...HHHHH....D~~",
-  "~~T.....p........T~~~~O...HHHHH....O~~",
+  "~~TTTT..p...HHHHHT~~~~O.............O~",
+  "~~T.....p...HHHHHT~~~~O....HHHHH....O~",
+  "~~T.....ppppppp..T~~~~O....HHHHH....D~",
+  "~~T.....p........T~~~~O....HHHHH....O~",
   "~~T.....pppppppppBBBBBppppppp...f..O~~",
   "~~T.....p.....T..T~~~~O.....p......O~~",
   "~~TTTTTTpTTTTTT..T~~~~O.....p......O~~",
@@ -94,7 +94,7 @@ export const SHOPS = [
     label: "MUSIC ROOM", scene: "musicroom",
   },
   {
-    id: "lab", col: 27, row: 17,
+    id: "lab", col: 28, row: 17,
     label: "THE LAB", scene: "lab",
   },
   {
