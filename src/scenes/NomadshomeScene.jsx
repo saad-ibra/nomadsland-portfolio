@@ -379,7 +379,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
 
               {/* Sunbeam */}
               <div style={{
-                position: "absolute", top: TILE - 2, left: TILE * 6 - 10, width: TILE * 3 + 44, height: TILE * 6,
+                position: "absolute", top: TILE - 2, left: TILE * 6 - 10, width: TILE * 3 + 48, height: TILE * 6,
                 background: "linear-gradient(to bottom, rgba(255,220,150,0.4), transparent)",
                 clipPath: "polygon(24px 0, calc(100% - 24px) 0, 100% 100%, 0 100%)",
                 mixBlendMode: "overlay", pointerEvents: "none", zIndex: 300
