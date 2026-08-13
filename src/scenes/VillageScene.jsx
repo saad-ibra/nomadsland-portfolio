@@ -690,7 +690,7 @@ export default function VillageScene({ isLandscape, previousScene,
           else if (MAP[pos.row][pos.col-1] === 4) targetCol = pos.col - 1;
           else if (MAP[pos.row+1]?.[pos.col] === 4) targetRow = pos.row + 1;
           else if (MAP[pos.row-1]?.[pos.col] === 4) targetRow = pos.row - 1;
-          setBoatPos({ col: targetCol, row: targetRow });
+          setBoatPos({ col: targetCol - 0.5, row: targetRow });
           return;
         }
 
