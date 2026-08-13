@@ -682,7 +682,19 @@ export default function VillageScene({ isLandscape, previousScene,
     onAction: () => {
       if (!isSailing) {
         const t = MAP[pos.row]?.[pos.col];
-        if (t === 11 || (pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1)) {
+        const isOnBoatLocal = pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
+        
+        if (t === 11 && !isOnBoatLocal) {
+          let targetCol = pos.col, targetRow = pos.row;
+          if (MAP[pos.row][pos.col+1] === 4) targetCol = pos.col + 1;
+          else if (MAP[pos.row][pos.col-1] === 4) targetCol = pos.col - 1;
+          else if (MAP[pos.row+1]?.[pos.col] === 4) targetRow = pos.row + 1;
+          else if (MAP[pos.row-1]?.[pos.col] === 4) targetRow = pos.row - 1;
+          setBoatPos({ col: targetCol, row: targetRow });
+          return;
+        }
+
+        if (isOnBoatLocal) {
           setPos({ col: boatPos.col + 0.5, row: boatPos.row });
           setIsSailing(true);
           setSailStartTime(Date.now());
@@ -916,6 +928,7 @@ export default function VillageScene({ isLandscape, previousScene,
 
   const activeShop = SHOPS.find(s => s.id === nearShop);
   const isOnBoat = !isSailing && pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
+  const isStandingOnDock = !isSailing && MAP[pos.row]?.[pos.col] === 11;
   const isNearDockWhileSailing = isSailing && [
     { c: pos.col, r: pos.row - 1 }, { c: pos.col, r: pos.row + 1 },
     { c: pos.col - 1, r: pos.row }, { c: pos.col + 1, r: pos.row },
@@ -1536,7 +1549,7 @@ export default function VillageScene({ isLandscape, previousScene,
           )}
 
           {/* Proximity prompt */}
-          {phase === "free" && (activeShop || isOnBoat || isNearDockWhileSailing) && (
+          {phase === "free" && (activeShop || isOnBoat || isNearDockWhileSailing || (isStandingOnDock && !isOnBoat)) && (
             <div style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "5px 12px",
               background: "#f8f8f8", border: `2px solid #302820`, borderRadius: 4,
@@ -1547,6 +1560,7 @@ export default function VillageScene({ isLandscape, previousScene,
                 {activeShop && <><DoorOpen size={8} /><span>ENTER {activeShop.label}</span></>}
                 {isOnBoat && <span>SAIL BOAT</span>}
                 {isNearDockWhileSailing && <span>DROP ANCHOR</span>}
+                {isStandingOnDock && !isOnBoat && <span>SUMMON BOAT</span>}
               </div>
               <div style={{ fontSize: 5, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2 }}>SPACE/A</div>
             </div>
