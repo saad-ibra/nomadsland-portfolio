@@ -165,9 +165,13 @@ export default function ControlBar({
 
         {/* Start / Select Settings */}
         <div style={{ 
-          display: "flex", gap: isMobile ? 8 : 16, 
+          display: "flex", gap: isMobile ? 16 : 16, 
+          position: isMobile ? "absolute" : "static",
+          bottom: isMobile ? -10 : "auto",
+          left: isMobile ? "50%" : "auto",
+          transform: isMobile ? "translateX(-50%)" : "none",
           alignSelf: isDesktopLandscape ? "center" : "flex-end", 
-          paddingBottom: isDesktopLandscape ? 0 : 16 
+          paddingBottom: isDesktopLandscape ? 0 : (isMobile ? 0 : 16)
         }}>
           <PillBtn 
             label={musicMuted || !musicPlaying ? "AUDIO:OFF" : "AUDIO:ON"} 
@@ -193,8 +197,7 @@ export default function ControlBar({
         <div style={{ 
           display: "flex", gap: isMobile ? 16 : 20,
           alignSelf: isDesktopLandscape ? "center" : "center", 
-          flexShrink: 0,
-          marginRight: isMobile ? 12 : 0
+          flexShrink: 0
         }}>
           <div style={{ transform: `translateY(${stagger}px) rotate(-15deg)` }}>
             <ActionBtn label="B" keyName="Escape" />
