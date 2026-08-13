@@ -194,6 +194,7 @@ export default function ControlBar({
           display: "flex", gap: isMobile ? 16 : 20,
           alignSelf: isDesktopLandscape ? "center" : "center", 
           flexShrink: 0,
+          marginRight: isMobile ? 12 : 0
         }}>
           <div style={{ transform: `translateY(${stagger}px) rotate(-15deg)` }}>
             <ActionBtn label="B" keyName="Escape" />
