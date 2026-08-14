@@ -690,7 +690,11 @@ export default function VillageScene({ isLandscape, previousScene,
           else if (MAP[pos.row][pos.col-1] === 4) targetCol = pos.col - 1;
           else if (MAP[pos.row+1]?.[pos.col] === 4) targetRow = pos.row + 1;
           else if (MAP[pos.row-1]?.[pos.col] === 4) targetRow = pos.row - 1;
+          
           setBoatPos({ col: targetCol - 0.5, row: targetRow });
+          setPos({ col: targetCol, row: targetRow });
+          setIsSailing(true);
+          setSailStartTime(Date.now());
           return;
         }
 
@@ -1560,7 +1564,7 @@ export default function VillageScene({ isLandscape, previousScene,
                 {activeShop && <><DoorOpen size={8} /><span>ENTER {activeShop.label}</span></>}
                 {isOnBoat && <span>SAIL BOAT</span>}
                 {isNearDockWhileSailing && <span>DROP ANCHOR</span>}
-                {isStandingOnDock && !isOnBoat && <span>SUMMON BOAT</span>}
+                {isStandingOnDock && !isOnBoat && <span>SUMMON & SAIL</span>}
               </div>
               <div style={{ fontSize: 5, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2 }}>SPACE/A</div>
             </div>
