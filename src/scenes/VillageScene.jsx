@@ -684,7 +684,7 @@ export default function VillageScene({ isLandscape, previousScene,
         const t = MAP[pos.row]?.[pos.col];
         const isOnBoatLocal = pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
         
-        if (t === 11 && !isOnBoatLocal) {
+        if ((t === 11 || t === 10) && !isOnBoatLocal) {
           let targetCol = pos.col, targetRow = pos.row;
           if (MAP[pos.row][pos.col+1] === 4) targetCol = pos.col + 1;
           else if (MAP[pos.row][pos.col-1] === 4) targetCol = pos.col - 1;
@@ -722,6 +722,8 @@ export default function VillageScene({ isLandscape, previousScene,
           if (shop && sceneCallbacks[shop.scene]) sceneCallbacks[shop.scene]();
         }
       } else {
+        if (Date.now() - sailStartTime < 500) return;
+        
         // Drop anchor if next to a dock (Bridge = 10, Dock = 11)
         const adjs = [
           { c: pos.col, r: pos.row - 1 }, { c: pos.col, r: pos.row + 1 },
@@ -932,7 +934,7 @@ export default function VillageScene({ isLandscape, previousScene,
 
   const activeShop = SHOPS.find(s => s.id === nearShop);
   const isOnBoat = !isSailing && pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
-  const isStandingOnDock = !isSailing && MAP[pos.row]?.[pos.col] === 11;
+  const isStandingOnDock = !isSailing && (MAP[pos.row]?.[pos.col] === 11 || MAP[pos.row]?.[pos.col] === 10);
   const isNearDockWhileSailing = isSailing && [
     { c: pos.col, r: pos.row - 1 }, { c: pos.col, r: pos.row + 1 },
     { c: pos.col - 1, r: pos.row }, { c: pos.col + 1, r: pos.row },
