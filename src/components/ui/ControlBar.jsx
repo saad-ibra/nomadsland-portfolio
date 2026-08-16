@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, memo } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { toggleSfxMuted, getSfxMuted } from "../../engine/sfx";
 
 function ControlBarInner({
@@ -33,80 +33,51 @@ function ControlBarInner({
     window.dispatchEvent(e);
   };
 
-  // Shared pointer handlers that reliably clean up on ANY pointer termination
-  const makePointerHandlers = (keyName) => {
-    // Use a closure variable to track if this button is currently "pressed"
-    let pressed = false;
-    const press = (e) => {
-      e.preventDefault();
-      if (!pressed) {
-        pressed = true;
-        try { e.target.setPointerCapture(e.pointerId); } catch(_){}
-        simulateKey(keyName, "keydown");
-      }
-    };
-    const release = (e) => {
-      e.preventDefault();
-      if (pressed) {
-        pressed = false;
-        try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
-        simulateKey(keyName, "keyup");
-      }
-    };
-    return {
-      onPointerDown: press,
-      onPointerUp: release,
-      onPointerCancel: release,
-      onPointerLeave: release,
-      onLostPointerCapture: release,
-      onContextMenu: (e) => e.preventDefault(),
-    };
-  };
+  const DpadBtn = ({ gridArea, keyName }) => (
+    <button
+      onPointerDown={(e) => { e.preventDefault(); try { e.target.setPointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keydown"); }}
+      onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keyup"); }}
+      onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onLostPointerCapture={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onContextMenu={(e) => e.preventDefault()}
+      style={{
+        gridArea,
+        background: "#1c1c1c",
+        border: "none",
+        color: "#1c1c1c",
+        cursor: "pointer", touchAction: "none",
+        borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
+        borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
+        borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
+        borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 8 : 0,
+        boxShadow: "inset 0 2px 4px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)"
+      }}
+    />
+  );
 
-  const DpadBtn = ({ gridArea, keyName }) => {
-    // Create handlers once per mount via ref
-    const handlersRef = useRef(null);
-    if (!handlersRef.current) handlersRef.current = makePointerHandlers(keyName);
-    return (
+  const ActionBtn = ({ label, keyName }) => (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
       <button
-        {...handlersRef.current}
+        onPointerDown={(e) => { e.preventDefault(); try { e.target.setPointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keydown"); }}
+        onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keyup"); }}
+        onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onLostPointerCapture={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onContextMenu={(e) => e.preventDefault()}
         style={{
-          gridArea,
-          background: "#1c1c1c",
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "#9a2a3e",
           border: "none",
-          color: "#1c1c1c",
-          cursor: "pointer", touchAction: "none",
-          borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
-          borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
-          borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
-          borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 8 : 0,
-          boxShadow: "inset 0 2px 4px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)"
+          boxShadow: "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
+          cursor: "pointer", touchAction: "none"
         }}
       />
-    );
-  };
-
-  const ActionBtn = ({ label, keyName }) => {
-    const handlersRef = useRef(null);
-    if (!handlersRef.current) handlersRef.current = makePointerHandlers(keyName);
-    return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-        <button
-          {...handlersRef.current}
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: "50%",
-            background: "#9a2a3e",
-            border: "none",
-            boxShadow: "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
-            cursor: "pointer", touchAction: "none"
-          }}
-        />
-        <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
-      </div>
-    );
-  };
+      <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
+    </div>
+  );
 
   const PillBtn = ({ label, onClick, active }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, transform: "rotate(-15deg)" }}>
