@@ -13,8 +13,9 @@ const simulateKey = (key, type) => {
 
 const handlePress = (e, keyName) => {
   e.preventDefault();
-  if (e.currentTarget.dataset.active === "true") return;
+  // Even if already active, if it's a new pointer tapping, we should take over
   e.currentTarget.dataset.active = "true";
+  e.currentTarget.dataset.pointerId = e.pointerId;
   try { e.target.setPointerCapture(e.pointerId); } catch(_){}
   simulateKey(keyName, "keydown");
 };
@@ -22,9 +23,13 @@ const handlePress = (e, keyName) => {
 const handleRelease = (e, keyName) => {
   e.preventDefault();
   if (e.currentTarget.dataset.active === "true") {
-    e.currentTarget.dataset.active = "false";
-    try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
-    simulateKey(keyName, "keyup");
+    // Only release if it's from the same pointer that pressed it, avoiding stale lostpointercapture events
+    if (!e.currentTarget.dataset.pointerId || e.currentTarget.dataset.pointerId == e.pointerId) {
+      e.currentTarget.dataset.active = "false";
+      e.currentTarget.dataset.pointerId = "";
+      try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
+      simulateKey(keyName, "keyup");
+    }
   }
 };
 
