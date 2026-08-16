@@ -33,13 +33,30 @@ function ControlBarInner({
     window.dispatchEvent(e);
   };
 
+  const handlePress = (e, keyName) => {
+    e.preventDefault();
+    if (e.currentTarget.dataset.active === "true") return;
+    e.currentTarget.dataset.active = "true";
+    try { e.target.setPointerCapture(e.pointerId); } catch(_){}
+    simulateKey(keyName, "keydown");
+  };
+
+  const handleRelease = (e, keyName) => {
+    e.preventDefault();
+    if (e.currentTarget.dataset.active === "true") {
+      e.currentTarget.dataset.active = "false";
+      try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
+      simulateKey(keyName, "keyup");
+    }
+  };
+
   const DpadBtn = ({ gridArea, keyName }) => (
     <button
-      onPointerDown={(e) => { e.preventDefault(); try { e.target.setPointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keydown"); }}
-      onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keyup"); }}
-      onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-      onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-      onLostPointerCapture={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+      onPointerDown={(e) => handlePress(e, keyName)}
+      onPointerUp={(e) => handleRelease(e, keyName)}
+      onPointerLeave={(e) => handleRelease(e, keyName)}
+      onPointerCancel={(e) => handleRelease(e, keyName)}
+      onLostPointerCapture={(e) => handleRelease(e, keyName)}
       onContextMenu={(e) => e.preventDefault()}
       style={{
         gridArea,
@@ -47,6 +64,7 @@ function ControlBarInner({
         border: "none",
         color: "#1c1c1c",
         cursor: "pointer", touchAction: "none",
+        WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent",
         borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
         borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
         borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
@@ -59,11 +77,11 @@ function ControlBarInner({
   const ActionBtn = ({ label, keyName }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
       <button
-        onPointerDown={(e) => { e.preventDefault(); try { e.target.setPointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keydown"); }}
-        onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(_){} simulateKey(keyName, "keyup"); }}
-        onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-        onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-        onLostPointerCapture={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
+        onPointerDown={(e) => handlePress(e, keyName)}
+        onPointerUp={(e) => handleRelease(e, keyName)}
+        onPointerLeave={(e) => handleRelease(e, keyName)}
+        onPointerCancel={(e) => handleRelease(e, keyName)}
+        onLostPointerCapture={(e) => handleRelease(e, keyName)}
         onContextMenu={(e) => e.preventDefault()}
         style={{
           width: 56,
@@ -71,6 +89,7 @@ function ControlBarInner({
           borderRadius: "50%",
           background: "#9a2a3e",
           border: "none",
+          WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent",
           boxShadow: "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
           cursor: "pointer", touchAction: "none"
         }}
