@@ -686,10 +686,22 @@ export default function VillageScene({ isLandscape, previousScene,
         
         if ((t === 11 || t === 10) && !isOnBoatLocal) {
           let targetCol = pos.col, targetRow = pos.row;
-          if (MAP[pos.row][pos.col+1] === 4) targetCol = pos.col + 1;
-          else if (MAP[pos.row][pos.col-1] === 4) targetCol = pos.col - 1;
-          else if (MAP[pos.row+1]?.[pos.col] === 4) targetRow = pos.row + 1;
-          else if (MAP[pos.row-1]?.[pos.col] === 4) targetRow = pos.row - 1;
+          let foundWater = false;
+          // Search up to 3 tiles outwards for water (fixes large docks)
+          for (let d = 1; d <= 3 && !foundWater; d++) {
+            const adjs = [
+              {c: pos.col + d, r: pos.row}, {c: pos.col - d, r: pos.row},
+              {c: pos.col, r: pos.row + d}, {c: pos.col, r: pos.row - d}
+            ];
+            for (let adj of adjs) {
+              if (MAP[adj.r]?.[adj.c] === 4) {
+                targetCol = adj.c;
+                targetRow = adj.r;
+                foundWater = true;
+                break;
+              }
+            }
+          }
           
           setBoatPos({ col: targetCol - 0.5, row: targetRow });
           setPos({ col: targetCol, row: targetRow });

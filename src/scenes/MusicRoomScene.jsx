@@ -82,7 +82,7 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
     onMove: (c, r) => {
       // Stairs Down (top left corner)
       if (c >= 1 && c <= 2 && r === 1) {
-        onGoToNomadshome();
+        onBackToVillage();
         return true;
       }
       playWoodStep();
