@@ -13,9 +13,6 @@ const simulateKey = (key, type) => {
 
 const handlePress = (e, keyName) => {
   e.preventDefault();
-  // Break implicit touch capture so sliding works and prevents ghost async lostpointercapture events
-  try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
-
   if (e.currentTarget.dataset.active === "true") return;
   e.currentTarget.dataset.active = "true";
   simulateKey(keyName, "keydown");
@@ -38,6 +35,9 @@ const DpadBtn = ({ gridArea, keyName }) => (
     onPointerUp={(e) => handleRelease(e, keyName)}
     onPointerLeave={(e) => handleRelease(e, keyName)}
     onPointerCancel={(e) => handleRelease(e, keyName)}
+    onTouchStart={(e) => handlePress(e, keyName)}
+    onTouchEnd={(e) => handleRelease(e, keyName)}
+    onTouchCancel={(e) => handleRelease(e, keyName)}
     onContextMenu={(e) => e.preventDefault()}
     style={{
       gridArea,
@@ -65,6 +65,9 @@ const ActionBtn = ({ label, keyName }) => (
       onPointerUp={(e) => handleRelease(e, keyName)}
       onPointerLeave={(e) => handleRelease(e, keyName)}
       onPointerCancel={(e) => handleRelease(e, keyName)}
+      onTouchStart={(e) => handlePress(e, keyName)}
+      onTouchEnd={(e) => handleRelease(e, keyName)}
+      onTouchCancel={(e) => handleRelease(e, keyName)}
       onContextMenu={(e) => e.preventDefault()}
       style={{
         width: 56,
@@ -85,6 +88,7 @@ const PillBtn = ({ label, onClick, active }) => (
   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, transform: "rotate(-15deg)" }}>
     <button
       onPointerDown={(e) => { e.preventDefault(); onClick(); }}
+      onTouchStart={(e) => { e.preventDefault(); onClick(); }}
       onContextMenu={(e) => e.preventDefault()}
       style={{
         width: 48, height: 16,

@@ -3,8 +3,14 @@
     "id": "all",
     "label": "All",
     "type": "normal",
-    "count": 10,
+    "count": 11,
     "books": [
+      {
+        "title": "Journey into the Past",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
+      },
       {
         "title": "The Untouchables: Who were They and Why They became Untouchables?",
         "author": "B.R. Ambedkar",
@@ -71,8 +77,14 @@
     "id": "want-to-read",
     "label": "Want to Read",
     "type": "psychic",
-    "count": 2,
+    "count": 3,
     "books": [
+      {
+        "title": "Journey into the Past",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
+      },
       {
         "title": "The Gift of Therapy: An Open Letter to a New Generation of Therapists and Their Patients",
         "author": "Irvin D. Yalom",
