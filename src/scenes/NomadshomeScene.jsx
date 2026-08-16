@@ -179,7 +179,25 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
   const [nearPhone, setNearPhone] = useState(false);
   
   const containerRef = useRef(null);
+  const resumeScrollRef = useRef(null);
 
+  useEffect(() => {
+    if (!openResume) return;
+    const handleScroll = (e) => {
+      if (!resumeScrollRef.current) return;
+      const key = e.key.toLowerCase();
+      const scrollAmt = 40;
+      if (key === 'arrowdown' || key === 's') {
+        resumeScrollRef.current.scrollTop += scrollAmt;
+        e.preventDefault();
+      } else if (key === 'arrowup' || key === 'w') {
+        resumeScrollRef.current.scrollTop -= scrollAmt;
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("keydown", handleScroll, { capture: true });
+    return () => window.removeEventListener("keydown", handleScroll, { capture: true });
+  }, [openResume]);
   useEffect(() => {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
@@ -436,6 +454,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
               }}
             >
               <div
+                ref={resumeScrollRef}
                 onClick={e => e.stopPropagation()}
                 className="resume-scroll"
                 style={{

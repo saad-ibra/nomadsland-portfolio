@@ -171,6 +171,31 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
 
   const musicRef     = useRef({ audioCtx: null, interval: null });
   const containerRef = useRef(null);
+  const postScrollRef = useRef(null);
+
+  useEffect(() => {
+    if (!openPost) return;
+    const handleScroll = (e) => {
+      if (!postScrollRef.current) return;
+      const key = e.key.toLowerCase();
+      const scrollAmt = 40;
+      if (key === 'arrowdown' || key === 's') {
+        postScrollRef.current.scrollTop += scrollAmt;
+        e.preventDefault();
+      } else if (key === 'arrowup' || key === 'w') {
+        postScrollRef.current.scrollTop -= scrollAmt;
+        e.preventDefault();
+      } else if (key === 'arrowright' || key === 'd') {
+        postScrollRef.current.scrollLeft += scrollAmt;
+        e.preventDefault();
+      } else if (key === 'arrowleft' || key === 'a') {
+        postScrollRef.current.scrollLeft -= scrollAmt;
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("keydown", handleScroll, { capture: true });
+    return () => window.removeEventListener("keydown", handleScroll, { capture: true });
+  }, [openPost]);
 
   const { pos, facing, stepping } = usePlayerMovement({
     initialPos: layout.startPos,
@@ -656,7 +681,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                 </div>
 
                 {/* Scrollable content (Columns) */}
-                <div className="news-scroll" style={{
+                <div ref={postScrollRef} className="news-scroll" style={{
                   padding: "16px 14px",
                   overflow: "auto", flex: 1,
                   fontFamily: "monospace", // Typewriter feel
