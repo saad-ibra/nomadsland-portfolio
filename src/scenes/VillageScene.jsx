@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { DoorOpen } from "lucide-react";
 import { TILE, MOVE_COOLDOWN } from '../engine/constants';
@@ -751,7 +751,11 @@ export default function VillageScene({ isLandscape, previousScene,
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [cam, setCam] = useState({ x: initialPos.col * TILE - internalW/2, y: initialPos.row * TILE - internalH/2 });
+  // Camera uses refs + direct DOM mutation instead of React state to avoid 60fps re-renders
+  const camRef = useRef({ x: initialPos.col * TILE - internalW/2, y: initialPos.row * TILE - internalH/2 });
+  const worldRef = useRef(null);
+  // Only triggers React re-render when the visible tile window changes
+  const [tileWindow, setTileWindow] = useState({ sc: 0, ec: MAP_COLS, sr: 0, er: MAP_ROWS });
 
   useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
   useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
@@ -900,7 +904,7 @@ export default function VillageScene({ isLandscape, previousScene,
     };
   }, [phase, showComingSoon]);
 
-  // Smooth Camera Lerp
+  // Smooth Camera Lerp — uses direct DOM mutation, NOT React state
   useEffect(() => {
     let lastTime = performance.now();
     const updateCam = (time) => {
@@ -913,24 +917,53 @@ export default function VillageScene({ isLandscape, previousScene,
       const clampedTX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), targetX));
       const clampedTY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), targetY));
 
-      setCam(prev => {
-        const lerpFactor = 1.0 - Math.pow(0.001, dt * speedMultiplier);
-        return {
-          x: prev.x + (clampedTX - prev.x) * lerpFactor,
-          y: prev.y + (clampedTY - prev.y) * lerpFactor
-        };
+      const cam = camRef.current;
+      const lerpFactor = 1.0 - Math.pow(0.001, dt * speedMultiplier);
+      cam.x = cam.x + (clampedTX - cam.x) * lerpFactor;
+      cam.y = cam.y + (clampedTY - cam.y) * lerpFactor;
+
+      // Direct DOM mutation — no React re-render
+      if (worldRef.current) {
+        worldRef.current.style.transform = `translate(${-Math.round(cam.x)}px, ${-Math.round(cam.y)}px)`;
+      }
+
+      // Only trigger React re-render when the visible tile window actually changes
+      const sc = Math.max(0, Math.floor(cam.x / TILE) - 2);
+      const ec = Math.min(MAP_COLS, Math.floor((cam.x + internalW) / TILE) + 3);
+      const sr = Math.max(0, Math.floor(cam.y / TILE) - 2);
+      const er = Math.min(MAP_ROWS, Math.floor((cam.y + internalH) / TILE) + 3);
+      setTileWindow(prev => {
+        if (prev.sc !== sc || prev.ec !== ec || prev.sr !== sr || prev.er !== er) {
+          return { sc, ec, sr, er };
+        }
+        return prev;
       });
+
       rafRef.current = requestAnimationFrame(updateCam);
     };
     rafRef.current = requestAnimationFrame(updateCam);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [pos, speedMultiplier]);
+  }, [pos, speedMultiplier, internalW, internalH]);
 
-  // Virtualization
-  const startCol = Math.max(0, Math.floor(cam.x / TILE) - 2);
-  const endCol = Math.min(MAP_COLS, Math.floor((cam.x + internalW) / TILE) + 3);
-  const startRow = Math.max(0, Math.floor(cam.y / TILE) - 2);
-  const endRow = Math.min(MAP_ROWS, Math.floor((cam.y + internalH) / TILE) + 3);
+  // Virtualization — driven by tileWindow state (updates ~every 32px of movement, not every frame)
+  const { sc: startCol, ec: endCol, sr: startRow, er: endRow } = tileWindow;
+
+  // Pre-compute minimap tile rects once (MAP never changes)
+  const minimapTiles = useMemo(() => {
+    return MAP.map((row, ry) => row.map((t, cx) => {
+      let fill;
+      if (t === 0 || t === 6) fill = "#5a9a44";
+      else if (t === 1) fill = "#d0b870";
+      else if (t === 2 || t === 5 || t === 7) fill = "#1a4a22";
+      else if (t === 3) fill = "#6a6a6a";
+      else if (t === 4) fill = "#2060a0";
+      else if (t === 8) fill = "#5a4030";
+      else if (t === 9) fill = "#8a8a8a";
+      else if (t === 10 || t === 11) fill = "#8a5a2a";
+      else fill = "#2060a0";
+      return <rect key={`${ry}-${cx}`} x={cx} y={ry} width={1} height={1} fill={fill} />;
+    }));
+  }, []); // MAP is static, compute once
 
   const activeShop = SHOPS.find(s => s.id === nearShop);
   const isOnBoat = !isSailing && pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
@@ -1326,11 +1359,12 @@ export default function VillageScene({ isLandscape, previousScene,
           imageRendering: "pixelated",
         }}>
 
-          {/* Scrolling world layer */}
-          <div style={{
+          {/* Scrolling world layer — positioned by RAF via ref, not React state */}
+          <div ref={worldRef} style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            left: -Math.round(cam.x), top: -Math.round(cam.y),
+            transform: `translate(${-Math.round(camRef.current.x)}px, ${-Math.round(camRef.current.y)}px)`,
+            willChange: "transform",
           }}>
             
             {visibleTiles}
@@ -1497,20 +1531,8 @@ export default function VillageScene({ isLandscape, previousScene,
                 viewBox={`0 0 ${MAP_COLS} ${MAP_ROWS}`}
                 style={{ display: "block", imageRendering: "pixelated" }}
               >
-                {/* Map tiles */}
-                {MAP.map((row, ry) => row.map((t, cx) => {
-                  let fill;
-                  if (t === 0 || t === 6) fill = "#5a9a44";
-                  else if (t === 1) fill = "#d0b870";
-                  else if (t === 2 || t === 5 || t === 7) fill = "#1a4a22";
-                  else if (t === 3) fill = "#6a6a6a";
-                  else if (t === 4) fill = "#2060a0";
-                  else if (t === 8) fill = "#5a4030";
-                  else if (t === 9) fill = "#8a8a8a";
-                  else if (t === 10 || t === 11) fill = "#8a5a2a";
-                  else fill = "#2060a0";
-                  return <rect key={`${ry}-${cx}`} x={cx} y={ry} width={1} height={1} fill={fill} />;
-                }))}
+                {/* Map tiles — pre-computed once, never changes */}
+                {minimapTiles}
                 {/* Building markers — clickable */}
                 {SHOPS.map(shop => {
                   const colors = {

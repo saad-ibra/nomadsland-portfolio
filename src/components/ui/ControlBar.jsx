@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, memo } from "react";
 import { toggleSfxMuted, getSfxMuted } from "../../engine/sfx";
 
-export default function ControlBar({
+function ControlBarInner({
   musicPlaying,
   musicMuted,
   musicVolume,
@@ -33,61 +33,93 @@ export default function ControlBar({
     window.dispatchEvent(e);
   };
 
-  const DpadBtn = ({ gridArea, keyName }) => (
-    <button
-      onPointerDown={(e) => { e.preventDefault(); e.target.setPointerCapture(e.pointerId); simulateKey(keyName, "keydown"); }}
-      onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(err){} simulateKey(keyName, "keyup"); }}
-      onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-      onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-      onContextMenu={(e) => e.preventDefault()}
-      style={{
-        gridArea,
-        background: "#1c1c1c",
-        border: "none",
-        color: "#1c1c1c", // hidden text
-        cursor: "pointer", touchAction: "manipulation",
-        borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
-        borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
-        borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
-        borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 8 : 0,
-        boxShadow: "inset 0 2px 4px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)"
-      }}
-    />
-  );
+  // Shared pointer handlers that reliably clean up on ANY pointer termination
+  const makePointerHandlers = (keyName) => {
+    // Use a closure variable to track if this button is currently "pressed"
+    let pressed = false;
+    const press = (e) => {
+      e.preventDefault();
+      if (!pressed) {
+        pressed = true;
+        try { e.target.setPointerCapture(e.pointerId); } catch(_){}
+        simulateKey(keyName, "keydown");
+      }
+    };
+    const release = (e) => {
+      e.preventDefault();
+      if (pressed) {
+        pressed = false;
+        try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
+        simulateKey(keyName, "keyup");
+      }
+    };
+    return {
+      onPointerDown: press,
+      onPointerUp: release,
+      onPointerCancel: release,
+      onPointerLeave: release,
+      onLostPointerCapture: release,
+      onContextMenu: (e) => e.preventDefault(),
+    };
+  };
 
-  const ActionBtn = ({ label, keyName }) => (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+  const DpadBtn = ({ gridArea, keyName }) => {
+    // Create handlers once per mount via ref
+    const handlersRef = useRef(null);
+    if (!handlersRef.current) handlersRef.current = makePointerHandlers(keyName);
+    return (
       <button
-        onPointerDown={(e) => { e.preventDefault(); e.target.setPointerCapture(e.pointerId); simulateKey(keyName, "keydown"); }}
-        onPointerUp={(e) => { e.preventDefault(); try { e.target.releasePointerCapture(e.pointerId); } catch(err){} simulateKey(keyName, "keyup"); }}
-        onPointerLeave={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-        onPointerCancel={(e) => { e.preventDefault(); simulateKey(keyName, "keyup"); }}
-        onContextMenu={(e) => e.preventDefault()}
+        {...handlersRef.current}
         style={{
-          width: isMobile ? 56 : 56,
-          height: isMobile ? 56 : 56,
-          borderRadius: "50%",
-          background: "#9a2a3e",
+          gridArea,
+          background: "#1c1c1c",
           border: "none",
-          boxShadow: "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
-          cursor: "pointer", touchAction: "manipulation"
+          color: "#1c1c1c",
+          cursor: "pointer", touchAction: "none",
+          borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
+          borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
+          borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
+          borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 8 : 0,
+          boxShadow: "inset 0 2px 4px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)"
         }}
       />
-      <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
-    </div>
-  );
+    );
+  };
+
+  const ActionBtn = ({ label, keyName }) => {
+    const handlersRef = useRef(null);
+    if (!handlersRef.current) handlersRef.current = makePointerHandlers(keyName);
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+        <button
+          {...handlersRef.current}
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: "50%",
+            background: "#9a2a3e",
+            border: "none",
+            boxShadow: "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
+            cursor: "pointer", touchAction: "none"
+          }}
+        />
+        <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
+      </div>
+    );
+  };
 
   const PillBtn = ({ label, onClick, active }) => (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, transform: "rotate(-15deg)" }}>
       <button
         onPointerDown={(e) => { e.preventDefault(); onClick(); }}
+        onContextMenu={(e) => e.preventDefault()}
         style={{
           width: 48, height: 16,
           borderRadius: 8,
           background: active ? "#5a5a5a" : "#7a7a7a",
           border: "none",
           boxShadow: active ? "inset 0 2px 4px rgba(0,0,0,0.5)" : "inset 0 2px 4px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3)",
-          cursor: "pointer", touchAction: "manipulation"
+          cursor: "pointer", touchAction: "none"
         }}
       />
       <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 10, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
@@ -115,7 +147,7 @@ export default function ControlBar({
       userSelect: "none",
       WebkitUserSelect: "none",
       WebkitTouchCallout: "none",
-      touchAction: "manipulation"
+      touchAction: "none"
     }}>
       
       {/* Decorative Speaker Lines — always bottom-right, like a real Gameboy */}
@@ -210,3 +242,6 @@ export default function ControlBar({
     </div>
   );
 }
+
+const ControlBar = memo(ControlBarInner);
+export default ControlBar;

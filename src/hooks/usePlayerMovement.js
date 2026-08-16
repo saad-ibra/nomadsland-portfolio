@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MOVE_COOLDOWN } from "../engine/constants";
 
+// All direction keys that could get stuck
+const DIR_KEYS = ["arrowup", "arrowdown", "arrowleft", "arrowright", "w", "a", "s", "d"];
+
 export function usePlayerMovement({
   sceneId,
   initialPos,
@@ -63,6 +66,44 @@ export function usePlayerMovement({
       localStorage.setItem(`pos_${sceneId}`, JSON.stringify(pos));
     }
   }, [pos, sceneId]);
+
+  // Clear all stuck keys — safety net for Android gesture interruptions
+  const clearAllKeys = useCallback(() => {
+    for (const k of DIR_KEYS) {
+      keysRef.current[k] = false;
+    }
+    keysRef.current[" "] = false;
+    keysRef.current["enter"] = false;
+    keysRef.current["escape"] = false;
+    turnBlockRef.current = false;
+    momentumRef.current = { dc: 0, dr: 0, stepsLeft: 0 };
+  }, []);
+
+  // Safety net: clear all keys on blur, visibility change, or global touch end
+  useEffect(() => {
+    const onBlur = () => clearAllKeys();
+    const onVisChange = () => {
+      if (document.hidden) clearAllKeys();
+    };
+    // If ALL touches end globally, no direction should be held
+    const onGlobalTouchEnd = (e) => {
+      if (e.touches && e.touches.length === 0) {
+        clearAllKeys();
+      }
+    };
+
+    window.addEventListener("blur", onBlur);
+    document.addEventListener("visibilitychange", onVisChange);
+    window.addEventListener("touchend", onGlobalTouchEnd);
+    window.addEventListener("touchcancel", onGlobalTouchEnd);
+
+    return () => {
+      window.removeEventListener("blur", onBlur);
+      document.removeEventListener("visibilitychange", onVisChange);
+      window.removeEventListener("touchend", onGlobalTouchEnd);
+      window.removeEventListener("touchcancel", onGlobalTouchEnd);
+    };
+  }, [clearAllKeys]);
 
   useEffect(() => {
     const down = (e) => {

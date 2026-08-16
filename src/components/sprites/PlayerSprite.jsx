@@ -4,6 +4,7 @@
  * Accepts a `costume` prop that swaps palette and accessories per room.
  * Costumes: "casual" (default), "labcoat", "newsroom"
  */
+import React, { memo } from 'react';
 import { TILE } from '../../engine/constants';
 
 const COSTUMES = {
@@ -42,7 +43,9 @@ const COSTUMES = {
   },
 };
 
-export default function PlayerSprite({ direction, stepping, costume = "casual" }) {
+const spriteStyle = { imageRendering: "pixelated", overflow: "visible" };
+
+function PlayerSpriteInner({ direction, stepping, costume = "casual" }) {
   const frame = stepping ? 1 : 0;
   const skin = "#fcd8b4", skinShade = "#e8b888";
   const eye = "#181818", white = "#ffffff";
@@ -98,7 +101,7 @@ export default function PlayerSprite({ direction, stepping, costume = "casual" }
   };
 
   return (
-    <svg width={TILE} height={TILE+2} viewBox="0 0 16 17" style={{ imageRendering: "pixelated", overflow: "visible" }}>
+    <svg width={TILE} height={TILE+2} viewBox="0 0 16 17" style={spriteStyle}>
       <ellipse cx="8" cy="16.5" rx="5" ry="1.5" fill="rgba(0,0,0,0.3)" />
       {direction === "down"  && renderDown()}
       {direction === "up"    && renderUp()}
@@ -107,3 +110,6 @@ export default function PlayerSprite({ direction, stepping, costume = "casual" }
     </svg>
   );
 }
+
+const PlayerSprite = memo(PlayerSpriteInner);
+export default PlayerSprite;
