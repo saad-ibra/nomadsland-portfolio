@@ -13,33 +13,31 @@ const simulateKey = (key, type) => {
 
 const handlePress = (e, keyName) => {
   e.preventDefault();
-  // Even if already active, if it's a new pointer tapping, we should take over
+  // Break implicit touch capture so sliding works and prevents ghost async lostpointercapture events
+  try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
+
+  if (e.currentTarget.dataset.active === "true") return;
   e.currentTarget.dataset.active = "true";
-  e.currentTarget.dataset.pointerId = e.pointerId;
-  try { e.target.setPointerCapture(e.pointerId); } catch(_){}
   simulateKey(keyName, "keydown");
 };
 
 const handleRelease = (e, keyName) => {
   e.preventDefault();
   if (e.currentTarget.dataset.active === "true") {
-    // Only release if it's from the same pointer that pressed it, avoiding stale lostpointercapture events
-    if (!e.currentTarget.dataset.pointerId || e.currentTarget.dataset.pointerId == e.pointerId) {
-      e.currentTarget.dataset.active = "false";
-      e.currentTarget.dataset.pointerId = "";
-      try { e.target.releasePointerCapture(e.pointerId); } catch(_){}
-      simulateKey(keyName, "keyup");
-    }
+    e.currentTarget.dataset.active = "false";
+    simulateKey(keyName, "keyup");
   }
 };
 
 const DpadBtn = ({ gridArea, keyName }) => (
   <button
     onPointerDown={(e) => handlePress(e, keyName)}
+    onPointerEnter={(e) => {
+      if (e.buttons > 0) handlePress(e, keyName);
+    }}
     onPointerUp={(e) => handleRelease(e, keyName)}
     onPointerLeave={(e) => handleRelease(e, keyName)}
     onPointerCancel={(e) => handleRelease(e, keyName)}
-    onLostPointerCapture={(e) => handleRelease(e, keyName)}
     onContextMenu={(e) => e.preventDefault()}
     style={{
       gridArea,
@@ -61,10 +59,12 @@ const ActionBtn = ({ label, keyName }) => (
   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
     <button
       onPointerDown={(e) => handlePress(e, keyName)}
+      onPointerEnter={(e) => {
+        if (e.buttons > 0) handlePress(e, keyName);
+      }}
       onPointerUp={(e) => handleRelease(e, keyName)}
       onPointerLeave={(e) => handleRelease(e, keyName)}
       onPointerCancel={(e) => handleRelease(e, keyName)}
-      onLostPointerCapture={(e) => handleRelease(e, keyName)}
       onContextMenu={(e) => e.preventDefault()}
       style={{
         width: 56,
