@@ -593,7 +593,7 @@ function Building({ shop, isNear }) {
 // ============================================================
 //  MAIN VILLAGE SCENE
 // ============================================================
-export default function VillageScene({ isLandscape, previousScene,
+export default function VillageScene({ isLandscape, previousScene, triggerTransition,
   onGoToLibrary, onGoToLab, onGoToNewsroom,
   onGoToNomadshome, onGoToMusicRoom,
   speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
@@ -703,17 +703,34 @@ export default function VillageScene({ isLandscape, previousScene,
             }
           }
           
-          setBoatPos({ col: targetCol - 0.5, row: targetRow });
-          setPos({ col: targetCol, row: targetRow });
-          setIsSailing(true);
-          setSailStartTime(Date.now());
+          if (triggerTransition) {
+            triggerTransition(() => {
+              setBoatPos({ col: targetCol - 0.5, row: targetRow });
+              setPos({ col: targetCol, row: targetRow });
+              setIsSailing(true);
+              setSailStartTime(Date.now());
+            });
+          } else {
+            setBoatPos({ col: targetCol - 0.5, row: targetRow });
+            setPos({ col: targetCol, row: targetRow });
+            setIsSailing(true);
+            setSailStartTime(Date.now());
+          }
           return;
         }
 
         if (isOnBoatLocal) {
-          setPos({ col: boatPos.col + 0.5, row: boatPos.row });
-          setIsSailing(true);
-          setSailStartTime(Date.now());
+          if (triggerTransition) {
+            triggerTransition(() => {
+              setPos({ col: boatPos.col + 0.5, row: boatPos.row });
+              setIsSailing(true);
+              setSailStartTime(Date.now());
+            });
+          } else {
+            setPos({ col: boatPos.col + 0.5, row: boatPos.row });
+            setIsSailing(true);
+            setSailStartTime(Date.now());
+          }
           return;
         }
         
@@ -743,9 +760,17 @@ export default function VillageScene({ isLandscape, previousScene,
         ];
         for (const adj of adjs) {
           if (MAP[adj.r]?.[adj.c] === 11) {
-            setBoatPos({ col: pos.col - 0.5, row: pos.row });
-            setPos({ col: adj.c, row: adj.r }); // Step player onto dock
-            setIsSailing(false);
+            if (triggerTransition) {
+              triggerTransition(() => {
+                setBoatPos({ col: pos.col - 0.5, row: pos.row });
+                setPos({ col: adj.c, row: adj.r }); // Step player onto dock
+                setIsSailing(false);
+              });
+            } else {
+              setBoatPos({ col: pos.col - 0.5, row: pos.row });
+              setPos({ col: adj.c, row: adj.r }); // Step player onto dock
+              setIsSailing(false);
+            }
             return;
           }
         }
@@ -1628,19 +1653,27 @@ export default function VillageScene({ isLandscape, previousScene,
                       style={{ cursor: "pointer", opacity: isLocked ? 0.65 : 1 }}
                       onPointerDown={(e) => {
                         e.preventDefault();
-                        if (isSailing) {
-                          setIsSailing(false);
-                          setBoatPos({ col: 27.5, row: 28 });
-                        }
-                        if (shop.id === "dock") {
-                          setPos({ col: 27, row: 27 });
-                        } else if (shop.id === "musicroom") {
-                          // Place player at the entrance of the bridge on the left
-                          setPos({ col: 13, row: 8 });
+                        const teleport = () => {
+                          if (isSailing) {
+                            setIsSailing(false);
+                            setBoatPos({ col: 27.5, row: 28 });
+                          }
+                          if (shop.id === "dock") {
+                            setPos({ col: 27, row: 27 });
+                          } else if (shop.id === "musicroom") {
+                            // Place player at the entrance of the bridge on the left
+                            setPos({ col: 13, row: 8 });
+                          } else {
+                            setPos({ col: shop.col, row: shop.row + 1 });
+                          }
+                          setNearShop(shop.id === "dock" ? null : shop.id);
+                        };
+                        
+                        if (triggerTransition) {
+                          triggerTransition(teleport);
                         } else {
-                          setPos({ col: shop.col, row: shop.row + 1 });
+                          teleport();
                         }
-                        setNearShop(shop.id === "dock" ? null : shop.id);
                       }}
                     />
                   );

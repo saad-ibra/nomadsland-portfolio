@@ -83,22 +83,22 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const changeScene = (newScene) => {
+  const triggerTransition = (callback) => {
     playTransition();
     if (transitionRef.current) {
-      transitionRef.current.play(() => {
-        setPreviousScene(scene);
-        localStorage.removeItem(`pos_${newScene}`);
-        localStorage.setItem("currentScene", newScene);
-        setScene(newScene);
-      });
+      transitionRef.current.play(callback);
     } else {
-      // fallback if ref not yet attached
+      callback();
+    }
+  };
+
+  const changeScene = (newScene) => {
+    triggerTransition(() => {
       setPreviousScene(scene);
       localStorage.removeItem(`pos_${newScene}`);
       localStorage.setItem("currentScene", newScene);
       setScene(newScene);
-    }
+    });
   };
 
   const sceneProps = {
@@ -107,7 +107,8 @@ function App() {
     setMusicPlaying,
     musicMuted, setMusicMuted,
     musicVolume, setMusicVolume,
-    isLandscape
+    isLandscape,
+    triggerTransition
   };
 
   return (
