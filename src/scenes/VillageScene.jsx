@@ -684,7 +684,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         const t = MAP[pos.row]?.[pos.col];
         const isOnBoatLocal = pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
         
-        if ((t === 11 || t === 10) && !isOnBoatLocal) {
+        if ((t === 11) && !isOnBoatLocal) {
           let targetCol = pos.col, targetRow = pos.row;
           let foundWater = false;
           // Search up to 3 tiles outwards for water (fixes large docks)
@@ -1067,7 +1067,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
 
   const activeShop = SHOPS.find(s => s.id === nearShop);
   const isOnBoat = !isSailing && pos.row === boatPos.row && Math.abs(pos.col - boatPos.col) <= 1;
-  const isStandingOnDock = !isSailing && (MAP[pos.row]?.[pos.col] === 11 || MAP[pos.row]?.[pos.col] === 10);
+  const isStandingOnDock = !isSailing && (MAP[pos.row]?.[pos.col] === 11);
   const isNearDockWhileSailing = isSailing && [
     { c: pos.col, r: pos.row - 1 }, { c: pos.col, r: pos.row + 1 },
     { c: pos.col - 1, r: pos.row }, { c: pos.col + 1, r: pos.row },
