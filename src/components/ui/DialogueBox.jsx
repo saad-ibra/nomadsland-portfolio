@@ -10,6 +10,7 @@ import { renderControlText, DIALOG_KEYFRAMES } from "../../utils/renderControls"
  *   onAdvance  - called when SPACE/A pressed (go to next line)
  *   onDismiss  - called when conversation ends or ESC pressed
  *   speaker    - name badge text (default "SAAD IBRA"), null to hide badge
+ *   portrait   - portrait image src (default "/favicon.svg"), null to hide
  *   theme      - color theme string: "home"|"village"|"library"|"lab"|"newsroom"|"music"
  *   lastButtonLabel - label for the dismiss button on the final line (default "GOT IT")
  */
@@ -184,6 +185,7 @@ export default function DialogueBox({
   onAdvance,
   onDismiss,
   speaker = "SAAD IBRA",
+  portrait = "/favicon.svg",
   theme = "home",
   lastButtonLabel = "GOT IT",
 }) {
@@ -250,49 +252,62 @@ export default function DialogueBox({
           </div>
         )}
 
-        {/* Text with typewriter cursor and styled keycaps */}
-        <div style={{ fontSize: 8, lineHeight: 2.2, minHeight: 32, color: t.textColor }}>
-          {renderControlText(shown, kcStyle)}
-          <span style={{
-            opacity: done ? 0 : 1,
-            animation: "dialogBlink 0.5s step-end infinite",
-          }}>&#x258A;</span>
-        </div>
-
-        {/* Action buttons */}
-        <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end", gap: 12 }}>
-          {!isLastLine && (
-            <button
-              onPointerDown={(e) => { e.preventDefault(); if (onDismiss) onDismiss(); }}
-              style={{
-                fontFamily: "'Press Start 2P', monospace", fontSize: 7,
-                background: t.btnBg, color: t.btnColor, border: "none",
-                padding: "8px 14px", borderRadius: 2, cursor: "pointer",
-                boxShadow: t.btnShadow, display: "flex", alignItems: "center", opacity: 0.8
-              }}
-            >
-              <span style={{
-                fontSize: 5, color: t.hintColor, marginRight: 8,
-                background: t.hintBg, padding: "2px 4px", borderRadius: 2,
-              }}>ESC/B</span>
-              SKIP
-            </button>
+        {/* Content: portrait + text */}
+        <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+          {portrait && (
+            <img src={portrait} alt="" draggable={false} style={{
+              width: 30, height: 30, minWidth: 30,
+              imageRendering: "pixelated",
+              borderRadius: 2,
+              marginTop: 1,
+            }} />
           )}
-          <button
-            onPointerDown={(e) => { e.preventDefault(); handleAction(); }}
-            style={{
-              fontFamily: "'Press Start 2P', monospace", fontSize: 7,
-              background: t.btnBg, color: t.btnColor, border: "none",
-              padding: "8px 14px", borderRadius: 2, cursor: "pointer",
-              boxShadow: t.btnShadow, display: "flex", alignItems: "center",
-            }}
-          >
-            <span style={{
-              fontSize: 5, color: t.hintColor, marginRight: 8,
-              background: t.hintBg, padding: "2px 4px", borderRadius: 2,
-            }}>SPACE/A</span>
-            {done && isLastLine ? lastButtonLabel : done ? "NEXT" : "FAST"}
-          </button>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {/* Text with typewriter cursor and styled keycaps */}
+            <div style={{ fontSize: 8, lineHeight: 2.2, minHeight: 32, color: t.textColor }}>
+              {renderControlText(shown, kcStyle)}
+              <span style={{
+                opacity: done ? 0 : 1,
+                animation: "dialogBlink 0.5s step-end infinite",
+              }}>&#x258A;</span>
+            </div>
+
+            {/* Action buttons */}
+            <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end", gap: 12 }}>
+              {!isLastLine && (
+                <button
+                  onPointerDown={(e) => { e.preventDefault(); if (onDismiss) onDismiss(); }}
+                  style={{
+                    fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                    background: t.btnBg, color: t.btnColor, border: "none",
+                    padding: "8px 14px", borderRadius: 2, cursor: "pointer",
+                    boxShadow: t.btnShadow, display: "flex", alignItems: "center", opacity: 0.8
+                  }}
+                >
+                  <span style={{
+                    fontSize: 5, color: t.hintColor, marginRight: 8,
+                    background: t.hintBg, padding: "2px 4px", borderRadius: 2,
+                  }}>ESC/B</span>
+                  SKIP
+                </button>
+              )}
+              <button
+                onPointerDown={(e) => { e.preventDefault(); handleAction(); }}
+                style={{
+                  fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                  background: t.btnBg, color: t.btnColor, border: "none",
+                  padding: "8px 14px", borderRadius: 2, cursor: "pointer",
+                  boxShadow: t.btnShadow, display: "flex", alignItems: "center",
+                }}
+              >
+                <span style={{
+                  fontSize: 5, color: t.hintColor, marginRight: 8,
+                  background: t.hintBg, padding: "2px 4px", borderRadius: 2,
+                }}>SPACE/A</span>
+                {done && isLastLine ? lastButtonLabel : done ? "NEXT" : "FAST"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </>

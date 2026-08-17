@@ -1620,21 +1620,29 @@ export default function VillageScene({ isLandscape, previousScene,
                 position: "absolute", top: -10, left: 10, background: "#d84040", border: "2px solid #302820",
                 padding: "2px 8px", fontSize: 6, color: "#fff", borderRadius: 2,
               }}>SAAD IBRA</div>
-              <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#302820" }}>
-                This is the village. Each building leads to a different part of my work. Walk up to any door and press{' '}
-                <span style={{ display: "inline-block", background: "#302820", border: "1px solid #504030", borderBottomWidth: 2, borderBottomColor: "#1a1410", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#fff", boxShadow: "0 1px 0 #1a1410", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" }}>SPACE</span>
-                {' '}to step inside.
-                <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>&#x258A;</span>
-              </div>
-              <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
-                <button onPointerDown={(e) => { e.preventDefault(); setPhase("free"); }} style={{
-                  fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#408ad8", color: "#fff",
-                  border: "2px solid #302820", padding: "6px 12px", borderRadius: 4, cursor: "pointer",
-                  boxShadow: "0 2px 0 #302820", display: "flex", alignItems: "center",
-                }}>
-                  <span style={{ fontSize: 5, color: "#302820", marginRight: 8, background: "rgba(255,255,255,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
-                  GOT IT
-                </button>
+              <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                <img src="/favicon.svg" alt="" draggable={false} style={{
+                  width: 30, height: 30, minWidth: 30,
+                  imageRendering: "pixelated", borderRadius: 2, marginTop: 1,
+                }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#302820" }}>
+                    This is the village. Each building leads to a different part of my work. Walk up to any door and press{' '}
+                    <span style={{ display: "inline-block", background: "#302820", border: "1px solid #504030", borderBottomWidth: 2, borderBottomColor: "#1a1410", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#fff", boxShadow: "0 1px 0 #1a1410", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" }}>SPACE</span>
+                    {' '}to step inside.
+                    <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>&#x258A;</span>
+                  </div>
+                  <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
+                    <button onPointerDown={(e) => { e.preventDefault(); setPhase("free"); }} style={{
+                      fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#408ad8", color: "#fff",
+                      border: "2px solid #302820", padding: "6px 12px", borderRadius: 4, cursor: "pointer",
+                      boxShadow: "0 2px 0 #302820", display: "flex", alignItems: "center",
+                    }}>
+                      <span style={{ fontSize: 5, color: "#302820", marginRight: 8, background: "rgba(255,255,255,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
+                      GOT IT
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}

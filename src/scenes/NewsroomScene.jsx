@@ -595,23 +595,31 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
                 background: "#000", border: "2px solid #fff",
                 padding: "2px 8px", fontSize: 7, color: "#fff",
               }}>SAAD IBRA</div>
-              <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#000" }}>
-                {introLine}
-                <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
-              </div>
-              <div style={{ marginTop: 8 }}>
-                <button
-                  onClick={() => setPhase("free")}
-                  style={{
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 7,
-                    background: "#000", color: "#fff", border: "none",
-                    padding: "8px 14px", cursor: "pointer",
-                    boxShadow: "4px 4px 0 #888", display: "flex", alignItems: "center"
-                  }}
-                >
-                  <span style={{ fontSize: 5, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE/A</span>
-                  GET TO WORK
-                </button>
+              <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                <img src="/favicon.svg" alt="" draggable={false} style={{
+                  width: 30, height: 30, minWidth: 30,
+                  imageRendering: "pixelated", borderRadius: 2, marginTop: 1,
+                }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#000" }}>
+                    {introLine}
+                    <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
+                  </div>
+                  <div style={{ marginTop: 8 }}>
+                    <button
+                      onClick={() => setPhase("free")}
+                      style={{
+                        fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                        background: "#000", color: "#fff", border: "none",
+                        padding: "8px 14px", cursor: "pointer",
+                        boxShadow: "4px 4px 0 #888", display: "flex", alignItems: "center"
+                      }}
+                    >
+                      <span style={{ fontSize: 5, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE/A</span>
+                      GET TO WORK
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}

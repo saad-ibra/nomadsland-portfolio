@@ -939,24 +939,32 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
               <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #f4e8d0", borderBottom: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #f4e8d0", borderBottom: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", top: -12, left: 10, background: "#1a1a28", border: "2px solid #f4e8d0", padding: "2px 8px", fontSize: 7, color: "#f8d878", borderRadius: 2 }}>SAAD IBRA</div>
-              <div style={{ fontSize: 9, lineHeight: 2.2, minHeight: 32, color: "#f4e8d0" }}>
-                {renderControlText(dialogueText, libKeycapStyle)}
-                <span style={{ opacity: dialogueText.length < currentLine.length ? 1 : 0, animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
-              </div>
-              {phase === "intro" && dialogueText.length >= currentLine.length && (
-                <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                  <button onClick={skipIntro} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, background: "#e04040", color: "#fff", border: "none", padding: "8px 14px", borderRadius: 2, cursor: "pointer", boxShadow: "0 3px 0 #a02020, inset 0 1px 0 rgba(255,255,255,0.2)", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
-                    <span style={{ fontSize: 5, color: "#ffbaba", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE</span>
-                    GOT IT
-                  </button>
+              <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                <img src="/favicon.svg" alt="" draggable={false} style={{
+                  width: 30, height: 30, minWidth: 30,
+                  imageRendering: "pixelated", borderRadius: 2, marginTop: 1,
+                }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 9, lineHeight: 2.2, minHeight: 32, color: "#f4e8d0" }}>
+                    {renderControlText(dialogueText, libKeycapStyle)}
+                    <span style={{ opacity: dialogueText.length < currentLine.length ? 1 : 0, animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
+                  </div>
+                  {phase === "intro" && dialogueText.length >= currentLine.length && (
+                    <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+                      <button onClick={skipIntro} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, background: "#e04040", color: "#fff", border: "none", padding: "8px 14px", borderRadius: 2, cursor: "pointer", boxShadow: "0 3px 0 #a02020, inset 0 1px 0 rgba(255,255,255,0.2)", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
+                        <span style={{ fontSize: 5, color: "#ffbaba", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE</span>
+                        GOT IT
+                      </button>
+                    </div>
+                  )}
+                  {phase === "touring" && (
+                    <button onClick={endTour} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "transparent", color: "#888", border: "none", padding: "6px 0 0", cursor: "pointer", textDecoration: "underline", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
+                      <span style={{ fontSize: 4, color: "#666", marginRight: 4, border: "1px solid #666", padding: "1px 2px", borderRadius: 2 }}>ESC</span>
+                      skip tour &gt;
+                    </button>
+                  )}
                 </div>
-              )}
-              {phase === "touring" && (
-                <button onClick={endTour} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "transparent", color: "#888", border: "none", padding: "6px 0 0", cursor: "pointer", textDecoration: "underline", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
-                  <span style={{ fontSize: 4, color: "#666", marginRight: 4, border: "1px solid #666", padding: "1px 2px", borderRadius: 2 }}>ESC</span>
-                  skip tour &gt;
-                </button>
-              )}
+              </div>
               {phase === "touring" && dialogueText.length >= currentLine.length && (
                 <div style={{ position: "absolute", right: 12, bottom: 8, fontSize: 10, animation: "dialogBlink 0.8s step-end infinite", color: "#f4e8d0" }}>v</div>
               )}

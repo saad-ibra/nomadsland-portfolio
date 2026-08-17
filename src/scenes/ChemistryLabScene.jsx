@@ -822,23 +822,31 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
                 background: "#0c1e2e", border: "2px solid #eef7f2",
                 padding: "2px 8px", fontSize: 7, color: "#80c8a0", borderRadius: 2,
               }}>SAAD IBRA</div>
-              <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#eef7f2" }}>
-                {renderControlText(introLine, labKeycapStyle)}
-                <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
-              </div>
-              <div style={{ marginTop: 8 }}>
-                <button
-                  onClick={() => setPhase("free")}
-                  style={{
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 7,
-                    background: "#1a5a3a", color: "#fff", border: "none",
-                    padding: "8px 14px", borderRadius: 2, cursor: "pointer",
-                    boxShadow: "0 3px 0 #0a3020", display: "flex", alignItems: "center"
-                  }}
-                >
-                  <span style={{ fontSize: 5, color: "#a8e8a8", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
-                  ENTER LAB
-                </button>
+              <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
+                <img src="/favicon.svg" alt="" draggable={false} style={{
+                  width: 30, height: 30, minWidth: 30,
+                  imageRendering: "pixelated", borderRadius: 2, marginTop: 1,
+                }} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#eef7f2" }}>
+                    {renderControlText(introLine, labKeycapStyle)}
+                    <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
+                  </div>
+                  <div style={{ marginTop: 8 }}>
+                    <button
+                      onClick={() => setPhase("free")}
+                      style={{
+                        fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                        background: "#1a5a3a", color: "#fff", border: "none",
+                        padding: "8px 14px", borderRadius: 2, cursor: "pointer",
+                        boxShadow: "0 3px 0 #0a3020", display: "flex", alignItems: "center"
+                      }}
+                    >
+                      <span style={{ fontSize: 5, color: "#a8e8a8", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
+                      ENTER LAB
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
