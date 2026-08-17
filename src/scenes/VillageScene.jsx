@@ -778,75 +778,138 @@ export default function VillageScene({ isLandscape, previousScene,
   const rafRef       = useRef();
 
   // ---- Synth engine: Richer 16-bit RPG Overworld Theme ----
-  const playStep = useCallback((idx, vol, muted) => {
+  const playStep = useCallback((idx, vol, muted, sailing) => {
     if (muted || vol === 0) return;
     try {
       if (!musicRef.current.audioCtx) musicRef.current.audioCtx = getSharedAudioCtx();
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
-      // Cheerful major scale melody (C Major Pentatonic + F & B for passing)
-      const scale = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // C major
       const t = ctx.currentTime;
 
-      // Bassline (Triangle wave - warmer, rounder bass)
-      if (idx % 4 === 0 || idx % 4 === 2) {
-        const bass = ctx.createOscillator();
-        const bG = ctx.createGain();
-        bass.type = "triangle";
-        // Alternating root notes for a walking bass feel
-        const roots = [130.81, 130.81, 174.61, 196.00]; // C, C, F, G
-        const root = roots[Math.floor(idx / 16) % roots.length];
-        bass.frequency.setValueAtTime(root, t);
-        
-        bG.gain.setValueAtTime(vol * 0.15, t);
-        bG.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-        bass.connect(bG); bG.connect(ctx.destination);
-        bass.start(t); bass.stop(t + 0.35);
-      }
+      if (sailing) {
+        // MAJESTIC OCEAN THEME
+        // D Major scale
+        const dScale = [293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 554.37, 587.33]; 
+        // D Major, A Major, B minor, G Major
+        const chords = [
+          [0, 2, 4],    // D F# A
+          [4, 6, 1+7],  // A C# E
+          [5, 0+7, 2+7], // B D F#
+          [3, 5, 0+7]   // G B D
+        ];
+        const chordIdx = Math.floor(idx / 12) % chords.length;
+        const chord = chords[chordIdx];
 
-      // Arpeggiated Melody (Square wave with lowpass filter for 16-bit "flute/synth" tone)
-      if (idx % 2 === 0) {
-        const mel = ctx.createOscillator();
-        const mG = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
-        
-        mel.type = "square";
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(1200, t); // Cut off harsh high frequencies
-        
-        // A slightly more complex, cheerful sequence
-        const pattern = [0, 2, 4, 7, 4, 5, 2, -1];
-        const noteIdx = pattern[(idx / 2) % 8];
-        
-        if (noteIdx !== -1) {
-          // Add some octave variation
-          const octave = (idx % 32 > 16) ? 2 : 1.5;
-          mel.frequency.setValueAtTime(scale[noteIdx] * octave, t);
-          
-          mG.gain.setValueAtTime(vol * 0.05, t);
-          // Slightly longer decay for smoother melody
-          mG.gain.setTargetAtTime(0.001, t + 0.1, 0.05);
-          
-          mel.connect(filter); filter.connect(mG); mG.connect(ctx.destination);
-          mel.start(t); mel.stop(t + 0.25);
+        // Sweeping Bass (Sine wave - deep and smooth)
+        if (idx % 12 === 0 || idx % 12 === 6) {
+          const bass = ctx.createOscillator();
+          const bG = ctx.createGain();
+          bass.type = "sine"; 
+          const rootNote = dScale[chord[0]] / 4; // two octaves down
+          bass.frequency.setValueAtTime(rootNote, t);
+          bG.gain.setValueAtTime(0, t);
+          bG.gain.linearRampToValueAtTime(vol * 0.2, t + 0.2);
+          bG.gain.exponentialRampToValueAtTime(0.001, t + 1.0);
+          bass.connect(bG); bG.connect(ctx.destination);
+          bass.start(t); bass.stop(t + 1.1);
         }
-      }
-      
-      // Counter-melody (Sine wave for a glassy pad sound)
-      if (idx % 8 === 0) {
-        const pad = ctx.createOscillator();
-        const pG = ctx.createGain();
-        pad.type = "sine";
-        const padNote = scale[Math.floor(idx / 16) % scale.length];
-        pad.frequency.setValueAtTime(padNote * 2, t); // High register
+
+        // Harp-like Arpeggios (Triangle wave)
+        if (idx % 2 === 0) {
+          const arp = ctx.createOscillator();
+          const aG = ctx.createGain();
+          arp.type = "triangle";
+          
+          const arpPattern = [0, 1, 2, 1]; // Up and down the chord
+          const noteIndexInChord = arpPattern[(idx / 2) % 4];
+          let noteFreq = dScale[chord[noteIndexInChord]] * 2; // one octave up
+
+          arp.frequency.setValueAtTime(noteFreq, t);
+          aG.gain.setValueAtTime(vol * 0.1, t);
+          aG.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          arp.connect(aG); aG.connect(ctx.destination);
+          arp.start(t); arp.stop(t + 0.4);
+        }
         
-        pG.gain.setValueAtTime(0, t);
-        pG.gain.linearRampToValueAtTime(vol * 0.03, t + 0.2);
-        pG.gain.linearRampToValueAtTime(0, t + 0.6);
+        // Majestic string pad (Sine wave chords swelling)
+        if (idx % 12 === 0) {
+           for (let i=0; i<3; i++) {
+             const pad = ctx.createOscillator();
+             const pG = ctx.createGain();
+             pad.type = "sine";
+             pad.frequency.setValueAtTime(dScale[chord[i]], t);
+             pG.gain.setValueAtTime(0, t);
+             pG.gain.linearRampToValueAtTime(vol * 0.04, t + 0.5);
+             pG.gain.exponentialRampToValueAtTime(0.001, t + 2.0);
+             pad.connect(pG); pG.connect(ctx.destination);
+             pad.start(t); pad.stop(t + 2.1);
+           }
+        }
+      } else {
+        // ORIGINAL OVERWORLD THEME
+        // Cheerful major scale melody (C Major Pentatonic + F & B for passing)
+        const scale = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]; // C major
+
+        // Bassline (Triangle wave - warmer, rounder bass)
+        if (idx % 4 === 0 || idx % 4 === 2) {
+          const bass = ctx.createOscillator();
+          const bG = ctx.createGain();
+          bass.type = "triangle";
+          // Alternating root notes for a walking bass feel
+          const roots = [130.81, 130.81, 174.61, 196.00]; // C, C, F, G
+          const root = roots[Math.floor(idx / 16) % roots.length];
+          bass.frequency.setValueAtTime(root, t);
+          
+          bG.gain.setValueAtTime(vol * 0.15, t);
+          bG.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          bass.connect(bG); bG.connect(ctx.destination);
+          bass.start(t); bass.stop(t + 0.35);
+        }
+
+        // Arpeggiated Melody (Square wave with lowpass filter for 16-bit "flute/synth" tone)
+        if (idx % 2 === 0) {
+          const mel = ctx.createOscillator();
+          const mG = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+          
+          mel.type = "square";
+          filter.type = "lowpass";
+          filter.frequency.setValueAtTime(1200, t); // Cut off harsh high frequencies
+          
+          // A slightly more complex, cheerful sequence
+          const pattern = [0, 2, 4, 7, 4, 5, 2, -1];
+          const noteIdx = pattern[(idx / 2) % 8];
+          
+          if (noteIdx !== -1) {
+            // Add some octave variation
+            const octave = (idx % 32 > 16) ? 2 : 1.5;
+            mel.frequency.setValueAtTime(scale[noteIdx] * octave, t);
+            
+            mG.gain.setValueAtTime(vol * 0.05, t);
+            // Slightly longer decay for smoother melody
+            mG.gain.setTargetAtTime(0.001, t + 0.1, 0.05);
+            
+            mel.connect(filter); filter.connect(mG); mG.connect(ctx.destination);
+            mel.start(t); mel.stop(t + 0.25);
+          }
+        }
         
-        pad.connect(pG); pG.connect(ctx.destination);
-        pad.start(t); pad.stop(t + 0.65);
+        // Counter-melody (Sine wave for a glassy pad sound)
+        if (idx % 8 === 0) {
+          const pad = ctx.createOscillator();
+          const pG = ctx.createGain();
+          pad.type = "sine";
+          const padNote = scale[Math.floor(idx / 16) % scale.length];
+          pad.frequency.setValueAtTime(padNote * 2, t); // High register
+          
+          pG.gain.setValueAtTime(0, t);
+          pG.gain.linearRampToValueAtTime(vol * 0.03, t + 0.2);
+          pG.gain.linearRampToValueAtTime(0, t + 0.6);
+          
+          pad.connect(pG); pG.connect(ctx.destination);
+          pad.start(t); pad.stop(t + 0.65);
+        }
       }
     } catch (_) {}
   }, []);
@@ -859,10 +922,10 @@ export default function VillageScene({ isLandscape, previousScene,
     let step = 0;
     const ms = Math.round(180 / speedMultiplier); // faster, upbeat tempo
     musicRef.current.interval = setInterval(() => {
-      playStep(step++, musicVolume, musicMuted);
+      playStep(step++, musicVolume, musicMuted, isSailing);
     }, ms);
     return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
-  }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
+  }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, isSailing, playStep]);
 
   useEffect(() => {
     const resize = () => {

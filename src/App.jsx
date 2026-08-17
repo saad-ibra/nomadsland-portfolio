@@ -8,7 +8,7 @@ import MusicRoomScene from './scenes/MusicRoomScene.jsx';
 import SceneTransition from './components/ui/SceneTransition.jsx';
 import './App.css';
 
-import { getSharedAudioCtx } from './engine/sfx.js';
+import { getSharedAudioCtx, playTransition } from './engine/sfx.js';
 
 // ---- Global AudioContext unlock ----
 // Browsers block audio until the first user gesture. This ensures the
@@ -84,6 +84,7 @@ function App() {
   }, []);
 
   const changeScene = (newScene) => {
+    playTransition();
     if (transitionRef.current) {
       transitionRef.current.play(() => {
         setPreviousScene(scene);

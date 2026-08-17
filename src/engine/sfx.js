@@ -162,3 +162,30 @@ export function playTileStep(volume = 0.01) {
 export function playBlip(volume = 0.02) {
   playOscillator('square', 800, volume, 0.05);
 }
+
+export function playTransition(volume = 0.05) {
+  if (isSfxMuted) return;
+  getSharedAudioCtx();
+  
+  // A sweeping arpeggio/chime for transitions
+  const t = audioCtx.currentTime;
+  const freqs = [440, 554.37, 659.25, 880, 1108.73]; // A major sweep
+  
+  freqs.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, t + i * 0.05);
+    
+    gainNode.gain.setValueAtTime(0, t + i * 0.05);
+    gainNode.gain.linearRampToValueAtTime(volume, t + i * 0.05 + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, t + i * 0.05 + 0.4);
+    
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    osc.start(t + i * 0.05);
+    osc.stop(t + i * 0.05 + 0.5);
+  });
+}
