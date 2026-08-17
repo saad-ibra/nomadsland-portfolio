@@ -525,12 +525,18 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
   const { pos, setPos, facing, stepping } = usePlayerMovement({
     initialPos: START_POS,
     canWalk: (c, r) => {
-      if (c === EXIT_DOOR_COL && r === EXIT_DOOR_ROW) { onBackToVillage(); return false; }
+      // Allow stepping onto the doormat
+      if (c === EXIT_DOOR_COL && r === EXIT_DOOR_ROW) return true;
       return canWalk(c, r);
     },
     speedMultiplier,
     isActive: phase === "free" && !openShelf && !isTransitioning,
-    onMove: (nc, nr) => { checkNear(nc, nr); playWoodStep(); return false; },
+    onMove: (nc, nr) => { 
+      checkNear(nc, nr); 
+      playWoodStep(); 
+      if (nc === EXIT_DOOR_COL && nr === EXIT_DOOR_ROW) onBackToVillage();
+      return false; 
+    },
     onAction: () => {
       const dc = Math.abs(NPC_POS.col - pos.col);
       const dr = Math.abs(NPC_POS.row - pos.row);

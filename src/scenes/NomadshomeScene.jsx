@@ -10,6 +10,7 @@ import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { useCameraLerp } from "../hooks/useCameraLerp";
 import { getSharedAudioCtx, playWoodStep, playBlip } from "../engine/sfx";
+import ExitDoor from "../components/sprites/ExitDoor";
 
 // --- MAP CONFIG ---
 const MAP_COLS = 16;
@@ -386,7 +387,12 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
               {MAP.map((row, r) => row.map((tile, c) => {
                  const key = `${r}_${c}`;
                  if (tile === 1) return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: "#5a3a2a", border: "1px solid #3a1c11", backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,0.1) 4px, rgba(0,0,0,0.1) 6px)", zIndex: r * 10 }} />;
-                 if (tile === 2) return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: "#8B4513", border: "2px solid #5C3A21", zIndex: r * 10 }}><div style={{ position: "absolute", top: 12, right: 4, width: 4, height: 4, background: "#DAA520", borderRadius: "50%" }} /></div>;
+                 if (tile === 2) return (
+                    <div key={key}>
+                      <div style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: (r + c) % 2 === 0 ? "#8c6b45" : "#805c38", border: "1px solid rgba(0,0,0,0.1)", zIndex: 0 }} />
+                      <ExitDoor col={c} row={r} />
+                    </div>
+                 );
                  return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: (r + c) % 2 === 0 ? "#8c6b45" : "#805c38", border: "1px solid rgba(0,0,0,0.1)", zIndex: 0 }} />;
               }))}
               {/* Window */}
