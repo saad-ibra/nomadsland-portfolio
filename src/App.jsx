@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import VillageScene from './scenes/VillageScene.jsx';
 import LibraryScene from './scenes/LibraryScene.jsx';
 import ChemistryLabScene from './scenes/ChemistryLabScene.jsx';
 import NewsroomScene from './scenes/NewsroomScene.jsx';
 import NomadshomeScene from './scenes/NomadshomeScene.jsx';
 import MusicRoomScene from './scenes/MusicRoomScene.jsx';
+import SceneTransition from './components/ui/SceneTransition.jsx';
 import './App.css';
 
 import { getSharedAudioCtx } from './engine/sfx.js';
@@ -51,7 +52,7 @@ document.addEventListener("visibilitychange", () => {
 function App() {
   const [scene, setScene] = useState(() => localStorage.getItem("currentScene") || 'nomadshome');
   const [previousScene, setPreviousScene] = useState(null);
-  const [fading, setFading] = useState(false);
+  const transitionRef = useRef(null);
 
   // Global Audio & Speed State
   const [speedMultiplier, setSpeedMultiplier] = useState(() => parseFloat(localStorage.getItem("speedMultiplier") || "1"));
@@ -83,14 +84,20 @@ function App() {
   }, []);
 
   const changeScene = (newScene) => {
-    setFading(true);
-    setTimeout(() => {
+    if (transitionRef.current) {
+      transitionRef.current.play(() => {
+        setPreviousScene(scene);
+        localStorage.removeItem(`pos_${newScene}`);
+        localStorage.setItem("currentScene", newScene);
+        setScene(newScene);
+      });
+    } else {
+      // fallback if ref not yet attached
       setPreviousScene(scene);
       localStorage.removeItem(`pos_${newScene}`);
       localStorage.setItem("currentScene", newScene);
       setScene(newScene);
-      setFading(false);
-    }, 400); // 400ms fade transition
+    }
   };
 
   const sceneProps = {
@@ -120,11 +127,8 @@ function App() {
           background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 1px, transparent 1px, transparent 2px)'
         }} />
 
-        {/* Global Fade Overlay */}
-        <div style={{
-          position: 'fixed', inset: 0, background: '#000', zIndex: 9999, pointerEvents: 'none',
-          opacity: fading ? 1 : 0, transition: 'opacity 0.4s ease-in-out'
-        }} />
+        {/* Pixelated Iris-Wipe Transition */}
+        <SceneTransition ref={transitionRef} />
 
         {scene === 'village' && (
           <VillageScene
