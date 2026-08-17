@@ -83,13 +83,22 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const isTransitioningRef = useRef(false);
+
   const triggerTransition = (callback) => {
+    if (isTransitioningRef.current) return;
+    isTransitioningRef.current = true;
+    
     playTransition();
     if (transitionRef.current) {
       transitionRef.current.play(callback);
     } else {
       callback();
     }
+    
+    setTimeout(() => {
+      isTransitioningRef.current = false;
+    }, 1000);
   };
 
   const changeScene = (newScene) => {
