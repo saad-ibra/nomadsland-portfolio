@@ -28,7 +28,7 @@ const DIALOGUE_LINES = [
   "The studio. Not much to mess with yet, but the sound system works. Head back downstairs whenever you want.",
 ];
 
-export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
+export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
   const [scale, setScale] = useState(1);
   const [internalW, setInternalW] = useState(384);
   const [internalH, setInternalH] = useState(288);
@@ -76,7 +76,7 @@ export default function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNom
 
   const { pos, facing, stepping } = usePlayerMovement({
     initialPos: { col: 2, row: 2 }, // spawn near stairs
-    isActive: phase === "free",
+    isActive: phase === "free" && !isTransitioning,
     canWalk: isWalkable,
     speedMultiplier,
     onMove: (c, r) => {

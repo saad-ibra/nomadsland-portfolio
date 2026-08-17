@@ -349,7 +349,7 @@ function PixelChair({ col, row }) {
 // ============================================================
 //  MAIN COMPONENT
 // ============================================================
-export default function LibraryScene({ isLandscape, onBackToVillage , speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
+export default function LibraryScene({ isLandscape, onBackToVillage , triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
   const [nearShelf, setNearShelf] = useState(null);
   const [openShelf, setOpenShelf] = useState(null);
 
@@ -529,8 +529,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
       return canWalk(c, r);
     },
     speedMultiplier,
-    isActive: phase === "free" && !openShelf,
-    onMove: (c, r) => { checkNear(c, r); playWoodStep(); return false; },
+    isActive: phase === "free" && !openShelf && !isTransitioning,
+    onMove: (nc, nr) => { checkNear(nc, nr); playWoodStep(); return false; },
     onAction: () => {
       const dc = Math.abs(NPC_POS.col - pos.col);
       const dr = Math.abs(NPC_POS.row - pos.row);

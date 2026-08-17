@@ -376,7 +376,7 @@ function ChemicalCart({ col, row }) {
 // ============================================================
 //  MAIN CHEMISTRY LAB COMPONENT
 // ============================================================
-export default function ChemistryLab({ isLandscape, onBackToVillage , speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
+export default function ChemistryLabScene({ isLandscape, onBackToVillage, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
   const [repos, setRepos]           = useState([]);
   const [stats, setStats]           = useState({ public: 0, private: 0 });
   const [reposLoaded, setReposLoaded] = useState(false);
@@ -537,7 +537,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
       return canLayoutWalk(layoutRef.current, c, r);
     },
     speedMultiplier,
-    isActive: phase === "free" && !openStation,
+    isActive: phase === "free" && !isTransitioning && !openStation,
     onMove: (c, r) => { checkNear(c, r); playTileStep(); return false; },
     onAction: () => {
       const npcCol = layoutRef.current.startPos.col + 2;

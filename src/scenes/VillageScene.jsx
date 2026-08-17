@@ -593,7 +593,7 @@ function Building({ shop, isNear }) {
 // ============================================================
 //  MAIN VILLAGE SCENE
 // ============================================================
-export default function VillageScene({ isLandscape, previousScene, triggerTransition,
+export default function VillageScene({ isLandscape, previousScene, triggerTransition, isTransitioning,
   onGoToLibrary, onGoToLab, onGoToNewsroom,
   onGoToNomadshome, onGoToMusicRoom,
   speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
@@ -653,7 +653,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     initialPos,
     canWalk,
     speedMultiplier,
-    isActive: phase === "free",
+    isActive: phase === "free" && !isTransitioning,
     isSailing,
     onMove: (nc, nr) => {
       if (isSailing) {
@@ -1520,7 +1520,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
             {/* Player */}
             <div style={{
               position: "absolute", left: pos.col * TILE, top: pos.row * TILE, 
-              transition: isSailing ? "none" : "left 0.14s linear, top 0.14s linear", 
+              transition: (isTransitioning || isSailing) ? "none" : "left 0.14s linear, top 0.14s linear", 
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,

@@ -83,11 +83,13 @@ function App() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const isTransitioningRef = useRef(false);
 
   const triggerTransition = (callback) => {
     if (isTransitioningRef.current) return;
     isTransitioningRef.current = true;
+    setIsTransitioning(true);
     
     playTransition();
     if (transitionRef.current) {
@@ -98,6 +100,7 @@ function App() {
     
     setTimeout(() => {
       isTransitioningRef.current = false;
+      setIsTransitioning(false);
     }, 1000);
   };
 
@@ -117,7 +120,8 @@ function App() {
     musicMuted, setMusicMuted,
     musicVolume, setMusicVolume,
     isLandscape,
-    triggerTransition
+    triggerTransition,
+    isTransitioning
   };
 
   return (

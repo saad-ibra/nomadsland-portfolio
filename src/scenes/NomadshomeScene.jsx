@@ -162,7 +162,7 @@ function TipLineForm({ onClose }) {
   );
 }
 
-export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
+export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
   const [scale, setScale] = useState(1);
   const [internalW, setInternalW] = useState(256);
   const [internalH, setInternalH] = useState(192);
@@ -313,7 +313,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, speedMul
   const { pos, facing, stepping } = usePlayerMovement({
     sceneId: "nomadshome_studio",
     initialPos: START_POS,
-    isActive: phase === "free" && !openResume && !openTipLine,
+    isActive: phase === "free" && !isTransitioning && !openResume && !openTipLine,
     speedMultiplier,
     canWalk: (targetC, targetR) => {
       if (targetR < 0 || targetR >= MAP_ROWS || targetC < 0 || targetC >= MAP_COLS) return false;

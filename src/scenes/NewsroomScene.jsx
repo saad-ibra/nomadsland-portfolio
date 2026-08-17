@@ -152,7 +152,7 @@ function PrintingPress({ col }) {
 // ============================================================
 //  MAIN NEWSROOM COMPONENT
 // ============================================================
-export default function NewsroomScene({ isLandscape, onBackToVillage , speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
+export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
   const layout = useMemo(() => generateNewsroomLayout(BLOG_POSTS), []);
   const layoutRef = useRef(layout);
   useEffect(() => { layoutRef.current = layout; }, [layout]);
@@ -204,7 +204,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
       return canLayoutWalk(layoutRef.current, c, r);
     },
     speedMultiplier,
-    isActive: phase === "free" && !openPost,
+    isActive: phase === "free" && !isTransitioning && !openPost,
     onMove: (c, r) => { checkNear(c, r); playTileStep(); return false; },
     onAction: () => {
       const dc = Math.abs(NPC_POS.col - pos.col);
