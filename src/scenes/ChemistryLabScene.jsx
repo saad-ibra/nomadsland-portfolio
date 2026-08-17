@@ -818,7 +818,7 @@ export default function ChemistryLab({ isLandscape, onBackToVillage , speedMulti
               <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #eef7f2", borderBottom: "2px solid #eef7f2", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #eef7f2", borderBottom: "2px solid #eef7f2", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{
-                position: "absolute", top: -12, left: 10,
+                position: "absolute", top: -12, left: 54,
                 background: "#0c1e2e", border: "2px solid #eef7f2",
                 padding: "2px 8px", fontSize: 7, color: "#80c8a0", borderRadius: 2,
               }}>SAAD IBRA</div>

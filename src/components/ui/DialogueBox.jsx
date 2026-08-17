@@ -244,9 +244,9 @@ export default function DialogueBox({
         {/* Speaker badge */}
         {speaker && (
           <div style={{
-            position: "absolute", top: -12, left: 10,
-            background: t.speakerBg, border: t.speakerBorder,
-            padding: "2px 8px", fontSize: 7, color: t.speakerColor, borderRadius: 2,
+            position: "absolute", top: -12, left: portrait ? 54 : 10,
+            background: t.badgeBg || t.speakerBg || "#d84040", border: t.border || t.speakerBorder,
+            padding: "2px 8px", fontSize: 7, color: t.badgeColor || t.speakerColor || "#fff", borderRadius: 2,
           }}>
             {speaker}
           </div>

@@ -591,7 +591,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage , speedMult
               <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #000", borderBottom: "2px solid #000", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #000", borderBottom: "2px solid #000", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{
-                position: "absolute", top: -12, left: 10,
+                position: "absolute", top: -12, left: 54,
                 background: "#000", border: "2px solid #fff",
                 padding: "2px 8px", fontSize: 7, color: "#fff",
               }}>SAAD IBRA</div>

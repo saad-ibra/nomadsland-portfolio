@@ -1617,7 +1617,7 @@ export default function VillageScene({ isLandscape, previousScene,
               <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #302820", borderBottom: "2px solid #302820", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #302820", borderBottom: "2px solid #302820", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{
-                position: "absolute", top: -10, left: 10, background: "#d84040", border: "2px solid #302820",
+                position: "absolute", top: -10, left: 54, background: "#d84040", border: "2px solid #302820",
                 padding: "2px 8px", fontSize: 6, color: "#fff", borderRadius: 2,
               }}>SAAD IBRA</div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>

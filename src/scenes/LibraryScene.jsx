@@ -938,7 +938,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , speedMulti
               <div style={{ position: "absolute", top: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #f4e8d0", borderTop: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", bottom: 3, left: 3, width: 4, height: 4, borderLeft: "2px solid #f4e8d0", borderBottom: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #f4e8d0", borderBottom: "2px solid #f4e8d0", opacity: 0.35, pointerEvents: "none" }} />
-              <div style={{ position: "absolute", top: -12, left: 10, background: "#1a1a28", border: "2px solid #f4e8d0", padding: "2px 8px", fontSize: 7, color: "#f8d878", borderRadius: 2 }}>SAAD IBRA</div>
+              <div style={{ position: "absolute", top: -12, left: 54, background: "#1a1a28", border: "2px solid #f4e8d0", padding: "2px 8px", fontSize: 7, color: "#f8d878", borderRadius: 2 }}>SAAD IBRA</div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <img src="/favicon.svg" alt="" draggable={false} style={{
                   width: 30, height: 30, minWidth: 30,
