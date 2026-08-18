@@ -189,3 +189,33 @@ export function playTransition(volume = 0.05) {
     osc.stop(t + i * 0.05 + 0.5);
   });
 }
+
+export function playWhistle(volume = 0.025) {
+  if (isSfxMuted) return;
+  getSharedAudioCtx();
+
+  const t = audioCtx.currentTime;
+
+  // Two-note whistle: short rising tweet
+  const notes = [
+    { freq: 1200, start: 0,    dur: 0.18 },
+    { freq: 1500, start: 0.22, dur: 0.25 },
+  ];
+
+  notes.forEach(({ freq, start, dur }) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, t + start);
+    osc.frequency.linearRampToValueAtTime(freq * 1.08, t + start + dur);
+    gain.gain.setValueAtTime(0, t + start);
+    gain.gain.linearRampToValueAtTime(volume, t + start + 0.02);
+    gain.gain.setValueAtTime(volume, t + start + dur * 0.6);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + start + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t + start);
+    osc.stop(t + start + dur + 0.01);
+  });
+}
+
