@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, memo, useMemo } from "react";
+import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
