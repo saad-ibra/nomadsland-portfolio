@@ -549,6 +549,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
   const [shelves, setShelves] = useState(SHELF_LAYOUT.map(l => ({ ...l, label: "Loading...", count: 0, type: "normal", books: [] })));
 
   const containerRef = useRef(null);
+  const shelfScrollRef = useRef(null);
   const moveTimerRef = useRef(0);
   const keysRef = useRef({});
   const tourTimerRef = useRef(null);
@@ -678,6 +679,19 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
 
       // Allow movement keys to exit intro/tour mode
       if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) {
+        if (openShelf && (k === "arrowdown" || k === "s" || k === "arrowup" || k === "w")) {
+          e.preventDefault();
+          const scrollAmt = 60;
+          if (shelfScrollRef.current) {
+            if (k === "arrowdown" || k === "s") {
+              shelfScrollRef.current.scrollTop += scrollAmt;
+            } else {
+              shelfScrollRef.current.scrollTop -= scrollAmt;
+            }
+          }
+          return;
+        }
+
         if (phase === "intro" || phase === "touring") {
           e.preventDefault();
           clearTimeout(arriveTimeoutRef.current);
@@ -987,7 +1001,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
           {/* Modal */}
           {modalShelf && (
             <div onClick={() => setOpenShelf(null)} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 700, imageRendering: "pixelated" }}>
-              <div className="retro-scrollbar" onClick={(e) => e.stopPropagation()} style={{ background: "#1a1a28", border: "4px solid #f4e8d0", borderRadius: 2, width: 340, maxWidth: "95%", maxHeight: "90%", overflowY: "auto", overflowX: "hidden", boxShadow: "0 0 0 2px #1a1a28, 0 0 0 6px #888, 0 10px 30px rgba(0,0,0,0.8)" }}>
+              <div ref={shelfScrollRef} className="retro-scrollbar" onClick={(e) => e.stopPropagation()} style={{ background: "#1a1a28", border: "4px solid #f4e8d0", borderRadius: 2, width: 340, maxWidth: "95%", maxHeight: "90%", overflowY: "auto", overflowX: "hidden", boxShadow: "0 0 0 2px #1a1a28, 0 0 0 6px #888, 0 10px 30px rgba(0,0,0,0.8)" }}>
                 <div style={{ padding: "8px 12px", background: TYPE_COLORS[modalShelf.type].primary, borderBottom: `3px solid ${TYPE_COLORS[modalShelf.type].dark}`, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
                   <div style={{ fontSize: 7, color: "#fff", textShadow: `1px 1px 0 ${TYPE_COLORS[modalShelf.type].dark}`, display: "flex", alignItems: "center", gap: 6 }}>
                     {getShelfIcon(modalShelf.id, 10)} {modalShelf.label.toUpperCase()}
