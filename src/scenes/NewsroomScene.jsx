@@ -157,6 +157,30 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
   const layoutRef = useRef(layout);
   useEffect(() => { layoutRef.current = layout; }, [layout]);
 
+  const renderedTiles = useMemo(() => layout.map.map((row, r) => row.map((tile, c) => {
+    if (tile === 0) return null;
+    let bg, bx = "none";
+    if (tile === 2) {
+      bg = "repeating-linear-gradient(90deg,#4a545e,#4a545e 4px,#586068 4px,#586068 8px)";
+      bx = "inset 0 -3px 0 #2a3036, inset 0 -8px 8px rgba(0,0,0,0.5)";
+    } else if (tile === 4) {
+      bg = "repeating-linear-gradient(45deg,#8a6442,#8a6442 2px,#9a7452 2px,#9a7452 4px)";
+      bx = "inset -3px 0 0 #5a3c24, inset 0 -8px 8px rgba(0,0,0,0.5)";
+    } else if (tile === 3) {
+      bg = "#2a3a4a";
+      bx = "inset 0 0 0 1px #1a2a3a";
+    } else {
+      bg = (r + c) % 2 === 0 ? "#c4d0d8" : "#a4b0b8";
+      bx = "inset 0 0 0 1px rgba(0,0,0,0.05)";
+    }
+    return (
+      <div key={`${r}-${c}`} style={{
+        position: "absolute", left: c * TILE, top: r * TILE,
+        width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,
+      }} />
+    );
+  })), [layout]);
+
   const [nearObject, setNearObject] = useState(null); // ID of article
   const [openPost, setOpenPost]     = useState(null);
   const [phase, setPhase]           = useState("intro");
@@ -452,33 +476,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           }}>
 
             {/* Tile layer */}
-            {useMemo(() => layout.map.map((row, r) => row.map((tile, c) => {
-              if (tile === 0) return null;
-              let bg, bx = "none";
-              if (tile === 2) {
-                // Top Wall (Concrete/Office)
-                bg = "repeating-linear-gradient(90deg,#4a545e,#4a545e 4px,#586068 4px,#586068 8px)";
-                bx = "inset 0 -3px 0 #2a3036, inset 0 -8px 8px rgba(0,0,0,0.5)";
-              } else if (tile === 4) {
-                // Left Wall (Corkboard)
-                bg = "repeating-linear-gradient(45deg,#8a6442,#8a6442 2px,#9a7452 2px,#9a7452 4px)";
-                bx = "inset -3px 0 0 #5a3c24, inset 0 -8px 8px rgba(0,0,0,0.5)";
-              } else if (tile === 3) {
-                // Drafting Carpet
-                bg = "#2a3a4a";
-                bx = "inset 0 0 0 1px #1a2a3a";
-              } else {
-                // Linoleum Floor
-                bg = (r + c) % 2 === 0 ? "#c4d0d8" : "#a4b0b8";
-                bx = "inset 0 0 0 1px rgba(0,0,0,0.05)";
-              }
-              return (
-                <div key={`${r}-${c}`} style={{
-                  position: "absolute", left: c * TILE, top: r * TILE,
-                  width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,
-                }} />
-              );
-            })), [layout])}
+            {renderedTiles}
 
             {/* Printing Press */}
             <PrintingPress col={7} />
