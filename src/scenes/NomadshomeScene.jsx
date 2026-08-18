@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useForm, ValidationError } from '@formspree/react';
 import { TILE } from '../engine/constants';
@@ -162,6 +162,40 @@ function TipLineForm({ onClose }) {
     </form>
   );
 }
+
+const StaticWorld = memo(() => (
+  <>
+    {MAP.map((row, r) => row.map((tile, c) => {
+       const key = `${r}_${c}`;
+       if (tile === 1) return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: "#5a3a2a", border: "1px solid #3a1c11", backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,0.1) 4px, rgba(0,0,0,0.1) 6px)", zIndex: r * 10 }} />;
+       if (tile === 2) return (
+          <div key={key}>
+            <div style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: (r + c) % 2 === 0 ? "#8c6b45" : "#805c38", border: "1px solid rgba(0,0,0,0.1)", zIndex: 0 }} />
+            <ExitDoor col={c} row={r} />
+          </div>
+       );
+       return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: (r + c) % 2 === 0 ? "#8c6b45" : "#805c38", border: "1px solid rgba(0,0,0,0.1)", zIndex: 0 }} />;
+    }))}
+    {/* Window */}
+    <div style={{ position: "absolute", top: 4, left: TILE * 6 + 12, width: TILE * 3, height: TILE - 8, background: "linear-gradient(to bottom, #ff7b54, #ffd56b)", border: "2px solid #3a1c11", zIndex: 15, boxShadow: "inset 0 0 12px rgba(255,255,255,0.7), 0 0 40px rgba(255,160,80,0.6)" }}>
+      <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 2, background: "#3a1c11", transform: "translateX(-50%)" }} />
+      <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#3a1c11", transform: "translateY(-50%)" }} />
+    </div>
+
+    {/* Sunbeam */}
+    <div style={{
+      position: "absolute", top: TILE - 2, left: TILE * 6 - 10, width: TILE * 3 + 48, height: TILE * 6,
+      background: "linear-gradient(to bottom, rgba(255,220,150,0.4), transparent)",
+      clipPath: "polygon(24px 0, calc(100% - 24px) 0, 100% 100%, 0 100%)",
+      mixBlendMode: "overlay", pointerEvents: "none", zIndex: 300
+    }}>
+      <div style={{ position: "absolute", left: "30%", top: "40%", width: 2, height: 2, background: "#fff", animation: "dustParticle 4s infinite linear", opacity: 0 }} />
+      <div style={{ position: "absolute", left: "60%", top: "60%", width: 2, height: 2, background: "#fff", animation: "dustParticle 5s infinite linear 1.5s", opacity: 0 }} />
+      <div style={{ position: "absolute", left: "40%", top: "20%", width: 2, height: 2, background: "#fff", animation: "dustParticle 3.5s infinite linear 0.7s", opacity: 0 }} />
+      <div style={{ position: "absolute", left: "70%", top: "30%", width: 2, height: 2, background: "#fff", animation: "dustParticle 6s infinite linear 2.5s", opacity: 0 }} />
+    </div>
+  </>
+));
 
 export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
   const [scale, setScale] = useState(1);
@@ -384,35 +418,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#000", boxShadow: "0 0 0 4px #2a1c11, 0 0 30px rgba(0,0,0,1)", imageRendering: "pixelated", borderRadius: 4 }}>
             {/* CAMERA CONTAINER */}
             <div style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, zIndex: 1 }}>
-              {MAP.map((row, r) => row.map((tile, c) => {
-                 const key = `${r}_${c}`;
-                 if (tile === 1) return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: "#5a3a2a", border: "1px solid #3a1c11", backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(0,0,0,0.1) 4px, rgba(0,0,0,0.1) 6px)", zIndex: r * 10 }} />;
-                 if (tile === 2) return (
-                    <div key={key}>
-                      <div style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: (r + c) % 2 === 0 ? "#8c6b45" : "#805c38", border: "1px solid rgba(0,0,0,0.1)", zIndex: 0 }} />
-                      <ExitDoor col={c} row={r} />
-                    </div>
-                 );
-                 return <div key={key} style={{ position: "absolute", left: c*TILE, top: r*TILE, width: TILE, height: TILE, background: (r + c) % 2 === 0 ? "#8c6b45" : "#805c38", border: "1px solid rgba(0,0,0,0.1)", zIndex: 0 }} />;
-              }))}
-              {/* Window */}
-              <div style={{ position: "absolute", top: 4, left: TILE * 6 + 12, width: TILE * 3, height: TILE - 8, background: "linear-gradient(to bottom, #ff7b54, #ffd56b)", border: "2px solid #3a1c11", zIndex: 15, boxShadow: "inset 0 0 12px rgba(255,255,255,0.7), 0 0 40px rgba(255,160,80,0.6)" }}>
-                <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 2, background: "#3a1c11", transform: "translateX(-50%)" }} />
-                <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#3a1c11", transform: "translateY(-50%)" }} />
-              </div>
-
-              {/* Sunbeam */}
-              <div style={{
-                position: "absolute", top: TILE - 2, left: TILE * 6 - 10, width: TILE * 3 + 48, height: TILE * 6,
-                background: "linear-gradient(to bottom, rgba(255,220,150,0.4), transparent)",
-                clipPath: "polygon(24px 0, calc(100% - 24px) 0, 100% 100%, 0 100%)",
-                mixBlendMode: "overlay", pointerEvents: "none", zIndex: 300
-              }}>
-                <div style={{ position: "absolute", left: "30%", top: "40%", width: 2, height: 2, background: "#fff", animation: "dustParticle 4s infinite linear", opacity: 0 }} />
-                <div style={{ position: "absolute", left: "60%", top: "60%", width: 2, height: 2, background: "#fff", animation: "dustParticle 5s infinite linear 1.5s", opacity: 0 }} />
-                <div style={{ position: "absolute", left: "40%", top: "20%", width: 2, height: 2, background: "#fff", animation: "dustParticle 3.5s infinite linear 0.7s", opacity: 0 }} />
-                <div style={{ position: "absolute", left: "70%", top: "30%", width: 2, height: 2, background: "#fff", animation: "dustParticle 6s infinite linear 2.5s", opacity: 0 }} />
-              </div>
+              <StaticWorld />
               {FURNITURE.map((item, idx) => {
                 let isNear = false;
                 if (item.type !== "rug") {

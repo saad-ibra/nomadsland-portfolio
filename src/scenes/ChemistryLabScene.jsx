@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { renderControlText } from '../utils/renderControls';
@@ -666,7 +666,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
           }}>
 
             {/* Tile layer */}
-            {layout.map.map((row, r) => row.map((tile, c) => {
+            {useMemo(() => layout.map.map((row, r) => row.map((tile, c) => {
               if (tile === 0) return null;
               let bg, bx = "none";
               if (tile === 2) {
@@ -685,17 +685,17 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                   width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,
                 }} />
               );
-            }))}
+            })), [layout])}
 
             {/* Wall baseboard strip */}
-            {layout.map[1]?.map((t, c) => t === 2 ? (
+            {useMemo(() => layout.map[1]?.map((t, c) => t === 2 ? (
               <div key={`wb${c}`} style={{
                 position: "absolute", left: c*TILE, top: TILE*2-4,
                 width: TILE, height: 4, background: "#0a1828",
               }}>
                 <div style={{ height:2, background:"#162e4c" }} />
               </div>
-            ) : null)}
+            ) : null), [layout])}
 
             {/* Chalkboard */}
             <Chalkboard

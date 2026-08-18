@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef, memo, useMemo } from "react";
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
@@ -452,7 +452,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           }}>
 
             {/* Tile layer */}
-            {layout.map.map((row, r) => row.map((tile, c) => {
+            {useMemo(() => layout.map.map((row, r) => row.map((tile, c) => {
               if (tile === 0) return null;
               let bg, bx = "none";
               if (tile === 2) {
@@ -478,7 +478,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                   width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,
                 }} />
               );
-            }))}
+            })), [layout])}
 
             {/* Printing Press */}
             <PrintingPress col={7} />

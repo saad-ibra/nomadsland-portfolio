@@ -179,8 +179,8 @@ function ControlBarInner({
           display: "grid",
           gridTemplateColumns: "1fr 1fr 1fr",
           gridTemplateRows: "1fr 1fr 1fr",
-          width: isMobile ? 150 : 160,
-          height: isMobile ? 150 : 160,
+          width: isMobile ? 120 : 160,
+          height: isMobile ? 120 : 160,
           flexShrink: 0,
           gridTemplateAreas: `
             ". top ."

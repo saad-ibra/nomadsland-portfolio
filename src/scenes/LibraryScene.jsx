@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { renderControlText } from '../utils/renderControls';
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
@@ -345,6 +345,95 @@ function PixelChair({ col, row }) {
     </div>
   );
 }
+
+const StaticWorld = memo(() => (
+  <>
+    {/* Render tiles */}
+    {MAP.map((row, r) => row.map((tile, c) => {
+      if (tile === 0) return null;
+      
+      let bg = "none";
+      let boxS = "none";
+      
+      if (tile === 2) {
+        // Victorian striped wallpaper
+        bg = "repeating-linear-gradient(90deg, #3a1c22, #3a1c22 4px, #422026 4px, #422026 8px)";
+        // Wooden baseboard and shadow
+        boxS = "inset 0 -3px 0 #201008, inset 0 -4px 0 #3a1a10, inset 0 -8px 8px rgba(0,0,0,0.5)";
+      } else if (tile === 3) {
+        // Subtle dark carpet
+        bg = "#4c2828";
+        boxS = "inset 0 0 0 1px #3a1a1a, inset 2px 2px 4px rgba(0,0,0,0.3)";
+      } else if (tile === 1) {
+        // Hardwood floor planks
+        bg = (r + c) % 2 === 0 ? "#4a3320" : "#422a18";
+        boxS = "inset 0 0 0 1px rgba(0,0,0,0.2)";
+      }
+
+      return (
+        <div key={`${r}-${c}`} style={{
+          position: "absolute", left: c * TILE, top: r * TILE,
+          width: TILE + 1, height: TILE + 1, background: bg,
+          boxShadow: boxS,
+        }} />
+      );
+    }))}
+
+    {/* Wall trim on row=1 (wall tiles) */}
+    {MAP[1] && MAP[1].map((t, c) => t === 2 ? (
+      <div key={`wt${c}`} style={{ position: "absolute", left: c*TILE, top: 1*TILE+TILE-4, width: TILE, height: 4, background: "#6b4a2e" }}>
+        <div style={{ height: 2, background: "#8a6a42" }} />
+      </div>
+    ) : null)}
+    {MAP[8] && MAP[8].map((t, c) => t === 2 ? (
+      <div key={`wt2${c}`} style={{ position: "absolute", left: c*TILE, top: 8*TILE+TILE-4, width: TILE, height: 4, background: "#6b4a2e" }}>
+        <div style={{ height: 2, background: "#8a6a42" }} />
+      </div>
+    ) : null)}
+
+    {/* Window on back wall */}
+    <div style={{
+      position: "absolute", left: 5*TILE, top: 1*TILE,
+      width: TILE*2, height: TILE-4,
+      background: "linear-gradient(to bottom, #1a2a4a, #2a3a5a)", border: "2px solid #6b4a2e",
+      boxShadow: "inset 0 0 12px rgba(100,150,255,0.4), 0 0 40px rgba(100,150,255,0.25)",
+      zIndex: 15
+    }}>
+      {/* Sky Elements */}
+      <div style={{ position: "absolute", left: 6, top: 4, width: 2, height: 2, background: "#fff", opacity: 0.8 }} />
+      <div style={{ position: "absolute", right: 8, top: 6, width: 2, height: 2, background: "#fff", opacity: 0.6 }} />
+      <div style={{ position: "absolute", right: 4, top: 14, width: 6, height: 6, borderRadius: "50%", background: "#e8e0c0", boxShadow: "0 0 8px rgba(232,224,192,0.6)" }} />
+      
+      {/* Railing */}
+      <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 2, background: "#6b4a2e", transform: "translateX(-50%)" }} />
+      <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#6b4a2e", transform: "translateY(-50%)" }} />
+    </div>
+
+    {/* Moonlight Sunbeam */}
+    <div style={{
+      position: "absolute", top: 2*TILE - 2, left: 5*TILE - 18, width: TILE*2 + 40, height: TILE*6,
+      background: "linear-gradient(to bottom, rgba(100,150,255,0.25), transparent)",
+      clipPath: "polygon(20px 0, calc(100% - 20px) 0, 100% 100%, 0 100%)",
+      mixBlendMode: "screen", pointerEvents: "none", zIndex: 400
+    }}>
+      <div style={{ position: "absolute", left: "30%", top: "40%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 4s infinite linear", opacity: 0 }} />
+      <div style={{ position: "absolute", left: "60%", top: "60%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 5s infinite linear 1.5s", opacity: 0 }} />
+      <div style={{ position: "absolute", left: "40%", top: "20%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 3.5s infinite linear 0.7s", opacity: 0 }} />
+      <div style={{ position: "absolute", left: "70%", top: "30%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 6s infinite linear 2.5s", opacity: 0 }} />
+    </div>
+
+    {/* Decorations */}
+    <PixelLantern col={1} row={1} />
+    <PixelLantern col={11} row={1} />
+    <PixelLantern col={17} row={8} />
+    <WallBookcase col={3} row={1} />
+    <WallBookcase col={9} row={1} flip />
+    <WallBookcase col={14} row={8} />
+    <ReadingDesk col={10} row={3} />
+    <PixelGlobe col={5} row={7} />
+    <PixelChair col={3} row={8} />
+  </>
+));
 
 // ============================================================
 //  MAIN COMPONENT
@@ -768,90 +857,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
             left: -cam.x, top: -cam.y, zIndex: 1
           }}>
-            {/* Render tiles */}
-            {MAP.map((row, r) => row.map((tile, c) => {
-              if (tile === 0) return null;
-              
-              let bg = "none";
-              let boxS = "none";
-              
-              if (tile === 2) {
-                // Victorian striped wallpaper
-                bg = "repeating-linear-gradient(90deg, #3a1c22, #3a1c22 4px, #422026 4px, #422026 8px)";
-                // Wooden baseboard and shadow
-                boxS = "inset 0 -3px 0 #201008, inset 0 -4px 0 #3a1a10, inset 0 -8px 8px rgba(0,0,0,0.5)";
-              } else if (tile === 3) {
-                // Subtle dark carpet
-                bg = "#4c2828";
-                boxS = "inset 0 0 0 1px #3a1a1a, inset 2px 2px 4px rgba(0,0,0,0.3)";
-              } else if (tile === 1) {
-                // Hardwood floor planks
-                bg = (r + c) % 2 === 0 ? "#4a3320" : "#422a18";
-                boxS = "inset 0 0 0 1px rgba(0,0,0,0.2)";
-              }
+              <StaticWorld />
 
-              return (
-                <div key={`${r}-${c}`} style={{
-                  position: "absolute", left: c * TILE, top: r * TILE,
-                  width: TILE + 1, height: TILE + 1, background: bg,
-                  boxShadow: boxS,
-                }} />
-              );
-            }))}
-
-            {/* Wall trim on row=1 (wall tiles) */}
-            {MAP[1] && MAP[1].map((t, c) => t === 2 ? (
-              <div key={`wt${c}`} style={{ position: "absolute", left: c*TILE, top: 1*TILE+TILE-4, width: TILE, height: 4, background: "#6b4a2e" }}>
-                <div style={{ height: 2, background: "#8a6a42" }} />
-              </div>
-            ) : null)}
-            {MAP[8] && MAP[8].map((t, c) => t === 2 ? (
-              <div key={`wt2${c}`} style={{ position: "absolute", left: c*TILE, top: 8*TILE+TILE-4, width: TILE, height: 4, background: "#6b4a2e" }}>
-                <div style={{ height: 2, background: "#8a6a42" }} />
-              </div>
-            ) : null)}
-
-            {/* Window on back wall */}
-            <div style={{
-              position: "absolute", left: 5*TILE, top: 1*TILE,
-              width: TILE*2, height: TILE-4,
-              background: "linear-gradient(to bottom, #1a2a4a, #2a3a5a)", border: "2px solid #6b4a2e",
-              boxShadow: "inset 0 0 12px rgba(100,150,255,0.4), 0 0 40px rgba(100,150,255,0.25)",
-              zIndex: 15
-            }}>
-              {/* Sky Elements */}
-              <div style={{ position: "absolute", left: 6, top: 4, width: 2, height: 2, background: "#fff", opacity: 0.8 }} />
-              <div style={{ position: "absolute", right: 8, top: 6, width: 2, height: 2, background: "#fff", opacity: 0.6 }} />
-              <div style={{ position: "absolute", right: 4, top: 14, width: 6, height: 6, borderRadius: "50%", background: "#e8e0c0", boxShadow: "0 0 8px rgba(232,224,192,0.6)" }} />
-              
-              {/* Railing */}
-              <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 2, background: "#6b4a2e", transform: "translateX(-50%)" }} />
-              <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 2, background: "#6b4a2e", transform: "translateY(-50%)" }} />
-            </div>
-
-            {/* Moonlight Sunbeam */}
-            <div style={{
-              position: "absolute", top: 2*TILE - 2, left: 5*TILE - 18, width: TILE*2 + 40, height: TILE*6,
-              background: "linear-gradient(to bottom, rgba(100,150,255,0.25), transparent)",
-              clipPath: "polygon(20px 0, calc(100% - 20px) 0, 100% 100%, 0 100%)",
-              mixBlendMode: "screen", pointerEvents: "none", zIndex: 400
-            }}>
-              <div style={{ position: "absolute", left: "30%", top: "40%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 4s infinite linear", opacity: 0 }} />
-              <div style={{ position: "absolute", left: "60%", top: "60%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 5s infinite linear 1.5s", opacity: 0 }} />
-              <div style={{ position: "absolute", left: "40%", top: "20%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 3.5s infinite linear 0.7s", opacity: 0 }} />
-              <div style={{ position: "absolute", left: "70%", top: "30%", width: 2, height: 2, background: "#88ccff", animation: "dustParticle 6s infinite linear 2.5s", opacity: 0 }} />
-            </div>
-
-            {/* Decorations */}
-            <PixelLantern col={1} row={1} />
-            <PixelLantern col={11} row={1} />
-            <PixelLantern col={17} row={8} />
-            <WallBookcase col={3} row={1} />
-            <WallBookcase col={9} row={1} flip />
-            <WallBookcase col={14} row={8} />
-            <ReadingDesk col={10} row={3} />
-            <PixelGlobe col={5} row={7} />
-            <PixelChair col={3} row={8} />
 
             {/* Shelves */}
             {shelves.map((s) => (

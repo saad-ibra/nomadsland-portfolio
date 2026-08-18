@@ -24,6 +24,10 @@ export function useCameraLerp(pos, TILE, internalW, internalH, cols, rows, speed
       const clampedTY = Math.max(0, Math.min(Math.max(0, rows * TILE - internalH), targetY));
 
       setCam(prev => {
+        if (Math.abs(clampedTX - prev.x) < 0.1 && Math.abs(clampedTY - prev.y) < 0.1) {
+          if (prev.x === clampedTX && prev.y === clampedTY) return prev;
+          return { x: clampedTX, y: clampedTY };
+        }
         const lerpFactor = 1.0 - Math.pow(0.001, dt * speedMultiplier);
         return {
           x: prev.x + (clampedTX - prev.x) * lerpFactor,
