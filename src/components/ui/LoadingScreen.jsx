@@ -74,8 +74,8 @@ const LoadingScreen = memo(function LoadingScreen({ onDone }) {
       {/* Title */}
       <div
         style={{
-          fontFamily: "'Press Start 2P', monospace",
-          fontSize: 18,
+          fontFamily: "'VT323', monospace",
+          fontSize: 48,
           color: "#e8e0d4",
           letterSpacing: 4,
           marginBottom: 40,
@@ -83,7 +83,7 @@ const LoadingScreen = memo(function LoadingScreen({ onDone }) {
           zIndex: 1,
         }}
       >
-        NOMADSLAND
+        Nomad's Land
       </div>
 
       {/* Progress bar container */}
@@ -126,7 +126,8 @@ const LoadingScreen = memo(function LoadingScreen({ onDone }) {
       </div>
 
       {/* Keyframes for blinking dots */}
-      <style>{`
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
         @keyframes loadingDots {
           0%, 25%   { content: '.'; }
           25%, 50%  { content: '..'; }

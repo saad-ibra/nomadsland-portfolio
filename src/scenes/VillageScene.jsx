@@ -659,7 +659,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     onMove: (nc, nr) => {
       if (isSailing) {
         setBoatPos({ col: nc, row: nr });
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
+
 
         if (MAP[nr]?.[nc] === 4) setWakes(prev => [...prev.slice(-8), { c: nc, r: nr, id: Math.random() }]);
         playWoodStep();
