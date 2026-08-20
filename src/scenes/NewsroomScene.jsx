@@ -26,7 +26,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return <div style={{ color: "red", padding: 20, background: "black", position: "absolute", inset: 0, zIndex: 9999 }}>
         <h2>Newsroom Crashed!</h2>
-        <pre style={{ fontSize: 30, whiteSpace: "pre-wrap" }}>{this.state.error?.toString()}</pre>
+        <pre style={{ fontSize: 20, whiteSpace: "pre-wrap" }}>{this.state.error?.toString()}</pre>
         <button onClick={() => window.location.reload()} style={{ padding: 10, marginTop: 20 }}>Reload</button>
       </div>;
     }
@@ -566,7 +566,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           {/* ← VILLAGE */}
           <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
-            fontFamily: "'Micro 5', monospace", fontSize: 18,
+            fontFamily: "'Micro 5', monospace", fontSize: 12,
             background: "#2a3036", color: "#eef7f2", border: "2px solid #eef7f2",
             padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 500,
             boxShadow: "0 2px 0 #181a1c",
@@ -579,7 +579,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           {/* Post count badge */}
           <div style={{
             position: "absolute", top: 8, right: 8,
-            fontFamily: "'Micro 5', monospace", fontSize: 15,
+            fontFamily: "'Micro 5', monospace", fontSize: 10,
             color: "#eef7f2", background: "rgba(0,0,0,0.5)",
             padding: "4px 6px", borderRadius: 2,
             zIndex: 500, display: "flex", alignItems: "center", gap: 4,
@@ -597,11 +597,11 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
               background: "rgba(0,0,0,0.9)", border: "2px solid #fff",
               zIndex: 500, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", pointerEvents: "auto",
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 18, color: "#fff" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#fff" }}>
                 <FileText size={8} /><span>{activeArticle?.label}</span>
               </div>
               <div style={{
-                fontSize: 15, color: "#000", background: "#fff",
+                fontSize: 10, color: "#000", background: "#fff",
                 padding: "2px 4px"
               }}>SPACE/A</div>
             </div>
@@ -621,7 +621,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
               <div style={{
                 position: "absolute", top: -12, left: 54,
                 background: "#000", border: "2px solid #fff",
-                padding: "2px 8px", fontSize: 21, color: "#fff",
+                padding: "2px 8px", fontSize: 14, color: "#fff",
               }}>SAAD IBRA</div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <img src="/favicon.svg" alt="" draggable={false} style={{
@@ -629,7 +629,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                   imageRendering: "pixelated", borderRadius: 2, marginTop: 1,
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 24, lineHeight: 2.4, minHeight: 28, color: "#000" }}>
+                  <div style={{ fontSize: 16, lineHeight: 2.4, minHeight: 28, color: "#000" }}>
                     {introLine}
                     <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
                   </div>
@@ -637,13 +637,13 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                     <button
                       onClick={() => setPhase("free")}
                       style={{
-                        fontFamily: "'Micro 5', monospace", fontSize: 21,
+                        fontFamily: "'Micro 5', monospace", fontSize: 14,
                         background: "#000", color: "#fff", border: "none",
                         padding: "8px 14px", cursor: "pointer",
                         boxShadow: "4px 4px 0 #888", display: "flex", alignItems: "center"
                       }}
                     >
-                      <span style={{ fontSize: 15, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE/A</span>
+                      <span style={{ fontSize: 10, color: "#000", marginRight: 8, background: "#fff", padding: "2px 4px" }}>SPACE/A</span>
                       GET TO WORK
                     </button>
                   </div>
@@ -678,11 +678,11 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                   borderBottom: "4px solid #000",
                   flexShrink: 0, textAlign: "center",
                 }}>
-                  <div style={{ fontSize: 30, color: "#000", lineHeight: "14px", fontWeight: "bold", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 20, color: "#000", lineHeight: "14px", fontWeight: "bold", textTransform: "uppercase" }}>
                     {openPost.title}
                   </div>
                   {openPost.subtitle && (
-                    <div style={{ fontSize: 18, color: "#444", marginTop: 8, fontStyle: "italic", fontFamily: "'Micro 5', monospace" }}>
+                    <div style={{ fontSize: 12, color: "#444", marginTop: 8, fontStyle: "italic", fontFamily: "'Micro 5', monospace" }}>
                       {openPost.subtitle}
                     </div>
                   )}
@@ -692,7 +692,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                 <div style={{
                   padding: "6px 14px",
                   display: "flex", alignItems: "center", justifyContent: "space-between",
-                  fontSize: 15, color: "#000", background: "#f0f0f0",
+                  fontSize: 10, color: "#000", background: "#f0f0f0",
                   borderBottom: "2px solid #000", flexShrink: 0,
                   fontFamily: "'Micro 5', monospace", textTransform: "uppercase"
                 }}>
@@ -704,12 +704,12 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button onClick={() => window.open('blogs/index.html', '_blank')} style={{
-                        fontFamily: "'Micro 5', monospace", fontSize: 18,
+                        fontFamily: "'Micro 5', monospace", fontSize: 12,
                         background: "#fff", color: "#000", border: "1px solid #000",
                         padding: "2px 5px", cursor: "pointer",
                       }}>READ IN NEWSPAPER</button>
                     <button onClick={() => setOpenPost(null)} style={{
-                        fontFamily: "'Micro 5', monospace", fontSize: 18,
+                        fontFamily: "'Micro 5', monospace", fontSize: 12,
                         background: "#000", color: "#fff", border: "none",
                         padding: "2px 5px", cursor: "pointer",
                       }}>CLOSE</button>
@@ -725,10 +725,10 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                 }}>
                   {openPost.content.map((para, i) => (
                     <p key={i} style={{
-                      fontSize: 18, lineHeight: "11px", color: "#000",
+                      fontSize: 12, lineHeight: "11px", color: "#000",
                       margin: "0 0 12px 0", textAlign: "justify",
                     }}>
-                      {i === 0 ? <span style={{ fontSize: 36, float: "left", lineHeight: "12px", paddingRight: 4, fontWeight: "bold" }}>{para.charAt(0)}</span> : null}
+                      {i === 0 ? <span style={{ fontSize: 24, float: "left", lineHeight: "12px", paddingRight: 4, fontWeight: "bold" }}>{para.charAt(0)}</span> : null}
                       {i === 0 ? para.slice(1) : para}
                     </p>
                   ))}
@@ -740,7 +740,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                   }}>
                     {openPost.tags.map(tag => (
                       <span key={tag} style={{
-                        fontSize: 15, color: "#fff", background: "#000",
+                        fontSize: 10, color: "#fff", background: "#000",
                         padding: "3px 6px", textTransform: "uppercase"
                       }}>
                         {tag}

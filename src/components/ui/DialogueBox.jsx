@@ -246,7 +246,7 @@ export default function DialogueBox({
           <div style={{
             position: "absolute", top: -12, left: portrait ? 54 : 10,
             background: t.badgeBg || t.speakerBg || "#d84040", border: t.border || t.speakerBorder,
-            padding: "2px 8px", fontSize: 21, color: t.badgeColor || t.speakerColor || "#fff", borderRadius: 2,
+            padding: "2px 8px", fontSize: 14, color: t.badgeColor || t.speakerColor || "#fff", borderRadius: 2,
           }}>
             {speaker}
           </div>
@@ -264,7 +264,7 @@ export default function DialogueBox({
           )}
           <div style={{ flex: 1, minWidth: 0 }}>
             {/* Text with typewriter cursor and styled keycaps */}
-            <div style={{ fontSize: 24, lineHeight: 2.2, minHeight: 32, color: t.textColor }}>
+            <div style={{ fontSize: 16, lineHeight: 2.2, minHeight: 32, color: t.textColor }}>
               {renderControlText(shown, kcStyle)}
               <span style={{
                 opacity: done ? 0 : 1,
@@ -278,14 +278,14 @@ export default function DialogueBox({
                 <button
                   onPointerDown={(e) => { e.preventDefault(); if (onDismiss) onDismiss(); }}
                   style={{
-                    fontFamily: "'Micro 5', monospace", fontSize: 21,
+                    fontFamily: "'Micro 5', monospace", fontSize: 14,
                     background: t.btnBg, color: t.btnColor, border: "none",
                     padding: "8px 14px", borderRadius: 2, cursor: "pointer",
                     boxShadow: t.btnShadow, display: "flex", alignItems: "center", opacity: 0.8
                   }}
                 >
                   <span style={{
-                    fontSize: 15, color: t.hintColor, marginRight: 8,
+                    fontSize: 10, color: t.hintColor, marginRight: 8,
                     background: t.hintBg, padding: "2px 4px", borderRadius: 2,
                   }}>ESC/B</span>
                   SKIP
@@ -294,14 +294,14 @@ export default function DialogueBox({
               <button
                 onPointerDown={(e) => { e.preventDefault(); handleAction(); }}
                 style={{
-                  fontFamily: "'Micro 5', monospace", fontSize: 21,
+                  fontFamily: "'Micro 5', monospace", fontSize: 14,
                   background: t.btnBg, color: t.btnColor, border: "none",
                   padding: "8px 14px", borderRadius: 2, cursor: "pointer",
                   boxShadow: t.btnShadow, display: "flex", alignItems: "center",
                 }}
               >
                 <span style={{
-                  fontSize: 15, color: t.hintColor, marginRight: 8,
+                  fontSize: 10, color: t.hintColor, marginRight: 8,
                   background: t.hintBg, padding: "2px 4px", borderRadius: 2,
                 }}>SPACE/A</span>
                 {done && isLastLine ? lastButtonLabel : done ? "NEXT" : "FAST"}

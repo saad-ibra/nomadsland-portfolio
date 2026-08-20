@@ -135,7 +135,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
                   <div style={{
                     position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
                     background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "1px 4px",
-                    fontFamily: "'Micro 5', monospace", fontSize: 15, color: "#000",
+                    fontFamily: "'Micro 5', monospace", fontSize: 10, color: "#000",
                     animation: "npcBounce 1s infinite", zIndex: 100,
                   }}>!</div>
                 )}
@@ -150,7 +150,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
             </div>
             
             <button onClick={onBackToVillage} style={{
-              position: "absolute", top: 8, left: 8, fontFamily: "'Micro 5', monospace", fontSize: 18,
+              position: "absolute", top: 8, left: 8, fontFamily: "'Micro 5', monospace", fontSize: 12,
               background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div>

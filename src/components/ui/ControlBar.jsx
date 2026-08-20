@@ -80,7 +80,7 @@ const ActionBtn = ({ label, keyName }) => (
         cursor: "pointer", touchAction: "none"
       }}
     />
-    <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 33, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
+    <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
   </div>
 );
 
@@ -99,7 +99,7 @@ const PillBtn = ({ label, onClick, active }) => (
         cursor: "pointer", touchAction: "none"
       }}
     />
-    <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 30, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
+    <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 10, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
   </div>
 );
 

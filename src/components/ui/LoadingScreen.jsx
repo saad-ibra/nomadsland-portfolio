@@ -134,7 +134,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
         {/* ── "saad-ibra's" ── */}
         <div style={{
           fontFamily: "'Micro 5', monospace",
-          fontSize: 30,
+          fontSize: 20,
           letterSpacing: 2,
           color: "#d4af37", // Warm gold
           textShadow: "1px 1px 0 #000, 2px 2px 0 #222",
@@ -156,7 +156,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
         }}>
           <div style={{
             fontFamily: "'Micro 5', monospace",
-            fontSize: 48,
+            fontSize: 32,
             letterSpacing: 4,
             color: "#f4f0e6", // Off-white
             textShadow:
@@ -180,7 +180,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
       <div
         style={{
           fontFamily: "'Micro 5', monospace",
-          fontSize: 24,
+          fontSize: 16,
           color: "#6b7280",
           marginTop: 16,
           zIndex: 1,
