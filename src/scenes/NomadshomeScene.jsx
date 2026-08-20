@@ -323,7 +323,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
           filter.frequency.setValueAtTime(800, t);
           filter.frequency.exponentialRampToValueAtTime(300, t + 1.5);
           
-          const v = vol * (si === 0 ? 0.08 : 0.05);
+          const v = vol * (si === 0 ? 0.4 : 0.25);
           gain.gain.setValueAtTime(v, t);
           gain.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
           
@@ -346,7 +346,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
         nFilter.frequency.value = 400; // very muffled crackle
 
         const nG = ctx.createGain();
-        nG.gain.setValueAtTime(vol * 0.015, t);
+        nG.gain.setValueAtTime(vol * 0.05, t);
         nG.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
         
         noise.connect(nFilter); nFilter.connect(nG); nG.connect(ctx.destination);
@@ -380,7 +380,6 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     const tile = MAP[targetR][targetC];
     if (tile === 1) return false;
     if (FURNITURE.some(f => f.collision && targetC >= f.col && targetC < f.col + f.w && targetR >= f.row && targetR < f.row + f.h)) return false;
-    if (targetC === 7 && targetR === 4) return false;
     return true;
   }, []);
 

@@ -237,92 +237,49 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
 
       {/* ═══ MAIN LOGO BLOCK ═══ */}
       <div style={{
-        display: "flex", flexDirection: "column", alignItems: "center",
+        display: "flex", flexDirection: "column", alignItems: "flex-start",
         zIndex: 2, animation: "logoGlow 3s ease-in-out infinite",
-        marginBottom: 32,
+        marginBottom: 48,
+        transform: "scale(1.2)", // Make it really big
       }}>
 
-        {/* Top ornamental line */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 8, marginBottom: 6,
-        }}>
-          <div style={{ width: 40, height: 1, background: "linear-gradient(to right, transparent, #d4af37)" }} />
-          {/* Compass rose SVG */}
-          <svg width="16" height="16" viewBox="0 0 16 16" style={{ imageRendering: "pixelated" }}>
-            {/* N/S/E/W points */}
-            <polygon points="8,0 10,6 8,4 6,6" fill="#d4af37" />
-            <polygon points="8,16 10,10 8,12 6,10" fill="#b8860b" />
-            <polygon points="16,8 10,10 12,8 10,6" fill="#d4af37" />
-            <polygon points="0,8 6,10 4,8 6,6" fill="#b8860b" />
-            {/* Center diamond */}
-            <rect x="7" y="7" width="2" height="2" fill="#ffd700" />
-          </svg>
-          <div style={{ width: 40, height: 1, background: "linear-gradient(to left, transparent, #d4af37)" }} />
-        </div>
-
-        {/* ── "Nomad's" ── */}
+        {/* ── "saad-ibra's" ── */}
         <div style={{
           fontFamily: "'Press Start 2P', monospace",
-          fontSize: 14,
-          letterSpacing: 12,
-          color: "#d4af37",
-          textShadow:
-            "0 0 0 #d4af37, " +
-            "2px 0 0 #b8860b, -2px 0 0 #b8860b, 0 2px 0 #b8860b, 0 -2px 0 #b8860b, " +
-            "1px 1px 0 #b8860b, -1px -1px 0 #b8860b, 1px -1px 0 #b8860b, -1px 1px 0 #b8860b, " +
-            "0 4px 0 #8b6914, " +
-            "0 5px 0 #6b5010, " +
-            "0 6px 8px rgba(0,0,0,0.6)",
-          lineHeight: 1,
-          zIndex: 2,
+          fontSize: 10,
+          letterSpacing: 2,
+          color: "#e8e0d4",
+          textShadow: "1px 1px 0 #555",
+          marginBottom: -4,
+          marginLeft: 4,
+          zIndex: 3,
+          textTransform: "uppercase",
         }}>
-          Nomad's
+          saad-ibra's
         </div>
 
-        {/* ── "Land" ── the big word */}
+        {/* ── "Nomad's Land" ── the huge unified text */}
         <div style={{
-          fontFamily: "'Press Start 2P', monospace",
-          fontSize: 36,
-          letterSpacing: 8,
-          color: "#ffd700",
-          textShadow:
-            "0 0 0 #ffd700, " +
-            "3px 0 0 #b8860b, -3px 0 0 #b8860b, 0 3px 0 #b8860b, 0 -3px 0 #b8860b, " +
-            "2px 2px 0 #b8860b, -2px -2px 0 #b8860b, 2px -2px 0 #b8860b, -2px 2px 0 #b8860b, " +
-            "0 5px 0 #8b6914, " +
-            "0 6px 0 #6b5010, " +
-            "0 7px 0 #4a3800, " +
-            "0 8px 12px rgba(0,0,0,0.8)",
-          lineHeight: 1,
-          marginTop: 4,
-          zIndex: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
         }}>
-          Land
-        </div>
-
-        {/* Bottom ornamental line */}
-        <div style={{
-          display: "flex", alignItems: "center", gap: 6, marginTop: 8,
-        }}>
-          <div style={{ width: 30, height: 1, background: "linear-gradient(to right, transparent, #d4af37)" }} />
-          {/* Small pixel diamonds */}
-          <div style={{ width: 4, height: 4, background: "#d4af37", transform: "rotate(45deg)" }} />
-          <div style={{ width: 6, height: 6, background: "#ffd700", transform: "rotate(45deg)", border: "1px solid #b8860b" }} />
-          <div style={{ width: 4, height: 4, background: "#d4af37", transform: "rotate(45deg)" }} />
-          <div style={{ width: 30, height: 1, background: "linear-gradient(to left, transparent, #d4af37)" }} />
-        </div>
-
-        {/* ── "saad ibra" ── */}
-        <div style={{
-          fontFamily: "'Press Start 2P', monospace",
-          fontSize: 7,
-          letterSpacing: 3,
-          color: "#ffd700",
-          marginTop: 12,
-          animation: "subtitleFade 1s ease-out 0.5s both",
-          textShadow: "1px 1px 0 #b8860b",
-        }}>
-          saad ibra
+          <div style={{
+            fontFamily: "'Press Start 2P', monospace",
+            fontSize: 48,
+            letterSpacing: 4,
+            color: "#e8e0d4", // Using a clean off-white like The Godfather text
+            textShadow:
+              "3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, " +
+              "0 4px 0 #333, " +
+              "0 5px 0 #222, " +
+              "0 8px 16px rgba(0,0,0,0.8)",
+            lineHeight: 1.1,
+            zIndex: 2,
+            textAlign: "center",
+          }}>
+            Nomad's<br/>Land
+          </div>
         </div>
       </div>
 
