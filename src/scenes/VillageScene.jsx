@@ -4,7 +4,7 @@ import { getSharedAudioCtx } from '../engine/sfx.js';
 import { DoorOpen } from "lucide-react";
 import { TILE, MOVE_COOLDOWN } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
-import { useTapToMove, TapMarker } from "../hooks/useTapToMove.js";
+import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
 import { playWaterSlosh, playGrassStep, playDirtStep, playWoodStep, playTileStep } from "../engine/sfx";
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import ControlBar from "../components/ui/ControlBar";

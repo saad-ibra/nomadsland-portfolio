@@ -10,7 +10,7 @@ import SaadSprite from "../components/sprites/SaadSprite";
 import ExitDoor from "../components/sprites/ExitDoor";
 import { TILE } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
-import { useTapToMove, TapMarker } from "../hooks/useTapToMove.js";
+import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
 import { playWoodStep } from "../engine/sfx";
 import { MAP, MAP_COLS, MAP_ROWS, SHELF_LAYOUT, SHELF_TILES, DECOR_TILES, TOUR_MOVE_MS, TOUR_PAUSE_MS, TYPE_COLORS, BOOK_SPINE_PALETTES, START_POS, EXIT_DOOR_COL, EXIT_DOOR_ROW } from "../data/library";
 

@@ -8,7 +8,7 @@ import SaadSprite from "../components/sprites/SaadSprite";
 import ControlBar from "../components/ui/ControlBar";
 import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
-import { useTapToMove, TapMarker } from "../hooks/useTapToMove.js";
+import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
 import { useCameraLerp } from "../hooks/useCameraLerp";
 import { getSharedAudioCtx, playWoodStep, playBlip } from "../engine/sfx";
 import ExitDoor from "../components/sprites/ExitDoor";
