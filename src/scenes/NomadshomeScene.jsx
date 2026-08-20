@@ -79,8 +79,6 @@ const FurnitureSprite = ({ item }) => {
 function TipLinePhone({ isNear, onClick }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div
       onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
@@ -132,9 +130,7 @@ function TipLineForm({ onClose }) {
   }, [onClose]);
 
   if (state.succeeded) {
-  
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
-  return (
+    return (
       <div style={{ textAlign: "center", padding: 20 }}>
         <h3 style={{ fontSize: 10, color: "#228b22", marginBottom: 16 }}>SENT!</h3>
         <p style={{ fontSize: 6, color: "#333", marginBottom: 16 }}>Message received loud and clear.</p>
@@ -143,8 +139,6 @@ function TipLineForm({ onClose }) {
     );
   }
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "monospace" }}>
       <div>
@@ -412,12 +406,12 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
       }
     }
   });
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+
 
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
   const worldRef = useRef(null);
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
       <title>Home | Saad Ibra</title>
@@ -437,9 +431,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                    isNear = pos.col >= item.col - 1 && pos.col <= item.col + item.w && 
                             pos.row >= item.row - 1 && pos.row <= item.row + item.h;
                 }
-              
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
-  return (
+                return (
                   <div key={`furn-${idx}`} style={{ position: "absolute", left: item.col * TILE, top: item.row * TILE, width: item.w * TILE, height: item.h * TILE, zIndex: item.collision ? ((item.row + item.h - 1) * 10 + 1) : 1, pointerEvents: "none", filter: isNear && phase === "free" ? "drop-shadow(0 0 6px rgba(244,232,208,0.8))" : "none", transition: "filter 0.2s" }}><FurnitureSprite item={item} /></div>
                 );
               })}

@@ -98,12 +98,12 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
       }
     }
   });
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+
 
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
   const worldRef = useRef(null);
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,

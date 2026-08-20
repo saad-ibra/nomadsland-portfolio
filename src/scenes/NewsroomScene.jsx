@@ -79,8 +79,6 @@ function PixelArticle({ article, isNear, onClick }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div
       onClick={onClick}
@@ -121,8 +119,6 @@ function PixelArticle({ article, isNear, onClick }) {
 //  PRINTING PRESS — top wall decor
 // ============================================================
 function PrintingPress({ col }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div style={{
       position: "absolute",
@@ -177,9 +173,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
       bg = (r + c) % 2 === 0 ? "#c4d0d8" : "#a4b0b8";
       bx = "inset 0 0 0 1px rgba(0,0,0,0.05)";
     }
-  
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
-  return (
+    return (
       <div key={`${r}-${c}`} style={{
         position: "absolute", left: c * TILE, top: r * TILE,
         width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,
@@ -249,6 +243,8 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
     },
     onCancel: () => { setOpenPost(null); }
   });
+  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
+
 
   // Also keep a ref to facing so keyboard handler can read it without triggering re-renders
   const keysRef = useRef({});
@@ -435,8 +431,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
   const introLine = `The newsroom. Every article on that corkboard is something I wrote. The red phone on the desk has my contact info.`;
 
   // ---- Render ----
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,

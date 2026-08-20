@@ -115,8 +115,6 @@ function Chalkboard({ stats, isNear, chalkCol, onClick }) {
   const active = isNear || hovered;
   const boardW = 4 * TILE;
   const left   = chalkCol * TILE - boardW / 2 + TILE / 2;
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
       position: "absolute",
@@ -171,9 +169,7 @@ function ChalkboardModal({ commitStats, onClose }) {
     const { years, maxMonth } = commitStats;
     const maxCommits = maxMonth?.commits || 1; // avoid div by 0
 
-  
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
-  return (
+    return (
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ overflow: "visible" }}>
         {/* Draw subtle grid lines for months */}
         {Array.from({ length: 12 }).map((_, i) => (
@@ -203,9 +199,7 @@ function ChalkboardModal({ commitStats, onClose }) {
             }
           });
 
-        
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
-  return (
+          return (
             <g key={yearData.year}>
               {/* Year label */}
               <text x={0} y={baseY - 2} fill="rgba(196,232,188,0.5)" fontSize={5} fontFamily="'Press Start 2P', monospace">{yearData.year}</text>
@@ -222,8 +216,6 @@ function ChalkboardModal({ commitStats, onClose }) {
     );
   };
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div
       onClick={onClose}
@@ -298,8 +290,6 @@ function RepoTerminal({ station, isNear, onClick }) {
   const zIdx    = station.row * 10;
   const truncated = station.label.length > 6 ? station.label.slice(0, 5) + "…" : station.label;
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
       position: "absolute",
@@ -370,8 +360,6 @@ function RepoTerminal({ station, isNear, onClick }) {
 //  CHEM CART  — pure decoration
 // ============================================================
 function ChemicalCart({ col, row }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div style={{ position:"absolute", left: col*TILE+4, top: row*TILE, width: 24, height: TILE, zIndex: row*10 }}>
       <div style={{ width:"100%", height:28, background:"#9ab0bc", border:"2px solid #304050", borderRadius:2, position:"relative", boxSizing:"border-box" }}>
@@ -564,6 +552,8 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
     },
     onCancel: () => setOpenStation(null)
   });
+  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
+
 
 
   // ---- Keyboard & Audio Resume ----
@@ -638,8 +628,6 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
     : "Pulling data from GitHub...";
 
   // ---- Render ----
-
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
@@ -696,9 +684,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                 bg = (r + c) % 2 === 0 ? "#2e4460" : "#38506e";
                 bx = "inset 0 0 0 1px rgba(0,0,0,0.12)";
               }
-            
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
-  return (
+              return (
                 <div key={`${r}-${c}`} style={{
                   position: "absolute", left: c * TILE, top: r * TILE,
                   width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,

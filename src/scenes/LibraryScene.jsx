@@ -120,8 +120,6 @@ function PixelShelf({ shelf, isNear, onClick }) {
     }
   };
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
       position: "absolute",
@@ -197,8 +195,6 @@ function useTypewriter(text, skip, speed = 28) {
 //  Book Cover (modal)
 // ============================================================
 function PixelBookCover({ book, typeColors }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <a href={book.link || "#"} target="_blank" rel="noopener noreferrer" style={{ display: "flex", gap: 8, alignItems: "center", padding: "6px 8px", background: "rgba(0,0,0,0.25)", borderRadius: 2, border: "2px solid rgba(255,255,255,0.1)", textDecoration: "none", transition: "transform 0.1s, background 0.1s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.1)"; e.currentTarget.style.transform = "translateX(2px)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0.25)"; e.currentTarget.style.transform = "translateX(0)"; }}>
       <div style={{
@@ -226,8 +222,6 @@ function PixelBookCover({ book, typeColors }) {
 //  Decorations
 // ============================================================
 function PixelLantern({ col, row }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div style={{ position: "absolute", left: col*TILE+8, top: row*TILE-4, imageRendering: "pixelated", zIndex: row * 10 }}>
       <svg width="16" height="32" viewBox="0 0 8 16" style={{ imageRendering: "pixelated", overflow: "visible" }}>
@@ -245,8 +239,6 @@ function PixelLantern({ col, row }) {
 }
 
 function WallBookcase({ col, row, flip }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div style={{ position: "absolute", left: col*TILE, top: row*TILE-8, imageRendering: "pixelated", transform: flip ? "scaleX(-1)" : undefined, zIndex: row * 10 }}>
       <svg width="32" height="40" viewBox="0 0 16 20" style={{ imageRendering: "pixelated", overflow: "visible" }}>
@@ -281,8 +273,6 @@ function WallBookcase({ col, row, flip }) {
 }
 
 function ReadingDesk({ col, row }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div style={{ position: "absolute", left: col*TILE, top: row*TILE+8, imageRendering: "pixelated", zIndex: row * 10 }}>
       <svg width="32" height="24" viewBox="0 0 16 12" style={{ imageRendering: "pixelated", overflow: "visible" }}>
@@ -313,8 +303,6 @@ function ReadingDesk({ col, row }) {
 }
 
 function PixelGlobe({ col, row }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div style={{ position: "absolute", left: col*TILE+4, top: row*TILE+8, imageRendering: "pixelated", zIndex: row * 10 }}>
       <svg width="24" height="24" viewBox="0 0 12 12" style={{ imageRendering: "pixelated", overflow: "visible" }}>
@@ -339,8 +327,6 @@ function PixelGlobe({ col, row }) {
 }
 
 function PixelChair({ col, row }) {
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div style={{ position: "absolute", left: col*TILE + 6, top: row*TILE + 2, imageRendering: "pixelated", zIndex: row * 10 }}>
       <svg width="20" height="28" viewBox="0 0 10 14" style={{ imageRendering: "pixelated", overflow: "visible" }}>
@@ -385,9 +371,7 @@ const StaticWorld = memo(() => (
         boxS = "inset 0 0 0 1px rgba(0,0,0,0.2)";
       }
 
-    
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
-  return (
+      return (
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
           width: TILE + 1, height: TILE + 1, background: bg,
@@ -655,6 +639,8 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
     },
     onCancel: () => setOpenShelf(null)
   });
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+
 
   // ---- Responsive Scaling ----
   useEffect(() => {
@@ -844,8 +830,6 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
 
   const libKeycapStyle = { display: "inline-block", background: "#2a2a40", border: "1px solid #f4e8d0", borderBottomWidth: 2, borderBottomColor: "#0a0a18", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#f8d878", boxShadow: "0 1px 0 #0a0a18", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" };
 
-
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
