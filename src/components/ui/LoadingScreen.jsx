@@ -260,7 +260,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
           <div style={{ width: 40, height: 1, background: "linear-gradient(to left, transparent, #d4af37)" }} />
         </div>
 
-        {/* ── "NOMAD'S" ── */}
+        {/* ── "Nomad's" ── */}
         <div style={{
           fontFamily: "'Press Start 2P', monospace",
           fontSize: 14,
@@ -275,12 +275,11 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
             "0 6px 8px rgba(0,0,0,0.6)",
           lineHeight: 1,
           zIndex: 2,
-          textTransform: "uppercase",
         }}>
           Nomad's
         </div>
 
-        {/* ── "LAND" ── the big word */}
+        {/* ── "Land" ── the big word */}
         <div style={{
           fontFamily: "'Press Start 2P', monospace",
           fontSize: 36,
@@ -297,7 +296,6 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
           lineHeight: 1,
           marginTop: 4,
           zIndex: 2,
-          textTransform: "uppercase",
         }}>
           Land
         </div>
@@ -314,17 +312,17 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
           <div style={{ width: 30, height: 1, background: "linear-gradient(to left, transparent, #d4af37)" }} />
         </div>
 
-        {/* ── "by SAAD IBRA" ── */}
+        {/* ── "saad ibra" ── */}
         <div style={{
           fontFamily: "'Press Start 2P', monospace",
           fontSize: 7,
           letterSpacing: 3,
-          color: "#8b8b9e",
+          color: "#ffd700",
           marginTop: 12,
           animation: "subtitleFade 1s ease-out 0.5s both",
-          textTransform: "uppercase",
+          textShadow: "1px 1px 0 #b8860b",
         }}>
-          by Saad Ibra
+          saad ibra
         </div>
       </div>
 

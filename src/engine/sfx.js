@@ -36,7 +36,7 @@ function getNoiseBuffer() {
 }
 
 function playNoise(volume = 0.5, duration = 0.1, bandpassFreq = null, lowpassFreq = null) {
-  if (isSfxMuted) return;
+  if (isSfxMuted || document.hidden) return;
   getSharedAudioCtx();
   const noiseSource = audioCtx.createBufferSource();
   noiseSource.buffer = getNoiseBuffer();
@@ -73,7 +73,7 @@ function playNoise(volume = 0.5, duration = 0.1, bandpassFreq = null, lowpassFre
 }
 
 function playOscillator(type = 'sine', freq = 440, volume = 0.5, duration = 0.1) {
-  if (isSfxMuted) return;
+  if (isSfxMuted || document.hidden) return;
   getSharedAudioCtx();
   const osc = audioCtx.createOscillator();
   osc.type = type;
@@ -95,7 +95,7 @@ function playOscillator(type = 'sine', freq = 440, volume = 0.5, duration = 0.1)
 }
 
 export function playWaterSlosh(volume = 0.05) {
-  if (isSfxMuted) return;
+  if (isSfxMuted || document.hidden) return;
   getSharedAudioCtx();
   
   // 1. The "Splash" (Noise)
@@ -164,7 +164,7 @@ export function playBlip(volume = 0.02) {
 }
 
 export function playTransition(volume = 0.05) {
-  if (isSfxMuted) return;
+  if (isSfxMuted || document.hidden) return;
   getSharedAudioCtx();
   
   // A sweeping arpeggio/chime for transitions
@@ -191,7 +191,7 @@ export function playTransition(volume = 0.05) {
 }
 
 export function playWhistle(volume = 0.025) {
-  if (isSfxMuted) return;
+  if (isSfxMuted || document.hidden) return;
   getSharedAudioCtx();
 
   const t = audioCtx.currentTime;
