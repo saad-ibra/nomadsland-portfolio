@@ -516,28 +516,28 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 {/* Header (Left Aligned) */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #111", paddingBottom: "8px", marginBottom: "12px", position: "sticky", top: "-20px", background: "#fcfaf5", zIndex: 5 }}>
                   <div>
-                    <div style={{ fontSize: "20px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>Saad Ibra</div>
-                    <div style={{ fontSize: "10px", marginTop: "6px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                    <div style={{ fontSize: "32px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>Saad Ibra</div>
+                    <div style={{ fontSize: "16px", marginTop: "6px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
                       <a href="https://linkedin.com/in/saadibrahimkhan" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>LINKEDIN</a>
                       <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>GITHUB</a>
-                      <button onClick={() => { setOpenResume(false); setOpenTipLine(true); }} style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px", fontFamily: "'Micro 5', monospace", fontSize: "8px", cursor: "pointer"}}>REACH OUT</button>
+                      <button onClick={() => { setOpenResume(false); setOpenTipLine(true); }} style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px", fontFamily: "'Micro 5', monospace", fontSize: "16px", cursor: "pointer"}}>REACH OUT</button>
                     </div>
                   </div>
                   <button onClick={() => setOpenResume(false)} style={{ fontFamily: "'Micro 5', monospace", fontSize: 10, background: "#111", color: "#fff", border: "none", padding: "6px 8px", cursor: "pointer", flexShrink: 0, boxShadow: "2px 2px 0 rgba(0,0,0,0.3)" }}>CLOSE</button>
                 </div>
 
                 {/* Summary */}
-                <div style={{ fontSize: "14px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Professional Summary</div>
+                <div style={{ fontSize: "24px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Professional Summary</div>
                 <div style={{ marginBottom: "12px", textAlign: "left" }}>
                   Cloud and Automation Engineer with experience in Azure integrations, workflow orchestration, and applied AI solutions. Proficient in Azure Functions, Logic Apps, Service Bus, Power Automate, and Dynamics 365 F&O. Delivered enterprise pipelines combining AI-driven validation, anomaly detection, and Teams-based approvals. Full-stack background in Kotlin, Spring Boot, and React.js. Published patent holder and award recipient for Best Project of Social Relevance in DSCE.
                 </div>
 
                 {/* Experience */}
-                <div style={{ fontSize: "14px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Experience</div>
+                <div style={{ fontSize: "24px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Experience</div>
                 
                 <div style={{ marginBottom: "12px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
-                    <strong style={{ fontSize: "6.5px" }}>sa.global</strong>
+                    <strong style={{ fontSize: "32px" }}>sa.global</strong>
                     <span style={{ color: "#555" }}>Bengaluru, India</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
@@ -567,7 +567,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 </div>
 
                 {/* Projects */}
-                <div style={{ fontSize: "14px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Projects</div>
+                <div style={{ fontSize: "24px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Projects</div>
                 <div style={{ marginBottom: "12px" }}>
                   <div style={{ fontWeight: "bold", marginBottom: "2px" }}>Gray Matter - Knowledge Organization App</div>
                   <ul style={{ margin: "0 0 4px 14px", padding: 0 }}>
@@ -576,14 +576,14 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 </div>
 
                 {/* Skills */}
-                <div style={{ fontSize: "14px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Skills</div>
+                <div style={{ fontSize: "24px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Skills</div>
                 <div style={{ marginBottom: "12px", display: "grid", gap: "4px" }}>
                   <div><strong style={{ minWidth: "90px", display: "inline-block" }}>Cloud & Automation:</strong> Azure Functions, Logic Apps, Service Bus, Blob Storage, Azure OpenAI, Form Recognizer, Power Automate, SharePoint, Dynamics 365 F&O, Microsoft Copilot Studio</div>
                   <div><strong style={{ minWidth: "90px", display: "inline-block" }}>Languages:</strong> Python, C#, Java, JavaScript, SQL, Kotlin, C++, HTML/CSS</div>
                 </div>
 
                 {/* Education */}
-                <div style={{ fontSize: "14px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Education</div>
+                <div style={{ fontSize: "24px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Education</div>
                 <div style={{ marginBottom: "8px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1px" }}>
                     <strong>Dayananda Sagar College of Engineering</strong>
@@ -618,14 +618,14 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 </div>
 
                 {/* Awards & Patent */}
-                <div style={{ fontSize: "14px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Awards & Patent</div>
+                <div style={{ fontSize: "24px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Awards & Patent</div>
                 <ul style={{ margin: "0 0 12px 14px", padding: 0 }}>
                   <li style={{ paddingBottom: "3px" }}><strong>Patent:</strong> Sustainable Energy Monitoring System (SEMS), App. No. 202241069889 (Dec 2022) – IoT-based real-time energy monitoring via Raspberry Pi.</li>
                   <li style={{ paddingBottom: "3px" }}><strong>Best Project of Social Relevance</strong>, DSCE 2024 – ML-based mental health diagnostics using Random Forest and cosine similarity.</li>
                 </ul>
 
                 {/* Certifications */}
-                <div style={{ fontSize: "14px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Certifications</div>
+                <div style={{ fontSize: "24px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Certifications</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
                   <div>
                     <strong style={{ display: "block", marginBottom: "1px" }}>Power Platform & Data</strong>

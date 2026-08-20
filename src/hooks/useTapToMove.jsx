@@ -72,20 +72,32 @@ export function TapMarker({ tapTarget, TILE }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      animation: 'tapMarkerPulse 1s infinite alternate'
     }}>
       <style>{`
-        @keyframes tapMarkerPulse {
-          0% { transform: scale(0.8); opacity: 0.8; }
-          100% { transform: scale(1.1); opacity: 0.3; }
+        @keyframes tapMarkerRetroBlink {
+          0%, 49% { opacity: 1; transform: scale(1); }
+          50%, 99% { opacity: 0.2; transform: scale(0.9); }
+          100% { opacity: 1; transform: scale(1); }
         }
       `}</style>
       <div style={{
-        width: 8, height: 8, 
-        border: '2px solid rgba(255,255,255,0.8)', 
-        borderRadius: '50%',
-        boxShadow: '0 0 4px rgba(0,0,0,0.5)'
-      }} />
+        position: 'relative', width: 12, height: 12,
+        animation: 'tapMarkerRetroBlink 0.6s infinite step-end',
+        imageRendering: 'pixelated'
+      }}>
+        {/* Top-Left */}
+        <div style={{ position: 'absolute', top: 0, left: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
+        {/* Top-Right */}
+        <div style={{ position: 'absolute', top: 0, right: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
+        <div style={{ position: 'absolute', top: 0, right: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
+        {/* Bottom-Left */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
+        {/* Bottom-Right */}
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
+        <div style={{ position: 'absolute', bottom: 0, right: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
+      </div>
     </div>
   );
 }
