@@ -237,50 +237,20 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
 
       {/* ═══ MAIN LOGO BLOCK ═══ */}
       <div style={{
-        display: "flex", flexDirection: "column", alignItems: "flex-start",
+        display: "flex", flexDirection: "column", alignItems: "center",
         zIndex: 2, animation: "logoGlow 3s ease-in-out infinite",
         marginBottom: 48,
-        transform: "scale(1.2)", // Make it really big
       }}>
-
-        {/* ── "saad-ibra's" ── */}
-        <div style={{
-          fontFamily: "'Press Start 2P', monospace",
-          fontSize: 10,
-          letterSpacing: 2,
-          color: "#e8e0d4",
-          textShadow: "1px 1px 0 #555",
-          marginBottom: -4,
-          marginLeft: 4,
-          zIndex: 3,
-          textTransform: "uppercase",
-        }}>
-          saad-ibra's
-        </div>
-
-        {/* ── "Nomad's Land" ── the huge unified text */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}>
-          <div style={{
-            fontFamily: "'Press Start 2P', monospace",
-            fontSize: 48,
-            letterSpacing: 4,
-            color: "#e8e0d4", // Using a clean off-white like The Godfather text
-            textShadow:
-              "3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, " +
-              "0 4px 0 #333, " +
-              "0 5px 0 #222, " +
-              "0 8px 16px rgba(0,0,0,0.8)",
-            lineHeight: 1.1,
-            zIndex: 2,
-            textAlign: "center",
-          }}>
-            Nomad's<br/>Land
-          </div>
-        </div>
+        <img 
+          src="/logo.svg" 
+          alt="Nomad's Land by Saad Ibra"
+          style={{
+            width: "100%",
+            maxWidth: 600,
+            objectFit: "contain",
+            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.8))"
+          }} 
+        />
       </div>
 
       {/* Animated progress bar */}
