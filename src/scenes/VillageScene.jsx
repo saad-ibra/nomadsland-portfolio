@@ -4,6 +4,7 @@ import { getSharedAudioCtx } from '../engine/sfx.js';
 import { DoorOpen } from "lucide-react";
 import { TILE, MOVE_COOLDOWN } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
+import { findPath } from "../engine/pathfinding";
 import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
 import { playWaterSlosh, playGrassStep, playDirtStep, playWoodStep, playTileStep } from "../engine/sfx";
 import PlayerSprite from "../components/sprites/PlayerSprite";
@@ -630,8 +631,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
       return t === 4 || t === 10; // Allow water and bridge while sailing
     } else {
       if (t === 0 || t === 1 || t === 6 || t === 9 || t === 10 || t === 11) return true;
-      if (r === boatPos.row && Math.abs(c - boatPos.col) <= 1) return true; // Walk on parked boat
-      return false;
+            return false;
     }
   }, [isSailing, boatPos]);
 
@@ -722,20 +722,6 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
           return;
         }
 
-        if (isOnBoatLocal) {
-          if (triggerTransition) {
-            triggerTransition(() => {
-              setPos({ col: boatPos.col + 0.5, row: boatPos.row });
-              setIsSailing(true);
-              setSailStartTime(Date.now());
-            });
-          } else {
-            setPos({ col: boatPos.col + 0.5, row: boatPos.row });
-            setIsSailing(true);
-            setSailStartTime(Date.now());
-          }
-          return;
-        }
         
         const nx = pos.col + (facing === "right" ? 1 : facing === "left" ? -1 : 0);
         const ny = pos.row + (facing === "down" ? 1 : facing === "up" ? -1 : 0);
@@ -1421,7 +1407,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
           width: TILE + 1, height: TILE + 1, background: bg,
-          zIndex: (isSailing && (tile === 10 || tile === 11)) ? r * 10 + 6 : undefined,
+          zIndex: tile === 10 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : undefined,
         }}>
           {content}
         </div>
@@ -1565,7 +1551,26 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
               animation: "floatBoat 4s ease-in-out infinite",
               zIndex: (isSailing ? pos.row : boatPos.row) * 10 + 8, // Sort in front of player on boat
               pointerEvents: "auto", cursor: "pointer",
-            }} onClick={() => { if (!isSailing) alert("Press SPACE/A to Sail!"); }}>
+            }} onClick={(e) => { 
+              e.stopPropagation();
+              if (!isSailing) {
+                const adjs = [
+                  {c: boatPos.col, r: boatPos.row + 1}, {c: boatPos.col, r: boatPos.row - 1},
+                  {c: boatPos.col - 1, r: boatPos.row}, {c: boatPos.col + 1, r: boatPos.row},
+                  {c: boatPos.col - 2, r: boatPos.row}, {c: boatPos.col + 2, r: boatPos.row}
+                ];
+                let dockCol = -1, dockRow = -1;
+                for (let adj of adjs) {
+                  if (MAP[adj.r]?.[adj.c] === 11) {
+                    dockCol = adj.c; dockRow = adj.r; break;
+                  }
+                }
+                if (dockCol !== -1) {
+                  const path = findPath(pos.col, pos.row, dockCol, dockRow, canWalk, MAP_COLS, MAP_ROWS);
+                  if (path.length > 0) setPath(path);
+                }
+              }
+            }}>
               <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
                 {(!isSailing || facing === "left" || facing === "right") && (
                   <div style={{ position: "absolute", bottom: 4, left: 4, width: TILE*2 - 8, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 14px 14px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
