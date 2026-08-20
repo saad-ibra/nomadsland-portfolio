@@ -406,11 +406,11 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
       }
     }
   });
+  const worldRef = useRef(null);
   const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
-  const worldRef = useRef(null);
 
   return (
     <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>

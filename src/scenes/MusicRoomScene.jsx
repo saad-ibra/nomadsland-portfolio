@@ -98,11 +98,11 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
       }
     }
   });
+  const worldRef = useRef(null);
   const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
-  const worldRef = useRef(null);
 
   return (
     <div ref={containerRef} style={{
@@ -177,91 +177,4 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
           </div>
       </div>
       <ControlBar
-        musicPlaying={musicPlaying} musicMuted={musicMuted} musicVolume={musicVolume} speedMultiplier={speedMultiplier}
-        onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)} onChangeVolume={setMusicVolume} onChangeSpeed={setSpeedMultiplier}
-      />
-    </div>
-  );
-}
-
-const StaticWorld = memo(() => (
-  <>
-    {/* Floor - Dark Wood / Studio */}
-    <div style={{ position: "absolute", left: TILE, top: TILE, width: (MAP_COLS-2)*TILE, height: (MAP_ROWS-2)*TILE, background: "#2C1B18" }}>
-        {/* Floorboards */}
-        {Array.from({ length: MAP_ROWS - 2 }).map((_, r) => (
-          <div key={r} style={{ position: "absolute", top: r * TILE, left: 0, right: 0, height: 1, background: "rgba(0,0,0,0.3)" }} />
-        ))}
-        {/* Soundproofing Studio Rug */}
-        <div style={{ position: "absolute", left: 5*TILE, top: 5*TILE, width: 13*TILE, height: 7*TILE, background: "#1A1A1A", border: "2px solid #333", borderRadius: 8 }}>
-          <div style={{ position: "absolute", inset: 4, background: "#222", borderRadius: 4 }} />
-        </div>
-    </div>
-    
-    {/* Soundproof Walls */}
-    <div style={{ position: "absolute", left: TILE, top: 0, width: (MAP_COLS-2)*TILE, height: TILE, background: "#3A3A3A", borderBottom: "4px solid #111", display: "flex" }}>
-        {Array.from({ length: MAP_COLS - 2 }).map((_, c) => (
-          <div key={c} style={{ flex: 1, borderRight: "1px solid #222", borderLeft: "1px solid #444", background: c % 2 === 0 ? "#333" : "#3A3A3A" }} />
-        ))}
-    </div>
-    
-    {/* Stairs Down */}
-    <div style={{ position: "absolute", left: TILE, top: TILE, width: 2*TILE, height: 2*TILE, background: "#1A0F0D", borderRight: "2px solid #000", display: "flex", flexDirection: "column" }}>
-      {[1,2,3,4].map(i => <div key={i} style={{ flex: 1, borderBottom: "2px solid #0A0504", borderTop: "1px solid #3A221C" }} />)}
-      <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", color: "#fff", opacity: 0.5 }}><ArrowDown size={12} /></div>
-    </div>
-
-    {/* Mixing Desk & Monitors */}
-    <div style={{ position: "absolute", left: 9*TILE, top: 4*TILE, width: 7*TILE, height: 2*TILE, background: "#222", border: "2px solid #000", borderRadius: 4, display: "flex", justifyContent: "center", alignItems: "center", gap: 16 }}>
-        <div style={{ width: 64, height: 32, background: "#111", border: "1px solid #444", display: "flex", flexDirection: "column", gap: 2, padding: 2 }}>
-          <div style={{ display: "flex", gap: 2, flex: 1 }}>
-              {Array.from({length: 12}).map((_,i) => <div key={i} style={{ flex: 1, background: i%3===0 ? "#f00" : "#0f0", height: Math.random() * 20 + 4, alignSelf: "flex-end" }} />)}
-          </div>
-        </div>
-        {/* Studio Chair */}
-        <div style={{ position: "absolute", top: 2.2*TILE, left: "50%", transform: "translateX(-50%)", width: 24, height: 24, background: "#1A1A1A", borderRadius: "50%", border: "2px solid #000" }} />
-    </div>
-    
-    {/* Left Monitor */}
-    <div style={{ position: "absolute", left: 8*TILE, top: 4*TILE, width: TILE, height: TILE, background: "#111", border: "2px solid #000" }}>
-        <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 16, height: 16, borderRadius: "50%", background: "#222", border: "1px solid #000" }} />
-    </div>
-    {/* Right Monitor */}
-    <div style={{ position: "absolute", left: 16*TILE, top: 4*TILE, width: TILE, height: TILE, background: "#111", border: "2px solid #000" }}>
-        <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 16, height: 16, borderRadius: "50%", background: "#222", border: "1px solid #000" }} />
-    </div>
-
-    {/* Drum Kit */}
-    <div style={{ position: "absolute", left: 18*TILE, top: 12*TILE, width: 4*TILE, height: 4*TILE }}>
-        {/* Bass Drum */}
-        <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 40, height: 40, background: "#EEE", border: "4px solid #8B0000", borderRadius: "50%" }} />
-        {/* Snare */}
-        <div style={{ position: "absolute", left: 4, top: 20, width: 24, height: 24, background: "#FFF", border: "2px solid #CCC", borderRadius: "50%" }} />
-        {/* Hi-Hat */}
-        <div style={{ position: "absolute", left: 0, top: 4, width: 20, height: 20, background: "#DAA520", borderRadius: "50%" }} />
-        {/* Cymbal */}
-        <div style={{ position: "absolute", right: 0, top: 0, width: 28, height: 28, background: "#DAA520", borderRadius: "50%" }} />
-        {/* Floor Tom */}
-        <div style={{ position: "absolute", right: 8, bottom: 8, width: 30, height: 30, background: "#EEE", border: "4px solid #8B0000", borderRadius: "50%" }} />
-    </div>
-
-    {/* Guitars */}
-    <div style={{ position: "absolute", left: 3*TILE, top: 13*TILE, width: 3*TILE, height: 3*TILE, display: "flex", gap: 8 }}>
-        {/* Strat */}
-        <div style={{ width: 16, height: 48, background: "#111", borderRadius: 8, position: "relative", transform: "rotate(15deg)" }}>
-          <div style={{ position: "absolute", left: 6, top: -16, width: 4, height: 24, background: "#D2B48C" }} />
-        </div>
-        {/* Bass */}
-        <div style={{ width: 18, height: 50, background: "#8B0000", borderRadius: 8, position: "relative", transform: "rotate(-10deg)" }}>
-          <div style={{ position: "absolute", left: 7, top: -20, width: 4, height: 28, background: "#D2B48C" }} />
-        </div>
-    </div>
-
-    {/* Vinyl Crates */}
-    <div style={{ position: "absolute", left: 20*TILE, top: 2*TILE, width: 3*TILE, height: 3*TILE, background: "#8B4513", border: "2px solid #5C3A21", display: "flex", flexWrap: "wrap", padding: 4, gap: 2 }}>
-        {Array.from({length: 6}).map((_,i) => <div key={i} style={{ width: 12, height: 24, background: ["#FFD700", "#FF4500", "#1E90FF", "#32CD32"][i%4], border: "1px solid #000" }} />)}
-    </div>
-  </>
-));
-
-export default MusicRoomScene;
+        musicPlaying={musicPlaying} musicMuted={musicMuted} musicVolume={

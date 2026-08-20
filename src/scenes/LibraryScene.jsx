@@ -639,6 +639,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
     },
     onCancel: () => setOpenShelf(null)
   });
+  const worldRef = useRef(null);
   const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
@@ -824,7 +825,6 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
 
   // ---- Camera: center on player ----
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
-  const worldRef = useRef(null);
   
   const transitionTime = (0.14 / speedMultiplier).toFixed(2);
 

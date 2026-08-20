@@ -552,6 +552,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
     },
     onCancel: () => setOpenStation(null)
   });
+  const worldRef = useRef(null);
   const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
 
 
@@ -617,7 +618,6 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
   // ---- Camera (clamped to world bounds) ----
   const layout = labLayout;
   const cam = useCameraLerp(pos, TILE, internalW, internalH, layout.totalCols, layout.totalRows, speedMultiplier); 
-  const worldRef = useRef(null);
   const tt   = (0.14 / speedMultiplier).toFixed(2);
 
   const activeStation    = layout.stations.find(s => s.id === nearStation);
