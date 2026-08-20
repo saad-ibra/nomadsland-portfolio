@@ -237,20 +237,73 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
 
       {/* ═══ MAIN LOGO BLOCK ═══ */}
       <div style={{
-        display: "flex", flexDirection: "column", alignItems: "center",
-        zIndex: 2, animation: "logoGlow 3s ease-in-out infinite",
+        display: "flex", flexDirection: "column", alignItems: "flex-start",
+        zIndex: 2,
         marginBottom: 48,
+        transform: "scale(1.2)",
+        position: "relative"
       }}>
-        <img 
-          src="/logo.png" 
-          alt="Nomad's Land by Saad Ibra"
-          style={{
-            width: "100%",
-            maxWidth: 600,
-            objectFit: "contain", mixBlendMode: "screen",
-            filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.8))"
-          }} 
-        />
+        {/* Subtle background glow */}
+        <div style={{
+          position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+          width: 300, height: 100, background: "radial-gradient(ellipse, rgba(212,175,55,0.15) 0%, transparent 70%)",
+          zIndex: 0, pointerEvents: "none", animation: "logoGlow 4s ease-in-out infinite"
+        }} />
+
+        {/* Pixel Art Compass/Star */}
+        <div style={{
+          position: "absolute", top: -16, right: -16, zIndex: 3,
+          animation: "floatBoat 6s ease-in-out infinite"
+        }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" style={{ imageRendering: "pixelated", filter: "drop-shadow(0 0 8px rgba(255,215,0,0.6))" }}>
+            <polygon points="12,0 14,10 12,8 10,10" fill="#ffd700" />
+            <polygon points="12,24 14,14 12,16 10,14" fill="#b8860b" />
+            <polygon points="24,12 14,14 16,12 14,10" fill="#ffd700" />
+            <polygon points="0,12 10,14 8,12 10,10" fill="#b8860b" />
+            <rect x="11" y="11" width="2" height="2" fill="#fff" />
+          </svg>
+        </div>
+
+        {/* ── "saad-ibra's" ── */}
+        <div style={{
+          fontFamily: "'Press Start 2P', monospace",
+          fontSize: 10,
+          letterSpacing: 2,
+          color: "#d4af37", // Warm gold
+          textShadow: "1px 1px 0 #000, 2px 2px 0 #222",
+          marginBottom: -4,
+          marginLeft: 4,
+          zIndex: 3,
+          textTransform: "uppercase",
+        }}>
+          saad-ibra's
+        </div>
+
+        {/* ── "Nomad's Land" ── */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          position: "relative",
+          zIndex: 2,
+        }}>
+          <div style={{
+            fontFamily: "'Press Start 2P', monospace",
+            fontSize: 48,
+            letterSpacing: 4,
+            color: "#f4f0e6", // Off-white
+            textShadow:
+              "3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, " +
+              "0 4px 0 #8b6914, " + // Gold 3D extrusion
+              "0 5px 0 #6b5010, " +
+              "0 6px 0 #4a3800, " +
+              "0 8px 24px rgba(212,175,55,0.4)", // Golden glow drop shadow
+            lineHeight: 1.1,
+            textAlign: "center",
+          }}>
+            Nomad's<br/>Land
+          </div>
+        </div>
       </div>
 
       {/* Animated progress bar */}
