@@ -242,12 +242,12 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
         marginBottom: 48,
       }}>
         <img 
-          src="/logo.svg" 
+          src="/logo.png" 
           alt="Nomad's Land by Saad Ibra"
           style={{
             width: "100%",
             maxWidth: 600,
-            objectFit: "contain",
+            objectFit: "contain", mixBlendMode: "screen",
             filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.8))"
           }} 
         />
