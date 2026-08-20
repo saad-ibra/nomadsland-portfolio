@@ -794,6 +794,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
   // Camera uses refs + direct DOM mutation instead of React state to avoid 60fps re-renders
   const camRef = useRef({ x: initialPos.col * TILE - internalW/2, y: initialPos.row * TILE - internalH/2 });
   const worldRef = useRef(null);
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   // Only triggers React re-render when the visible tile window changes
   const [tileWindow, setTileWindow] = useState({ sc: 0, ec: MAP_COLS, sr: 0, er: MAP_ROWS });
 
@@ -1463,13 +1464,14 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         }}>
 
           {/* Scrolling world layer — positioned by RAF via ref, not React state */}
-          <div ref={worldRef} style={{
+          <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
             transform: `translate(${-Math.round(camRef.current.x)}px, ${-Math.round(camRef.current.y)}px)`,
             willChange: "transform",
-          }} onPointerDown={handleWorldTap}>
-            <TapMarker tapTarget={tapTarget} TILE={TILE} />
+            zIndex: 1
+          }}>
+          <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
             
             {visibleTiles}

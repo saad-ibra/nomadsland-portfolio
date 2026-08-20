@@ -351,7 +351,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     if (targetR < 0 || targetR >= MAP_ROWS || targetC < 0 || targetC >= MAP_COLS) return false;
     const tile = MAP[targetR][targetC];
     if (tile === 1) return false;
-    if (FURNITURE.some(f => targetC >= f.col && targetC < f.col + f.w && targetR >= f.row && targetR < f.row + f.h)) return false;
+    if (FURNITURE.some(f => f.collision && targetC >= f.col && targetC < f.col + f.w && targetR >= f.row && targetR < f.row + f.h)) return false;
     if (targetC >= DESK_COLLISION.x && targetC < DESK_COLLISION.x + DESK_COLLISION.w && targetR >= DESK_COLLISION.y && targetR < DESK_COLLISION.y + DESK_COLLISION.h) return false;
     if (targetC === 7 && targetR === 4) return false;
     return true;

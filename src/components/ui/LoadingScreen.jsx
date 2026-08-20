@@ -201,8 +201,8 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
       {/* Title */}
       <div
         style={{
-          fontFamily: "'Press Start 2P', monospace",
-          fontSize: 18,
+          fontFamily: "'VT323', monospace",
+          fontSize: 48,
           color: "#e8e0d4",
           letterSpacing: 4,
           marginBottom: 40,
@@ -210,7 +210,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
           zIndex: 1,
         }}
       >
-        NOMADSLAND
+        Nomad's Land
       </div>
 
       {/* Animated progress bar */}
