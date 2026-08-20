@@ -613,13 +613,15 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
     setNearShelf(null);
   }, []);
 
+  
+  const isWalkable = useCallback((c, r) => {
+    if (c === EXIT_DOOR_COL && r === EXIT_DOOR_ROW) return true;
+    return canWalk(c, r);
+  }, []);
+
   const { pos, setPos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
     initialPos: START_POS,
-    canWalk: (c, r) => {
-      // Allow stepping onto the doormat
-      if (c === EXIT_DOOR_COL && r === EXIT_DOOR_ROW) return true;
-      return canWalk(c, r);
-    },
+    canWalk: isWalkable,
     speedMultiplier,
     isActive: phase === "free" && !openShelf && !isTransitioning,
     onMove: (nc, nr) => { 
@@ -640,7 +642,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
     onCancel: () => setOpenShelf(null)
   });
   const worldRef = useRef(null);
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+  const handleWorldTap = useTapToMove(worldRef, pos, isWalkable, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
   // ---- Responsive Scaling ----

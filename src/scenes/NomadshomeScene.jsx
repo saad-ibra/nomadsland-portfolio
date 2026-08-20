@@ -346,21 +346,23 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     window.dispatchEvent(e);
   };
 
+  
+  const isWalkable = useCallback((targetC, targetR) => {
+    if (targetR < 0 || targetR >= MAP_ROWS || targetC < 0 || targetC >= MAP_COLS) return false;
+    const tile = MAP[targetR][targetC];
+    if (tile === 1) return false;
+    if (FURNITURE.some(f => targetC >= f.col && targetC < f.col + f.w && targetR >= f.row && targetR < f.row + f.h)) return false;
+    if (targetC >= DESK_COLLISION.x && targetC < DESK_COLLISION.x + DESK_COLLISION.w && targetR >= DESK_COLLISION.y && targetR < DESK_COLLISION.y + DESK_COLLISION.h) return false;
+    if (targetC === 7 && targetR === 4) return false;
+    return true;
+  }, []);
+
   const { pos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
     sceneId: "nomadshome_studio",
     initialPos: START_POS,
     isActive: phase === "free" && !isTransitioning && !openResume && !openTipLine,
     speedMultiplier,
-    canWalk: (targetC, targetR) => {
-      if (targetR < 0 || targetR >= MAP_ROWS || targetC < 0 || targetC >= MAP_COLS) return false;
-      const tile = MAP[targetR][targetC];
-      if (tile === 1) return false;
-      if (targetC === NPC_POS.col && targetR === NPC_POS.row) return false;
-      for (const item of FURNITURE) {
-        if (item.collision && targetC >= item.col && targetC < item.col + item.w && targetR >= item.row && targetR < item.row + item.h) return false;
-      }
-      return true;
-    },
+    canWalk: isWalkable,
     onMove: (nc, nr) => {
       playWoodStep();
       setNearPhone(nc >= 4 && nc <= 6 && nr >= 0 && nr <= 2);
@@ -407,7 +409,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     }
   });
   const worldRef = useRef(null);
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+  const handleWorldTap = useTapToMove(worldRef, pos, isWalkable, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 

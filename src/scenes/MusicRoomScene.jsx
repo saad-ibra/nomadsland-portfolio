@@ -99,7 +99,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
     }
   });
   const worldRef = useRef(null);
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+  const handleWorldTap = useTapToMove(worldRef, pos, isWalkable, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
