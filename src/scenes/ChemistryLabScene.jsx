@@ -791,11 +791,16 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
 
           {/* Proximity prompt */}
           {phase === "free" && activeStation && !openStation && (
-            <div style={{
+            <div 
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+                setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: " " })), 50);
+              }}
+              style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 10px",
               background: "rgba(6,10,14,0.97)", border: "2px solid #eef7f2", borderRadius: 2,
-              zIndex: 500, pointerEvents: "none",
+              zIndex: 500, pointerEvents: "auto", cursor: "pointer",
               display: "flex", gap: 8, alignItems: "center",
               boxShadow: "0 4px 12px rgba(0,0,0,0.9)", whiteSpace: "nowrap",
             }}>

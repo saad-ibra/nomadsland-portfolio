@@ -566,11 +566,16 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
 
           {/* Proximity prompt */}
           {phase === "free" && nearObject && !openPost && (
-            <div style={{
+            <div 
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+                setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: " " })), 50);
+              }}
+              style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 8px",
               background: "rgba(0,0,0,0.9)", border: "2px solid #fff",
-              zIndex: 500, display: "flex", alignItems: "center", gap: 6,
+              zIndex: 500, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", pointerEvents: "auto",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 6, color: "#fff" }}>
                 <FileText size={8} /><span>{activeArticle?.label}</span>

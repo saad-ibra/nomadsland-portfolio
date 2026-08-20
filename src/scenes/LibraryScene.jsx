@@ -942,11 +942,16 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
 
           {/* Proximity prompt */}
           {phase === "free" && activeShelf && !openShelf && (
-            <div style={{
+            <div 
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+                setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: " " })), 50);
+              }}
+              style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 8px",
               background: "rgba(10,10,20,0.85)", border: "2px solid #f4e8d0", borderRadius: 4,
-              zIndex: 650, pointerEvents: "none", display: "flex", gap: 8, alignItems: "center",
+              zIndex: 650, pointerEvents: "auto", cursor: "pointer", display: "flex", gap: 8, alignItems: "center",
               boxShadow: "0 4px 12px rgba(0,0,0,0.6)"
             }}>
               <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 6, color: TYPE_COLORS[activeShelf.type].light }}>

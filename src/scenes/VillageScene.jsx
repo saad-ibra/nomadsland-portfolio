@@ -1693,10 +1693,15 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
 
           {/* Proximity prompt */}
           {phase === "free" && (activeShop || isOnBoat || isNearDockWhileSailing || (isStandingOnDock && !isOnBoat)) && (
-            <div style={{
+            <div 
+              onClick={() => {
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+                setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: " " })), 50);
+              }}
+              style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "5px 12px",
               background: "#f8f8f8", border: `2px solid #302820`, borderRadius: 4,
-              zIndex: 6000, pointerEvents: "none", display: "flex", gap: 8, alignItems: "center",
+              zIndex: 6000, pointerEvents: "auto", cursor: "pointer", display: "flex", gap: 8, alignItems: "center",
               boxShadow: `0 4px 0 rgba(0,0,0,0.2)`, whiteSpace: "nowrap", color: "#302820"
             }}>
               <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 5.5, color: "#302820" }}>
