@@ -218,6 +218,25 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
   const resumeScrollRef = useRef(null);
 
   useEffect(() => {
+    const handleIntroDismiss = (e) => {
+      if (phase === "intro" && (e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
+        e.preventDefault();
+        setPhase("free");
+      } else if (phase === "talking" && (e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
+        e.preventDefault();
+        const activeLines = dynamicDialogue || INTRO_DIALOGUE;
+        if (dialogueIndex < activeLines.length - 1) {
+          setDialogueIndex(prev => prev + 1);
+        } else {
+          setPhase("free");
+        }
+      }
+    };
+    window.addEventListener("keydown", handleIntroDismiss);
+    return () => window.removeEventListener("keydown", handleIntroDismiss);
+  }, [phase, dialogueIndex, dynamicDialogue]);
+
+  useEffect(() => {
     if (!openResume) return;
     const handleScroll = (e) => {
       if (!resumeScrollRef.current) return;

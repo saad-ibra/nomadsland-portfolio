@@ -5,6 +5,7 @@ import { getSharedAudioCtx } from '../engine/sfx.js';
 import { renderControlText } from '../utils/renderControls';
 import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-react";
 import { TILE } from '../engine/constants';
+import { useTapToMove, TapMarker } from '../hooks/useTapToMove.jsx';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
 import { playTileStep } from '../engine/sfx';
 import PlayerSprite from '../components/sprites/PlayerSprite';
@@ -667,6 +668,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
             left: -cam.x, top: -cam.y,
             
           }}>
+            <TapMarker tapTarget={tapTarget} TILE={TILE} />
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
 

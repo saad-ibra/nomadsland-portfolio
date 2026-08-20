@@ -5,6 +5,7 @@ import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
 
 import { TILE } from '../engine/constants';
+import { useTapToMove, TapMarker } from '../hooks/useTapToMove.jsx';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
 import { playTileStep } from '../engine/sfx';
 import PlayerSprite from '../components/sprites/PlayerSprite';
@@ -477,6 +478,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
             left: -cam.x, top: -cam.y,
             
           }}>
+            <TapMarker tapTarget={tapTarget} TILE={TILE} />
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
 
