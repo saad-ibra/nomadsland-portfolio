@@ -79,6 +79,8 @@ function PixelArticle({ article, isNear, onClick }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
 
+
+  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div
       onClick={onClick}
@@ -119,6 +121,8 @@ function PixelArticle({ article, isNear, onClick }) {
 //  PRINTING PRESS — top wall decor
 // ============================================================
 function PrintingPress({ col }) {
+
+  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div style={{
       position: "absolute",
@@ -173,7 +177,9 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
       bg = (r + c) % 2 === 0 ? "#c4d0d8" : "#a4b0b8";
       bx = "inset 0 0 0 1px rgba(0,0,0,0.05)";
     }
-    return (
+  
+  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
+  return (
       <div key={`${r}-${c}`} style={{
         position: "absolute", left: c * TILE, top: r * TILE,
         width: TILE + 1, height: TILE + 1, background: bg, boxShadow: bx,
@@ -221,7 +227,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
     return () => window.removeEventListener("keydown", handleScroll, { capture: true });
   }, [openPost]);
 
-  const { pos, facing, stepping } = usePlayerMovement({
+  const { pos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
     initialPos: layout.startPos,
     canWalk: (c, r) => {
       if (c === 5 && r === 1) { onBackToVillage(); return false; }
@@ -421,13 +427,16 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
 
 
   // ---- Camera (clamped to world bounds) ----
-  const cam = useCameraLerp(pos, TILE, internalW, internalH, layout.totalCols, layout.totalRows, speedMultiplier);
+  const cam = useCameraLerp(pos, TILE, internalW, internalH, layout.totalCols, layout.totalRows, speedMultiplier); 
+  const worldRef = useRef(null);
   const tt = (0.14 / speedMultiplier).toFixed(2);
 
   const activeArticle = layout.articles.find(r => r.id === nearObject);
   const introLine = `The newsroom. Every article on that corkboard is something I wrote. The red phone on the desk has my contact info.`;
 
   // ---- Render ----
+
+  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
@@ -468,12 +477,14 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
         }}>
 
           {/* Scrolling world */}
-          <div style={{
+          <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: layout.totalCols * TILE, height: layout.totalRows * TILE,
             left: -cam.x, top: -cam.y,
             
           }}>
+            <TapMarker tapTarget={tapTarget} TILE={TILE} />
+
 
             {/* Tile layer */}
             {renderedTiles}

@@ -49,6 +49,22 @@ export function usePlayerMovement({
   const onCancelRef = useRef(onCancel);
   const canWalkRef = useRef(canWalk);
 
+  // ---- Path queue for tap-to-move ----
+  const pathQueueRef = useRef([]);
+  const [tapTarget, setTapTarget] = useState(null); // {col, row} for visual marker
+
+  const setPath = useCallback((pathArray) => {
+    pathQueueRef.current = pathArray ? [...pathArray] : [];
+    if (pathArray && pathArray.length > 0) {
+      setTapTarget(pathArray[pathArray.length - 1]); // mark the destination
+    }
+  }, []);
+
+  const clearPath = useCallback(() => {
+    pathQueueRef.current = [];
+    setTapTarget(null);
+  }, []);
+
   // Keep refs up to date
   useEffect(() => {
     onMoveRef.current = onMove;
@@ -116,6 +132,11 @@ export function usePlayerMovement({
       else if (k === "arrowleft" || k === "a") { isDirKey = true; pressedDir = "left"; }
       else if (k === "arrowright" || k === "d") { isDirKey = true; pressedDir = "right"; }
 
+      // Any manual direction input cancels the auto-walk path
+      if (isDirKey) {
+        clearPath();
+      }
+
       if (isDirKey && !keysRef.current[k] && isActive) {
         if (facingRef.current !== pressedDir) {
           setFacing(pressedDir);
@@ -173,7 +194,7 @@ export function usePlayerMovement({
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
     };
-  }, [isActive]);
+  }, [isActive, clearPath]);
 
   const posRef = useRef(pos);
   useEffect(() => { posRef.current = pos; }, [pos]);
@@ -181,6 +202,7 @@ export function usePlayerMovement({
   useEffect(() => {
     if (!isActive) {
       setStepping(false);
+      clearPath(); // Clear path when scene becomes inactive (dialogue, modal, etc.)
       return;
     }
 
@@ -191,11 +213,33 @@ export function usePlayerMovement({
 
       const k = keysRef.current;
       let dc = 0, dr = 0;
+      let fromPath = false;
+
+      // Priority 1: Keyboard / D-pad input
       if (k["arrowup"] || k["w"]) dr = -1;
       else if (k["arrowdown"] || k["s"]) dr = 1;
       else if (k["arrowleft"] || k["a"]) dc = -1;
       else if (k["arrowright"] || k["d"]) dc = 1;
 
+      // Priority 2: Path queue (tap-to-move)
+      if (dc === 0 && dr === 0 && pathQueueRef.current.length > 0) {
+        const next = pathQueueRef.current[0];
+        const p = posRef.current;
+        dc = next.col - p.col;
+        dr = next.row - p.row;
+
+        // Sanity: path step should be exactly 1 tile away
+        if (Math.abs(dc) + Math.abs(dr) !== 1) {
+          // Path is stale or corrupted — clear it
+          clearPath();
+          dc = 0;
+          dr = 0;
+        } else {
+          fromPath = true;
+        }
+      }
+
+      // Priority 3: Sailing momentum
       if (dc === 0 && dr === 0) {
         if (isSailing && momentumRef.current.stepsLeft > 0) {
           dc = momentumRef.current.dc;
@@ -205,7 +249,7 @@ export function usePlayerMovement({
           setStepping(false);
           return;
         }
-      } else {
+      } else if (!fromPath) {
         if (isSailing) {
           momentumRef.current = { dc, dr, stepsLeft: 1 }; // glide 1 extra step
         } else {
@@ -216,7 +260,8 @@ export function usePlayerMovement({
       const dir = dr < 0 ? "up" : dr > 0 ? "down" : dc < 0 ? "left" : "right";
       
       // If we are blocking movement because we just turned, abort here
-      if (turnBlockRef.current) {
+      // (only applies to keyboard input, not path-based movement)
+      if (turnBlockRef.current && !fromPath) {
         setStepping(false);
         return;
       }
@@ -234,20 +279,33 @@ export function usePlayerMovement({
         
         // Clear stepping flag shortly after
         setTimeout(() => setStepping(false), 90);
+
+        // Consume the path step
+        if (fromPath) {
+          pathQueueRef.current.shift();
+          // Clear tap target when we arrive at destination
+          if (pathQueueRef.current.length === 0) {
+            setTapTarget(null);
+          }
+        }
         
         if (onMoveRef.current) {
           const cancelMove = onMoveRef.current(nc, nr);
-          if (cancelMove) return;
+          if (cancelMove) {
+            clearPath(); // Cancel path on scene transition etc.
+            return;
+          }
         }
         
         setPos(newPos);
       } else {
         momentumRef.current.stepsLeft = 0; // stop gliding on wall bump
+        if (fromPath) clearPath(); // Path is blocked — cancel
       }
     }, 30);
 
     return () => clearInterval(id);
-  }, [isActive, speedMultiplier, isSailing]);
+  }, [isActive, speedMultiplier, isSailing, clearPath]);
 
-  return { pos, setPos, facing, setFacing, stepping };
+  return { pos, setPos, facing, setFacing, stepping, setPath, clearPath, tapTarget };
 }

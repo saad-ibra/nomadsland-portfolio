@@ -8,6 +8,7 @@ import SaadSprite from "../components/sprites/SaadSprite";
 import ControlBar from "../components/ui/ControlBar";
 import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
+import { useTapToMove, TapMarker } from "../hooks/useTapToMove.js";
 import { useCameraLerp } from "../hooks/useCameraLerp";
 import { getSharedAudioCtx, playWoodStep, playBlip } from "../engine/sfx";
 import ExitDoor from "../components/sprites/ExitDoor";
@@ -78,6 +79,8 @@ const FurnitureSprite = ({ item }) => {
 function TipLinePhone({ isNear, onClick }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div
       onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
@@ -129,7 +132,9 @@ function TipLineForm({ onClose }) {
   }, [onClose]);
 
   if (state.succeeded) {
-    return (
+  
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+  return (
       <div style={{ textAlign: "center", padding: 20 }}>
         <h3 style={{ fontSize: 10, color: "#228b22", marginBottom: 16 }}>SENT!</h3>
         <p style={{ fontSize: 6, color: "#333", marginBottom: 16 }}>Message received loud and clear.</p>
@@ -138,6 +143,8 @@ function TipLineForm({ onClose }) {
     );
   }
 
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "monospace" }}>
       <div>
@@ -345,7 +352,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     window.dispatchEvent(e);
   };
 
-  const { pos, facing, stepping } = usePlayerMovement({
+  const { pos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
     sceneId: "nomadshome_studio",
     initialPos: START_POS,
     isActive: phase === "free" && !isTransitioning && !openResume && !openTipLine,
@@ -406,8 +413,11 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     }
   });
 
-  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier);
+  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
+  const worldRef = useRef(null);
 
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
       <title>Home | Saad Ibra</title>
@@ -417,7 +427,9 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#000", boxShadow: "0 0 0 4px #2a1c11, 0 0 30px rgba(0,0,0,1)", imageRendering: "pixelated", borderRadius: 4 }}>
             {/* CAMERA CONTAINER */}
-            <div style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, zIndex: 1 }}>
+            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, zIndex: 1 }}>
+            <TapMarker tapTarget={tapTarget} TILE={TILE} />
+
               <StaticWorld />
               {FURNITURE.map((item, idx) => {
                 let isNear = false;
@@ -425,7 +437,9 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                    isNear = pos.col >= item.col - 1 && pos.col <= item.col + item.w && 
                             pos.row >= item.row - 1 && pos.row <= item.row + item.h;
                 }
-                return (
+              
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
+  return (
                   <div key={`furn-${idx}`} style={{ position: "absolute", left: item.col * TILE, top: item.row * TILE, width: item.w * TILE, height: item.h * TILE, zIndex: item.collision ? ((item.row + item.h - 1) * 10 + 1) : 1, pointerEvents: "none", filter: isNear && phase === "free" ? "drop-shadow(0 0 6px rgba(244,232,208,0.8))" : "none", transition: "filter 0.2s" }}><FurnitureSprite item={item} /></div>
                 );
               })}

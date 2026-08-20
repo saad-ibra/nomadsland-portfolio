@@ -6,6 +6,7 @@ import NewsroomScene from './scenes/NewsroomScene.jsx';
 import NomadshomeScene from './scenes/NomadshomeScene.jsx';
 import MusicRoomScene from './scenes/MusicRoomScene.jsx';
 import SceneTransition from './components/ui/SceneTransition.jsx';
+import LoadingScreen from './components/ui/LoadingScreen.jsx';
 import './App.css';
 
 import { getSharedAudioCtx, playTransition } from './engine/sfx.js';
@@ -50,6 +51,24 @@ document.addEventListener("visibilitychange", () => {
 });
 
 function App() {
+  const [appReady, setAppReady] = useState(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
+
+  useEffect(() => {
+    // Wait for fonts and load event
+    const handleReady = () => setAppReady(true);
+    
+    // Ensure we wait at least 1.5 seconds so the loading screen is visible
+    const minTimePromise = new Promise(resolve => setTimeout(resolve, 1500));
+    const readyPromise = new Promise(resolve => {
+      if (document.readyState === 'complete') resolve();
+      else window.addEventListener('load', resolve);
+    });
+    const fontsPromise = document.fonts ? document.fonts.ready : Promise.resolve();
+
+    Promise.all([minTimePromise, readyPromise, fontsPromise]).then(handleReady);
+  }, []);
+
   const [scene, setScene] = useState(() => localStorage.getItem("currentScene") || 'nomadshome');
   const [previousScene, setPreviousScene] = useState(null);
   const transitionRef = useRef(null);
@@ -136,6 +155,14 @@ function App() {
         boxSizing: 'border-box',
         position: 'relative'
       }}>
+        {/* Loading Screen Overlay */}
+        {showLoadingScreen && (
+          <LoadingScreen 
+            ready={appReady} 
+            onDone={() => setShowLoadingScreen(false)} 
+          />
+        )}
+
         {/* Global CRT Overlay */}
         <div style={{
           position: 'fixed', inset: 0, zIndex: 9998, pointerEvents: 'none',

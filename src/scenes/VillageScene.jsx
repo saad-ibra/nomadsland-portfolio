@@ -4,6 +4,7 @@ import { getSharedAudioCtx } from '../engine/sfx.js';
 import { DoorOpen } from "lucide-react";
 import { TILE, MOVE_COOLDOWN } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
+import { useTapToMove, TapMarker } from "../hooks/useTapToMove.js";
 import { playWaterSlosh, playGrassStep, playDirtStep, playWoodStep, playTileStep } from "../engine/sfx";
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import ControlBar from "../components/ui/ControlBar";
@@ -35,6 +36,8 @@ function BuildingShell({ shop, isNear, children }) {
   const width  = TILE * 5;
   const height = TILE * 3;
 
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -63,6 +66,8 @@ function BuildingShell({ shop, isNear, children }) {
 //  Steep gabled roof, dark slate, arched windows, ivy, lantern
 // ============================================================
 function LibraryBuilding({ shop, isNear }) {
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   return (
     <BuildingShell shop={shop} isNear={isNear}>
       {({ active, width, height }) => (<>
@@ -161,6 +166,8 @@ function LibraryBuilding({ shop, isNear }) {
 //  Flat-topped corrugated metal, portholes, reinforced hatch
 // ============================================================
 function LabBuilding({ shop, isNear }) {
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   return (
     <BuildingShell shop={shop} isNear={isNear}>
       {({ active, width }) => (<>
@@ -254,6 +261,8 @@ function LabBuilding({ shop, isNear }) {
 //  Rounded thatched roof, Tudor timber-frame, flower boxes
 // ============================================================
 function HomeBuilding({ shop, isNear }) {
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   return (
     <BuildingShell shop={shop} isNear={isNear}>
       {({ active, width }) => (<>
@@ -387,6 +396,8 @@ function HomeBuilding({ shop, isNear }) {
 //  Piano-lid roof, treble-clef windows, vinyl-record sign
 // ============================================================
 function MusicRoomBuilding({ shop, isNear }) {
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   return (
     <BuildingShell shop={shop} isNear={isNear}>
       {({ active, width }) => (<>
@@ -479,6 +490,8 @@ function MusicRoomBuilding({ shop, isNear }) {
 //  Mansard copper roof, navy clapboard, mailbox, newspaper sign
 // ============================================================
 function NewsletterBuilding({ shop, isNear }) {
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   return (
     <BuildingShell shop={shop} isNear={isNear}>
       {({ active, width }) => (<>
@@ -647,7 +660,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     return START_POS;
   })();
 
-  const { pos, setPos, facing, stepping } = usePlayerMovement({
+  const { pos, setPos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
     sceneId: "village",
     ignoreSavedPos: previousScene !== null,
     initialPos,
@@ -1425,6 +1438,8 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     }
   }
 
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
@@ -1465,7 +1480,9 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
             transform: `translate(${-Math.round(camRef.current.x)}px, ${-Math.round(camRef.current.y)}px)`,
             willChange: "transform",
-          }}>
+          }} onPointerDown={handleWorldTap}>
+            <TapMarker tapTarget={tapTarget} TILE={TILE} />
+
             
             {visibleTiles}
 
@@ -1538,7 +1555,9 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
               const tileType = MAP[w.r]?.[w.c];
               if (tileType !== 4) return null; // Only show on water tiles
               
-              return (
+            
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
+  return (
                 <div key={w.id} style={{
                   position: "absolute", left: (w.c + 0.5) * TILE - 3, top: (w.r + 0.5) * TILE - 3,
                   width: 6, height: 6, background: "#fff", borderRadius: "50%",
@@ -1642,7 +1661,9 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
                   };
                   // Music room shows on minimap but greyed out (locked)
                   const isLocked = shop.id === "musicroom";
-                  return (
+                
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
+  return (
                     <rect
                       key={shop.id}
                       x={shop.col - 2} y={shop.row - 2}

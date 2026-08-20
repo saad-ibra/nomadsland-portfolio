@@ -9,6 +9,7 @@ import SaadSprite from "../components/sprites/SaadSprite";
 import ControlBar from "../components/ui/ControlBar";
 import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
+import { useTapToMove, TapMarker } from "../hooks/useTapToMove.js";
 import { playWoodStep } from "../engine/sfx";
 
 const MAP_COLS = 24;
@@ -74,7 +75,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
     return true;
   };
 
-  const { pos, facing, stepping } = usePlayerMovement({
+  const { pos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
     initialPos: { col: 2, row: 2 }, // spawn near stairs
     isActive: phase === "free" && !isTransitioning,
     canWalk: isWalkable,
@@ -98,8 +99,11 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
     }
   });
 
-  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier);
+  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
+  const worldRef = useRef(null);
 
+
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
@@ -110,7 +114,9 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
         <div style={{ transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#111", boxShadow: "0 0 0 4px #222" }}>
             
-            <div style={{ position: "absolute", left: -cam.x, top: -cam.y, width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
+            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", left: -cam.x, top: -cam.y, width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
+            <TapMarker tapTarget={tapTarget} TILE={TILE} />
+
               <StaticWorld />
 
 
