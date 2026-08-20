@@ -943,7 +943,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
           {/* Proximity prompt */}
           {phase === "free" && activeShelf && !openShelf && (
             <div 
-              onClick={() => { triggerAction(); }}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 8px",

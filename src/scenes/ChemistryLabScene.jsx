@@ -792,7 +792,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
           {/* Proximity prompt */}
           {phase === "free" && activeStation && !openStation && (
             <div 
-              onClick={() => { triggerAction(); }}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 10px",
