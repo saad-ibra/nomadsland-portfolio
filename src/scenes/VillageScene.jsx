@@ -648,7 +648,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     return START_POS;
   })();
 
-  const { pos, setPos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
+  const {  pos, setPos, facing, stepping, setPath, tapTarget , triggerAction } = usePlayerMovement({
     sceneId: "village",
     ignoreSavedPos: previousScene !== null,
     initialPos,
@@ -1694,10 +1694,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
           {/* Proximity prompt */}
           {phase === "free" && (activeShop || isOnBoat || isNearDockWhileSailing || (isStandingOnDock && !isOnBoat)) && (
             <div 
-              onClick={() => {
-                window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
-                setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: " " })), 50);
-              }}
+              onClick={() => { triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "5px 12px",
               background: "#f8f8f8", border: `2px solid #302820`, borderRadius: 4,

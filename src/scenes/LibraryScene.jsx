@@ -619,7 +619,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
     return canWalk(c, r);
   }, []);
 
-  const { pos, setPos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
+  const {  pos, setPos, facing, stepping, setPath, tapTarget , triggerAction } = usePlayerMovement({
     initialPos: START_POS,
     canWalk: isWalkable,
     speedMultiplier,
@@ -943,10 +943,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
           {/* Proximity prompt */}
           {phase === "free" && activeShelf && !openShelf && (
             <div 
-              onClick={() => {
-                window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
-                setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: " " })), 50);
-              }}
+              onClick={() => { triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 8px",

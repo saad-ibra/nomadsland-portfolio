@@ -529,7 +529,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
     setNearStation(null);
   }, []);
 
-  const { pos, setPos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
+  const {  pos, setPos, facing, stepping, setPath, tapTarget , triggerAction } = usePlayerMovement({
     initialPos: labLayout.startPos,
     canWalk: (c, r) => {
       if (c === layoutRef.current.startPos.col && r === 1) { onBackToVillage(); return false; }
@@ -792,10 +792,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
           {/* Proximity prompt */}
           {phase === "free" && activeStation && !openStation && (
             <div 
-              onClick={() => {
-                window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
-                setTimeout(() => window.dispatchEvent(new KeyboardEvent("keyup", { key: " " })), 50);
-              }}
+              onClick={() => { triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 10px",

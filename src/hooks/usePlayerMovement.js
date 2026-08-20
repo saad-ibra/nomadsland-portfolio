@@ -307,5 +307,5 @@ export function usePlayerMovement({
     return () => clearInterval(id);
   }, [isActive, speedMultiplier, isSailing, clearPath]);
 
-  return { pos, setPos, facing, setFacing, stepping, setPath, clearPath, tapTarget };
+  return { pos, setPos, facing, setFacing, stepping, setPath, clearPath, tapTarget, triggerAction: () => { if (onActionRef.current) onActionRef.current(); } };
 }
