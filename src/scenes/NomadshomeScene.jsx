@@ -219,10 +219,11 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
 
   useEffect(() => {
     const handleIntroDismiss = (e) => {
-      if (phase === "intro" && (e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
+      const isTap = !e.key;
+      if (phase === "intro" && (isTap || e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
         e.preventDefault();
         setPhase("free");
-      } else if (phase === "talking" && (e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
+      } else if (phase === "talking" && (isTap || e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
         e.preventDefault();
         const activeLines = dynamicDialogue || INTRO_DIALOGUE;
         if (dialogueIndex < activeLines.length - 1) {
@@ -233,7 +234,15 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
       }
     };
     window.addEventListener("keydown", handleIntroDismiss);
-    return () => window.removeEventListener("keydown", handleIntroDismiss);
+    window.addEventListener("click", handleIntroDismiss);
+    window.addEventListener("touchstart", handleIntroDismiss, { passive: false });
+    window.addEventListener("pointerdown", handleIntroDismiss);
+    return () => {
+      window.removeEventListener("keydown", handleIntroDismiss);
+      window.removeEventListener("click", handleIntroDismiss);
+      window.removeEventListener("touchstart", handleIntroDismiss);
+      window.removeEventListener("pointerdown", handleIntroDismiss);
+    };
   }, [phase, dialogueIndex, dynamicDialogue]);
 
   useEffect(() => {
@@ -371,7 +380,6 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     const tile = MAP[targetR][targetC];
     if (tile === 1) return false;
     if (FURNITURE.some(f => f.collision && targetC >= f.col && targetC < f.col + f.w && targetR >= f.row && targetR < f.row + f.h)) return false;
-    if (targetC >= DESK_COLLISION.x && targetC < DESK_COLLISION.x + DESK_COLLISION.w && targetR >= DESK_COLLISION.y && targetR < DESK_COLLISION.y + DESK_COLLISION.h) return false;
     if (targetC === 7 && targetR === 4) return false;
     return true;
   }, []);

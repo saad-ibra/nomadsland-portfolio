@@ -13,6 +13,26 @@ import ControlBar from '../components/ui/ControlBar';
 import ExitDoor from '../components/sprites/ExitDoor';
 import SaadSprite from '../components/sprites/SaadSprite';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div style={{ color: "red", padding: 20, background: "black", position: "absolute", inset: 0, zIndex: 9999 }}>
+        <h2>Lab Crashed!</h2>
+        <pre style={{ fontSize: 10, whiteSpace: "pre-wrap" }}>{this.state.error?.toString()}</pre>
+        <button onClick={() => window.location.reload()} style={{ padding: 10, marginTop: 20 }}>Reload</button>
+      </div>;
+    }
+    return this.props.children;
+  }
+}
+
 
 // ============================================================
 //  DYNAMIC LAB LAYOUT GENERATOR
@@ -117,6 +137,7 @@ function Chalkboard({ stats, isNear, chalkCol, onClick }) {
   const boardW = 4 * TILE;
   const left   = chalkCol * TILE - boardW / 2 + TILE / 2;
   return (
+    <ErrorBoundary>
     <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
       position: "absolute",
       left, top: TILE - 12,
@@ -152,6 +173,7 @@ function Chalkboard({ stats, isNear, chalkCol, onClick }) {
         {active ? "▲ SPACE/A — open github" : "github / saad-ibra"}
       </div>
     </div>
+    </ErrorBoundary>
   );
 }
 
@@ -554,7 +576,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
     onCancel: () => setOpenStation(null)
   });
   const worldRef = useRef(null);
-  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, layout.totalCols, layout.totalRows, phase === "free" && !isTransitioning);
+  const handleWorldTap = useTapToMove(worldRef, pos, (c, r) => canLayoutWalk(layoutRef.current, c, r), setPath, labLayout.totalCols, labLayout.totalRows, phase === "free" && !isTransitioning);
 
 
 
@@ -668,7 +690,6 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
             left: -cam.x, top: -cam.y,
             
           }}>
-            <TapMarker tapTarget={tapTarget} TILE={TILE} />
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
 
@@ -794,7 +815,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
           {/* Proximity prompt */}
           {phase === "free" && activeStation && !openStation && (
             <div 
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
+              onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 10px",
