@@ -14,6 +14,26 @@ import ExitDoor from '../components/sprites/ExitDoor';
 import SaadSprite from '../components/sprites/SaadSprite';
 import { BLOG_POSTS } from '../data/posts';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div style={{ color: "red", padding: 20, background: "black", position: "absolute", inset: 0, zIndex: 9999 }}>
+        <h2>Newsroom Crashed!</h2>
+        <pre style={{ fontSize: 10, whiteSpace: "pre-wrap" }}>{this.state.error?.toString()}</pre>
+        <button onClick={() => window.location.reload()} style={{ padding: 10, marginTop: 20 }}>Reload</button>
+      </div>;
+    }
+    return this.props.children;
+  }
+}
+
 // ============================================================
 //  DYNAMIC NEWSROOM LAYOUT GENERATOR
 // ============================================================
@@ -81,6 +101,7 @@ function PixelArticle({ article, isNear, onClick }) {
   const active = isNear || hovered;
 
   return (
+    <ErrorBoundary>
     <div
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
@@ -113,6 +134,7 @@ function PixelArticle({ article, isNear, onClick }) {
         <circle cx="8" cy="5.5" r="1.5" fill="#c03030" />
       </svg>
     </div>
+    </ErrorBoundary>
   );
 }
 
@@ -479,7 +501,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
             
           }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
-            <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
 
             {/* Tile layer */}
@@ -569,7 +590,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           {/* Proximity prompt */}
           {phase === "free" && nearObject && !openPost && (
             <div 
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
+              onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)",
               padding: "4px 8px",

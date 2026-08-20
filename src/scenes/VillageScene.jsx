@@ -1694,7 +1694,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
           {/* Proximity prompt */}
           {phase === "free" && (activeShop || isOnBoat || isNearDockWhileSailing || (isStandingOnDock && !isOnBoat)) && (
             <div 
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
+              onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
               position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "5px 12px",
               background: "#f8f8f8", border: `2px solid #302820`, borderRadius: 4,
