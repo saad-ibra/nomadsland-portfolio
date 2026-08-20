@@ -134,7 +134,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
         {/* ── "saad-ibra's" ── */}
         <div style={{
           fontFamily: "'Micro 5', monospace",
-          fontSize: 10,
+          fontSize: 30,
           letterSpacing: 2,
           color: "#d4af37", // Warm gold
           textShadow: "1px 1px 0 #000, 2px 2px 0 #222",
@@ -180,7 +180,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
       <div
         style={{
           fontFamily: "'Micro 5', monospace",
-          fontSize: 8,
+          fontSize: 24,
           color: "#6b7280",
           marginTop: 16,
           zIndex: 1,

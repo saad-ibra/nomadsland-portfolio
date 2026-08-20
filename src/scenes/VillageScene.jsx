@@ -1706,13 +1706,13 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
               zIndex: 6000, pointerEvents: "auto", cursor: "pointer", display: "flex", gap: 8, alignItems: "center",
               boxShadow: `0 4px 0 rgba(0,0,0,0.2)`, whiteSpace: "nowrap", color: "#302820"
             }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 5.5, color: "#302820" }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 15.5, color: "#302820" }}>
                 {activeShop && <><DoorOpen size={8} /><span>ENTER {activeShop.label}</span></>}
                 {isOnBoat && <span>SAIL BOAT</span>}
                 {isNearDockWhileSailing && <span>DROP ANCHOR</span>}
                 {isStandingOnDock && !isOnBoat && <span>SUMMON & SAIL</span>}
               </div>
-              <div style={{ fontSize: 5, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2 }}>SPACE/A</div>
+              <div style={{ fontSize: 15, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2 }}>SPACE/A</div>
             </div>
           )}
 
@@ -1728,7 +1728,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
               <div style={{ position: "absolute", bottom: 3, right: 3, width: 4, height: 4, borderRight: "2px solid #302820", borderBottom: "2px solid #302820", opacity: 0.35, pointerEvents: "none" }} />
               <div style={{
                 position: "absolute", top: -10, left: 54, background: "#d84040", border: "2px solid #302820",
-                padding: "2px 8px", fontSize: 6, color: "#fff", borderRadius: 2,
+                padding: "2px 8px", fontSize: 18, color: "#fff", borderRadius: 2,
               }}>SAAD IBRA</div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <img src="/favicon.svg" alt="" draggable={false} style={{
@@ -1736,7 +1736,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
                   imageRendering: "pixelated", borderRadius: 2, marginTop: 1,
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#302820" }}>
+                  <div style={{ fontSize: 24, lineHeight: 2.4, minHeight: 28, color: "#302820" }}>
                     This is the village. Each building leads to a different part of my work. Walk up to any door and press{' '}
                     <span style={{ display: "inline-block", background: "#302820", border: "1px solid #504030", borderBottomWidth: 2, borderBottomColor: "#1a1410", padding: "1px 4px", borderRadius: 2, fontFamily: "'Micro 5', monospace", color: "#fff", boxShadow: "0 1px 0 #1a1410", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" }}>SPACE</span>
                     {' '}to step inside.
@@ -1744,11 +1744,11 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
                   </div>
                   <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
                     <button onPointerDown={(e) => { e.preventDefault(); setPhase("free"); }} style={{
-                      fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#408ad8", color: "#fff",
+                      fontFamily: "'Micro 5', monospace", fontSize: 18, background: "#408ad8", color: "#fff",
                       border: "2px solid #302820", padding: "6px 12px", borderRadius: 4, cursor: "pointer",
                       boxShadow: "0 2px 0 #302820", display: "flex", alignItems: "center",
                     }}>
-                      <span style={{ fontSize: 5, color: "#302820", marginRight: 8, background: "rgba(255,255,255,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
+                      <span style={{ fontSize: 15, color: "#302820", marginRight: 8, background: "rgba(255,255,255,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
                       GOT IT
                     </button>
                   </div>

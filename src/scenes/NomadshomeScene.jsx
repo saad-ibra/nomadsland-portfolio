@@ -132,34 +132,34 @@ function TipLineForm({ onClose }) {
   if (state.succeeded) {
     return (
       <div style={{ textAlign: "center", padding: 20 }}>
-        <h3 style={{ fontSize: 10, color: "#228b22", marginBottom: 16 }}>SENT!</h3>
-        <p style={{ fontSize: 6, color: "#333", marginBottom: 16 }}>Message received loud and clear.</p>
-        <button onClick={onClose} style={{ fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "6px 10px", border: "none", cursor: "pointer" }}>CLOSE</button>
+        <h3 style={{ fontSize: 30, color: "#228b22", marginBottom: 16 }}>SENT!</h3>
+        <p style={{ fontSize: 18, color: "#333", marginBottom: 16 }}>Message received loud and clear.</p>
+        <button onClick={onClose} style={{ fontFamily: "'Micro 5', monospace", fontSize: 18, background: "#000", color: "#fff", padding: "6px 10px", border: "none", cursor: "pointer" }}>CLOSE</button>
       </div>
     );
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "monospace" }}>
+    <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "'Micro 5', monospace" }}>
       <div>
-        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>NAME</label>
-        <input name="name" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
-        <ValidationError field="name" prefix="Name" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
+        <label style={{ display: "block", fontSize: 18, fontWeight: "bold", marginBottom: 2, color: "#111" }}>NAME</label>
+        <input name="name" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "'Micro 5', monospace", fontSize: 18, color: "#111" }} />
+        <ValidationError field="name" prefix="Name" errors={state.errors} style={{ fontSize: 15, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
       <div>
-        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>CONTACT</label>
-        <input name="email" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, color: "#111" }} />
-        <ValidationError field="email" prefix="Email" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
+        <label style={{ display: "block", fontSize: 18, fontWeight: "bold", marginBottom: 2, color: "#111" }}>CONTACT</label>
+        <input name="email" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "'Micro 5', monospace", fontSize: 18, color: "#111" }} />
+        <ValidationError field="email" prefix="Email" errors={state.errors} style={{ fontSize: 15, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
       <div>
-        <label style={{ display: "block", fontSize: 6, fontWeight: "bold", marginBottom: 2, color: "#111" }}>MESSAGE</label>
-        <textarea name="message" required rows={3} style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, resize: "none", color: "#111" }} />
-        <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
+        <label style={{ display: "block", fontSize: 18, fontWeight: "bold", marginBottom: 2, color: "#111" }}>MESSAGE</label>
+        <textarea name="message" required rows={3} style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "'Micro 5', monospace", fontSize: 18, resize: "none", color: "#111" }} />
+        <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 15, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
-      <button type="submit" disabled={state.submitting} style={{ fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "8px", border: "none", cursor: "pointer", marginTop: 4, boxShadow: "2px 2px 0 rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <button type="submit" disabled={state.submitting} style={{ fontFamily: "'Micro 5', monospace", fontSize: 18, background: "#000", color: "#fff", padding: "8px", border: "none", cursor: "pointer", marginTop: 4, boxShadow: "2px 2px 0 rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {state.submitting ? "SENDING..." : "SUBMIT"}
       </button>
-      {state.errors && state.errors.length > 0 && <div style={{ fontSize: 5, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
+      {state.errors && state.errors.length > 0 && <div style={{ fontSize: 15, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
     </form>
   );
 }
@@ -485,7 +485,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
             <div style={{ position: "absolute", inset: 0, background: "#ff8a50", mixBlendMode: "multiply", opacity: 0.4, pointerEvents: "none", zIndex: 899 }} />
             <div style={{ position: "absolute", inset: 0, background: "#603080", mixBlendMode: "overlay", opacity: 0.3, pointerEvents: "none", zIndex: 900 }} />
           </div>
-          <button onClick={onBackToVillage} style={{ position: "absolute", top: 8, right: 8, fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto", zIndex: 500 }}><div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div></button>
+          <button onClick={onBackToVillage} style={{ position: "absolute", top: 8, right: 8, fontFamily: "'Micro 5', monospace", fontSize: 18, background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto", zIndex: 500 }}><div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div></button>
           {(phase === "intro" || phase === "talking") && (
             <DialogueBox lines={dynamicDialogue || INTRO_DIALOGUE} lineIndex={dialogueIndex} onAdvance={() => { playBlip(); setDialogueIndex(i => i + 1); }} onDismiss={() => { setPhase("free"); setDynamicDialogue(null); }} speaker={dynamicDialogue ? null : "SAAD IBRA"} theme="home" lastButtonLabel="GOT IT" />
           )}
@@ -508,32 +508,32 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                   width: 480, maxWidth: "95%", maxHeight: internalH - 20,
                   boxShadow: "4px 4px 0 rgba(0,0,0,0.8)",
                   overflow: "auto", display: "flex", flexDirection: "column",
-                  fontFamily: "monospace", padding: "20px",
-                  color: "#111", fontSize: "6px", lineHeight: "1.6",
+                  fontFamily: "'Micro 5', monospace", padding: "20px",
+                  color: "#111", fontSize: "18px", lineHeight: "1.6",
                   textAlign: "left"
                 }}
               >
                 {/* Header (Left Aligned) */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #111", paddingBottom: "8px", marginBottom: "12px", position: "sticky", top: "-20px", background: "#fcfaf5", zIndex: 5 }}>
                   <div>
-                    <div style={{ fontSize: "10px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>Saad Ibra</div>
-                    <div style={{ fontSize: "5px", marginTop: "6px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                    <div style={{ fontSize: "30px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px" }}>Saad Ibra</div>
+                    <div style={{ fontSize: "15px", marginTop: "6px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
                       <a href="https://linkedin.com/in/saadibrahimkhan" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>LINKEDIN</a>
                       <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>GITHUB</a>
-                      <button onClick={() => { setOpenResume(false); setOpenTipLine(true); }} style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px", fontFamily: "'Micro 5', monospace", fontSize: "4px", cursor: "pointer"}}>REACH OUT</button>
+                      <button onClick={() => { setOpenResume(false); setOpenTipLine(true); }} style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px", fontFamily: "'Micro 5', monospace", fontSize: "12px", cursor: "pointer"}}>REACH OUT</button>
                     </div>
                   </div>
-                  <button onClick={() => setOpenResume(false)} style={{ fontFamily: "'Micro 5', monospace", fontSize: 5, background: "#111", color: "#fff", border: "none", padding: "6px 8px", cursor: "pointer", flexShrink: 0, boxShadow: "2px 2px 0 rgba(0,0,0,0.3)" }}>CLOSE</button>
+                  <button onClick={() => setOpenResume(false)} style={{ fontFamily: "'Micro 5', monospace", fontSize: 15, background: "#111", color: "#fff", border: "none", padding: "6px 8px", cursor: "pointer", flexShrink: 0, boxShadow: "2px 2px 0 rgba(0,0,0,0.3)" }}>CLOSE</button>
                 </div>
 
                 {/* Summary */}
-                <div style={{ fontSize: "7px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Professional Summary</div>
+                <div style={{ fontSize: "21px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>Professional Summary</div>
                 <div style={{ marginBottom: "12px", textAlign: "left" }}>
                   Cloud and Automation Engineer with experience in Azure integrations, workflow orchestration, and applied AI solutions. Proficient in Azure Functions, Logic Apps, Service Bus, Power Automate, and Dynamics 365 F&O. Delivered enterprise pipelines combining AI-driven validation, anomaly detection, and Teams-based approvals. Full-stack background in Kotlin, Spring Boot, and React.js. Published patent holder and award recipient for Best Project of Social Relevance in DSCE.
                 </div>
 
                 {/* Experience */}
-                <div style={{ fontSize: "7px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Experience</div>
+                <div style={{ fontSize: "21px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Experience</div>
                 
                 <div style={{ marginBottom: "12px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "2px" }}>
@@ -567,7 +567,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 </div>
 
                 {/* Projects */}
-                <div style={{ fontSize: "7px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Projects</div>
+                <div style={{ fontSize: "21px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Projects</div>
                 <div style={{ marginBottom: "12px" }}>
                   <div style={{ fontWeight: "bold", marginBottom: "2px" }}>Gray Matter - Knowledge Organization App</div>
                   <ul style={{ margin: "0 0 4px 14px", padding: 0 }}>
@@ -576,14 +576,14 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 </div>
 
                 {/* Skills */}
-                <div style={{ fontSize: "7px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Skills</div>
+                <div style={{ fontSize: "21px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Skills</div>
                 <div style={{ marginBottom: "12px", display: "grid", gap: "4px" }}>
                   <div><strong style={{ minWidth: "90px", display: "inline-block" }}>Cloud & Automation:</strong> Azure Functions, Logic Apps, Service Bus, Blob Storage, Azure OpenAI, Form Recognizer, Power Automate, SharePoint, Dynamics 365 F&O, Microsoft Copilot Studio</div>
                   <div><strong style={{ minWidth: "90px", display: "inline-block" }}>Languages:</strong> Python, C#, Java, JavaScript, SQL, Kotlin, C++, HTML/CSS</div>
                 </div>
 
                 {/* Education */}
-                <div style={{ fontSize: "7px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Education</div>
+                <div style={{ fontSize: "21px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Education</div>
                 <div style={{ marginBottom: "8px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1px" }}>
                     <strong>Dayananda Sagar College of Engineering</strong>
@@ -618,14 +618,14 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 </div>
 
                 {/* Awards & Patent */}
-                <div style={{ fontSize: "7px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Awards & Patent</div>
+                <div style={{ fontSize: "21px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Awards & Patent</div>
                 <ul style={{ margin: "0 0 12px 14px", padding: 0 }}>
                   <li style={{ paddingBottom: "3px" }}><strong>Patent:</strong> Sustainable Energy Monitoring System (SEMS), App. No. 202241069889 (Dec 2022) – IoT-based real-time energy monitoring via Raspberry Pi.</li>
                   <li style={{ paddingBottom: "3px" }}><strong>Best Project of Social Relevance</strong>, DSCE 2024 – ML-based mental health diagnostics using Random Forest and cosine similarity.</li>
                 </ul>
 
                 {/* Certifications */}
-                <div style={{ fontSize: "7px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Certifications</div>
+                <div style={{ fontSize: "21px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.5px", borderTop: "1px solid #ddd", paddingTop: "8px", marginBottom: "6px" }}>Certifications</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
                   <div>
                     <strong style={{ display: "block", marginBottom: "1px" }}>Power Platform & Data</strong>
@@ -676,13 +676,13 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 
                 <button onClick={() => setOpenTipLine(false)} style={{
                   position: "absolute", top: 4, right: 4,
-                  fontFamily: "'Micro 5', monospace", fontSize: 10,
+                  fontFamily: "'Micro 5', monospace", fontSize: 30,
                   background: "transparent", color: "#111", border: "none",
                   padding: "4px", cursor: "pointer", zIndex: 10
                 }}>✕</button>
 
-                <h2 style={{ fontFamily: "'Micro 5', monospace", fontSize: 8, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 8 }}>LEAVE A TIP</h2>
-                <div style={{ fontSize: 6, color: "#333", marginBottom: 12, fontFamily: "monospace" }}>I'll get back to you ASAP!</div>
+                <h2 style={{ fontFamily: "'Micro 5', monospace", fontSize: 24, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 8 }}>LEAVE A TIP</h2>
+                <div style={{ fontSize: 18, color: "#333", marginBottom: 12, fontFamily: "'Micro 5', monospace" }}>I'll get back to you ASAP!</div>
                 
                 <TipLineForm onClose={() => setOpenTipLine(false)} />
               </div>

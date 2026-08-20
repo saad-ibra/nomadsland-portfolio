@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return <div style={{ color: "red", padding: 20, background: "black", position: "absolute", inset: 0, zIndex: 9999 }}>
         <h2>Lab Crashed!</h2>
-        <pre style={{ fontSize: 10, whiteSpace: "pre-wrap" }}>{this.state.error?.toString()}</pre>
+        <pre style={{ fontSize: 30, whiteSpace: "pre-wrap" }}>{this.state.error?.toString()}</pre>
         <button onClick={() => window.location.reload()} style={{ padding: 10, marginTop: 20 }}>Reload</button>
       </div>;
     }
@@ -154,17 +154,17 @@ function Chalkboard({ stats, isNear, chalkCol }) {
       color: "#c4e8bc", zIndex: 15, cursor: "pointer",
     }}>
       {/* Chalk header */}
-      <div style={{ fontSize: 4.5, textAlign: "center", borderBottom: "1px dashed rgba(196,232,188,0.2)", paddingBottom: 2, marginBottom: 3, opacity: 0.8 }}>
+      <div style={{ fontSize: 12.5, textAlign: "center", borderBottom: "1px dashed rgba(196,232,188,0.2)", paddingBottom: 2, marginBottom: 3, opacity: 0.8 }}>
         EXPERIMENTS LOG
       </div>
       {/* Stats */}
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 4, marginBottom: 3 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 3 }}>
         <span style={{ color: "#60ffc0" }}>PUB {stats.public}</span>
         <span style={{ color: "#ff8888" }}>PRIV {stats.private}</span>
       </div>
       {/* Link line — changes with proximity/hover */}
       <div style={{
-        fontSize: 4,
+        fontSize: 12,
         textAlign: "center",
         color: active ? "#b0f0b8" : "#608068",
         transition: "color 0.4s",
@@ -260,13 +260,13 @@ function ChalkboardModal({ commitStats, onClose }) {
       >
         <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
           <div>
-            <div style={{ color: "#c4e8bc", fontSize: 6, fontFamily: "'Micro 5', monospace" }}>GITHUB ACTIVITY</div>
-            <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{ color: "#b0f0b8", fontSize: 6, textDecoration: "underline", fontFamily: "'Micro 5', monospace", marginTop: 6, display: "block" }}>
+            <div style={{ color: "#c4e8bc", fontSize: 18, fontFamily: "'Micro 5', monospace" }}>GITHUB ACTIVITY</div>
+            <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{ color: "#b0f0b8", fontSize: 18, textDecoration: "underline", fontFamily: "'Micro 5', monospace", marginTop: 6, display: "block" }}>
               github.com/saad-ibra
             </a>
           </div>
           <button onClick={onClose} style={{
-            fontFamily: "'Micro 5', monospace", fontSize: 6,
+            fontFamily: "'Micro 5', monospace", fontSize: 18,
             background: "#4a3018", color: "#c4e8bc", border: "none",
             padding: "4px 8px", borderRadius: 2, cursor: "pointer",
           }}>X</button>
@@ -274,17 +274,17 @@ function ChalkboardModal({ commitStats, onClose }) {
 
           <div style={{ position: "relative", background: "#0e1813", padding: "10px", borderRadius: 4, border: "2px solid #203828", width: "100%", boxSizing: "border-box" }}>
           {!commitStats ? (
-            <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#c4e8bc", fontSize: 5, animation: "dialogBlink 1s infinite" }}>
+            <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#c4e8bc", fontSize: 15, animation: "dialogBlink 1s infinite" }}>
               ANALYZING COMMITS...
             </div>
           ) : commitStats.error ? (
-            <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#ff8888", fontSize: 4, textAlign: "center", lineHeight: "8px" }}>
+            <div style={{ height: height, display: "flex", alignItems: "center", justifyContent: "center", color: "#ff8888", fontSize: 12, textAlign: "center", lineHeight: "8px" }}>
               VITE_GITHUB_TOKEN REQUIRED<br/><br/>(ADD TO .env FOR EKG)
             </div>
           ) : (
             <>
               {renderEKG()}
-              <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(196,232,188,0.5)", fontSize: 4, fontFamily: "'Micro 5', monospace", marginTop: 4 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(196,232,188,0.5)", fontSize: 12, fontFamily: "'Micro 5', monospace", marginTop: 4 }}>
                 <span>JAN</span>
                 <span>DEC</span>
               </div>
@@ -293,7 +293,7 @@ function ChalkboardModal({ commitStats, onClose }) {
         </div>
         
         {commitStats && !commitStats.error && commitStats.maxMonth && (
-          <div style={{ color: "#ffd060", fontSize: 4, fontFamily: "'Micro 5', monospace", marginTop: 12, textAlign: "center", opacity: 0.8 }}>
+          <div style={{ color: "#ffd060", fontSize: 12, fontFamily: "'Micro 5', monospace", marginTop: 12, textAlign: "center", opacity: 0.8 }}>
             ◆ BUSIEST MONTH: {['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][commitStats.maxMonth.monthIndex]} {commitStats.maxMonth.year} ({commitStats.maxMonth.commits} COMMITS)
           </div>
         )}
@@ -355,7 +355,7 @@ function RepoTerminal({ station, isNear }) {
             </svg>
           ) : (
             <div style={{
-              fontSize: 3, color: glow, fontFamily: "'Micro 5', monospace",
+              fontSize: 9, color: glow, fontFamily: "'Micro 5', monospace",
               padding: "0 1px", textAlign: "center",
               overflow: "hidden", whiteSpace: "nowrap",
             }}>{truncated}</div>
@@ -792,7 +792,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
           {/* ← LIBRARY button */}
           <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
-            fontFamily: "'Micro 5', monospace", fontSize: 6,
+            fontFamily: "'Micro 5', monospace", fontSize: 18,
             background: "#111e2a", color: "#eef7f2", border: "2px solid #eef7f2",
             padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 500,
             boxShadow: "0 2px 0 #060e18",
@@ -805,7 +805,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
           {/* Syncing indicator */}
           {!reposLoaded && (
             <div style={{
-              position: "absolute", top: 8, right: 8, fontSize: 5,
+              position: "absolute", top: 8, right: 8, fontSize: 15,
               color: "#00ffcc", animation: "dialogBlink 0.7s step-end infinite", zIndex: 500,
             }}>SYNCING…</div>
           )}
@@ -822,12 +822,12 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
               display: "flex", gap: 8, alignItems: "center",
               boxShadow: "0 4px 12px rgba(0,0,0,0.9)", whiteSpace: "nowrap",
             }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 5, color: activeStation.id === "chalkboard" ? "#b0f0b8" : activeStation.isPrivate ? "#ff5252" : "#00ffcc" }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 15, color: activeStation.id === "chalkboard" ? "#b0f0b8" : activeStation.isPrivate ? "#ff5252" : "#00ffcc" }}>
                 {activeStation.id === "chalkboard" ? <ScrollText size={7} /> : <Terminal size={7} />}
                 <span>{activeStation.label.slice(0, 22).toUpperCase()}</span>
               </div>
               <div style={{
-                fontSize: 5, color: "#a8e8a8", background: "rgba(0,0,0,0.4)",
+                fontSize: 15, color: "#a8e8a8", background: "rgba(0,0,0,0.4)",
                 padding: "2px 4px", borderRadius: 2
               }}>SPACE/A</div>
             </div>
@@ -848,7 +848,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
               <div style={{
                 position: "absolute", top: -12, left: 54,
                 background: "#0c1e2e", border: "2px solid #eef7f2",
-                padding: "2px 8px", fontSize: 7, color: "#80c8a0", borderRadius: 2,
+                padding: "2px 8px", fontSize: 21, color: "#80c8a0", borderRadius: 2,
               }}>SAAD IBRA</div>
               <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <img src="/favicon.svg" alt="" draggable={false} style={{
@@ -856,7 +856,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                   imageRendering: "pixelated", borderRadius: 2, marginTop: 1,
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#eef7f2" }}>
+                  <div style={{ fontSize: 24, lineHeight: 2.4, minHeight: 28, color: "#eef7f2" }}>
                     {renderControlText(introLine, labKeycapStyle)}
                     <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>▊</span>
                   </div>
@@ -864,13 +864,13 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                     <button
                       onClick={() => setPhase("free")}
                       style={{
-                        fontFamily: "'Micro 5', monospace", fontSize: 7,
+                        fontFamily: "'Micro 5', monospace", fontSize: 21,
                         background: "#1a5a3a", color: "#fff", border: "none",
                         padding: "8px 14px", borderRadius: 2, cursor: "pointer",
                         boxShadow: "0 3px 0 #0a3020", display: "flex", alignItems: "center"
                       }}
                     >
-                      <span style={{ fontSize: 5, color: "#a8e8a8", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
+                      <span style={{ fontSize: 15, color: "#a8e8a8", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</span>
                       ENTER LAB
                     </button>
                   </div>
@@ -910,11 +910,11 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                   background: openStationData.isPrivate ? "#6e0e18" : "#065038",
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                 }}>
-                  <div style={{ fontSize: 6.5, color: "#fff", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ fontSize: 18.5, color: "#fff", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "flex", alignItems: "center", gap: 6 }}>
                     {openStationData.isPrivate ? <Lock size={10} /> : <Hexagon size={10} />} {openStationData.label}
                   </div>
                   <button onClick={() => setOpenStation(null)} style={{
-                    fontFamily: "'Micro 5', monospace", fontSize: 6,
+                    fontFamily: "'Micro 5', monospace", fontSize: 18,
                     background: "#c03030", color: "#fff", border: "2px solid #eef7f2",
                     padding: "2px 5px", borderRadius: 2, cursor: "pointer",
                   }}>X</button>
@@ -924,26 +924,26 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                 <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
                   {openStationData.isPrivate ? (
                     <>
-                      <div style={{ fontSize: 5.5, color: "#ff8080", textAlign: "center" }}>ACCESS RESTRICTED</div>
-                      <div style={{ fontSize: 4.5, color: "#7090a0", textAlign: "center", lineHeight: "9px" }}>
+                      <div style={{ fontSize: 15.5, color: "#ff8080", textAlign: "center" }}>ACCESS RESTRICTED</div>
+                      <div style={{ fontSize: 12.5, color: "#7090a0", textAlign: "center", lineHeight: "9px" }}>
                         Private repository — name only visible
                       </div>
                     </>
                   ) : (
                     <>
                       {openStationData.repoData?.description && (
-                        <div style={{ fontSize: 4.5, color: "#90b8c8", lineHeight: "9px" }}>
+                        <div style={{ fontSize: 12.5, color: "#90b8c8", lineHeight: "9px" }}>
                           {openStationData.repoData.description}
                         </div>
                       )}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         {openStationData.repoData?.language && (
-                          <span style={{ fontSize: 5, color: "#60889a" }}>
+                          <span style={{ fontSize: 15, color: "#60889a" }}>
                             {openStationData.repoData.language}
                           </span>
                         )}
                         {openStationData.repoData?.stars > 0 && (
-                          <span style={{ fontSize: 5, color: "#ffd060", display: "flex", alignItems: "center", gap: 4 }}>
+                          <span style={{ fontSize: 15, color: "#ffd060", display: "flex", alignItems: "center", gap: 4 }}>
                             <Star size={7} /> {openStationData.repoData.stars}
                           </span>
                         )}
@@ -954,7 +954,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                           target="_blank"
                           rel="noopener noreferrer"
                           style={{
-                            display: "block", textAlign: "center", fontSize: 6,
+                            display: "block", textAlign: "center", fontSize: 18,
                             color: "#00ffcc", background: "#051812",
                             border: "2px solid #00ffcc44", padding: "7px", borderRadius: 2,
                             textDecoration: "none",
