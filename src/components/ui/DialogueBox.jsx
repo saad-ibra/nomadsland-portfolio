@@ -142,7 +142,7 @@ function keycapStyle(t) {
     borderBottomColor: t.keycapShadow,
     padding: "1px 4px",
     borderRadius: 2,
-    fontFamily: "'Press Start 2P', monospace",
+    fontFamily: "'Micro 5', monospace",
     color: t.keycapText,
     boxShadow: `0 1px 0 ${t.keycapShadow}`,
     margin: "0 2px",
@@ -278,7 +278,7 @@ export default function DialogueBox({
                 <button
                   onPointerDown={(e) => { e.preventDefault(); if (onDismiss) onDismiss(); }}
                   style={{
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                    fontFamily: "'Micro 5', monospace", fontSize: 7,
                     background: t.btnBg, color: t.btnColor, border: "none",
                     padding: "8px 14px", borderRadius: 2, cursor: "pointer",
                     boxShadow: t.btnShadow, display: "flex", alignItems: "center", opacity: 0.8
@@ -294,7 +294,7 @@ export default function DialogueBox({
               <button
                 onPointerDown={(e) => { e.preventDefault(); handleAction(); }}
                 style={{
-                  fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                  fontFamily: "'Micro 5', monospace", fontSize: 7,
                   background: t.btnBg, color: t.btnColor, border: "none",
                   padding: "8px 14px", borderRadius: 2, cursor: "pointer",
                   boxShadow: t.btnShadow, display: "flex", alignItems: "center",

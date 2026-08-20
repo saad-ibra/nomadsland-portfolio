@@ -150,7 +150,7 @@ function Chalkboard({ stats, isNear, chalkCol }) {
       transition: "box-shadow 0.4s, border-color 0.4s",
       display: "flex", flexDirection: "column", justifyContent: "center",
       padding: "4px 8px", boxSizing: "border-box",
-      fontFamily: "'Press Start 2P', monospace",
+      fontFamily: "'Micro 5', monospace",
       color: "#c4e8bc", zIndex: 15, cursor: "pointer",
     }}>
       {/* Chalk header */}
@@ -225,7 +225,7 @@ function ChalkboardModal({ commitStats, onClose }) {
           return (
             <g key={yearData.year}>
               {/* Year label */}
-              <text x={0} y={baseY - 2} fill="rgba(196,232,188,0.5)" fontSize={5} fontFamily="'Press Start 2P', monospace">{yearData.year}</text>
+              <text x={0} y={baseY - 2} fill="rgba(196,232,188,0.5)" fontSize={5} fontFamily="'Micro 5', monospace">{yearData.year}</text>
               {/* Heartbeat line */}
               <polyline points={points} fill="none" stroke="#c4e8bc" strokeWidth={1.5} strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 2px rgba(196,232,188,0.4))" }} />
               {/* Peak marker */}
@@ -260,13 +260,13 @@ function ChalkboardModal({ commitStats, onClose }) {
       >
         <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
           <div>
-            <div style={{ color: "#c4e8bc", fontSize: 6, fontFamily: "'Press Start 2P', monospace" }}>GITHUB ACTIVITY</div>
-            <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{ color: "#b0f0b8", fontSize: 6, textDecoration: "underline", fontFamily: "'Press Start 2P', monospace", marginTop: 6, display: "block" }}>
+            <div style={{ color: "#c4e8bc", fontSize: 6, fontFamily: "'Micro 5', monospace" }}>GITHUB ACTIVITY</div>
+            <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{ color: "#b0f0b8", fontSize: 6, textDecoration: "underline", fontFamily: "'Micro 5', monospace", marginTop: 6, display: "block" }}>
               github.com/saad-ibra
             </a>
           </div>
           <button onClick={onClose} style={{
-            fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+            fontFamily: "'Micro 5', monospace", fontSize: 6,
             background: "#4a3018", color: "#c4e8bc", border: "none",
             padding: "4px 8px", borderRadius: 2, cursor: "pointer",
           }}>X</button>
@@ -284,7 +284,7 @@ function ChalkboardModal({ commitStats, onClose }) {
           ) : (
             <>
               {renderEKG()}
-              <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(196,232,188,0.5)", fontSize: 4, fontFamily: "'Press Start 2P', monospace", marginTop: 4 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", color: "rgba(196,232,188,0.5)", fontSize: 4, fontFamily: "'Micro 5', monospace", marginTop: 4 }}>
                 <span>JAN</span>
                 <span>DEC</span>
               </div>
@@ -293,7 +293,7 @@ function ChalkboardModal({ commitStats, onClose }) {
         </div>
         
         {commitStats && !commitStats.error && commitStats.maxMonth && (
-          <div style={{ color: "#ffd060", fontSize: 4, fontFamily: "'Press Start 2P', monospace", marginTop: 12, textAlign: "center", opacity: 0.8 }}>
+          <div style={{ color: "#ffd060", fontSize: 4, fontFamily: "'Micro 5', monospace", marginTop: 12, textAlign: "center", opacity: 0.8 }}>
             ◆ BUSIEST MONTH: {['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][commitStats.maxMonth.monthIndex]} {commitStats.maxMonth.year} ({commitStats.maxMonth.commits} COMMITS)
           </div>
         )}
@@ -355,7 +355,7 @@ function RepoTerminal({ station, isNear }) {
             </svg>
           ) : (
             <div style={{
-              fontSize: 3, color: glow, fontFamily: "'Press Start 2P', monospace",
+              fontSize: 3, color: glow, fontFamily: "'Micro 5', monospace",
               padding: "0 1px", textAlign: "center",
               overflow: "hidden", whiteSpace: "nowrap",
             }}>{truncated}</div>
@@ -645,7 +645,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
 
   const activeStation    = layout.stations.find(s => s.id === nearStation);
   const openStationData  = layout.stations.find(s => s.id === openStation);
-  const labKeycapStyle = { display: "inline-block", background: "#0c2e1e", border: "1px solid #80c8a0", borderBottomWidth: 2, borderBottomColor: "#041810", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#a8e8a8", boxShadow: "0 1px 0 #041810", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" };
+  const labKeycapStyle = { display: "inline-block", background: "#0c2e1e", border: "1px solid #80c8a0", borderBottomWidth: 2, borderBottomColor: "#041810", padding: "1px 4px", borderRadius: 2, fontFamily: "'Micro 5', monospace", color: "#a8e8a8", boxShadow: "0 1px 0 #041810", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" };
   const introLine        = reposLoaded
     ? `My lab. Every terminal connects to a GitHub repo. ${stats.public} public, ${stats.private} private. Walk up to one and press SPACE.`
     : "Pulling data from GitHub...";
@@ -656,7 +656,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
       position: "fixed", inset: 0,
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#060a0e", overflow: "hidden",
-      fontFamily: "'Press Start 2P', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      fontFamily: "'Micro 5', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Chemistry Lab | Saad Ibra</title>
       <meta name="description" content="Welcome to the Chemistry Lab. View my software engineering projects synced directly with GitHub." />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
@@ -792,7 +792,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
           {/* ← LIBRARY button */}
           <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
-            fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+            fontFamily: "'Micro 5', monospace", fontSize: 6,
             background: "#111e2a", color: "#eef7f2", border: "2px solid #eef7f2",
             padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 500,
             boxShadow: "0 2px 0 #060e18",
@@ -864,7 +864,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                     <button
                       onClick={() => setPhase("free")}
                       style={{
-                        fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                        fontFamily: "'Micro 5', monospace", fontSize: 7,
                         background: "#1a5a3a", color: "#fff", border: "none",
                         padding: "8px 14px", borderRadius: 2, cursor: "pointer",
                         boxShadow: "0 3px 0 #0a3020", display: "flex", alignItems: "center"
@@ -914,7 +914,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                     {openStationData.isPrivate ? <Lock size={10} /> : <Hexagon size={10} />} {openStationData.label}
                   </div>
                   <button onClick={() => setOpenStation(null)} style={{
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+                    fontFamily: "'Micro 5', monospace", fontSize: 6,
                     background: "#c03030", color: "#fff", border: "2px solid #eef7f2",
                     padding: "2px 5px", borderRadius: 2, cursor: "pointer",
                   }}>X</button>

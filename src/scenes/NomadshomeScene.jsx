@@ -134,7 +134,7 @@ function TipLineForm({ onClose }) {
       <div style={{ textAlign: "center", padding: 20 }}>
         <h3 style={{ fontSize: 10, color: "#228b22", marginBottom: 16 }}>SENT!</h3>
         <p style={{ fontSize: 6, color: "#333", marginBottom: 16 }}>Message received loud and clear.</p>
-        <button onClick={onClose} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "6px 10px", border: "none", cursor: "pointer" }}>CLOSE</button>
+        <button onClick={onClose} style={{ fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "6px 10px", border: "none", cursor: "pointer" }}>CLOSE</button>
       </div>
     );
   }
@@ -156,7 +156,7 @@ function TipLineForm({ onClose }) {
         <textarea name="message" required rows={3} style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "monospace", fontSize: 6, resize: "none", color: "#111" }} />
         <ValidationError field="message" prefix="Message" errors={state.errors} style={{ fontSize: 5, color: "#c03030", marginTop: 2, display: "block" }} />
       </div>
-      <button type="submit" disabled={state.submitting} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "8px", border: "none", cursor: "pointer", marginTop: 4, boxShadow: "2px 2px 0 rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <button type="submit" disabled={state.submitting} style={{ fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#000", color: "#fff", padding: "8px", border: "none", cursor: "pointer", marginTop: 4, boxShadow: "2px 2px 0 rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {state.submitting ? "SENDING..." : "SUBMIT"}
       </button>
       {state.errors && state.errors.length > 0 && <div style={{ fontSize: 5, color: "#c03030", textAlign: "center" }}>Failed to send. Try again.</div>}
@@ -441,7 +441,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
   const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
 
   return (
-    <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
+    <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Micro 5', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
       <title>Home | Saad Ibra</title>
       <meta name="description" content="Welcome to my cozy home base. View my resume, learn more about me, and interact with my pixel art apartment." />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
@@ -485,7 +485,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
             <div style={{ position: "absolute", inset: 0, background: "#ff8a50", mixBlendMode: "multiply", opacity: 0.4, pointerEvents: "none", zIndex: 899 }} />
             <div style={{ position: "absolute", inset: 0, background: "#603080", mixBlendMode: "overlay", opacity: 0.3, pointerEvents: "none", zIndex: 900 }} />
           </div>
-          <button onClick={onBackToVillage} style={{ position: "absolute", top: 8, right: 8, fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto", zIndex: 500 }}><div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div></button>
+          <button onClick={onBackToVillage} style={{ position: "absolute", top: 8, right: 8, fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto", zIndex: 500 }}><div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div></button>
           {(phase === "intro" || phase === "talking") && (
             <DialogueBox lines={dynamicDialogue || INTRO_DIALOGUE} lineIndex={dialogueIndex} onAdvance={() => { playBlip(); setDialogueIndex(i => i + 1); }} onDismiss={() => { setPhase("free"); setDynamicDialogue(null); }} speaker={dynamicDialogue ? null : "SAAD IBRA"} theme="home" lastButtonLabel="GOT IT" />
           )}
@@ -520,10 +520,10 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                     <div style={{ fontSize: "5px", marginTop: "6px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
                       <a href="https://linkedin.com/in/saadibrahimkhan" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>LINKEDIN</a>
                       <a href="https://github.com/saad-ibra" target="_blank" rel="noopener noreferrer" style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px"}}>GITHUB</a>
-                      <button onClick={() => { setOpenResume(false); setOpenTipLine(true); }} style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px", fontFamily: "'Press Start 2P', monospace", fontSize: "4px", cursor: "pointer"}}>REACH OUT</button>
+                      <button onClick={() => { setOpenResume(false); setOpenTipLine(true); }} style={{background: "#fff", color: "#111", padding: "3px 5px", textDecoration: "none", border: "1px solid #111", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", letterSpacing: "0.5px", fontFamily: "'Micro 5', monospace", fontSize: "4px", cursor: "pointer"}}>REACH OUT</button>
                     </div>
                   </div>
-                  <button onClick={() => setOpenResume(false)} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 5, background: "#111", color: "#fff", border: "none", padding: "6px 8px", cursor: "pointer", flexShrink: 0, boxShadow: "2px 2px 0 rgba(0,0,0,0.3)" }}>CLOSE</button>
+                  <button onClick={() => setOpenResume(false)} style={{ fontFamily: "'Micro 5', monospace", fontSize: 5, background: "#111", color: "#fff", border: "none", padding: "6px 8px", cursor: "pointer", flexShrink: 0, boxShadow: "2px 2px 0 rgba(0,0,0,0.3)" }}>CLOSE</button>
                 </div>
 
                 {/* Summary */}
@@ -676,12 +676,12 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
                 
                 <button onClick={() => setOpenTipLine(false)} style={{
                   position: "absolute", top: 4, right: 4,
-                  fontFamily: "'Press Start 2P', monospace", fontSize: 10,
+                  fontFamily: "'Micro 5', monospace", fontSize: 10,
                   background: "transparent", color: "#111", border: "none",
                   padding: "4px", cursor: "pointer", zIndex: 10
                 }}>✕</button>
 
-                <h2 style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 8, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 8 }}>LEAVE A TIP</h2>
+                <h2 style={{ fontFamily: "'Micro 5', monospace", fontSize: 8, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 8 }}>LEAVE A TIP</h2>
                 <div style={{ fontSize: 6, color: "#333", marginBottom: 12, fontFamily: "monospace" }}>I'll get back to you ASAP!</div>
                 
                 <TipLineForm onClose={() => setOpenTipLine(false)} />

@@ -133,7 +133,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
 
         {/* ── "saad-ibra's" ── */}
         <div style={{
-          fontFamily: "'Press Start 2P', monospace",
+          fontFamily: "'Micro 5', monospace",
           fontSize: 10,
           letterSpacing: 2,
           color: "#d4af37", // Warm gold
@@ -141,7 +141,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
           marginBottom: -4,
           marginLeft: 4,
           zIndex: 3,
-          textTransform: "uppercase",
+          textTransform: "lowercase",
         }}>
           saad-ibra's
         </div>
@@ -155,7 +155,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
           zIndex: 2,
         }}>
           <div style={{
-            fontFamily: "'Press Start 2P', monospace",
+            fontFamily: "'Micro 5', monospace",
             fontSize: 48,
             letterSpacing: 4,
             color: "#f4f0e6", // Off-white
@@ -179,7 +179,7 @@ export default function LoadingScreenWrapper({ ready, onDone }) {
       {/* Loading text */}
       <div
         style={{
-          fontFamily: "'Press Start 2P', monospace",
+          fontFamily: "'Micro 5', monospace",
           fontSize: 8,
           color: "#6b7280",
           marginTop: 16,

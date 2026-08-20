@@ -459,7 +459,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
       position: "fixed", inset: 0,
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#080c10", overflow: "hidden",
-      fontFamily: "'Press Start 2P', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
+      fontFamily: "'Micro 5', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Newsroom | Saad Ibra</title>
       <meta name="description" content="Read my latest thoughts and articles on software engineering, game dev, and more in the Newsroom." />
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
@@ -566,7 +566,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           {/* ← VILLAGE */}
           <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
-            fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+            fontFamily: "'Micro 5', monospace", fontSize: 6,
             background: "#2a3036", color: "#eef7f2", border: "2px solid #eef7f2",
             padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 500,
             boxShadow: "0 2px 0 #181a1c",
@@ -579,7 +579,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           {/* Post count badge */}
           <div style={{
             position: "absolute", top: 8, right: 8,
-            fontFamily: "'Press Start 2P', monospace", fontSize: 5,
+            fontFamily: "'Micro 5', monospace", fontSize: 5,
             color: "#eef7f2", background: "rgba(0,0,0,0.5)",
             padding: "4px 6px", borderRadius: 2,
             zIndex: 500, display: "flex", alignItems: "center", gap: 4,
@@ -637,7 +637,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                     <button
                       onClick={() => setPhase("free")}
                       style={{
-                        fontFamily: "'Press Start 2P', monospace", fontSize: 7,
+                        fontFamily: "'Micro 5', monospace", fontSize: 7,
                         background: "#000", color: "#fff", border: "none",
                         padding: "8px 14px", cursor: "pointer",
                         boxShadow: "4px 4px 0 #888", display: "flex", alignItems: "center"
@@ -704,12 +704,12 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
                   </div>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button onClick={() => window.open('blogs/index.html', '_blank')} style={{
-                        fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+                        fontFamily: "'Micro 5', monospace", fontSize: 6,
                         background: "#fff", color: "#000", border: "1px solid #000",
                         padding: "2px 5px", cursor: "pointer",
                       }}>READ IN NEWSPAPER</button>
                     <button onClick={() => setOpenPost(null)} style={{
-                        fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+                        fontFamily: "'Micro 5', monospace", fontSize: 6,
                         background: "#000", color: "#fff", border: "none",
                         padding: "2px 5px", cursor: "pointer",
                       }}>CLOSE</button>

@@ -108,7 +108,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
-      background: "#000", fontFamily: "'Press Start 2P', monospace", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw",
+      background: "#000", fontFamily: "'Micro 5', monospace", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw",
     }}>
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
         <div style={{ transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
@@ -135,7 +135,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
                   <div style={{
                     position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
                     background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "1px 4px",
-                    fontFamily: "'Press Start 2P', monospace", fontSize: 5, color: "#000",
+                    fontFamily: "'Micro 5', monospace", fontSize: 5, color: "#000",
                     animation: "npcBounce 1s infinite", zIndex: 100,
                   }}>!</div>
                 )}
@@ -150,7 +150,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
             </div>
             
             <button onClick={onBackToVillage} style={{
-              position: "absolute", top: 8, left: 8, fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+              position: "absolute", top: 8, left: 8, fontFamily: "'Micro 5', monospace", fontSize: 6,
               background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div>

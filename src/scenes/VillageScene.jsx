@@ -1420,7 +1420,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
       position: "fixed", inset: 0,
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#000",
-      fontFamily: "'Press Start 2P', monospace", userSelect: "none",
+      fontFamily: "'Micro 5', monospace", userSelect: "none",
       
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Village Hub | Saad Ibra</title>
@@ -1738,13 +1738,13 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 8, lineHeight: 2.4, minHeight: 28, color: "#302820" }}>
                     This is the village. Each building leads to a different part of my work. Walk up to any door and press{' '}
-                    <span style={{ display: "inline-block", background: "#302820", border: "1px solid #504030", borderBottomWidth: 2, borderBottomColor: "#1a1410", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#fff", boxShadow: "0 1px 0 #1a1410", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" }}>SPACE</span>
+                    <span style={{ display: "inline-block", background: "#302820", border: "1px solid #504030", borderBottomWidth: 2, borderBottomColor: "#1a1410", padding: "1px 4px", borderRadius: 2, fontFamily: "'Micro 5', monospace", color: "#fff", boxShadow: "0 1px 0 #1a1410", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" }}>SPACE</span>
                     {' '}to step inside.
                     <span style={{ animation: "dialogBlink 0.5s step-end infinite" }}>&#x258A;</span>
                   </div>
                   <div style={{ marginTop: 8, display: "flex", justifyContent: "flex-end" }}>
                     <button onPointerDown={(e) => { e.preventDefault(); setPhase("free"); }} style={{
-                      fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#408ad8", color: "#fff",
+                      fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#408ad8", color: "#fff",
                       border: "2px solid #302820", padding: "6px 12px", borderRadius: 4, cursor: "pointer",
                       boxShadow: "0 2px 0 #302820", display: "flex", alignItems: "center",
                     }}>

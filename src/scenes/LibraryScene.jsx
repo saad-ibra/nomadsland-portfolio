@@ -210,8 +210,8 @@ function PixelBookCover({ book, typeColors }) {
         </>)}
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, color: "#f4e8d0", lineHeight: 1.6, wordWrap: "break-word" }}>{book.title}</div>
-        <div style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 5, opacity: 0.6, color: "#f4e8d0", marginTop: 4 }}>{book.author}</div>
+        <div style={{ fontFamily: "'Micro 5', monospace", fontSize: 6, color: "#f4e8d0", lineHeight: 1.6, wordWrap: "break-word" }}>{book.title}</div>
+        <div style={{ fontFamily: "'Micro 5', monospace", fontSize: 5, opacity: 0.6, color: "#f4e8d0", marginTop: 4 }}>{book.author}</div>
       </div>
     </a>
   );
@@ -830,14 +830,14 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
   
   const transitionTime = (0.14 / speedMultiplier).toFixed(2);
 
-  const libKeycapStyle = { display: "inline-block", background: "#2a2a40", border: "1px solid #f4e8d0", borderBottomWidth: 2, borderBottomColor: "#0a0a18", padding: "1px 4px", borderRadius: 2, fontFamily: "'Press Start 2P', monospace", color: "#f8d878", boxShadow: "0 1px 0 #0a0a18", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" };
+  const libKeycapStyle = { display: "inline-block", background: "#2a2a40", border: "1px solid #f4e8d0", borderBottomWidth: 2, borderBottomColor: "#0a0a18", padding: "1px 4px", borderRadius: 2, fontFamily: "'Micro 5', monospace", color: "#f8d878", boxShadow: "0 1px 0 #0a0a18", margin: "0 2px", whiteSpace: "nowrap", animation: "keycapGlow 2s ease-in-out infinite" };
 
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#05050a", overflow: "hidden", margin: 0, padding: 0,
-      fontFamily: "'Press Start 2P', monospace", color: "#f4e8d0", userSelect: "none",
+      fontFamily: "'Micro 5', monospace", color: "#f4e8d0", userSelect: "none",
       
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Reading List | Saad Ibra</title>
@@ -845,7 +845,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         body { margin: 0; padding: 0; overflow: hidden; background: #05050a; }
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Micro+5&display=swap');
         @keyframes shelfPulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
         @keyframes lanternFlicker { 0%{opacity:0.8; transform: scale(0.95)} 100%{opacity:1; transform: scale(1.05)} }
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
@@ -930,7 +930,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
 
           <button onClick={onBackToVillage} style={{
             position: "absolute", top: 8, left: 8,
-            fontFamily: "'Press Start 2P', monospace", fontSize: 6,
+            fontFamily: "'Micro 5', monospace", fontSize: 6,
             background: "#1a2b1a", color: "#eef7f2", border: "2px solid #eef7f2",
             padding: "4px 8px", cursor: "pointer", borderRadius: 2, zIndex: 500,
             boxShadow: "0 2px 0 #060e08",
@@ -988,14 +988,14 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
                   </div>
                   {phase === "intro" && dialogueText.length >= currentLine.length && (
                     <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                      <button onClick={skipIntro} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 7, background: "#e04040", color: "#fff", border: "none", padding: "8px 14px", borderRadius: 2, cursor: "pointer", boxShadow: "0 3px 0 #a02020, inset 0 1px 0 rgba(255,255,255,0.2)", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
+                      <button onClick={skipIntro} style={{ fontFamily: "'Micro 5', monospace", fontSize: 7, background: "#e04040", color: "#fff", border: "none", padding: "8px 14px", borderRadius: 2, cursor: "pointer", boxShadow: "0 3px 0 #a02020, inset 0 1px 0 rgba(255,255,255,0.2)", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
                         <span style={{ fontSize: 5, color: "#ffbaba", marginRight: 8, background: "rgba(0,0,0,0.2)", padding: "2px 4px", borderRadius: 2 }}>SPACE</span>
                         GOT IT
                       </button>
                     </div>
                   )}
                   {phase === "touring" && (
-                    <button onClick={endTour} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "transparent", color: "#888", border: "none", padding: "6px 0 0", cursor: "pointer", textDecoration: "underline", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
+                    <button onClick={endTour} style={{ fontFamily: "'Micro 5', monospace", fontSize: 6, background: "transparent", color: "#888", border: "none", padding: "6px 0 0", cursor: "pointer", textDecoration: "underline", imageRendering: "pixelated", display: "flex", alignItems: "center" }}>
                       <span style={{ fontSize: 4, color: "#666", marginRight: 4, border: "1px solid #666", padding: "1px 2px", borderRadius: 2 }}>ESC</span>
                       skip tour &gt;
                     </button>
@@ -1018,7 +1018,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <div style={{ fontSize: 6, color: "#fff", opacity: 0.8, background: "rgba(0,0,0,0.3)", padding: "2px 6px", borderRadius: 2 }}>{modalShelf.count} BOOK{modalShelf.count === 1 ? "" : "S"}</div>
-                    <button onClick={() => setOpenShelf(null)} style={{ fontFamily: "'Press Start 2P', monospace", fontSize: 6, background: "#d04040", color: "#fff", border: "2px solid #f4e8d0", padding: "2px 4px", borderRadius: 2, cursor: "pointer", boxShadow: "0 2px 0 #802020", imageRendering: "pixelated", display: "flex", alignItems: "center", justifyContent: "center" }} aria-label="Close">X</button>
+                    <button onClick={() => setOpenShelf(null)} style={{ fontFamily: "'Micro 5', monospace", fontSize: 6, background: "#d04040", color: "#fff", border: "2px solid #f4e8d0", padding: "2px 4px", borderRadius: 2, cursor: "pointer", boxShadow: "0 2px 0 #802020", imageRendering: "pixelated", display: "flex", alignItems: "center", justifyContent: "center" }} aria-label="Close">X</button>
                   </div>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4, padding: 8 }}>
