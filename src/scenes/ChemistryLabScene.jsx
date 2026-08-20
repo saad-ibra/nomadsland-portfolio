@@ -131,14 +131,14 @@ function canLayoutWalk(layout, col, row) {
 //  CHALKBOARD  — interactable; subtle glow when player is near
 //  Link is chalk text — no separate button
 // ============================================================
-function Chalkboard({ stats, isNear, chalkCol, onClick }) {
+function Chalkboard({ stats, isNear, chalkCol }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
   const boardW = 4 * TILE;
   const left   = chalkCol * TILE - boardW / 2 + TILE / 2;
   return (
     <ErrorBoundary>
-    <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
+    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
       position: "absolute",
       left, top: TILE - 12,
       width: boardW, height: 58,
@@ -305,7 +305,7 @@ function ChalkboardModal({ commitStats, onClose }) {
 // ============================================================
 //  REPO TERMINAL  — one per project, colour-coded per type
 // ============================================================
-function RepoTerminal({ station, isNear, onClick }) {
+function RepoTerminal({ station, isNear }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
   const isPriv  = station.isPrivate;
@@ -314,7 +314,7 @@ function RepoTerminal({ station, isNear, onClick }) {
   const truncated = station.label.length > 6 ? station.label.slice(0, 5) + "…" : station.label;
 
   return (
-    <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
+    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)} style={{
       position: "absolute",
       left: station.col * TILE + 3,
       top: station.row * TILE,
@@ -730,7 +730,6 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
               stats={stats}
               isNear={nearStation === "chalkboard"}
               chalkCol={layout.chalkCol}
-              onClick={() => { if (phase === "free") setOpenStation("chalkboard"); }}
             />
 
             {/* Individual repo terminals */}
@@ -741,7 +740,6 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
                   key={s.id} 
                   station={s} 
                   isNear={nearStation === s.id} 
-                  onClick={() => { if (phase === "free") setOpenStation(s.id); }} 
                 />
               ))
             }
