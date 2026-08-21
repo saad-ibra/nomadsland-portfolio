@@ -1,0 +1,174 @@
+[
+  {
+    "id": "all",
+    "label": "All",
+    "type": "normal",
+    "count": 11,
+    "books": [
+      {
+        "title": "Journey into the Past",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Untouchables: Who were They and Why They became Untouchables?",
+        "author": "B.R. Ambedkar",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1421086983l/12461945.jpg",
+        "link": "https://www.goodreads.com/review/show/8705217196?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "A Fine Balance",
+        "author": "Rohinton Mistry",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1551173390l/5211._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8473709710?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Gift of Therapy: An Open Letter to a New Generation of Therapists and Their Patients",
+        "author": "Irvin D. Yalom",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1581004586l/21025._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8705210201?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "On Becoming a Person: A Therapist's View of Psychotherapy",
+        "author": "Carl R. Rogers",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1348329148l/174879.jpg",
+        "link": "https://www.goodreads.com/review/show/8705209716?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Heart Lamp: Selected Stories",
+        "author": "Banu Mushtaq",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1787203554l/205544315._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8473739772?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Sense of an Ending",
+        "author": "Julian Barnes",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
+        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Stranger",
+        "author": "Albert Camus",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1738704267l/49552._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8471355822?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Ummath: A Novel of Community and Conflict",
+        "author": "Sharmila Seyyid",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1533150396l/41023014._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8403509268?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Schopenhauer Cure",
+        "author": "Irvin D. Yalom",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1410129804l/19508.jpg",
+        "link": "https://www.goodreads.com/review/show/8342492650?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Tartar Steppe",
+        "author": "Dino Buzzati",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327904364l/83017.jpg",
+        "link": "https://www.goodreads.com/review/show/8342475987?utm_medium=api&utm_source=rss"
+      }
+    ]
+  },
+  {
+    "id": "want-to-read",
+    "label": "Want to Read",
+    "type": "psychic",
+    "count": 2,
+    "books": [
+      {
+        "title": "The Gift of Therapy: An Open Letter to a New Generation of Therapists and Their Patients",
+        "author": "Irvin D. Yalom",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1581004586l/21025._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8705210201?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "On Becoming a Person: A Therapist's View of Psychotherapy",
+        "author": "Carl R. Rogers",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1348329148l/174879.jpg",
+        "link": "https://www.goodreads.com/review/show/8705209716?utm_medium=api&utm_source=rss"
+      }
+    ]
+  },
+  {
+    "id": "currently-reading",
+    "label": "Currently Reading",
+    "type": "fire",
+    "count": 1,
+    "books": [
+      {
+        "title": "The Untouchables: Who were They and Why They became Untouchables?",
+        "author": "B.R. Ambedkar",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1421086983l/12461945.jpg",
+        "link": "https://www.goodreads.com/review/show/8705217196?utm_medium=api&utm_source=rss"
+      }
+    ]
+  },
+  {
+    "id": "read",
+    "label": "Read",
+    "type": "grass",
+    "count": 5,
+    "books": [
+      {
+        "title": "Journey into the Past",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Stranger",
+        "author": "Albert Camus",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1738704267l/49552._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8471355822?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Ummath: A Novel of Community and Conflict",
+        "author": "Sharmila Seyyid",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1533150396l/41023014._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8403509268?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Schopenhauer Cure",
+        "author": "Irvin D. Yalom",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1410129804l/19508.jpg",
+        "link": "https://www.goodreads.com/review/show/8342492650?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Tartar Steppe",
+        "author": "Dino Buzzati",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327904364l/83017.jpg",
+        "link": "https://www.goodreads.com/review/show/8342475987?utm_medium=api&utm_source=rss"
+      }
+    ]
+  },
+  {
+    "id": "did-not-finish",
+    "label": "Did Not Finish",
+    "type": "poison",
+    "count": 3,
+    "books": [
+      {
+        "title": "A Fine Balance",
+        "author": "Rohinton Mistry",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1551173390l/5211._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8473709710?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Heart Lamp: Selected Stories",
+        "author": "Banu Mushtaq",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1787203554l/205544315._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8473739772?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Sense of an Ending",
+        "author": "Julian Barnes",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
+        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
+      }
+    ]
+  }
+]
