@@ -68,34 +68,39 @@ export function TapMarker({ tapTarget, TILE }) {
       width: TILE,
       height: TILE,
       pointerEvents: 'none',
-      zIndex: 5000,
+      zIndex: tapTarget.row * 10 + 4, // Above ground/docks but behind player/trees
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       mixBlendMode: 'difference'
     }}>
       <style>{`
-        @keyframes tapMarkerScale {
-          0% { transform: scale(1.2); }
-          50% { transform: scale(0.8); }
-          100% { transform: scale(1.2); }
+        @keyframes tapMarkerIsoScale {
+          0% { transform: scale(1.1); }
+          50% { transform: scale(0.85); }
+          100% { transform: scale(1.1); }
         }
       `}</style>
       <div style={{
-        position: 'relative', width: 12, height: 12,
-        animation: 'tapMarkerScale 0.8s infinite ease-in-out',
+        position: 'relative', width: 16, height: 16,
+        animation: 'tapMarkerIsoScale 1s infinite ease-in-out',
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        <svg width="12" height="12" viewBox="0 0 12 12" style={{ imageRendering: "pixelated" }}>
+        {/* Isometric 16x8 hollow circle */}
+        <svg width="16" height="8" viewBox="0 0 16 8" style={{ imageRendering: "pixelated" }}>
           <path fill="#fff" d="
-            M4,0 h4 v2 h-4 z
-            M2,2 h2 v2 h-2 z
-            M8,2 h2 v2 h-2 z
-            M0,4 h2 v4 h-2 z
-            M10,4 h2 v4 h-2 z
-            M2,8 h2 v2 h-2 z
-            M8,8 h2 v2 h-2 z
-            M4,10 h4 v2 h-4 z
+            M6,0 h4 v1 h-4 z
+            M3,1 h3 v1 h-3 z
+            M10,1 h3 v1 h-3 z
+            M1,2 h2 v1 h-2 z
+            M13,2 h2 v1 h-2 z
+            M0,3 h1 v2 h-1 z
+            M15,3 h1 v2 h-1 z
+            M1,5 h2 v1 h-2 z
+            M13,5 h2 v1 h-2 z
+            M3,6 h3 v1 h-3 z
+            M10,6 h3 v1 h-3 z
+            M6,7 h4 v1 h-4 z
           " />
         </svg>
       </div>
