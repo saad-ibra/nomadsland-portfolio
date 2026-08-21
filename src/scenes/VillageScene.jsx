@@ -772,7 +772,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
   useEffect(() => {
     const tile = MAP[pos.row]?.[pos.col];
     if (tile === 4 || tile === 10 || tile === 11) { // Water, Bridge, Dock
-      setPos({ col: 27, row: 27 }); // Place them right outside the dock
+      setPos({ col: 29, row: 27 }); // Place them right outside the dock
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1671,7 +1671,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
                             setBoatPos({ col: 27.5, row: 28 });
                           }
                           if (shop.id === "dock") {
-                            setPos({ col: 27, row: 27 });
+                            setPos({ col: 29, row: 27 });
                           } else if (shop.id === "musicroom") {
                             // Place player at the entrance of the bridge on the left
                             setPos({ col: 13, row: 8 });
