@@ -1407,7 +1407,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
           width: TILE + 1, height: TILE + 1, background: bg,
-          zIndex: tile === 10 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : undefined,
+          zIndex: tile === 10 || tile === 11 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : undefined,
         }}>
           {content}
         </div>
