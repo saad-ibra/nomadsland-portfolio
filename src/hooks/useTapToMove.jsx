@@ -68,7 +68,7 @@ export function TapMarker({ tapTarget, TILE }) {
       width: TILE,
       height: TILE,
       pointerEvents: 'none',
-      zIndex: tapTarget.row * 10 + 4, // Above ground/docks but behind player/trees
+      zIndex: tapTarget.row * 10 + 4,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -80,10 +80,14 @@ export function TapMarker({ tapTarget, TILE }) {
           50% { transform: scale(0.85); }
           100% { transform: scale(1.1); }
         }
+        @keyframes tapGlow {
+          0%, 100% { filter: drop-shadow(0 0 3px rgba(255,255,255,0.9)) drop-shadow(0 0 6px rgba(255,255,255,0.5)); }
+          50% { filter: drop-shadow(0 0 5px rgba(255,255,255,1)) drop-shadow(0 0 10px rgba(255,255,255,0.7)); }
+        }
       `}</style>
       <div style={{
         position: 'relative', width: 16, height: 16,
-        animation: 'tapMarkerIsoScale 1s infinite ease-in-out',
+        animation: 'tapMarkerIsoScale 1s infinite ease-in-out, tapGlow 1s infinite ease-in-out',
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
         {/* Isometric 16x8 hollow circle */}

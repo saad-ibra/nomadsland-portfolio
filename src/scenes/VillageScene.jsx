@@ -1407,7 +1407,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
           width: TILE + 1, height: TILE + 1, background: bg,
-          zIndex: (tile === 4 ? r * 10 - 10 : (tile === 11 ? r * 10 + 0 : (tile === 10 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : r * 10 + 2))),
+          zIndex: tile === 4 ? -2 : tile === 10 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : tile === 11 ? r * 10 + 3 : undefined,
         }}>
           {content}
         </div>
@@ -1415,21 +1415,20 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     }
   }
 
-  const bc = isSailing ? pos.col : boatPos.col;
-  const br = isSailing ? pos.row : boatPos.row;
-  let nearStructure = false;
-  for (let dr = -2; dr <= 2; dr++) {
-    for (let dc = -2; dc <= 2; dc++) {
-      const tr = Math.floor(br) + dr;
-      const tc = Math.floor(bc) + dc;
-      if (MAP[tr]?.[tc] === 10 || MAP[tr]?.[tc] === 11) {
-        nearStructure = true;
-      }
+  // Determine if boat is near a bridge — if so, drop it behind land tiles
+  const bRow = isSailing ? pos.row : boatPos.row;
+  const bCol = isSailing ? pos.col : boatPos.col;
+  let nearBridge = false;
+  for (let dr = -2; dr <= 2 && !nearBridge; dr++) {
+    for (let dc = -2; dc <= 2 && !nearBridge; dc++) {
+      const tr = Math.floor(bRow) + dr;
+      const tc = Math.floor(bCol) + dc;
+      if (MAP[tr]?.[tc] === 10) nearBridge = true;
     }
   }
-  const boatHullZ = Math.floor(br) * 10 + (nearStructure ? 1 : 8);
-  const boatSailZ = Math.floor(br) * 10 + (nearStructure ? 0 : 4);
-  const playerZ = isSailing ? Math.floor(pos.row) * 10 + (nearStructure ? -1 : 5) : Math.floor(pos.row) * 10 + 5;
+  const boatHullZ = nearBridge ? -1 : Math.floor(bRow) * 10 + 8;
+  const boatSailZ = nearBridge ? -1 : Math.floor(bRow) * 10 + 2;
+
   return (
     <div ref={containerRef} style={{
       position: "fixed", inset: 0,
@@ -1531,7 +1530,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
               transition: (isTransitioning || isSailing) ? "none" : "left 0.14s linear, top 0.14s linear", 
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
-              zIndex: playerZ,
+              zIndex: pos.row * 10 + 5,
               animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
               animationDelay: isSailing ? `-${(sailStartTime - mountTime) % 4000}ms` : "0ms",
             }}>
@@ -1564,7 +1563,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
               top: (isSailing ? pos.row : boatPos.row) * TILE,
               width: TILE * 2, height: TILE * 1.5,
               animation: "floatBoat 4s ease-in-out infinite",
-              zIndex: boatHullZ, // Sort correctly based on nearStructure
+              zIndex: boatHullZ,
               pointerEvents: "auto", cursor: "pointer",
             }} onClick={(e) => { 
               e.stopPropagation();
@@ -1606,7 +1605,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
               top: (isSailing ? pos.row : boatPos.row) * TILE,
               width: TILE * 2, height: TILE * 1.5,
               animation: "floatBoat 4s ease-in-out infinite",
-              zIndex: (isSailing ? pos.row : boatPos.row) * 10 + 2, // Sort behind player on boat
+              zIndex: boatSailZ,
               pointerEvents: "none",
             }}>
               <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
