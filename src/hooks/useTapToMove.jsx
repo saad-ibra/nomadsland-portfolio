@@ -68,10 +68,11 @@ export function TapMarker({ tapTarget, TILE }) {
       width: TILE,
       height: TILE,
       pointerEvents: 'none',
-      zIndex: 99,
+      zIndex: 5000,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      mixBlendMode: 'difference'
     }}>
       <style>{`
         @keyframes tapMarkerScale {
@@ -83,20 +84,20 @@ export function TapMarker({ tapTarget, TILE }) {
       <div style={{
         position: 'relative', width: 12, height: 12,
         animation: 'tapMarkerScale 0.8s infinite ease-in-out',
-        imageRendering: 'pixelated'
+        display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        {/* Top-Left */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
-        <div style={{ position: 'absolute', top: 0, left: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
-        {/* Top-Right */}
-        <div style={{ position: 'absolute', top: 0, right: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
-        <div style={{ position: 'absolute', top: 0, right: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
-        {/* Bottom-Left */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
-        <div style={{ position: 'absolute', bottom: 0, left: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
-        {/* Bottom-Right */}
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: 4, height: 2, background: 'rgba(255,255,255,0.9)' }} />
-        <div style={{ position: 'absolute', bottom: 0, right: 0, width: 2, height: 4, background: 'rgba(255,255,255,0.9)' }} />
+        <svg width="12" height="12" viewBox="0 0 12 12" style={{ imageRendering: "pixelated" }}>
+          <path fill="#fff" d="
+            M4,0 h4 v2 h-4 z
+            M2,2 h2 v2 h-2 z
+            M8,2 h2 v2 h-2 z
+            M0,4 h2 v4 h-2 z
+            M10,4 h2 v4 h-2 z
+            M2,8 h2 v2 h-2 z
+            M8,8 h2 v2 h-2 z
+            M4,10 h4 v2 h-4 z
+          " />
+        </svg>
       </div>
     </div>
   );
