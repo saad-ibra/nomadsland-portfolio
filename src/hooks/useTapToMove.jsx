@@ -74,15 +74,15 @@ export function TapMarker({ tapTarget, TILE }) {
       justifyContent: 'center',
     }}>
       <style>{`
-        @keyframes tapMarkerRetroBlink {
-          0%, 49% { opacity: 1; transform: scale(1); }
-          50%, 99% { opacity: 0.2; transform: scale(0.9); }
-          100% { opacity: 1; transform: scale(1); }
+        @keyframes tapMarkerScale {
+          0% { transform: scale(1.2); }
+          50% { transform: scale(0.8); }
+          100% { transform: scale(1.2); }
         }
       `}</style>
       <div style={{
         position: 'relative', width: 12, height: 12,
-        animation: 'tapMarkerRetroBlink 0.6s infinite step-end',
+        animation: 'tapMarkerScale 0.8s infinite ease-in-out',
         imageRendering: 'pixelated'
       }}>
         {/* Top-Left */}
