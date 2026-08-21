@@ -37,7 +37,7 @@ const layout = [
   "~~T.....p...HHHHHT~~~~O...HHHHH..O~~~~",
   "~~T.....ppppppp...D~~~O...HHHHH...D~~~",
   "~~T.....p........T~~~~O...HHHHH..O~~~~",
-  "~~T.....pppppppppBBBBBppppppp..f.O~~~~",
+  "~~T.....ppppppppppBBBBppppppp..f.O~~~~",
   "~~T.....p.....T..T~~~~O.....p....O~~~~",
   "~~TTTTTTpTTTTTT..T~~~~O.....p....O~~~~",
   "~~CCCCCCSCCCCCC..T~~~~O.....p....O~~~~",
