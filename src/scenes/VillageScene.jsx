@@ -1407,7 +1407,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         <div key={`${r}-${c}`} style={{
           position: "absolute", left: c * TILE, top: r * TILE,
           width: TILE + 1, height: TILE + 1, background: bg,
-          zIndex: tile === 4 ? -2 : tile === 10 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : tile === 11 ? r * 10 + 3 : undefined,
+          zIndex: tile === 4 ? -10 : tile === 11 ? -5 : tile === 10 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : undefined,
         }}>
           {content}
         </div>
@@ -1415,19 +1415,19 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     }
   }
 
-  // Determine if boat is near a bridge — if so, drop it behind land tiles
+  // Determine if boat is near a bridge or dock — if so, drop it behind land tiles but above dock
   const bRow = isSailing ? pos.row : boatPos.row;
   const bCol = isSailing ? pos.col : boatPos.col;
-  let nearBridge = false;
-  for (let dr = -2; dr <= 2 && !nearBridge; dr++) {
-    for (let dc = -2; dc <= 2 && !nearBridge; dc++) {
+  let nearStructure = false;
+  for (let dr = -2; dr <= 2 && !nearStructure; dr++) {
+    for (let dc = -2; dc <= 2 && !nearStructure; dc++) {
       const tr = Math.floor(bRow) + dr;
       const tc = Math.floor(bCol) + dc;
-      if (MAP[tr]?.[tc] === 10) nearBridge = true;
+      if (MAP[tr]?.[tc] === 10 || MAP[tr]?.[tc] === 11) nearStructure = true;
     }
   }
-  const boatHullZ = nearBridge ? -1 : Math.floor(bRow) * 10 + 8;
-  const boatSailZ = nearBridge ? -1 : Math.floor(bRow) * 10 + 2;
+  const boatHullZ = nearStructure ? -3 : Math.floor(bRow) * 10 + 8;
+  const boatSailZ = nearStructure ? -2 : Math.floor(bRow) * 10 + 4;
 
   return (
     <div ref={containerRef} style={{
