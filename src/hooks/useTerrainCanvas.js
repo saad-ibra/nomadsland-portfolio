@@ -65,7 +65,10 @@ export function useTerrainCanvas() {
           bg = PALETTE.grass[0]; // house base
         } else {
           // tiles 0, 2, 5, 6, 7 all get grass base on land layer
-          bg = PALETTE.grass[h % PALETTE.grass.length];
+          const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 28, 2));
+          const dryness = Math.max(0, Math.min(1, 1 - (distToLab - 2) / 7));
+          const isDry = (h % 100) / 100 < dryness;
+          bg = isDry ? PALETTE.dryGrass[h % PALETTE.dryGrass.length] : PALETTE.grass[h % PALETTE.grass.length];
         }
 
         // Fill tile background
@@ -74,9 +77,13 @@ export function useTerrainCanvas() {
 
         // ── Per-tile details ──
         if (tile === 0 || tile === 6) {
-          if (h % 3 === 0) { ctx.fillStyle = "#50a840"; ctx.fillRect(x + (h % 14) + 4, y + (h % 10) + 6, 2, 4); }
-          if (h % 5 === 0) { ctx.fillStyle = "#48a038"; ctx.fillRect(x + (h % 8) + 16, y + (h % 12) + 2, 2, 3); }
-          if (tile === 6) {
+          const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 28, 2));
+          const dryness = Math.max(0, Math.min(1, 1 - (distToLab - 2) / 7));
+          const isDry = (h % 100) / 100 < dryness;
+          
+          if (h % 3 === 0) { ctx.fillStyle = isDry ? "#8a814c" : "#50a840"; ctx.fillRect(x + (h % 14) + 4, y + (h % 10) + 6, 2, 4); }
+          if (h % 5 === 0) { ctx.fillStyle = isDry ? "#7a713b" : "#48a038"; ctx.fillRect(x + (h % 8) + 16, y + (h % 12) + 2, 2, 3); }
+          if (tile === 6 && !isDry) {
             ctx.fillStyle = "#f878a0"; ctx.fillRect(x + 6, y + 6, 4, 4);
             ctx.fillStyle = "#f0c040"; ctx.fillRect(x + 8, y + 8, 2, 2);
             ctx.fillStyle = "#f0c040"; ctx.fillRect(x + 20, y + 18, 4, 4);

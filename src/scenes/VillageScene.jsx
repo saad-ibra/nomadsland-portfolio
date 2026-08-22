@@ -1096,7 +1096,9 @@ export default function VillageScene() {
       let bg = PALETTE.grass[h % PALETTE.grass.length]; // default grass base
       let content = null;
 
-      const isDry = Math.abs(r - 17) <= 6 && Math.abs(c - 28) <= 6;
+      const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 28, 2));
+      const dryness = Math.max(0, Math.min(1, 1 - (distToLab - 2) / 7));
+      const isDry = (h % 100) / 100 < dryness;
 
       if (tile === 0 || tile === 6 || tile === 1 || tile === 3 || tile === 4 || tile === 8 || tile === 9 || tile === 11) {
         // Ground tiles are painted on the pre-baked <canvas> — skip DOM rendering
@@ -1397,8 +1399,9 @@ export default function VillageScene() {
       if (MAP[tr]?.[tc] === 10 || MAP[tr]?.[tc] === 11) nearStructure = true;
     }
   }
-  const boatHullZ = nearStructure ? -3 : Math.floor(bRow) * 10 + 8;
-  const boatSailZ = nearStructure ? -2 : Math.floor(bRow) * 10 + 4;
+  const boatSailZ = nearStructure ? -3 : Math.floor(bRow) * 10 + 4;
+  const playerZ   = (isSailing && nearStructure) ? -2 : pos.row * 10 + 5;
+  const boatHullZ = nearStructure ? -1 : Math.floor(bRow) * 10 + 8;
 
   return (
     <div ref={containerRef} style={{
@@ -1502,7 +1505,7 @@ export default function VillageScene() {
               transition: (isTransitioning || isSailing) ? "none" : "left 0.14s linear, top 0.14s linear", 
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
-              zIndex: pos.row * 10 + 5,
+              zIndex: playerZ,
               animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
               animationDelay: isSailing ? `-${(sailStartTime - mountTime) % 4000}ms` : "0ms",
             }}>

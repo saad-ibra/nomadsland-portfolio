@@ -114,6 +114,7 @@ export const START_POS = { col: 8, row: 27 };
 
 export const PALETTE = {
   grass:   ["#68c058", "#60b850", "#70c860"],
+  dryGrass:["#a89f68", "#9a915b", "#b0a875"],
   path:    ["#e8c880", "#e0c078"],
   tree:    ["#307840", "#286838", "#388848"],
   flowers: ["#f8d8e8", "#f0e060"],
