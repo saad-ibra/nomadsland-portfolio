@@ -11,6 +11,7 @@ import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
 import { playWoodStep } from "../engine/sfx";
+import { useGame } from '../context/GameContext.jsx';
 
 const MAP_COLS = 24;
 const MAP_ROWS = 18;
@@ -29,15 +30,14 @@ const DIALOGUE_LINES = [
   "The studio. Not much to mess with yet, but the sound system works. Head back downstairs whenever you want.",
 ];
 
-function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
+function MusicRoomScene() {
+  const { speedMultiplier, isLandscape, isTransitioning, changeScene } = useGame();
   const [scale, setScale] = useState(1);
   const [internalW, setInternalW] = useState(384);
   const [internalH, setInternalH] = useState(288);
   const [phase, setPhase] = useState("intro");
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const containerRef = useRef(null);
-
-  useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -83,7 +83,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
     onMove: (c, r) => {
       // Stairs Down (top left corner)
       if (c >= 1 && c <= 2 && r === 1) {
-        onBackToVillage();
+        changeScene('village');
         return true;
       }
       playWoodStep();
@@ -149,7 +149,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
               </div>
             </div>
             
-            <button onClick={onBackToVillage} style={{
+            <button onClick={() => changeScene('village')} style={{
               position: "absolute", top: 8, left: 8, fontFamily: "'Micro 5', monospace", fontSize: 12,
               background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto",
             }}>
@@ -175,10 +175,7 @@ function MusicRoomScene({ isLandscape, onBackToVillage, onGoToNomadshome, trigge
           </div>
           </div>
       </div>
-      <ControlBar
-        musicPlaying={musicPlaying} musicMuted={musicMuted} musicVolume={musicVolume} speedMultiplier={speedMultiplier}
-        onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)} onChangeVolume={setMusicVolume} onChangeSpeed={setSpeedMultiplier}
-      />
+      <ControlBar />
     </div>
   );
 }

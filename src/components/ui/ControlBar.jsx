@@ -1,5 +1,6 @@
 import React, { useEffect, useState, memo } from "react";
 import { toggleSfxMuted, getSfxMuted } from "../../engine/sfx";
+import { useGame } from "../../context/GameContext.jsx";
 
 const simulateKey = (key, type) => {
   const e = new KeyboardEvent(type, {
@@ -103,15 +104,8 @@ const PillBtn = ({ label, onClick, active }) => (
   </div>
 );
 
-function ControlBarInner({
-  musicPlaying,
-  musicMuted,
-  musicVolume,
-  speedMultiplier,
-  onTogglePlay,
-  onChangeVolume,
-  onChangeSpeed
-}) {
+function ControlBarInner() {
+  const { speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted } = useGame();
   const [sfxMuted, setSfxMuted] = useState(() => getSfxMuted());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [isDesktopLandscape, setIsDesktopLandscape] = useState(window.innerWidth > window.innerHeight && window.innerWidth >= 1024);
@@ -210,7 +204,7 @@ function ControlBarInner({
             label={musicMuted || !musicPlaying ? "AUDIO:OFF" : "AUDIO:ON"} 
             onClick={() => {
               const audioWasOff = musicMuted || !musicPlaying;
-              onTogglePlay();
+              musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true);
               if (audioWasOff && sfxMuted) {
                  setSfxMuted(toggleSfxMuted());
               } else if (!audioWasOff && !sfxMuted) {
@@ -221,7 +215,7 @@ function ControlBarInner({
           />
           <PillBtn 
             label={`SPD:${speedMultiplier}X`} 
-            onClick={() => onChangeSpeed(speedMultiplier === 1 ? 1.5 : speedMultiplier === 1.5 ? 2 : 1)}
+            onClick={() => setSpeedMultiplier(speedMultiplier === 1 ? 1.5 : speedMultiplier === 1.5 ? 2 : 1)}
             active={speedMultiplier > 1}
           />
         </div>

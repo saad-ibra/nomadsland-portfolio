@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useForm, ValidationError } from '@formspree/react';
+import { useGame } from '../context/GameContext.jsx';
 import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import SaadSprite from "../components/sprites/SaadSprite";
@@ -198,7 +199,17 @@ const StaticWorld = memo(() => (
   </>
 ));
 
-export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
+export default function NomadshomeScene() {
+  const {
+    isLandscape,
+    changeScene,
+    isTransitioning,
+    speedMultiplier,
+    musicPlaying,
+    musicMuted,
+    musicVolume,
+  } = useGame();
+
   const [scale, setScale] = useState(1);
   const [internalW, setInternalW] = useState(256);
   const [internalH, setInternalH] = useState(192);
@@ -262,6 +273,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     window.addEventListener("keydown", handleScroll, { capture: true });
     return () => window.removeEventListener("keydown", handleScroll, { capture: true });
   }, [openResume]);
+
   useEffect(() => {
     const handleResize = () => {
       const isMobile = window.innerWidth < 768;
@@ -369,12 +381,6 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
 
-  const simulateKey = (keyName, type) => {
-    const e = new KeyboardEvent(type, { key: keyName, bubbles: true });
-    window.dispatchEvent(e);
-  };
-
-  
   const isWalkable = useCallback((targetC, targetR) => {
     if (targetR < 0 || targetR >= MAP_ROWS || targetC < 0 || targetC >= MAP_COLS) return false;
     const tile = MAP[targetR][targetC];
@@ -392,7 +398,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
     onMove: (nc, nr) => {
       playWoodStep();
       setNearPhone(nc >= 4 && nc <= 6 && nr >= 0 && nr <= 2);
-      if (MAP[nr]?.[nc] === 2) onBackToVillage();
+      if (MAP[nr]?.[nc] === 2) changeScene('village');
       return false;
     },
     onAction: () => {
@@ -485,7 +491,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
             <div style={{ position: "absolute", inset: 0, background: "#ff8a50", mixBlendMode: "multiply", opacity: 0.4, pointerEvents: "none", zIndex: 899 }} />
             <div style={{ position: "absolute", inset: 0, background: "#603080", mixBlendMode: "overlay", opacity: 0.3, pointerEvents: "none", zIndex: 900 }} />
           </div>
-          <button onClick={onBackToVillage} style={{ position: "absolute", top: 8, right: 8, fontFamily: "'Micro 5', monospace", fontSize: 12, background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto", zIndex: 500 }}><div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div></button>
+          <button onClick={() => changeScene('village')} style={{ position: "absolute", top: 8, right: 8, fontFamily: "'Micro 5', monospace", fontSize: 12, background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto", zIndex: 500 }}><div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div></button>
           {(phase === "intro" || phase === "talking") && (
             <DialogueBox lines={dynamicDialogue || INTRO_DIALOGUE} lineIndex={dialogueIndex} onAdvance={() => { playBlip(); setDialogueIndex(i => i + 1); }} onDismiss={() => { setPhase("free"); setDynamicDialogue(null); }} speaker={dynamicDialogue ? null : "SAAD IBRA"} theme="home" lastButtonLabel="GOT IT" />
           )}
@@ -691,11 +697,7 @@ export default function NomadshomeScene({ isLandscape, onBackToVillage, triggerT
         </div>
       </div>
 
-      <ControlBar
-        musicPlaying={musicPlaying} musicMuted={musicMuted} musicVolume={musicVolume} speedMultiplier={speedMultiplier}
-        onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)} onChangeVolume={setMusicVolume} onChangeSpeed={setSpeedMultiplier}
-        simulateKey={simulateKey}
-      />
+      <ControlBar />
     </div>
   );
 }

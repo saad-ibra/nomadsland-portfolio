@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
+import { useGame } from '../context/GameContext.jsx';
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { renderControlText } from '../utils/renderControls';
@@ -399,7 +400,17 @@ function ChemicalCart({ col, row }) {
 // ============================================================
 //  MAIN CHEMISTRY LAB COMPONENT
 // ============================================================
-export default function ChemistryLabScene({ isLandscape, onBackToVillage, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
+export default function ChemistryLabScene() {
+  const {
+    isLandscape,
+    changeScene,
+    isTransitioning,
+    speedMultiplier,
+    musicPlaying,
+    musicMuted,
+    musicVolume,
+  } = useGame();
+
   const [repos, setRepos]           = useState([]);
   const [stats, setStats]           = useState({ public: 0, private: 0 });
   const [reposLoaded, setReposLoaded] = useState(false);
@@ -422,10 +433,6 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
   const [scale,          setScale]          = useState(1);
   const [internalW,      setInternalW]      = useState(384);
   const [internalH,      setInternalH]      = useState(288);
-        
-  useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
-  useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
-  useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
 
   const musicRef    = useRef({ audioCtx: null, interval: null });
   const containerRef= useRef(null);
@@ -555,7 +562,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
   const {  pos, setPos, facing, stepping, setPath, tapTarget , triggerAction } = usePlayerMovement({
     initialPos: labLayout.startPos,
     canWalk: (c, r) => {
-      if (c === layoutRef.current.startPos.col && r === 1) { onBackToVillage(); return false; }
+      if (c === layoutRef.current.startPos.col && r === 1) { changeScene('village'); return false; }
       if (c === layoutRef.current.startPos.col + 2 && r === 3) return false;
       return canLayoutWalk(layoutRef.current, c, r);
     },
@@ -789,8 +796,8 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
             background: "repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.06) 2px,rgba(0,0,0,0.06) 4px)",
           }} />
 
-          {/* ← LIBRARY button */}
-          <button onClick={onBackToVillage} style={{
+          {/* ← VILLAGE button */}
+          <button onClick={() => changeScene('village')} style={{
             position: "absolute", top: 8, left: 8,
             fontFamily: "'Micro 5', monospace", fontSize: 12,
             background: "#111e2a", color: "#eef7f2", border: "2px solid #eef7f2",
@@ -976,16 +983,7 @@ export default function ChemistryLabScene({ isLandscape, onBackToVillage, trigge
 
       </div>
     </div>
-      <ControlBar 
-          
-          musicPlaying={musicPlaying}
-          musicMuted={musicMuted}
-          musicVolume={musicVolume}
-          speedMultiplier={speedMultiplier}
-          onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)}
-          onChangeVolume={setMusicVolume}
-          onChangeSpeed={setSpeedMultiplier}
-        />
+      <ControlBar />
     </div>
   );
 }

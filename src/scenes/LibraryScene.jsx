@@ -13,6 +13,7 @@ import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
 import { playWoodStep } from "../engine/sfx";
 import { MAP, MAP_COLS, MAP_ROWS, SHELF_LAYOUT, SHELF_TILES, DECOR_TILES, TOUR_MOVE_MS, TOUR_PAUSE_MS, TYPE_COLORS, BOOK_SPINE_PALETTES, START_POS, EXIT_DOOR_COL, EXIT_DOOR_ROW } from "../data/library";
+import { useGame } from '../context/GameContext.jsx';
 
 const getShelfIcon = (id, size=10) => {
   switch (id) {
@@ -439,15 +440,21 @@ const StaticWorld = memo(() => (
 // ============================================================
 //  MAIN COMPONENT
 // ============================================================
-export default function LibraryScene({ isLandscape, onBackToVillage , triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
+export default function LibraryScene() {
+  const {
+    speedMultiplier,
+    musicPlaying,
+    musicMuted,
+    musicVolume,
+    isLandscape,
+    isTransitioning,
+    changeScene,
+  } = useGame();
+
   const [nearShelf, setNearShelf] = useState(null);
   const [openShelf, setOpenShelf] = useState(null);
 
   const [phase, setPhase] = useState("intro");
-        
-  useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
-  useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
-  useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
 
   const [tourIndex, setTourIndex] = useState(-1);
   const [arrived, setArrived] = useState(true);
@@ -627,7 +634,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
     onMove: (nc, nr) => { 
       checkNear(nc, nr); 
       playWoodStep(); 
-      if (nc === EXIT_DOOR_COL && nr === EXIT_DOOR_ROW) onBackToVillage();
+      if (nc === EXIT_DOOR_COL && nr === EXIT_DOOR_ROW) changeScene('village');
       return false; 
     },
     onAction: () => {
@@ -928,7 +935,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
             }} />
           </div>
 
-          <button onClick={onBackToVillage} style={{
+          <button onClick={() => changeScene('village')} style={{
             position: "absolute", top: 8, left: 8,
             fontFamily: "'Micro 5', monospace", fontSize: 12,
             background: "#1a2b1a", color: "#eef7f2", border: "2px solid #eef7f2",
@@ -1032,15 +1039,7 @@ export default function LibraryScene({ isLandscape, onBackToVillage , triggerTra
 
       </div>
       {/* ── CONTROL BAR ── */}
-      <ControlBar
-        musicPlaying={musicPlaying}
-        musicMuted={musicMuted}
-        musicVolume={musicVolume}
-        speedMultiplier={speedMultiplier}
-        onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)}
-        onChangeVolume={setMusicVolume}
-        onChangeSpeed={setSpeedMultiplier}
-      />
+      <ControlBar />
     </div>
   );
 }

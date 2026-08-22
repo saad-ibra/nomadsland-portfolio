@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { getSharedAudioCtx } from '../engine/sfx.js';
+import { useGame } from '../context/GameContext.jsx';
 import { DoorOpen } from "lucide-react";
 import { TILE, MOVE_COOLDOWN } from '../engine/constants';
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
@@ -10,6 +11,7 @@ import { playWaterSlosh, playGrassStep, playDirtStep, playWoodStep, playTileStep
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import ControlBar from "../components/ui/ControlBar";
 import SaadSprite from "../components/sprites/SaadSprite";
+import { useTerrainCanvas } from "../hooks/useTerrainCanvas";
 import {
   MAP, MAP_COLS, MAP_ROWS, SHOPS, SHOP_TILES, START_POS,
   PALETTE,
@@ -595,10 +597,9 @@ function Building({ shop, isNear }) {
 // ============================================================
 //  MAIN VILLAGE SCENE
 // ============================================================
-export default function VillageScene({ isLandscape, previousScene, triggerTransition, isTransitioning,
-  onGoToLibrary, onGoToLab, onGoToNewsroom,
-  onGoToNomadshome, onGoToMusicRoom,
-  speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume  }) {
+export default function VillageScene() {
+  const { isLandscape, isTransitioning, triggerTransition, previousScene, changeScene,
+    speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume } = useGame();
   const [nearShop, setNearShop]   = useState(null);
   const [phase, setPhase]         = useState(previousScene ? "free" : "intro");
   const [scale, setScale] = useState(1);
@@ -636,8 +637,8 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
   }, [isSailing, boatPos]);
 
   const sceneCallbacks = {
-    library: onGoToLibrary, lab: onGoToLab, newsroom: onGoToNewsroom,
-    nomadshome: onGoToNomadshome, musicroom: onGoToMusicRoom,
+    library: () => changeScene('library'), lab: () => changeScene('lab'), newsroom: () => changeScene('newsroom'),
+    nomadshome: () => changeScene('nomadshome'), musicroom: () => changeScene('musicroom'),
   };
 
   const initialPos = (() => {
@@ -784,13 +785,12 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
   // Only triggers React re-render when the visible tile window changes
   const [tileWindow, setTileWindow] = useState({ sc: 0, ec: MAP_COLS, sr: 0, er: MAP_ROWS });
 
-  useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
-  useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
-  useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
+
 
   const musicRef     = useRef({ audioCtx: null, interval: null });
   const containerRef = useRef(null);
   const rafRef       = useRef();
+  const { waterCanvasRef, landCanvasRef } = useTerrainCanvas();
 
   // ---- Synth engine: Richer 16-bit RPG Overworld Theme ----
   const playStep = useCallback((idx, vol, muted, sailing) => {
@@ -1069,7 +1069,8 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
     return "none";
   };
 
-  // Render Virtualized Grid
+  // Render Virtualized Grid — ONLY trees (Y-sorted), bridges (dynamic z), NPC, and barricade
+  // Ground tiles (grass, path, water, cliffs, stairs, docks) are on the pre-baked <canvas>.
   const visibleTiles = [];
   for (let r = startRow; r < endRow; r++) {
     for (let c = startCol; c < endCol; c++) {
@@ -1079,30 +1080,17 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
       let bg = PALETTE.grass[h % PALETTE.grass.length]; // default grass base
       let content = null;
 
-      if (tile === 0 || tile === 6) { // Grass / Flowers
-        // Pixel grass detail — small hard-edged squares
-        content = (
-          <>
-            {h % 3 === 0 && <div style={{ position: "absolute", left: h % 14 + 4, top: h % 10 + 6, width: 2, height: 4, background: "#50a840" }} />}
-            {h % 5 === 0 && <div style={{ position: "absolute", left: h % 8 + 16, top: h % 12 + 2, width: 2, height: 3, background: "#48a038" }} />}
-            {tile === 6 && <>
-              <div style={{ position: "absolute", left: 6, top: 6, width: 4, height: 4, background: "#f878a0" }} />
-              <div style={{ position: "absolute", left: 8, top: 8, width: 2, height: 2, background: "#f0c040" }} />
-              <div style={{ position: "absolute", left: 20, top: 18, width: 4, height: 4, background: "#f0c040" }} />
-              <div style={{ position: "absolute", left: 22, top: 20, width: 2, height: 2, background: "#f878a0" }} />
-              <div style={{ position: "absolute", left: 12, top: 22, width: 3, height: 3, background: "#fff" }} />
-            </>}
-          </>
-        );
-      } else if (tile === 1) { // Path
-        bg = PALETTE.path[h % PALETTE.path.length];
-        // Pixel path edge — 1px solid border, no anti-aliasing
-        content = <div style={{ position: "absolute", inset: 0, borderBottom: "1px solid rgba(0,0,0,0.08)", borderRight: "1px solid rgba(0,0,0,0.06)" }} />;
+      const isDry = Math.abs(r - 17) <= 6 && Math.abs(c - 28) <= 6;
+
+      if (tile === 0 || tile === 6 || tile === 1 || tile === 3 || tile === 4 || tile === 8 || tile === 9 || tile === 11) {
+        // Ground tiles are painted on the pre-baked <canvas> — skip DOM rendering
       } else if (tile === 2) { // Tree
-        bg = PALETTE.grass[h % PALETTE.grass.length]; // base grass
-        
         // Render a detailed pixel-art Pokémon-style RPG tree
-        const SPECIES = [
+        const SPECIES = isDry ? [
+          ["#5c3a21", "#c28144", "#e8a864", "#8c562b"], // dry broadleaf
+          ["#4d311c", "#a86b32", "#cc8b4a", "#734522"], // dry oak
+          ["#3d2716", "#8f5726", "#b06e33", "#59361a"], // dry pine
+        ] : [
           ["#1a4d24", "#5db34a", "#a3e37e", "#2f7d3a"], // broadleaf
           ["#173d1f", "#4f9c3c", "#87c95f", "#26622c"], // oak
           ["#0f3322", "#2f7d4a", "#5cae74", "#1c5433"], // pine
@@ -1119,10 +1107,11 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         const flip = h % 2 === 0;
         const circleTags = circles.map(c => <circle key={c.cx+","+c.cy} cx={c.cx} cy={c.cy} r={c.r} />);
 
-        content = (
-          <div style={{
-            position: "absolute", left: -8, top: -22, width: TILE + 16, height: TILE + 24,
-            zIndex: r * 10 + 2, display: "flex", alignItems: "flex-end", justifyContent: "center"
+        visibleTiles.push(
+          <div key={`${r}-${c}`} style={{
+            position: "absolute", left: c * TILE - 8, top: r * TILE - 22, width: TILE + 16, height: TILE + 24,
+            zIndex: r * 10 + 2, display: "flex", alignItems: "flex-end", justifyContent: "center",
+            pointerEvents: "none",
           }}>
             <svg viewBox="0 0 56 66" width="56" height="66"
                  style={{ transform: flip ? "scaleX(-1)" : "none", overflow: "visible" }}>
@@ -1163,21 +1152,27 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
             </svg>
           </div>
         );
-      } else if (tile === 3) { // House Base
-        bg = PALETTE.grass[0]; // House rendered over this
-      } else if (tile === 4) { // Water
-        bg = PALETTE.water[h % PALETTE.water.length];
-        // Pixel wave highlights — hard rectangles, no border-radius
-        content = (
-          <>
-            {h % 3 === 0 && <div style={{ position: "absolute", left: h % 8 + 2, top: h % 10 + 6, width: 8, height: 2, background: "#4090c0" }} />}
-            {h % 4 === 0 && <div style={{ position: "absolute", left: h % 12 + 14, top: h % 8 + 16, width: 6, height: 2, background: "#3888b8" }} />}
-            {h % 7 === 0 && <div style={{ position: "absolute", left: h % 6 + 8, top: h % 14 + 2, width: 4, height: 1, background: "#5098c8" }} />}
-          </>
+      } else if (tile === 10) { // Bridge — stays as DOM for dynamic z-index (sailing vs walking)
+        visibleTiles.push(
+          <div key={`br-${r}-${c}`} style={{
+            position: "absolute", left: c * TILE, top: r * TILE,
+            width: TILE + 1, height: TILE + 1,
+            background: PALETTE.bridge[h % PALETTE.bridge.length],
+            zIndex: isSailing ? r * 10 + 9 : r * 10 + 3,
+          }}>
+            {[0, 8, 16, 24].map(sx => (
+              <div key={sx} style={{ position: "absolute", left: sx, top: 0, width: 1, height: TILE, background: "#5c3a18" }} />
+            ))}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
+          </div>
         );
-      } else if (tile === 5) { // Pine Tree — conical layered circles
-        bg = PALETTE.grass[h % PALETTE.grass.length];
-        const PINE_PALETTES = [
+      } else if (tile === 5) { // Pine Tree
+        const PINE_PALETTES = isDry ? [
+          ["#4a2c16", "#7d4a24", "#ad6a35", "#5c3619"],
+          ["#3d2311", "#663b1b", "#94582a", "#4d2c14"],
+          ["#5c341b", "#8f522a", "#c2733f", "#734120"],
+        ] : [
           ["#0d3a1f", "#1a5c2a", "#3a8a4a", "#0f4a22"],
           ["#0a3018", "#166628", "#2d7a3c", "#0c3a1a"],
           ["#0f3322", "#1e6830", "#40905a", "#134428"],
@@ -1192,10 +1187,12 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         const [pOutline, pBase, pHi, pSh] = PINE_PALETTES[h % PINE_PALETTES.length];
         const pFlip = h % 2 === 0;
         const pTags = pCircles.map(ci => <circle key={ci.cy} cx={ci.cx} cy={ci.cy} r={ci.r} />);
-        content = (
-          <div style={{
-            position: "absolute", left: -4, top: -24, width: TILE + 8, height: TILE + 26,
-            zIndex: r * 10 + 2, display: "flex", alignItems: "flex-end", justifyContent: "center"
+        visibleTiles.push(
+          <div key={`${r}-${c}`} style={{
+            position: "absolute", left: c * TILE - 4, top: r * TILE - 24,
+            width: TILE + 8, height: TILE + 26,
+            zIndex: r * 10 + 2, display: "flex", alignItems: "flex-end", justifyContent: "center",
+            pointerEvents: "none",
           }}>
             <svg viewBox="0 0 40 62" width="40" height="62"
                  style={{ transform: pFlip ? "scaleX(-1)" : "none", overflow: "visible" }}>
@@ -1218,9 +1215,12 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
             </svg>
           </div>
         );
-      } else if (tile === 7) { // Oak Tree — wide rounded circle clusters
-        bg = PALETTE.grass[h % PALETTE.grass.length];
-        const OAK_PALETTES = [
+      } else if (tile === 7) { // Oak Tree
+        const OAK_PALETTES = isDry ? [
+          ["#4d311c", "#a86b32", "#cc8b4a", "#734522"],
+          ["#3d2716", "#8f5726", "#b06e33", "#59361a"],
+          ["#5c3a21", "#c28144", "#e8a864", "#8c562b"],
+        ] : [
           ["#1a4d22", "#2d6a36", "#5aa060", "#1f5a28"],
           ["#174420", "#28603a", "#4a9050", "#1c5030"],
           ["#1a5028", "#38783e", "#60b068", "#245a30"],
@@ -1235,10 +1235,12 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
         const [oOutline, oBase, oHi, oSh] = OAK_PALETTES[h % OAK_PALETTES.length];
         const oFlip = h % 2 === 0;
         const oTags = oCircles.map(ci => <circle key={`${ci.cx},${ci.cy}`} cx={ci.cx} cy={ci.cy} r={ci.r} />);
-        content = (
-          <div style={{
-            position: "absolute", left: -8, top: -22, width: TILE + 16, height: TILE + 24,
-            zIndex: r * 10 + 2, display: "flex", alignItems: "flex-end", justifyContent: "center"
+        visibleTiles.push(
+          <div key={`${r}-${c}`} style={{
+            position: "absolute", left: c * TILE - 8, top: r * TILE - 22,
+            width: TILE + 16, height: TILE + 24,
+            zIndex: r * 10 + 2, display: "flex", alignItems: "flex-end", justifyContent: "center",
+            pointerEvents: "none",
           }}>
             <svg viewBox="0 0 48 62" width="48" height="62"
                  style={{ transform: oFlip ? "scaleX(-1)" : "none", overflow: "visible" }}>
@@ -1263,53 +1265,16 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
             </svg>
           </div>
         );
-      } else if (tile === 8) { // Cliff
-        bg = PALETTE.cliff[h % PALETTE.cliff.length];
-        // Pixel rock texture — hard-edged lines and cracks
-        content = (
-          <>
-            <div style={{ position: "absolute", left: 2, top: h % 8 + 2, width: 10, height: 2, background: "#4a3525" }} />
-            <div style={{ position: "absolute", right: 4, bottom: h % 6 + 4, width: 8, height: 2, background: "#4a3525" }} />
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "#6a5040" }} />
-            {h % 3 === 0 && <div style={{ position: "absolute", left: 10, top: 6, width: 1, height: 10, background: "#3a2a1a" }} />}
-            {h % 5 === 0 && <div style={{ position: "absolute", left: 20, top: 14, width: 1, height: 8, background: "#3a2a1a" }} />}
-          </>
-        );
-      } else if (tile === 9) { // Stairs
-        bg = PALETTE.stairs[0];
-        // Pixel stone steps — flat rectangles, no rounding
-        content = (
-          <>
-            {[2, 10, 18, 26].map(y => (
-              <div key={y} style={{
-                position: "absolute", left: 0, right: 0, top: y,
-                height: 6, background: PALETTE.stairs[1],
-                borderTop: "1px solid #a0a0a0", borderBottom: "1px solid #707070",
-              }} />
-            ))}
-          </>
-        );
-      } else if (tile === 10 || tile === 11) { // Bridge / Dock
-        bg = PALETTE.bridge[h % PALETTE.bridge.length];
-        // Pixel wooden planks — vertical slat lines
-        content = (
-          <>
-            {[0, 8, 16, 24].map(x => (
-              <div key={x} style={{ position: "absolute", left: x, top: 0, width: 1, height: TILE, background: "#5c3a18" }} />
-            ))}
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, background: "#5c3a18" }} />
-          </>
-        );
       }
 
       // Saad NPC
       if (r === 22 && c === 9) {
         const isNearNpc = Math.abs(9 - pos.col) <= 1 && Math.abs(22 - pos.row) <= 1;
-        content = (
-          <>
-            {content}
+        visibleTiles.push(
+          <div key="saad-npc" style={{
+            position: "absolute", left: 9 * TILE, top: 22 * TILE,
+            width: TILE, height: TILE, zIndex: 22 * 10 + 3, pointerEvents: "none",
+          }}>
             <div style={{
               position: "absolute", bottom: 4, left: 0,
               filter: isNearNpc && phase === "free" ? "drop-shadow(0 0 6px rgba(255,255,255,0.6))" : "none",
@@ -1317,7 +1282,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
             }}>
               <SaadSprite direction="down" />
             </div>
-          </>
+          </div>
         );
       }
 
@@ -1402,16 +1367,6 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
           </div>
         );
       }
-
-      visibleTiles.push(
-        <div key={`${r}-${c}`} style={{
-          position: "absolute", left: c * TILE, top: r * TILE,
-          width: TILE + 1, height: TILE + 1, background: bg,
-          zIndex: tile === 4 ? -10 : tile === 11 ? -5 : tile === 10 ? (isSailing ? r * 10 + 9 : r * 10 + 3) : undefined,
-        }}>
-          {content}
-        </div>
-      );
     }
   }
 
@@ -1471,8 +1426,9 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
             willChange: "transform",
             zIndex: 1
           }}>
-          <TapMarker tapTarget={tapTarget} TILE={TILE} />
-
+            <canvas ref={waterCanvasRef} style={{ position: "absolute", left: 0, top: 0, zIndex: -10, pointerEvents: "none" }} />
+            <canvas ref={landCanvasRef} style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }} />
+            <TapMarker tapTarget={tapTarget} TILE={TILE} />
             
             {visibleTiles}
 
@@ -1774,12 +1730,7 @@ export default function VillageScene({ isLandscape, previousScene, triggerTransi
       </div>
 
       </div>
-      <ControlBar
-        musicPlaying={musicPlaying} musicMuted={musicMuted}
-        musicVolume={musicVolume} speedMultiplier={speedMultiplier}
-        onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)}
-        onChangeVolume={setMusicVolume} onChangeSpeed={setSpeedMultiplier}
-      />
+      <ControlBar />
     </div>
   );
 }

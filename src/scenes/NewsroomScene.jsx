@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from "
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Briefcase, MessageCircle } from "lucide-react";
+import { useGame } from '../context/GameContext.jsx';
 
 import { TILE } from '../engine/constants';
 import { useTapToMove, TapMarker } from '../hooks/useTapToMove.jsx';
@@ -175,7 +176,17 @@ function PrintingPress({ col }) {
 // ============================================================
 //  MAIN NEWSROOM COMPONENT
 // ============================================================
-export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTransition, isTransitioning, speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume }) {
+export default function NewsroomScene() {
+  const {
+    speedMultiplier,
+    musicPlaying,
+    musicMuted,
+    musicVolume,
+    isLandscape,
+    isTransitioning,
+    changeScene,
+  } = useGame();
+
   const layout = useMemo(() => generateNewsroomLayout(BLOG_POSTS), []);
   const layoutRef = useRef(layout);
   useEffect(() => { layoutRef.current = layout; }, [layout]);
@@ -211,11 +222,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
   const [internalW, setInternalW] = useState(384);
   const [internalH, setInternalH] = useState(288);
 
-        
-  useEffect(() => { localStorage.setItem("musicMuted", JSON.stringify(musicMuted)); }, [musicMuted]);
-  useEffect(() => { localStorage.setItem("musicVolume", musicVolume.toString()); }, [musicVolume]);
-  useEffect(() => { localStorage.setItem("speedMultiplier", speedMultiplier.toString()); }, [speedMultiplier]);
-
   const musicRef     = useRef({ audioCtx: null, interval: null });
   const containerRef = useRef(null);
   const postScrollRef = useRef(null);
@@ -247,7 +253,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
   const {  pos, facing, stepping, setPath, tapTarget , triggerAction } = usePlayerMovement({
     initialPos: layout.startPos,
     canWalk: (c, r) => {
-      if (c === 5 && r === 1) { onBackToVillage(); return false; }
+      if (c === 5 && r === 1) { changeScene('village'); return false; }
       return canLayoutWalk(layoutRef.current, c, r);
     },
     speedMultiplier,
@@ -406,7 +412,6 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
     const onDown = (e) => {
       const k = e.key.toLowerCase();
       keysRef.current[k] = true;
-
       if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) {
         if (phase === "intro") {
           e.preventDefault();
@@ -564,7 +569,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
           }} />
 
           {/* ← VILLAGE */}
-          <button onClick={onBackToVillage} style={{
+          <button onClick={() => changeScene('village')} style={{
             position: "absolute", top: 8, left: 8,
             fontFamily: "'Micro 5', monospace", fontSize: 12,
             background: "#2a3036", color: "#eef7f2", border: "2px solid #eef7f2",
@@ -758,16 +763,7 @@ export default function NewsroomScene({ isLandscape, onBackToVillage, triggerTra
 
         </div>
       </div>
-      <ControlBar
-          
-          musicPlaying={musicPlaying}
-          musicMuted={musicMuted}
-          musicVolume={musicVolume}
-          speedMultiplier={speedMultiplier}
-          onTogglePlay={() => musicPlaying ? setMusicMuted(!musicMuted) : setMusicPlaying(true)}
-          onChangeVolume={setMusicVolume}
-          onChangeSpeed={setSpeedMultiplier}
-        />
+      <ControlBar />
     </div>
   );
 }
