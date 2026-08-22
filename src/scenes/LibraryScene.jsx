@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { renderControlText } from '../utils/renderControls';
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
+import { useViewport } from '../hooks/useViewport.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import ControlBar from "../components/ui/ControlBar";
@@ -458,9 +459,9 @@ export default function LibraryScene() {
 
   const [tourIndex, setTourIndex] = useState(-1);
   const [arrived, setArrived] = useState(true);
-  const [scale, setScale] = useState(1);
-  const [internalW, setInternalW] = useState(384);
-  const [internalH, setInternalH] = useState(288);
+  
+  const viewport = useViewport(isLandscape);
+  const { scale, internalW, internalH } = viewport;
   const musicRef = useRef({ audioCtx: null, interval: null });
 
   // Web Audio Synth melody player callback
@@ -652,25 +653,6 @@ export default function LibraryScene() {
   const handleWorldTap = useTapToMove(worldRef, pos, isWalkable, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
-  // ---- Responsive Scaling ----
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      const consoleWidth = isLandscape ? 320 : 0;
-      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-      const availableWidth = window.innerWidth - consoleWidth;
-      const availableHeight = window.innerHeight - consoleHeight;
-      const baseW = 256;
-      const baseH = 192;
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(availableWidth / newScale));
-      setInternalH(Math.floor(availableHeight / newScale));
-      setScale(newScale);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isLandscape]);
 
   // ---- Keyboard & Audio Resume ----
   useEffect(() => {

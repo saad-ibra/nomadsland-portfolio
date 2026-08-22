@@ -3,6 +3,8 @@ import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useForm, ValidationError } from '@formspree/react';
 import { useGame } from '../context/GameContext.jsx';
+import { useCameraLerp } from '../hooks/useCameraLerp.js';
+import { useViewport } from '../hooks/useViewport.js';
 import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import SaadSprite from "../components/sprites/SaadSprite";
@@ -10,7 +12,6 @@ import ControlBar from "../components/ui/ControlBar";
 import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
-import { useCameraLerp } from "../hooks/useCameraLerp";
 import { getSharedAudioCtx, playWoodStep, playBlip } from "../engine/sfx";
 import ExitDoor from "../components/sprites/ExitDoor";
 
@@ -210,9 +211,8 @@ export default function NomadshomeScene() {
     musicVolume,
   } = useGame();
 
-  const [scale, setScale] = useState(1);
-  const [internalW, setInternalW] = useState(256);
-  const [internalH, setInternalH] = useState(192);
+  const viewport = useViewport(isLandscape);
+  const { scale, internalW, internalH } = viewport;
   
   const [phase, setPhase] = useState(() => {
     if (sessionStorage.getItem("hasVisitedHome")) return "free";
@@ -274,24 +274,7 @@ export default function NomadshomeScene() {
     return () => window.removeEventListener("keydown", handleScroll, { capture: true });
   }, [openResume]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      const consoleWidth = isLandscape ? 320 : 0;
-      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-      const availableWidth = window.innerWidth - consoleWidth;
-      const availableHeight = window.innerHeight - consoleHeight;
-      const baseW = 256;
-      const baseH = 192;
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(availableWidth / newScale));
-      setInternalH(Math.floor(availableHeight / newScale));
-      setScale(newScale);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isLandscape]);
+
 
   useEffect(() => {
     if (containerRef.current) containerRef.current.focus();

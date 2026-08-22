@@ -6,6 +6,7 @@ import { ArrowLeft, Newspaper, FileText, Clock, Hash, X, ExternalLink, Phone, Br
 import { useGame } from '../context/GameContext.jsx';
 
 import { TILE } from '../engine/constants';
+import { useViewport } from '../hooks/useViewport.js';
 import { useTapToMove, TapMarker } from '../hooks/useTapToMove.jsx';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
 import { playTileStep } from '../engine/sfx';
@@ -218,9 +219,9 @@ export default function NewsroomScene() {
   const [nearObject, setNearObject] = useState(null); // ID of article
   const [openPost, setOpenPost]     = useState(null);
   const [phase, setPhase]           = useState("intro");
-  const [scale, setScale] = useState(1);
-  const [internalW, setInternalW] = useState(384);
-  const [internalH, setInternalH] = useState(288);
+  
+  const viewport = useViewport(isLandscape);
+  const { scale, internalW, internalH } = viewport;
 
   const musicRef     = useRef({ audioCtx: null, interval: null });
   const containerRef = useRef(null);
@@ -364,24 +365,7 @@ export default function NewsroomScene() {
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
 
   // ---- Responsive scale ----
-  useEffect(() => {
-    const resize = () => {
-      const isMobile = window.innerWidth < 768;
-      const consoleWidth = isLandscape ? 320 : 0;
-      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-      const availableWidth = window.innerWidth - consoleWidth;
-      const availableHeight = window.innerHeight - consoleHeight;
-      const baseW = 256;
-      const baseH = 192;
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(availableWidth / newScale));
-      setInternalH(Math.floor(availableHeight / newScale));
-      setScale(newScale);
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, [isLandscape]);
+
 
   // ---- Proximity detection ----
   const checkNear = useCallback((col, row) => {

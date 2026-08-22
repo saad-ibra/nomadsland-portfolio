@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, memo } from "react";
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
+import { useViewport } from '../hooks/useViewport.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { ArrowLeft, ArrowDown } from "lucide-react";
 import { TILE } from '../engine/constants';
@@ -32,31 +33,12 @@ const DIALOGUE_LINES = [
 
 function MusicRoomScene() {
   const { speedMultiplier, isLandscape, isTransitioning, changeScene } = useGame();
-  const [scale, setScale] = useState(1);
-  const [internalW, setInternalW] = useState(384);
-  const [internalH, setInternalH] = useState(288);
+  const viewport = useViewport(isLandscape);
+  const { scale, internalW, internalH } = viewport;
   const [phase, setPhase] = useState("intro");
   const [dialogueIndex, setDialogueIndex] = useState(0);
   const containerRef = useRef(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      const consoleWidth = isLandscape ? 320 : 0;
-      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-      const availableWidth = window.innerWidth - consoleWidth;
-      const availableHeight = window.innerHeight - consoleHeight;
-      const baseW = 256;
-      const baseH = 192;
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(availableWidth / newScale));
-      setInternalH(Math.floor(availableHeight / newScale));
-      setScale(newScale);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isLandscape]);
 
   // Object hitboxes
   const isWalkable = (c, r) => {

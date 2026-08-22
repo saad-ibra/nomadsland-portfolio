@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import { useGame } from '../context/GameContext.jsx';
 import { useCameraLerp } from '../hooks/useCameraLerp.js';
+import { useViewport } from '../hooks/useViewport.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { renderControlText } from '../utils/renderControls';
 import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-react";
@@ -430,9 +431,9 @@ export default function ChemistryLabScene() {
   const [nearStation,    setNearStation]    = useState(null);
   const [openStation,    setOpenStation]    = useState(null);
   const [phase,          setPhase]          = useState("intro");
-  const [scale,          setScale]          = useState(1);
-  const [internalW,      setInternalW]      = useState(384);
-  const [internalH,      setInternalH]      = useState(288);
+  
+  const viewport = useViewport(isLandscape);
+  const { scale, internalW, internalH } = viewport;
 
   const musicRef    = useRef({ audioCtx: null, interval: null });
   const containerRef= useRef(null);
@@ -531,24 +532,7 @@ export default function ChemistryLabScene() {
   }, []);
 
   // ---- Responsive scale ----
-  useEffect(() => {
-    const resize = () => {
-      const isMobile = window.innerWidth < 768;
-      const consoleWidth = isLandscape ? 320 : 0;
-      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-      const availableWidth = window.innerWidth - consoleWidth;
-      const availableHeight = window.innerHeight - consoleHeight;
-      const baseW = 256;
-      const baseH = 192;
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(availableWidth / newScale));
-      setInternalH(Math.floor(availableHeight / newScale));
-      setScale(newScale);
-    }
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, [isLandscape]);
+
 
   // ---- Proximity detection ----
   const checkNear = useCallback((col, row) => {

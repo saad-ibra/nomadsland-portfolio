@@ -594,6 +594,23 @@ function Building({ shop, isNear }) {
   return <Component shop={shop} isNear={isNear} />;
 }
 
+function getViewportMetrics(isLandscape) {
+  if (typeof window === 'undefined') return { scale: 1, w: 384, h: 288 };
+  const isMobile = window.innerWidth < 768;
+  const consoleWidth = isLandscape ? 320 : 0;
+  const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
+  const availableWidth = window.innerWidth - consoleWidth;
+  const availableHeight = window.innerHeight - consoleHeight;
+  const baseW = 256;
+  const baseH = 192;
+  const scale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
+  return {
+    scale,
+    w: Math.floor(availableWidth / scale),
+    h: Math.floor(availableHeight / scale)
+  };
+}
+
 // ============================================================
 //  MAIN VILLAGE SCENE
 // ============================================================
@@ -602,9 +619,9 @@ export default function VillageScene() {
     speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume } = useGame();
   const [nearShop, setNearShop]   = useState(null);
   const [phase, setPhase]         = useState(previousScene ? "free" : "intro");
-  const [scale, setScale] = useState(1);
-  const [internalW, setInternalW] = useState(384);
-  const [internalH, setInternalH] = useState(288);
+  
+  const [viewport, setViewport] = useState(() => getViewportMetrics(isLandscape));
+  const { scale, w: internalW, h: internalH } = viewport;
         
   const [isSailing, setIsSailing] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
@@ -779,7 +796,7 @@ export default function VillageScene() {
   }, []);
 
   // Camera uses refs + direct DOM mutation instead of React state to avoid 60fps re-renders
-  const camRef = useRef({ x: initialPos.col * TILE - internalW/2, y: initialPos.row * TILE - internalH/2 });
+  const camRef = useRef({ x: initialPos.col * TILE + TILE/2 - internalW/2, y: initialPos.row * TILE + TILE/2 - internalH/2 });
   const worldRef = useRef(null);
   const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   // Only triggers React re-render when the visible tile window changes
@@ -944,17 +961,7 @@ export default function VillageScene() {
 
   useEffect(() => {
     const resize = () => {
-      const isMobile = window.innerWidth < 768;
-      const consoleWidth = isLandscape ? 320 : 0;
-      const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-      const availableWidth = window.innerWidth - consoleWidth;
-      const availableHeight = window.innerHeight - consoleHeight;
-      const baseW = 256;
-      const baseH = 192;
-      const newScale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-      setInternalW(Math.floor(availableWidth / newScale));
-      setInternalH(Math.floor(availableHeight / newScale));
-      setScale(newScale);
+      setViewport(getViewportMetrics(isLandscape));
     };
     resize();
     window.addEventListener("resize", resize);
@@ -994,6 +1001,8 @@ export default function VillageScene() {
     };
   }, [phase, showComingSoon]);
 
+  const isFirstFrame = useRef(true);
+
   // Smooth Camera Lerp — uses direct DOM mutation, NOT React state
   useEffect(() => {
     let lastTime = performance.now();
@@ -1008,9 +1017,16 @@ export default function VillageScene() {
       const clampedTY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), targetY));
 
       const cam = camRef.current;
-      const lerpFactor = 1.0 - Math.pow(0.001, dt * speedMultiplier);
-      cam.x = cam.x + (clampedTX - cam.x) * lerpFactor;
-      cam.y = cam.y + (clampedTY - cam.y) * lerpFactor;
+      
+      if (isFirstFrame.current) {
+        cam.x = clampedTX;
+        cam.y = clampedTY;
+        isFirstFrame.current = false;
+      } else {
+        const lerpFactor = 1.0 - Math.pow(0.001, dt * speedMultiplier);
+        cam.x = cam.x + (clampedTX - cam.x) * lerpFactor;
+        cam.y = cam.y + (clampedTY - cam.y) * lerpFactor;
+      }
 
       // Direct DOM mutation — no React re-render
       if (worldRef.current) {
