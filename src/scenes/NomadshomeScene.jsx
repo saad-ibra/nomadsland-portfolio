@@ -88,10 +88,50 @@ function TipLinePhone({ isNear, onClick }) {
         position: "absolute", left: 5 * TILE, top: 1 * TILE - 8,
         width: TILE, height: TILE,
         display: "flex", alignItems: "flex-end", justifyContent: "center", cursor: "pointer",
-        filter: active ? "brightness(1.2) drop-shadow(0 0 8px rgba(0,180,255,0.6))" : "drop-shadow(0 4px 6px rgba(0,0,0,0.5))",
+        filter: active ? "brightness(1.2)" : "none",
         transition: "filter 0.15s", zIndex: 11,
       }}
     >
+      {/* Floating Animated Label */}
+      <div style={{
+        position: "absolute",
+        bottom: "110%",
+        whiteSpace: "nowrap",
+        background: "#000",
+        color: "#fff",
+        fontFamily: "'Micro 5', monospace",
+        fontSize: "12px",
+        padding: "2px 6px",
+        border: "1px solid #fff",
+        borderRadius: "4px",
+        pointerEvents: "none",
+        animation: "float 2s infinite ease-in-out",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.5)",
+      }}>
+        📞 CONTACT ME
+      </div>
+      
+      {/* Pulsing Glow Ring */}
+      <div style={{
+        position: "absolute",
+        inset: -10,
+        borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(0,180,255,0.4) 0%, transparent 70%)",
+        animation: "pulseGlow 2s infinite alternate",
+        pointerEvents: "none",
+      }} />
+      
+      <style>{`
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
+        }
+        @keyframes pulseGlow {
+          0% { opacity: 0.5; transform: scale(0.8); }
+          100% { opacity: 1; transform: scale(1.1); }
+        }
+      `}</style>
+
       <svg width="32" height="32" viewBox="0 0 16 16" style={{ imageRendering: "pixelated", overflow: "visible" }}>
         {/* Phone base */}
         <rect x="4" y="4" width="8" height="4" rx="1" fill="#c03030" />
@@ -109,7 +149,15 @@ function TipLinePhone({ isNear, onClick }) {
 
 function TipLineForm({ onClose }) {
   const [state, handleSubmit] = useForm('mljrjbde');
+  const [category, setCategory] = useState('tip');
   const formRef = useRef(null);
+
+  const CATEGORIES = [
+    { id: 'review', label: '⭐ REVIEW', color: '#d4af37' },
+    { id: 'comment', label: '💬 COMMENT', color: '#4a90d9' },
+    { id: 'complaint', label: '📢 COMPLAINT', color: '#c03030' },
+    { id: 'tip', label: '💡 TIP', color: '#228b22' },
+  ];
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -143,6 +191,30 @@ function TipLineForm({ onClose }) {
 
   return (
     <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 8, textAlign: "left", fontFamily: "'Micro 5', monospace" }}>
+      <input type="hidden" name="category" value={category} />
+      
+      <div>
+        <label style={{ display: "block", fontSize: 12, fontWeight: "bold", marginBottom: 2, color: "#111" }}>CATEGORY</label>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setCategory(cat.id)}
+              style={{
+                fontFamily: "'Micro 5', monospace", fontSize: 10,
+                background: category === cat.id ? cat.color : "#fff",
+                color: category === cat.id ? "#fff" : "#111",
+                border: "1px solid #111",
+                padding: "4px", cursor: "pointer"
+              }}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div>
         <label style={{ display: "block", fontSize: 12, fontWeight: "bold", marginBottom: 2, color: "#111" }}>NAME</label>
         <input name="name" required style={{ width: "100%", padding: 4, boxSizing: "border-box", border: "1px solid #111", background: "#fff", fontFamily: "'Micro 5', monospace", fontSize: 12, color: "#111" }} />
@@ -670,7 +742,10 @@ export default function NomadshomeScene() {
                   padding: "4px", cursor: "pointer", zIndex: 10
                 }}>✕</button>
 
-                <h2 style={{ fontFamily: "'Micro 5', monospace", fontSize: 16, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 8 }}>LEAVE A TIP</h2>
+                <h2 style={{ fontFamily: "'Micro 5', monospace", fontSize: 16, color: "#111", marginBottom: 8, marginTop: 12, letterSpacing: "-0.5px", borderBottom: "2px solid #000", paddingBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>LEAVE A MESSAGE</span>
+                  <button onClick={() => window.open('/contact/', '_blank')} style={{ fontFamily: "'Micro 5', monospace", fontSize: 10, background: "#fff", color: "#111", border: "1px solid #111", padding: "2px 6px", cursor: "pointer", boxShadow: "1px 1px 0 rgba(0,0,0,0.2)", height: "fit-content" }}>OPEN IN BROWSER</button>
+                </h2>
                 <div style={{ fontSize: 12, color: "#333", marginBottom: 12, fontFamily: "'Micro 5', monospace" }}>I'll get back to you ASAP!</div>
                 
                 <TipLineForm onClose={() => setOpenTipLine(false)} />
