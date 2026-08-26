@@ -95,7 +95,8 @@ function TipLinePhone({ isNear, onClick }) {
       {/* Floating Animated Label */}
       <div style={{
         position: "absolute",
-        bottom: "110%",
+        top: "100%",
+        marginTop: "4px",
         whiteSpace: "nowrap",
         background: "#000",
         color: "#fff",
@@ -108,7 +109,7 @@ function TipLinePhone({ isNear, onClick }) {
         animation: "float 2s infinite ease-in-out",
         boxShadow: "0 2px 4px rgba(0,0,0,0.5)",
       }}>
-        📞 CONTACT ME
+        [ CONTACT ME ]
       </div>
       
       {/* Pulsing Glow Ring */}
@@ -153,10 +154,10 @@ function TipLineForm({ onClose }) {
   const formRef = useRef(null);
 
   const CATEGORIES = [
-    { id: 'review', label: '⭐ REVIEW', color: '#d4af37' },
-    { id: 'comment', label: '💬 COMMENT', color: '#4a90d9' },
-    { id: 'complaint', label: '📢 COMPLAINT', color: '#c03030' },
-    { id: 'tip', label: '💡 TIP', color: '#228b22' },
+    { id: 'review', label: '[*] REVIEW', color: '#d4af37' },
+    { id: 'comment', label: '[>] COMMENT', color: '#4a90d9' },
+    { id: 'complaint', label: '[!] COMPLAINT', color: '#c03030' },
+    { id: 'tip', label: '[?] TIP', color: '#228b22' },
   ];
 
   useEffect(() => {

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useForm, ValidationError } from '@formspree/react';
 
 const CATEGORIES = [
-  { id: 'review', label: '⭐ REVIEW', color: '#d4af37' },
-  { id: 'comment', label: '💬 COMMENT', color: '#4a90d9' },
-  { id: 'complaint', label: '📢 COMPLAINT', color: '#c03030' },
-  { id: 'tip', label: '💡 TIP', color: '#228b22' },
+  { id: 'review', label: '[*] REVIEW', color: '#d4af37' },
+  { id: 'comment', label: '[>] COMMENT', color: '#4a90d9' },
+  { id: 'complaint', label: '[!] COMPLAINT', color: '#c03030' },
+  { id: 'tip', label: '[?] TIP', color: '#228b22' },
 ];
 
 function PixelEnvelope({ size = 80 }) {
@@ -81,7 +81,7 @@ export default function ContactApp() {
           borderRadius: 8, padding: '40px 30px',
           boxShadow: '0 0 40px rgba(244,232,208,0.1), 4px 4px 0 rgba(0,0,0,0.5)',
         }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>📬</div>
+          <div style={{ marginBottom: 16 }}><PixelMailbox size={64} /></div>
           <h2 style={{ fontSize: 28, color: '#228b22', marginBottom: 12, letterSpacing: 1 }}>MESSAGE SENT!</h2>
           <p style={{ fontSize: 16, color: '#f4e8d0', marginBottom: 24, opacity: 0.8 }}>
             Your message has been delivered to the Nomadsland Post Office.
@@ -97,7 +97,7 @@ export default function ContactApp() {
                 boxShadow: '3px 3px 0 rgba(0,0,0,0.4)',
               }}
             >
-              SEND ANOTHER
+              [ SEND ANOTHER ]
             </button>
             <a
               href="/"
@@ -109,7 +109,7 @@ export default function ContactApp() {
                 textDecoration: 'none', display: 'inline-block',
               }}
             >
-              VISIT THE VILLAGE →
+              [ VISIT THE VILLAGE ] →
             </a>
           </div>
         </div>
@@ -158,13 +158,6 @@ export default function ContactApp() {
           <PixelMailbox size={50} />
         </div>
 
-        <h1 style={{
-          fontSize: 'clamp(28px, 6vw, 42px)', color: '#f4e8d0', letterSpacing: 2,
-          margin: '0 0 4px', textShadow: '2px 2px 0 #000, 0 0 20px rgba(244,232,208,0.2)',
-          textTransform: 'uppercase',
-        }}>
-          Nomadsland Post Office
-        </h1>
         <div style={{
           fontSize: 14, color: '#a09880', letterSpacing: 3,
           borderTop: '2px solid #3a3020', borderBottom: '2px solid #3a3020',
@@ -319,7 +312,7 @@ export default function ContactApp() {
               marginTop: 4,
             }}
           >
-            {state.submitting ? '📤 SENDING...' : '📨 SEND MESSAGE'}
+            {state.submitting ? '[ SENDING... ]' : '[ SEND MESSAGE ]'}
           </button>
           {state.errors && state.errors.length > 0 && (
             <div style={{ fontSize: 12, color: '#c03030', textAlign: 'center', background: '#fff0f0', padding: 8, border: '1px solid #c03030' }}>
@@ -345,7 +338,7 @@ export default function ContactApp() {
             letterSpacing: 1,
           }}
         >
-          🏘️ VISIT THE VILLAGE →
+          [ VISIT THE VILLAGE ] →
         </a>
         <p style={{ fontSize: 12, color: '#4a4030', marginTop: 16 }}>
           Nomadsland Post Office · est. 2025
