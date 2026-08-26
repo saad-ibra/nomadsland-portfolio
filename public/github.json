@@ -1,19 +1,19 @@
 {
   "repos": [
     {
-      "name": "gray-matter",
-      "description": "",
-      "language": "Kotlin",
-      "stars": 0,
-      "url": "https://github.com/saad-ibra/gray-matter",
-      "isPrivate": false
-    },
-    {
       "name": "nomadsland-portfolio",
       "description": "",
       "language": "JavaScript",
       "stars": 0,
       "url": "https://github.com/saad-ibra/nomadsland-portfolio",
+      "isPrivate": false
+    },
+    {
+      "name": "gray-matter",
+      "description": "",
+      "language": "Kotlin",
+      "stars": 0,
+      "url": "https://github.com/saad-ibra/gray-matter",
       "isPrivate": false
     },
     {

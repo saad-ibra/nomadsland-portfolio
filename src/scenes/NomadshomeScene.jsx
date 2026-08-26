@@ -92,24 +92,20 @@ function TipLinePhone({ isNear, onClick }) {
         transition: "filter 0.15s", zIndex: 11,
       }}
     >
-      {/* Floating Animated Label */}
+      {/* Floating Exclamation Mark */}
       <div style={{
         position: "absolute",
-        top: "100%",
-        marginTop: "4px",
-        whiteSpace: "nowrap",
-        background: "#000",
-        color: "#fff",
+        bottom: "85%",
+        color: "#f4d03f", // Golden quest marker color
         fontFamily: "'Micro 5', monospace",
-        fontSize: "12px",
-        padding: "2px 6px",
-        border: "1px solid #fff",
-        borderRadius: "4px",
+        fontSize: "28px",
+        lineHeight: 1,
+        textShadow: "1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 4px 4px rgba(0,0,0,0.5)",
         pointerEvents: "none",
-        animation: "float 2s infinite ease-in-out",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.5)",
+        animation: "float 1.5s infinite ease-in-out",
+        zIndex: 12,
       }}>
-        [ CONTACT ME ]
+        !
       </div>
       
       {/* Pulsing Glow Ring */}
