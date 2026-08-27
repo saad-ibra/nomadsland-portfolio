@@ -3,8 +3,26 @@
     "id": "all",
     "label": "All",
     "type": "normal",
-    "count": 11,
+    "count": 12,
     "books": [
+      {
+        "title": "The Sense of an Ending",
+        "author": "Julian Barnes",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
+        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Stranger",
+        "author": "Albert Camus",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1738704267l/49552._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8471355822?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Prophet",
+        "author": "Kahlil Gibran",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1355046521l/2547.jpg",
+        "link": "https://www.goodreads.com/review/show/8895168181?utm_medium=api&utm_source=rss"
+      },
       {
         "title": "Journey into the Past",
         "author": "Stefan Zweig",
@@ -40,18 +58,6 @@
         "author": "Banu Mushtaq",
         "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1787486681l/205544315._SY475_.jpg",
         "link": "https://www.goodreads.com/review/show/8473739772?utm_medium=api&utm_source=rss"
-      },
-      {
-        "title": "The Sense of an Ending",
-        "author": "Julian Barnes",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
-        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
-      },
-      {
-        "title": "The Stranger",
-        "author": "Albert Camus",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1738704267l/49552._SY475_.jpg",
-        "link": "https://www.goodreads.com/review/show/8471355822?utm_medium=api&utm_source=rss"
       },
       {
         "title": "Ummath: A Novel of Community and Conflict",
@@ -97,8 +103,14 @@
     "id": "currently-reading",
     "label": "Currently Reading",
     "type": "fire",
-    "count": 1,
+    "count": 2,
     "books": [
+      {
+        "title": "The Prophet",
+        "author": "Kahlil Gibran",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1355046521l/2547.jpg",
+        "link": "https://www.goodreads.com/review/show/8895168181?utm_medium=api&utm_source=rss"
+      },
       {
         "title": "The Untouchables: Who were They and Why They became Untouchables?",
         "author": "B.R. Ambedkar",
@@ -111,19 +123,25 @@
     "id": "read",
     "label": "Read",
     "type": "grass",
-    "count": 5,
+    "count": 6,
     "books": [
       {
-        "title": "Journey into the Past",
-        "author": "Stefan Zweig",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
-        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
+        "title": "The Sense of an Ending",
+        "author": "Julian Barnes",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
+        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
       },
       {
         "title": "The Stranger",
         "author": "Albert Camus",
         "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1738704267l/49552._SY475_.jpg",
         "link": "https://www.goodreads.com/review/show/8471355822?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Journey into the Past",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
       },
       {
         "title": "Ummath: A Novel of Community and Conflict",
@@ -149,7 +167,7 @@
     "id": "did-not-finish",
     "label": "Did Not Finish",
     "type": "poison",
-    "count": 3,
+    "count": 2,
     "books": [
       {
         "title": "A Fine Balance",
@@ -162,12 +180,6 @@
         "author": "Banu Mushtaq",
         "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1787486681l/205544315._SY475_.jpg",
         "link": "https://www.goodreads.com/review/show/8473739772?utm_medium=api&utm_source=rss"
-      },
-      {
-        "title": "The Sense of an Ending",
-        "author": "Julian Barnes",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
-        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
       }
     ]
   }
