@@ -151,20 +151,6 @@ export default function ContactApp() {
       <header style={{
         textAlign: 'center', marginBottom: 24, maxWidth: 500, width: '100%',
       }}>
-        {/* Pixel art decorations */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginBottom: 12, animation: 'float 3s ease-in-out infinite' }}>
-          <PixelMailbox size={50} />
-          <PixelEnvelope size={70} />
-          <PixelMailbox size={50} />
-        </div>
-
-        <div style={{
-          fontSize: 14, color: '#a09880', letterSpacing: 3,
-          borderTop: '2px solid #3a3020', borderBottom: '2px solid #3a3020',
-          padding: '6px 0', margin: '0 auto',
-        }}>
-          LEAVE A REVIEW · COMMENT · COMPLAINT · TIP
-        </div>
         <p style={{ fontSize: 14, color: '#8a7a6a', margin: '12px 0 0', lineHeight: 1.6 }}>
           Got something to say? Drop a message below and I'll get back to you!
         </p>
