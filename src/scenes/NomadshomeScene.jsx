@@ -92,40 +92,67 @@ function TipLinePhone({ isNear, onClick }) {
         transition: "filter 0.15s", zIndex: 11,
       }}
     >
-      {/* Floating Exclamation Mark */}
+      {/* Floating Pixel Exclamation Mark */}
       <div style={{
         position: "absolute",
-        bottom: "85%",
-        color: "#f4d03f", // Golden quest marker color
-        fontFamily: "'Micro 5', monospace",
-        fontSize: "28px",
-        lineHeight: 1,
-        textShadow: "1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 4px 4px rgba(0,0,0,0.5)",
+        bottom: "80%",
+        left: "50%",
+        transform: "translateX(-50%)",
         pointerEvents: "none",
-        animation: "float 1.5s infinite ease-in-out",
+        animation: "questBob 2s infinite ease-in-out",
         zIndex: 12,
       }}>
-        !
+        {/* Golden glow behind the mark */}
+        <div style={{
+          position: "absolute",
+          inset: -6,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(244,208,63,0.45) 0%, rgba(244,208,63,0.15) 40%, transparent 70%)",
+          animation: "questGlow 2s infinite alternate ease-in-out",
+        }} />
+        {/* Sparkle particles */}
+        <div style={{ position: "absolute", top: -2, left: -4, width: 3, height: 3, background: "#fff", borderRadius: "50%", animation: "sparkle1 2.5s infinite ease-in-out", opacity: 0 }} />
+        <div style={{ position: "absolute", top: 4, right: -5, width: 2, height: 2, background: "#ffe68a", borderRadius: "50%", animation: "sparkle2 3s infinite ease-in-out 0.8s", opacity: 0 }} />
+        <div style={{ position: "absolute", bottom: 0, left: -3, width: 2, height: 2, background: "#fff", borderRadius: "50%", animation: "sparkle3 2.8s infinite ease-in-out 1.5s", opacity: 0 }} />
+        {/* The pixel exclamation mark itself */}
+        <svg width="12" height="22" viewBox="0 0 6 11" style={{ imageRendering: "pixelated", display: "block", filter: "drop-shadow(0 1px 0 #8a6d00) drop-shadow(0 2px 3px rgba(0,0,0,0.6))" }}>
+          {/* Shaft */}
+          <rect x="2" y="0" width="2" height="7" fill="#f4d03f" />
+          {/* Highlight edge */}
+          <rect x="2" y="0" width="1" height="7" fill="#ffe68a" />
+          {/* Dark edge */}
+          <rect x="3" y="1" width="1" height="6" fill="#c9a800" />
+          {/* Dot */}
+          <rect x="2" y="9" width="2" height="2" fill="#f4d03f" />
+          <rect x="2" y="9" width="1" height="1" fill="#ffe68a" />
+          <rect x="3" y="10" width="1" height="1" fill="#c9a800" />
+        </svg>
       </div>
       
-      {/* Pulsing Glow Ring */}
-      <div style={{
-        position: "absolute",
-        inset: -10,
-        borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(0,180,255,0.4) 0%, transparent 70%)",
-        animation: "pulseGlow 2s infinite alternate",
-        pointerEvents: "none",
-      }} />
-      
       <style>{`
+        @keyframes questBob {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50% { transform: translateX(-50%) translateY(-5px); }
+        }
+        @keyframes questGlow {
+          0% { opacity: 0.6; transform: scale(0.9); }
+          100% { opacity: 1; transform: scale(1.15); }
+        }
+        @keyframes sparkle1 {
+          0%, 100% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+          50% { opacity: 1; transform: translate(-3px, -4px) scale(1); }
+        }
+        @keyframes sparkle2 {
+          0%, 100% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+          50% { opacity: 0.9; transform: translate(3px, -3px) scale(1.2); }
+        }
+        @keyframes sparkle3 {
+          0%, 100% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+          50% { opacity: 0.8; transform: translate(-2px, 3px) scale(1); }
+        }
         @keyframes float {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
-        }
-        @keyframes pulseGlow {
-          0% { opacity: 0.5; transform: scale(0.8); }
-          100% { opacity: 1; transform: scale(1.1); }
         }
       `}</style>
 
