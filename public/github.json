@@ -1,19 +1,19 @@
 {
   "repos": [
     {
+      "name": "gray-matter",
+      "description": "",
+      "language": "Kotlin",
+      "stars": 8,
+      "url": "https://github.com/saad-ibra/gray-matter",
+      "isPrivate": false
+    },
+    {
       "name": "nomadsland-portfolio",
       "description": "",
       "language": "JavaScript",
       "stars": 0,
       "url": "https://github.com/saad-ibra/nomadsland-portfolio",
-      "isPrivate": false
-    },
-    {
-      "name": "gray-matter",
-      "description": "",
-      "language": "Kotlin",
-      "stars": 0,
-      "url": "https://github.com/saad-ibra/gray-matter",
       "isPrivate": false
     },
     {
@@ -131,7 +131,7 @@
     "years": [
       {
         "year": 2026,
-        "total": 511,
+        "total": 514,
         "months": [
           0,
           0,
@@ -140,7 +140,7 @@
           26,
           23,
           5,
-          326,
+          329,
           0,
           0,
           0,
@@ -223,7 +223,7 @@
     "maxMonth": {
       "year": 2026,
       "monthIndex": 7,
-      "commits": 326
+      "commits": 329
     }
   }
 }

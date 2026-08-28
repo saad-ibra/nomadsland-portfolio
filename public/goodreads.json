@@ -3,19 +3,43 @@
     "id": "all",
     "label": "All",
     "type": "normal",
-    "count": 12,
+    "count": 14,
     "books": [
       {
-        "title": "The Sense of an Ending",
-        "author": "Julian Barnes",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
-        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
+        "title": "Beware of Pity",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1657549159l/59149._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8896683709?utm_medium=api&utm_source=rss"
       },
       {
         "title": "The Stranger",
         "author": "Albert Camus",
         "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1738704267l/49552._SY475_.jpg",
         "link": "https://www.goodreads.com/review/show/8471355822?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Tartar Steppe",
+        "author": "Dino Buzzati",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327904364l/83017.jpg",
+        "link": "https://www.goodreads.com/review/show/8342475987?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Ummath: A Novel of Community and Conflict",
+        "author": "Sharmila Seyyid",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1533150396l/41023014._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8403509268?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Mother Night",
+        "author": "Kurt Vonnegut Jr.",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1344621657l/9592.jpg",
+        "link": "https://www.goodreads.com/review/show/8896613716?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "The Sense of an Ending",
+        "author": "Julian Barnes",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
+        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
       },
       {
         "title": "The Prophet",
@@ -60,22 +84,10 @@
         "link": "https://www.goodreads.com/review/show/8473739772?utm_medium=api&utm_source=rss"
       },
       {
-        "title": "Ummath: A Novel of Community and Conflict",
-        "author": "Sharmila Seyyid",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1533150396l/41023014._SY475_.jpg",
-        "link": "https://www.goodreads.com/review/show/8403509268?utm_medium=api&utm_source=rss"
-      },
-      {
         "title": "The Schopenhauer Cure",
         "author": "Irvin D. Yalom",
         "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1410129804l/19508.jpg",
         "link": "https://www.goodreads.com/review/show/8342492650?utm_medium=api&utm_source=rss"
-      },
-      {
-        "title": "The Tartar Steppe",
-        "author": "Dino Buzzati",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327904364l/83017.jpg",
-        "link": "https://www.goodreads.com/review/show/8342475987?utm_medium=api&utm_source=rss"
       }
     ]
   },
@@ -83,8 +95,20 @@
     "id": "want-to-read",
     "label": "Want to Read",
     "type": "psychic",
-    "count": 2,
+    "count": 4,
     "books": [
+      {
+        "title": "Beware of Pity",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1657549159l/59149._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8896683709?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Mother Night",
+        "author": "Kurt Vonnegut Jr.",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1344621657l/9592.jpg",
+        "link": "https://www.goodreads.com/review/show/8896613716?utm_medium=api&utm_source=rss"
+      },
       {
         "title": "The Gift of Therapy: An Open Letter to a New Generation of Therapists and Their Patients",
         "author": "Irvin D. Yalom",
@@ -126,22 +150,16 @@
     "count": 6,
     "books": [
       {
-        "title": "The Sense of an Ending",
-        "author": "Julian Barnes",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
-        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
-      },
-      {
         "title": "The Stranger",
         "author": "Albert Camus",
         "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1738704267l/49552._SY475_.jpg",
         "link": "https://www.goodreads.com/review/show/8471355822?utm_medium=api&utm_source=rss"
       },
       {
-        "title": "Journey into the Past",
-        "author": "Stefan Zweig",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
-        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
+        "title": "The Tartar Steppe",
+        "author": "Dino Buzzati",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327904364l/83017.jpg",
+        "link": "https://www.goodreads.com/review/show/8342475987?utm_medium=api&utm_source=rss"
       },
       {
         "title": "Ummath: A Novel of Community and Conflict",
@@ -150,16 +168,22 @@
         "link": "https://www.goodreads.com/review/show/8403509268?utm_medium=api&utm_source=rss"
       },
       {
+        "title": "The Sense of an Ending",
+        "author": "Julian Barnes",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1311704453l/10746542.jpg",
+        "link": "https://www.goodreads.com/review/show/8403511913?utm_medium=api&utm_source=rss"
+      },
+      {
+        "title": "Journey into the Past",
+        "author": "Stefan Zweig",
+        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630701316l/7938057._SY475_.jpg",
+        "link": "https://www.goodreads.com/review/show/8864220820?utm_medium=api&utm_source=rss"
+      },
+      {
         "title": "The Schopenhauer Cure",
         "author": "Irvin D. Yalom",
         "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1410129804l/19508.jpg",
         "link": "https://www.goodreads.com/review/show/8342492650?utm_medium=api&utm_source=rss"
-      },
-      {
-        "title": "The Tartar Steppe",
-        "author": "Dino Buzzati",
-        "coverUrl": "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1327904364l/83017.jpg",
-        "link": "https://www.goodreads.com/review/show/8342475987?utm_medium=api&utm_source=rss"
       }
     ]
   },

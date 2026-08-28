@@ -27,82 +27,122 @@ const handleRelease = (e, keyName) => {
   }
 };
 
-const DpadBtn = ({ gridArea, keyName }) => (
-  <button
-    onPointerDown={(e) => handlePress(e, keyName)}
-    onPointerEnter={(e) => {
-      if (e.buttons > 0) handlePress(e, keyName);
-    }}
-    onPointerUp={(e) => handleRelease(e, keyName)}
-    onPointerLeave={(e) => handleRelease(e, keyName)}
-    onPointerCancel={(e) => handleRelease(e, keyName)}
-    onTouchStart={(e) => handlePress(e, keyName)}
-    onTouchEnd={(e) => handleRelease(e, keyName)}
-    onTouchCancel={(e) => handleRelease(e, keyName)}
-    onContextMenu={(e) => e.preventDefault()}
-    style={{
-      gridArea,
-      background: "#1c1c1c",
-      border: "none",
-      color: "#1c1c1c",
-      cursor: "pointer", touchAction: "none",
-      WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent",
-      borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
-      borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
-      borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
-      borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 8 : 0,
-      boxShadow: "inset 0 2px 4px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)"
-    }}
-  />
-);
+const DpadBtn = ({ gridArea, keyName }) => {
+  const [pressed, setPressed] = useState(false);
+  
+  const press = (e) => {
+    handlePress(e, keyName);
+    setPressed(true);
+  };
+  const release = (e) => {
+    handleRelease(e, keyName);
+    setPressed(false);
+  };
 
-const ActionBtn = ({ label, keyName }) => (
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+  return (
     <button
-      onPointerDown={(e) => handlePress(e, keyName)}
-      onPointerEnter={(e) => {
-        if (e.buttons > 0) handlePress(e, keyName);
-      }}
-      onPointerUp={(e) => handleRelease(e, keyName)}
-      onPointerLeave={(e) => handleRelease(e, keyName)}
-      onPointerCancel={(e) => handleRelease(e, keyName)}
-      onTouchStart={(e) => handlePress(e, keyName)}
-      onTouchEnd={(e) => handleRelease(e, keyName)}
-      onTouchCancel={(e) => handleRelease(e, keyName)}
+      onPointerDown={press}
+      onPointerEnter={(e) => { if (e.buttons > 0) press(e); }}
+      onPointerUp={release}
+      onPointerLeave={release}
+      onPointerCancel={release}
+      onTouchStart={press}
+      onTouchEnd={release}
+      onTouchCancel={release}
       onContextMenu={(e) => e.preventDefault()}
       style={{
-        width: 56,
-        height: 56,
-        borderRadius: "50%",
-        background: "#9a2a3e",
+        gridArea,
+        background: "#1c1c1c",
         border: "none",
+        outline: "none",
+        color: "#1c1c1c",
+        cursor: "pointer", touchAction: "none",
         WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent",
-        boxShadow: "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
-        cursor: "pointer", touchAction: "none"
+        borderTopLeftRadius: gridArea === "top" || gridArea === "left" ? 8 : 0,
+        borderTopRightRadius: gridArea === "top" || gridArea === "right" ? 8 : 0,
+        borderBottomLeftRadius: gridArea === "bottom" || gridArea === "left" ? 8 : 0,
+        borderBottomRightRadius: gridArea === "bottom" || gridArea === "right" ? 8 : 0,
+        boxShadow: pressed ? "inset 0 4px 6px rgba(0,0,0,0.8)" : "inset 0 2px 4px rgba(255,255,255,0.1), 0 2px 4px rgba(0,0,0,0.4)",
+        filter: pressed ? "brightness(0.8)" : "none",
+        transition: "all 0.05s"
       }}
     />
-    <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
-  </div>
-);
+  );
+};
 
-const PillBtn = ({ label, onClick, active }) => (
-  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, transform: "rotate(-15deg)" }}>
-    <button
-      onPointerDown={(e) => { e.preventDefault(); onClick(); }}
-      onTouchStart={(e) => { e.preventDefault(); onClick(); }}
-      onContextMenu={(e) => e.preventDefault()}
-      style={{
-        width: 48, height: 16,
-        borderRadius: 8,
-        background: active ? "#5a5a5a" : "#7a7a7a",
-        border: "none",
-        boxShadow: active ? "inset 0 2px 4px rgba(0,0,0,0.5)" : "inset 0 2px 4px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3)",
-        cursor: "pointer", touchAction: "none"
-      }}
-    />
-    <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 10, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
-  </div>
-);
+const ActionBtn = ({ label, keyName }) => {
+  const [pressed, setPressed] = useState(false);
+  
+  const press = (e) => {
+    handlePress(e, keyName);
+    setPressed(true);
+  };
+  const release = (e) => {
+    handleRelease(e, keyName);
+    setPressed(false);
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+      <button
+        onPointerDown={press}
+        onPointerEnter={(e) => { if (e.buttons > 0) press(e); }}
+        onPointerUp={release}
+        onPointerLeave={release}
+        onPointerCancel={release}
+        onTouchStart={press}
+        onTouchEnd={release}
+        onTouchCancel={release}
+        onContextMenu={(e) => e.preventDefault()}
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "#9a2a3e",
+          border: "none",
+          outline: "none",
+          WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent",
+          boxShadow: pressed 
+            ? "inset 2px 4px 8px rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.2)"
+            : "inset -2px -4px 6px rgba(0,0,0,0.3), inset 2px 4px 6px rgba(255,255,255,0.2), 0 4px 6px rgba(0,0,0,0.4)",
+          transform: pressed ? "translateY(2px)" : "translateY(0)",
+          cursor: "pointer", touchAction: "none",
+          transition: "all 0.05s"
+        }}
+      />
+      <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 11, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
+    </div>
+  );
+};
+
+const PillBtn = ({ label, onClick, active }) => {
+  const [pressed, setPressed] = useState(false);
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, transform: "rotate(-15deg)" }}>
+      <button
+        onPointerDown={(e) => { e.preventDefault(); setPressed(true); onClick(); }}
+        onPointerUp={() => setPressed(false)}
+        onPointerLeave={() => setPressed(false)}
+        onTouchStart={(e) => { e.preventDefault(); setPressed(true); onClick(); }}
+        onTouchEnd={() => setPressed(false)}
+        onContextMenu={(e) => e.preventDefault()}
+        style={{
+          width: 48, height: 16,
+          borderRadius: 8,
+          background: active ? "#5a5a5a" : "#7a7a7a",
+          border: "none",
+          outline: "none",
+          boxShadow: (active || pressed) ? "inset 0 4px 6px rgba(0,0,0,0.7)" : "inset 0 2px 4px rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.3)",
+          transform: pressed ? "translateY(1px)" : "translateY(0)",
+          cursor: "pointer", touchAction: "none",
+          WebkitTapHighlightColor: "transparent",
+          transition: "all 0.05s"
+        }}
+      />
+      <span style={{ fontFamily: "sans-serif", fontWeight: "bold", fontSize: 10, color: "#8a867c", letterSpacing: 1 }}>{label}</span>
+    </div>
+  );
+};
 
 const InfoButton = ({ onClick }) => (
   <button
@@ -111,17 +151,18 @@ const InfoButton = ({ onClick }) => (
       width: 22, height: 22,
       background: "transparent",
       border: "none",
+      outline: "none",
       cursor: "pointer",
       padding: 0,
       display: "flex", alignItems: "center", justifyContent: "center",
       filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
-      transition: "transform 0.1s",
+      transition: "all 0.05s",
       touchAction: "none",
-      WebkitUserSelect: "none", userSelect: "none",
+      WebkitUserSelect: "none", userSelect: "none", WebkitTapHighlightColor: "transparent"
     }}
-    onPointerDown={e => e.currentTarget.style.transform = "scale(0.92)"}
-    onPointerUp={e => e.currentTarget.style.transform = "scale(1)"}
-    onPointerLeave={e => e.currentTarget.style.transform = "scale(1)"}
+    onPointerDown={e => { e.currentTarget.style.transform = "scale(0.9) translateY(2px)"; e.currentTarget.style.filter = "drop-shadow(0 1px 1px rgba(0,0,0,0.3))"; }}
+    onPointerUp={e => { e.currentTarget.style.transform = "scale(1) translateY(0)"; e.currentTarget.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"; }}
+    onPointerLeave={e => { e.currentTarget.style.transform = "scale(1) translateY(0)"; e.currentTarget.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"; }}
   >
     <svg width="22" height="22" viewBox="0 0 100 100" style={{ display: "block" }}>
       <defs>
