@@ -144,79 +144,38 @@ const PillBtn = ({ label, onClick, active }) => {
   );
 };
 
-const InfoButton = ({ onClick }) => (
-  <button
-    onClick={onClick}
-    style={{
-      width: 22, height: 22,
-      background: "transparent",
-      border: "none",
-      outline: "none",
-      cursor: "pointer",
-      padding: 0,
-      display: "flex", alignItems: "center", justifyContent: "center",
-      filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
-      transition: "all 0.05s",
-      touchAction: "none",
-      WebkitUserSelect: "none", userSelect: "none", WebkitTapHighlightColor: "transparent"
-    }}
-    onPointerDown={e => { e.currentTarget.style.transform = "scale(0.9) translateY(2px)"; e.currentTarget.style.filter = "drop-shadow(0 1px 1px rgba(0,0,0,0.3))"; }}
-    onPointerUp={e => { e.currentTarget.style.transform = "scale(1) translateY(0)"; e.currentTarget.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"; }}
-    onPointerLeave={e => { e.currentTarget.style.transform = "scale(1) translateY(0)"; e.currentTarget.style.filter = "drop-shadow(0 2px 4px rgba(0,0,0,0.5))"; }}
-  >
-    <svg width="22" height="22" viewBox="0 0 100 100" style={{ display: "block" }}>
-      <defs>
-        <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#e0e0e0" />
-          <stop offset="50%" stopColor="#9a9a9a" />
-          <stop offset="100%" stopColor="#555555" />
-        </linearGradient>
-        <linearGradient id="metalInset" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#a0a0a0" />
-          <stop offset="100%" stopColor="#333333" />
-        </linearGradient>
-        <radialGradient id="blueOrb" cx="50%" cy="30%" r="60%">
-          <stop offset="0%" stopColor="#4fc3f7" />
-          <stop offset="60%" stopColor="#0277bd" />
-          <stop offset="100%" stopColor="#01436b" />
-        </radialGradient>
-        <linearGradient id="gloss" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.75)" />
-          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-        </linearGradient>
-      </defs>
-      
-      {/* Outer metal bezel */}
-      <circle cx="50" cy="50" r="48" fill="url(#metal)" stroke="#222" strokeWidth="1" />
-      <circle cx="50" cy="50" r="37" fill="none" stroke="url(#metalInset)" strokeWidth="5" />
-      
-      {/* 8 Rivets */}
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => {
-        const rad = (angle * Math.PI) / 180;
-        const cx = 50 + 42.5 * Math.cos(rad);
-        const cy = 50 + 42.5 * Math.sin(rad);
-        return (
-          <g key={i}>
-            <circle cx={cx} cy={cy} r="3" fill="#333" />
-            <circle cx={cx-0.5} cy={cy-0.5} r="1.8" fill="#111" />
-            <path d={`M ${cx-1} ${cy-1} L ${cx+1} ${cy+1}`} stroke="#555" strokeWidth="1" />
-          </g>
-        );
-      })}
-
-      {/* Blue Glass Orb */}
-      <circle cx="50" cy="50" r="35" fill="url(#blueOrb)" />
-      
-      {/* Gloss Highlight */}
-      <ellipse cx="50" cy="26" rx="22" ry="12" fill="url(#gloss)" />
-      
-      {/* Italic 'i' */}
-      <text x="50" y="74" fontFamily="Georgia, 'Times New Roman', serif" fontStyle="italic" fontWeight="bold" fontSize="62" fill="#fff" textAnchor="middle" filter="drop-shadow(0 2px 2px rgba(0,0,0,0.4))">
+const InfoButton = ({ onClick }) => {
+  const [pressed, setPressed] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerLeave={() => setPressed(false)}
+      onTouchStart={() => setPressed(true)}
+      onTouchEnd={() => setPressed(false)}
+      style={{
+        width: 24, height: 24,
+        borderRadius: "50%",
+        background: "#2a5aa0",
+        border: "none",
+        outline: "none",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent",
+        boxShadow: pressed 
+          ? "inset 1px 2px 4px rgba(0,0,0,0.6), 0 1px 1px rgba(0,0,0,0.2)"
+          : "inset -1px -2px 3px rgba(0,0,0,0.3), inset 1px 2px 3px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.4)",
+        transform: pressed ? "translateY(1px)" : "translateY(0)",
+        cursor: "pointer", touchAction: "none",
+        transition: "all 0.05s"
+      }}
+    >
+      <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", fontWeight: "bold", fontSize: 16, color: "#fff", textShadow: "0 1px 1px rgba(0,0,0,0.4)", marginTop: -1 }}>
         i
-      </text>
-    </svg>
-  </button>
-);
+      </span>
+    </button>
+  );
+};
 
 const KeyBadge = ({ children, minWidth, color = "#d0d0c0" }) => (
   <span style={{ 
