@@ -483,7 +483,7 @@ function ControlBarInner() {
         {/* D-PAD + Info Button */}
         <div style={{ position: "relative", flexShrink: 0 }}>
           {/* Info button — top-left of D-pad */}
-          <div style={{ position: "absolute", top: -16, left: -16, zIndex: 20 }}>
+          <div style={{ position: "absolute", top: -14, left: -4, zIndex: 20 }}>
             <InfoButton onClick={() => setShowInfo(true)} />
           </div>
           <div style={{
