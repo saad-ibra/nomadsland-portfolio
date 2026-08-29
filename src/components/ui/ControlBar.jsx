@@ -207,9 +207,7 @@ const IconNewspaper = () => (
 
 const IconPhone = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3a4a6a" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 15.5c-0.5-1.5 0-3.5 1.5-5.5 1.5-2 3-3.5 5-4.5l1.5 2c-1 0.8-1.5 1.5-1.5 2.5 0.5 0.3 1.2 0.5 2 0.3l1.5 2c-1 1.5-2.5 2-4 1.5-2-0.5-4-2.5-5.5-5.5" />
-    <circle cx="5" cy="15" r="0.5" fill="#3a4a6a" />
-    <circle cx="14.5" cy="5.5" r="0.5" fill="#3a4a6a" />
+    <path d="M3 4c0.5 0 2-0.2 3 0.5 0.8 0.6 1.2 1.5 1 2.5l-0.5 1.5c1.2 1.8 2.8 3.2 4.5 4.2l1.5-0.8c1-0.3 2 0 2.8 0.7 0.8 0.8 1 2 0.7 3-0.5 1.5-2 2.5-3.5 2.5C8 18 4 14.5 2.5 10 1.5 7 1.5 5 3 4z" />
   </svg>
 );
 
@@ -356,38 +354,41 @@ const InfoPanel = ({ onClose }) => (
 
       {/* Brain doodle - bottom left, faded into paper */}
       <img src="/doodle-brain.png" alt="" style={{
-        position: "absolute", bottom: -20, left: -20, width: 130, height: 150,
-        opacity: 0.22,
-        transform: "rotate(-10deg)",
+        position: "absolute", bottom: 10, left: 5, width: 170, height: 190,
+        opacity: 0.4,
+        objectFit: "contain",
+        transform: "rotate(-8deg)",
         pointerEvents: "none",
         mixBlendMode: "multiply",
-        filter: "brightness(1.8) contrast(2.5) saturate(0.6)",
-        WebkitMaskImage: "radial-gradient(ellipse 55% 50% at 50% 50%, black 20%, transparent 70%)",
-        maskImage: "radial-gradient(ellipse 55% 50% at 50% 50%, black 20%, transparent 70%)",
+        filter: "brightness(1.3) contrast(2) saturate(0.4)",
+        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 85%)",
+        maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 85%)",
       }} />
 
       {/* Butterflies doodle - top right, faded into paper */}
       <img src="/doodle-butterflies.png" alt="" style={{
-        position: "absolute", top: 2, right: 10, width: 150, height: 70,
-        opacity: 0.2,
+        position: "absolute", top: 10, right: 30, width: 180, height: 90,
+        opacity: 0.35,
+        objectFit: "contain",
         transform: "rotate(2deg)",
         pointerEvents: "none",
         mixBlendMode: "multiply",
-        filter: "brightness(1.7) contrast(2.2) saturate(0.5)",
-        WebkitMaskImage: "radial-gradient(ellipse 60% 55% at 50% 50%, black 15%, transparent 65%)",
-        maskImage: "radial-gradient(ellipse 60% 55% at 50% 50%, black 15%, transparent 65%)",
+        filter: "brightness(1.3) contrast(2) saturate(0.4)",
+        WebkitMaskImage: "radial-gradient(ellipse 85% 85% at 50% 50%, black 35%, transparent 85%)",
+        maskImage: "radial-gradient(ellipse 85% 85% at 50% 50%, black 35%, transparent 85%)",
       }} />
 
       {/* Island doodle - bottom right, faded into paper */}
       <img src="/doodle-island.png" alt="" style={{
-        position: "absolute", bottom: -5, right: -15, width: 150, height: 110,
-        opacity: 0.18,
-        transform: "rotate(3deg)",
+        position: "absolute", bottom: 15, right: 10, width: 190, height: 140,
+        opacity: 0.35,
+        objectFit: "contain",
+        transform: "rotate(2deg)",
         pointerEvents: "none",
         mixBlendMode: "multiply",
-        filter: "brightness(1.6) contrast(3) saturate(0.3)",
-        WebkitMaskImage: "radial-gradient(ellipse 55% 50% at 55% 50%, black 15%, transparent 65%)",
-        maskImage: "radial-gradient(ellipse 55% 50% at 55% 50%, black 15%, transparent 65%)",
+        filter: "brightness(1.15) contrast(2.5) saturate(0.2)",
+        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 55% 50%, black 35%, transparent 85%)",
+        maskImage: "radial-gradient(ellipse 80% 80% at 55% 50%, black 35%, transparent 85%)",
       }} />
 
       {/* Close button */}
@@ -493,6 +494,11 @@ function ControlBarInner() {
       touchAction: "none"
     }}>
       
+      {/* Info button — top-left of the entire console */}
+      <div style={{ position: "absolute", top: 20, left: 20, zIndex: 20 }}>
+        <InfoButton onClick={() => setShowInfo(true)} />
+      </div>
+
       {/* Decorative Speaker Lines — always bottom-right, like a real Gameboy */}
       <div style={{
         position: "absolute",
@@ -516,12 +522,8 @@ function ControlBarInner() {
         flex: 1, position: "relative", zIndex: 10 
       }}>
         
-        {/* D-PAD + Info Button */}
+        {/* D-PAD */}
         <div style={{ position: "relative", flexShrink: 0 }}>
-          {/* Info button — top-left of D-pad */}
-          <div style={{ position: "absolute", top: -14, left: -4, zIndex: 20 }}>
-            <InfoButton onClick={() => setShowInfo(true)} />
-          </div>
           <div style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr 1fr",
