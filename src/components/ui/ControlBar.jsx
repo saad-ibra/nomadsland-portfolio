@@ -352,40 +352,31 @@ const InfoPanel = ({ onClose }) => (
         pointerEvents: "none"
       }} />
 
-      {/* Brain doodle - bottom left, faded into paper */}
+      {/* Brain doodle - bottom left */}
       <img src="/doodle-brain.png" alt="" style={{
         position: "absolute", bottom: 10, left: 5, width: 170, height: 190,
-        opacity: 0.45,
+        opacity: 0.85,
         objectFit: "contain",
         transform: "rotate(-8deg)",
         pointerEvents: "none",
-        mixBlendMode: "multiply",
-        /* Extreme contrast to turn paper pure white, grayscale to keep ink sharp */
-        filter: "grayscale(1) contrast(4) brightness(1.4)",
       }} />
 
-      {/* Butterflies doodle - top right, faded into paper */}
+      {/* Butterflies doodle - top right */}
       <img src="/doodle-butterflies.png" alt="" style={{
         position: "absolute", top: 10, right: 30, width: 180, height: 90,
-        opacity: 0.5,
+        opacity: 0.85,
         objectFit: "contain",
         transform: "rotate(2deg)",
         pointerEvents: "none",
-        mixBlendMode: "multiply",
-        /* Blue pen: keep saturation, blow out whites */
-        filter: "contrast(3.5) brightness(1.4) saturate(1.5)",
       }} />
 
-      {/* Island doodle - bottom right, faded into paper */}
+      {/* Island doodle - bottom right */}
       <img src="/doodle-island.png" alt="" style={{
         position: "absolute", bottom: 15, right: 10, width: 190, height: 140,
-        opacity: 0.4,
+        opacity: 0.85,
         objectFit: "contain",
         transform: "rotate(2deg)",
         pointerEvents: "none",
-        mixBlendMode: "multiply",
-        /* Pencil sketch: grayscale and massive contrast */
-        filter: "grayscale(1) contrast(5) brightness(1.6)",
       }} />
 
       {/* Close button */}
@@ -439,11 +430,6 @@ const InfoPanel = ({ onClose }) => (
         <DiaryLink label="GitHub" url="https://github.com/saad-ibra" icon={<IconComputer />} />
         <DiaryLink label="LinkedIn" url="https://linkedin.com/in/saad-ibra" icon={<IconBriefcase />} />
         <DiaryLink label="Goodreads" url="https://www.goodreads.com/user/show/155498817-saad-ibra" icon={<IconBook />} />
-      </div>
-
-      {/* Handwritten quote at the bottom */}
-      <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 14, color: "rgba(70,90,130,0.35)", textAlign: "right", marginTop: 14, fontStyle: "italic", position: "relative", zIndex: 1 }}>
-        "I define the line everyday"
       </div>
     </div>
   </div>
