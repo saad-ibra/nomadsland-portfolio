@@ -198,61 +198,49 @@ const KeyBadge = ({ children, minWidth, color = "#d0d0c0" }) => (
 );
 
 const IconNewspaper = () => (
-  <svg width="20" height="20" viewBox="0 0 16 16" style={{ imageRendering: "pixelated" }}>
-    <rect x="2" y="3" width="12" height="10" fill="#e0e0d0" />
-    <rect x="3" y="4" width="6" height="2" fill="#888" />
-    <rect x="3" y="7" width="10" height="1" fill="#aaa" />
-    <rect x="3" y="9" width="10" height="1" fill="#aaa" />
-    <rect x="3" y="11" width="6" height="1" fill="#aaa" />
-    <rect x="10" y="4" width="3" height="2" fill="#555" />
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3a4a6a" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 4.5c0.2-0.1 12.8-0.3 13 0v12c-0.1 0.3-12.9 0.2-13 0z" />
+    <path d="M5.5 7h4.5" /><path d="M5.5 9.5h8" /><path d="M5.5 12h8" /><path d="M5.5 14.5h5" />
+    <path d="M12 6.5c0.1 0 2.8-0.1 3 0v2.5c-0.2 0.1-2.8 0.1-3 0z" fill="#3a4a6a" opacity="0.15" />
   </svg>
 );
 
 const IconPhone = () => (
-  <svg width="20" height="20" viewBox="0 0 16 16" style={{ imageRendering: "pixelated" }}>
-    <rect x="4" y="8" width="8" height="5" rx="1" fill="#c03030" />
-    <rect x="6" y="9" width="4" height="3" fill="#a02020" />
-    <circle cx="8" cy="10.5" r="1.5" fill="#eef7f2" />
-    <rect x="3" y="4" width="10" height="2" rx="1" fill="#c03030" />
-    <rect x="2" y="4" width="2" height="3" fill="#a02020" />
-    <rect x="12" y="4" width="2" height="3" fill="#a02020" />
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3a4a6a" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 15.5c-0.5-1.5 0-3.5 1.5-5.5 1.5-2 3-3.5 5-4.5l1.5 2c-1 0.8-1.5 1.5-1.5 2.5 0.5 0.3 1.2 0.5 2 0.3l1.5 2c-1 1.5-2.5 2-4 1.5-2-0.5-4-2.5-5.5-5.5" />
+    <circle cx="5" cy="15" r="0.5" fill="#3a4a6a" />
+    <circle cx="14.5" cy="5.5" r="0.5" fill="#3a4a6a" />
   </svg>
 );
 
 const IconComputer = () => (
-  <svg width="20" height="20" viewBox="0 0 16 16" style={{ imageRendering: "pixelated" }}>
-    <rect x="2" y="3" width="12" height="9" rx="1" fill="#c0c0b0" />
-    <rect x="3" y="4" width="10" height="6" fill="#111" />
-    <rect x="4" y="5" width="3" height="1" fill="#4f4" />
-    <rect x="4" y="7" width="1" height="1" fill="#4f4" />
-    <rect x="3" y="13" width="10" height="2" fill="#909080" />
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3a4a6a" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 4c0.2-0.1 13.8-0.1 14 0v9c-0.1 0.2-13.8 0.2-14 0z" />
+    <path d="M4.5 5.5h11v6.5h-11z" fill="#3a4a6a" opacity="0.08" />
+    <path d="M6 8h2.5" stroke="#2a8a2a" strokeWidth="1" />
+    <path d="M6 10h1" stroke="#2a8a2a" strokeWidth="1" />
+    <path d="M7 15h6" /><path d="M5.5 17h9" />
   </svg>
 );
 
 const IconBook = () => (
-  <svg width="20" height="20" viewBox="0 0 16 16" style={{ imageRendering: "pixelated" }}>
-    <rect x="2" y="3" width="6" height="10" fill="#a05030" />
-    <rect x="8" y="3" width="6" height="10" fill="#c06040" />
-    <rect x="3" y="4" width="4" height="8" fill="#e0e0d0" />
-    <rect x="9" y="4" width="4" height="8" fill="#e0e0d0" />
-    <rect x="4" y="5" width="2" height="1" fill="#aaa" />
-    <rect x="4" y="7" width="2" height="1" fill="#aaa" />
-    <rect x="10" y="5" width="2" height="1" fill="#aaa" />
-    <rect x="10" y="7" width="2" height="1" fill="#aaa" />
-    <rect x="7" y="3" width="2" height="10" fill="#603010" />
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3a4a6a" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 5c-2-1.5-4-2-6-1.5v11c2-0.3 4 0.2 6 1.5" />
+    <path d="M10 5c2-1.5 4-2 6-1.5v11c-2-0.3-4 0.2-6 1.5" />
+    <path d="M6 7h2" /><path d="M6 9.5h2.5" /><path d="M12 7h2" /><path d="M12 9.5h2.5" />
   </svg>
 );
 
 const IconBriefcase = () => (
-  <svg width="20" height="20" viewBox="0 0 16 16" style={{ imageRendering: "pixelated" }}>
-    <rect x="3" y="6" width="10" height="7" rx="1" fill="#805030" />
-    <rect x="6" y="4" width="4" height="2" fill="none" stroke="#555" strokeWidth="2" />
-    <rect x="3" y="8" width="10" height="1" fill="#603020" />
-    <rect x="7" y="7" width="2" height="3" fill="#d0a040" />
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#3a4a6a" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 8c0.1-0.2 13.8-0.2 14 0v7c-0.2 0.2-13.8 0.2-14 0z" />
+    <path d="M7 8V6c0.1-0.3 5.8-0.3 6 0v2" />
+    <path d="M3 11h14" />
+    <path d="M9 10.5v2h2v-2" />
   </svg>
 );
 
-const RetroLink = ({ label, url, icon }) => {
+const DiaryLink = ({ label, url, icon }) => {
   const [hover, setHover] = useState(false);
   const handleOpen = (e) => {
     e.preventDefault();
@@ -267,23 +255,36 @@ const RetroLink = ({ label, url, icon }) => {
       onPointerUp={handleOpen}
       onClick={e => { e.preventDefault(); e.stopPropagation(); }}
       style={{
-        display: "flex", alignItems: "center", gap: 8,
-        color: hover ? "#f4d03f" : "#f4e8d0",
+        display: "flex", alignItems: "center", gap: 6,
+        color: hover ? "#1a3a6a" : "#4a4a4a",
         textDecoration: "none",
-        padding: "6px 8px",
-        background: hover ? "rgba(244,208,63,0.1)" : "rgba(0,0,0,0.2)",
-        border: hover ? "2px solid #f4d03f" : "2px solid #2a2a3e",
-        borderRadius: "4px",
+        padding: "5px 8px",
+        background: hover ? "rgba(70,130,200,0.06)" : "transparent",
+        position: "relative",
         cursor: "pointer",
-        transition: "all 0.1s",
-        boxShadow: hover ? "inset 0 0 10px rgba(244,208,63,0.2)" : "none",
+        transition: "all 0.15s",
         pointerEvents: "auto",
+        fontFamily: "'Caveat', 'Patrick Hand', cursive",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 24, height: 24, filter: hover ? "drop-shadow(0 0 4px rgba(244,208,63,0.5))" : "none", transition: "filter 0.1s" }}>
+      {/* Squiggly hand-drawn border */}
+      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none", overflow: "visible" }}>
+        <defs>
+          <filter id={`squig-${label}`} x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed={label.length * 7} result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+        <rect x="1" y="1" width="98%" height="90%" rx="3"
+          fill="none" stroke={hover ? "#4a6a9a" : "#9a9a8a"} strokeWidth="1.2" strokeDasharray={hover ? "none" : "5 3"}
+          filter={`url(#squig-${label})`}
+          style={{ transition: "stroke 0.15s" }}
+        />
+      </svg>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, filter: hover ? "drop-shadow(0 0 3px rgba(70,130,200,0.4))" : "none", transition: "filter 0.15s" }}>
         {icon}
       </div>
-      <div style={{ fontSize: 13, lineHeight: 1 }}>{label}</div>
+      <div style={{ fontSize: 15, lineHeight: 1.1 }}>{label}</div>
     </a>
   );
 };
@@ -293,82 +294,158 @@ const InfoPanel = ({ onClose }) => (
     onClick={onClose}
     style={{
       position: "fixed", inset: 0,
-      background: "rgba(0,0,0,0.8)",
+      background: "rgba(0,0,0,0.6)",
       display: "flex", alignItems: "center", justifyContent: "center",
       zIndex: 99999,
-      fontFamily: "'Micro 5', monospace",
     }}
   >
     <div
       onClick={e => e.stopPropagation()}
       onPointerDown={e => e.stopPropagation()}
       style={{
-        background: "#1a1a2e",
-        border: "4px solid #4a4a5e",
-        borderRadius: 8,
-        padding: "24px",
-        maxWidth: 380, width: "90%",
-        boxShadow: "0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5)",
-        color: "#f4e8d0",
+        background: "#f5f0e0",
+        borderRadius: "4px 12px 4px 4px",
+        padding: "28px 24px 24px 24px",
+        maxWidth: 400, width: "92%",
+        boxShadow: "4px 6px 20px rgba(0,0,0,0.4), inset 0 0 60px rgba(180,160,120,0.15)",
+        color: "#3a3020",
         position: "relative",
+        overflow: "hidden",
+        /* Notebook paper ruled lines */
+        backgroundImage: `
+          repeating-linear-gradient(
+            transparent,
+            transparent 27px,
+            rgba(180,160,140,0.25) 27px,
+            rgba(180,160,140,0.25) 28px
+          )
+        `,
+        backgroundSize: "100% 28px",
+        backgroundPosition: "0 16px",
       }}
     >
-      {/* Decorative corners */}
-      <div style={{ position: "absolute", top: 4, left: 4, width: 8, height: 8, borderTop: "2px solid #f4d03f", borderLeft: "2px solid #f4d03f" }} />
-      <div style={{ position: "absolute", top: 4, right: 4, width: 8, height: 8, borderTop: "2px solid #f4d03f", borderRight: "2px solid #f4d03f" }} />
-      <div style={{ position: "absolute", bottom: 4, left: 4, width: 8, height: 8, borderBottom: "2px solid #f4d03f", borderLeft: "2px solid #f4d03f" }} />
-      <div style={{ position: "absolute", bottom: 4, right: 4, width: 8, height: 8, borderBottom: "2px solid #f4d03f", borderRight: "2px solid #f4d03f" }} />
+      {/* Left margin red line */}
+      <div style={{ position: "absolute", top: 0, bottom: 0, left: 36, width: 1, background: "rgba(200,100,100,0.25)", pointerEvents: "none" }} />
 
+      {/* Dog-eared corner */}
+      <div style={{
+        position: "absolute", top: 0, right: 0, width: 24, height: 24,
+        background: "linear-gradient(225deg, #d8d0c0 50%, #e8e0d0 50%)",
+        boxShadow: "-1px 1px 3px rgba(0,0,0,0.1)",
+        pointerEvents: "none"
+      }} />
+
+      {/* Coffee stain watermark */}
+      <div style={{
+        position: "absolute", bottom: 20, right: 20, width: 50, height: 50,
+        borderRadius: "50%",
+        border: "3px solid rgba(160,120,60,0.08)",
+        background: "radial-gradient(circle, rgba(160,120,60,0.03) 60%, transparent 70%)",
+        pointerEvents: "none"
+      }} />
+
+      {/* Tape strip at top */}
+      <div style={{
+        position: "absolute", top: -4, left: "50%", transform: "translateX(-50%) rotate(-1deg)",
+        width: 80, height: 18,
+        background: "rgba(255,250,200,0.6)",
+        border: "1px solid rgba(200,190,150,0.4)",
+        borderRadius: 2,
+        pointerEvents: "none"
+      }} />
+
+      {/* Brain doodle - bottom left, faded into paper */}
+      <img src="/doodle-brain.png" alt="" style={{
+        position: "absolute", bottom: -20, left: -20, width: 130, height: 150,
+        opacity: 0.22,
+        transform: "rotate(-10deg)",
+        pointerEvents: "none",
+        mixBlendMode: "multiply",
+        filter: "brightness(1.8) contrast(2.5) saturate(0.6)",
+        WebkitMaskImage: "radial-gradient(ellipse 55% 50% at 50% 50%, black 20%, transparent 70%)",
+        maskImage: "radial-gradient(ellipse 55% 50% at 50% 50%, black 20%, transparent 70%)",
+      }} />
+
+      {/* Butterflies doodle - top right, faded into paper */}
+      <img src="/doodle-butterflies.png" alt="" style={{
+        position: "absolute", top: 2, right: 10, width: 150, height: 70,
+        opacity: 0.2,
+        transform: "rotate(2deg)",
+        pointerEvents: "none",
+        mixBlendMode: "multiply",
+        filter: "brightness(1.7) contrast(2.2) saturate(0.5)",
+        WebkitMaskImage: "radial-gradient(ellipse 60% 55% at 50% 50%, black 15%, transparent 65%)",
+        maskImage: "radial-gradient(ellipse 60% 55% at 50% 50%, black 15%, transparent 65%)",
+      }} />
+
+      {/* Island doodle - bottom right, faded into paper */}
+      <img src="/doodle-island.png" alt="" style={{
+        position: "absolute", bottom: -5, right: -15, width: 150, height: 110,
+        opacity: 0.18,
+        transform: "rotate(3deg)",
+        pointerEvents: "none",
+        mixBlendMode: "multiply",
+        filter: "brightness(1.6) contrast(3) saturate(0.3)",
+        WebkitMaskImage: "radial-gradient(ellipse 55% 50% at 55% 50%, black 15%, transparent 65%)",
+        maskImage: "radial-gradient(ellipse 55% 50% at 55% 50%, black 15%, transparent 65%)",
+      }} />
+
+      {/* Close button */}
       <button onClick={onClose} style={{
-        position: "absolute", top: 8, right: 12,
+        position: "absolute", top: 6, right: 28,
         background: "transparent", border: "none",
-        color: "#8a8a9e", fontSize: 24, cursor: "pointer",
-        fontFamily: "'Micro 5', monospace",
-        transition: "color 0.2s"
-      }} onMouseEnter={e => e.target.style.color = "#f4d03f"} onMouseLeave={e => e.target.style.color = "#8a8a9e"}>x</button>
+        color: "#b0a090", fontSize: 20, cursor: "pointer",
+        fontFamily: "'Caveat', cursive",
+        transition: "color 0.2s",
+      }} onMouseEnter={e => e.target.style.color = "#6a4a30"} onMouseLeave={e => e.target.style.color = "#b0a090"}>x</button>
 
-      {/* Header with Favicon */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20, borderBottom: "2px solid #3a3a4e", paddingBottom: 12 }}>
-        <img src="/favicon.svg" alt="Logo" style={{ width: 40, height: 40, imageRendering: "pixelated", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }} />
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, paddingBottom: 10, borderBottom: "1.5px solid rgba(0,0,0,0.08)", position: "relative", zIndex: 1 }}>
+        <img src="/favicon.svg" alt="Logo" style={{ width: 32, height: 32, imageRendering: "pixelated", filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.15))" }} />
         <div>
-          <div style={{ fontSize: 24, color: "#f4d03f", letterSpacing: 1, textShadow: "2px 2px 0 #000" }}>SAAD IBRA</div>
-          <div style={{ fontSize: 14, color: "#8a8a9e" }}>NOMADSLAND OS v1.0</div>
+          <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 26, color: "#2a3a5a", letterSpacing: 0.5, lineHeight: 1 }}>Saad Ibra</div>
+          <div style={{ fontFamily: "'Micro 5', monospace", fontSize: 11, color: "#8a8070", letterSpacing: 1 }}>NOMADSLAND OS v1.0</div>
         </div>
       </div>
 
       {/* Controls Section */}
-      <div style={{ fontSize: 18, color: "#fff", letterSpacing: 1, marginBottom: 12, textShadow: "1px 1px 0 #000" }}>
-        // CONTROLS
+      <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 19, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+        Controls ~
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10, fontSize: 16, marginBottom: 24 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, marginBottom: 18, fontFamily: "'Micro 5', monospace", position: "relative", zIndex: 1 }}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <KeyBadge minWidth={36}>W</KeyBadge><KeyBadge minWidth={36}>A</KeyBadge><KeyBadge minWidth={36}>S</KeyBadge><KeyBadge minWidth={36}>D</KeyBadge>
-          <span style={{ marginLeft: 8, color: "#c0b8a0" }}>MOVE</span>
+          <KeyBadge minWidth={30}>W</KeyBadge><KeyBadge minWidth={30}>A</KeyBadge><KeyBadge minWidth={30}>S</KeyBadge><KeyBadge minWidth={30}>D</KeyBadge>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <KeyBadge minWidth={175}>TAP / CLICK</KeyBadge>
-          <span style={{ marginLeft: 8, color: "#c0b8a0" }}>MOVE</span>
+          <KeyBadge minWidth={140}>TAP / CLICK</KeyBadge>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <KeyBadge minWidth={70} color="#e0a0a0">A</KeyBadge><KeyBadge minWidth={95} color="#e0a0a0">SPACE</KeyBadge>
-          <span style={{ marginLeft: 8, color: "#c0b8a0" }}>INTERACT</span>
+          <KeyBadge minWidth={55} color="#e8c0c0">A</KeyBadge><KeyBadge minWidth={78} color="#e8c0c0">SPACE</KeyBadge>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>interact</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <KeyBadge minWidth={70} color="#a0c0e0">B</KeyBadge><KeyBadge minWidth={95} color="#a0c0e0">ESC</KeyBadge>
-          <span style={{ marginLeft: 8, color: "#c0b8a0" }}>BACK</span>
+          <KeyBadge minWidth={55} color="#c0d0e8">B</KeyBadge><KeyBadge minWidth={78} color="#c0d0e8">ESC</KeyBadge>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>back</span>
         </div>
       </div>
 
       {/* Links Section */}
-      <div style={{ fontSize: 18, color: "#fff", letterSpacing: 1, marginBottom: 12, textShadow: "1px 1px 0 #000" }}>
-        // NETWORK
+      <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 19, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+        Places to find me ~
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 12px" }}>
-        <RetroLink label="BLOG" url="/blogs/" icon={<IconNewspaper />} />
-        <RetroLink label="CONTACT" url="/contact/" icon={<IconPhone />} />
-        <RetroLink label="GITHUB" url="https://github.com/saad-ibra" icon={<IconComputer />} />
-        <RetroLink label="LINKEDIN" url="https://linkedin.com/in/saad-ibra" icon={<IconBriefcase />} />
-        <RetroLink label="GOODREADS" url="https://www.goodreads.com/user/show/155498817-saad-ibra" icon={<IconBook />} />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 8px", position: "relative", zIndex: 1 }}>
+        <DiaryLink label="Blog" url="/blogs/" icon={<IconNewspaper />} />
+        <DiaryLink label="Contact" url="/contact/" icon={<IconPhone />} />
+        <DiaryLink label="GitHub" url="https://github.com/saad-ibra" icon={<IconComputer />} />
+        <DiaryLink label="LinkedIn" url="https://linkedin.com/in/saad-ibra" icon={<IconBriefcase />} />
+        <DiaryLink label="Goodreads" url="https://www.goodreads.com/user/show/155498817-saad-ibra" icon={<IconBook />} />
+      </div>
+
+      {/* Handwritten quote at the bottom */}
+      <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 14, color: "rgba(70,90,130,0.35)", textAlign: "right", marginTop: 14, fontStyle: "italic", position: "relative", zIndex: 1 }}>
+        "I define the line everyday"
       </div>
     </div>
   </div>
