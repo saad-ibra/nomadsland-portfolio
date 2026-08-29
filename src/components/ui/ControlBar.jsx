@@ -355,40 +355,37 @@ const InfoPanel = ({ onClose }) => (
       {/* Brain doodle - bottom left, faded into paper */}
       <img src="/doodle-brain.png" alt="" style={{
         position: "absolute", bottom: 10, left: 5, width: 170, height: 190,
-        opacity: 0.4,
+        opacity: 0.45,
         objectFit: "contain",
         transform: "rotate(-8deg)",
         pointerEvents: "none",
         mixBlendMode: "multiply",
-        filter: "brightness(1.3) contrast(2) saturate(0.4)",
-        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 85%)",
-        maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 85%)",
+        /* Extreme contrast to turn paper pure white, grayscale to keep ink sharp */
+        filter: "grayscale(1) contrast(4) brightness(1.4)",
       }} />
 
       {/* Butterflies doodle - top right, faded into paper */}
       <img src="/doodle-butterflies.png" alt="" style={{
         position: "absolute", top: 10, right: 30, width: 180, height: 90,
-        opacity: 0.35,
+        opacity: 0.5,
         objectFit: "contain",
         transform: "rotate(2deg)",
         pointerEvents: "none",
         mixBlendMode: "multiply",
-        filter: "brightness(1.3) contrast(2) saturate(0.4)",
-        WebkitMaskImage: "radial-gradient(ellipse 85% 85% at 50% 50%, black 35%, transparent 85%)",
-        maskImage: "radial-gradient(ellipse 85% 85% at 50% 50%, black 35%, transparent 85%)",
+        /* Blue pen: keep saturation, blow out whites */
+        filter: "contrast(3.5) brightness(1.4) saturate(1.5)",
       }} />
 
       {/* Island doodle - bottom right, faded into paper */}
       <img src="/doodle-island.png" alt="" style={{
         position: "absolute", bottom: 15, right: 10, width: 190, height: 140,
-        opacity: 0.35,
+        opacity: 0.4,
         objectFit: "contain",
         transform: "rotate(2deg)",
         pointerEvents: "none",
         mixBlendMode: "multiply",
-        filter: "brightness(1.15) contrast(2.5) saturate(0.2)",
-        WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 55% 50%, black 35%, transparent 85%)",
-        maskImage: "radial-gradient(ellipse 80% 80% at 55% 50%, black 35%, transparent 85%)",
+        /* Pencil sketch: grayscale and massive contrast */
+        filter: "grayscale(1) contrast(5) brightness(1.6)",
       }} />
 
       {/* Close button */}
