@@ -354,7 +354,7 @@ const InfoPanel = ({ onClose }) => (
 
       {/* Brain doodle - bottom left */}
       <img src="/doodle-brain.png" alt="" style={{
-        position: "absolute", bottom: 10, left: 5, width: 170, height: 190,
+        position: "absolute", bottom: -10, left: -10, width: 110, height: 130,
         opacity: 0.85,
         objectFit: "contain",
         transform: "rotate(-8deg)",
@@ -363,7 +363,7 @@ const InfoPanel = ({ onClose }) => (
 
       {/* Butterflies doodle - top right */}
       <img src="/doodle-butterflies.png" alt="" style={{
-        position: "absolute", top: 10, right: 30, width: 180, height: 90,
+        position: "absolute", top: 15, right: 15, width: 120, height: 60,
         opacity: 0.85,
         objectFit: "contain",
         transform: "rotate(2deg)",
@@ -372,7 +372,7 @@ const InfoPanel = ({ onClose }) => (
 
       {/* Island doodle - bottom right */}
       <img src="/doodle-island.png" alt="" style={{
-        position: "absolute", bottom: 15, right: 10, width: 190, height: 140,
+        position: "absolute", bottom: -5, right: 5, width: 130, height: 95,
         opacity: 0.85,
         objectFit: "contain",
         transform: "rotate(2deg)",
