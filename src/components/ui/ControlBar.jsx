@@ -170,7 +170,7 @@ const InfoButton = ({ onClick }) => {
         transition: "all 0.05s"
       }}
     >
-      <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", fontWeight: "bold", fontSize: 16, color: "#fff", textShadow: "0 1px 1px rgba(0,0,0,0.4)", marginTop: -1 }}>
+      <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", fontWeight: "bold", fontSize: 22, color: "#fff", textShadow: "0 1px 1px rgba(0,0,0,0.4)", marginTop: -1 }}>
         i
       </span>
     </button>
@@ -262,7 +262,7 @@ const DiaryLink = ({ label, url, icon }) => {
         cursor: "pointer",
         transition: "all 0.15s",
         pointerEvents: "auto",
-        fontFamily: "'Caveat', 'Patrick Hand', cursive",
+        fontFamily: "'Just Another Hand', cursive",
       }}
     >
       {/* Squiggly hand-drawn border */}
@@ -282,7 +282,7 @@ const DiaryLink = ({ label, url, icon }) => {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, filter: hover ? "drop-shadow(0 0 3px rgba(70,130,200,0.4))" : "none", transition: "filter 0.15s" }}>
         {icon}
       </div>
-      <div style={{ fontSize: 15, lineHeight: 1.1 }}>{label}</div>
+      <div style={{ fontSize: 22, lineHeight: 1.1 }}>{label}</div>
     </a>
   );
 };
@@ -358,8 +358,8 @@ const InfoPanel = ({ onClose }) => (
       <button onClick={onClose} style={{
         position: "absolute", top: 6, right: 28,
         background: "transparent", border: "none",
-        color: "#b0a090", fontSize: 20, cursor: "pointer",
-        fontFamily: "'Caveat', cursive",
+        color: "#b0a090", fontSize: 26, cursor: "pointer",
+        fontFamily: "'Just Another Hand', cursive",
         transition: "color 0.2s",
       }} onMouseEnter={e => e.target.style.color = "#6a4a30"} onMouseLeave={e => e.target.style.color = "#b0a090"}>x</button>
 
@@ -367,36 +367,36 @@ const InfoPanel = ({ onClose }) => (
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, paddingBottom: 10, borderBottom: "1.5px solid rgba(0,0,0,0.08)", position: "relative", zIndex: 1 }}>
         <img src="/favicon.svg" alt="Logo" style={{ width: 32, height: 32, imageRendering: "pixelated", filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.15))" }} />
         <div>
-          <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 26, color: "#2a3a5a", letterSpacing: 0.5, lineHeight: 1 }}>Saad Ibra</div>
+          <div style={{ fontFamily: "'Just Another Hand', cursive", fontSize: 36, color: "#2a3a5a", letterSpacing: 0.5, lineHeight: 1 }}>Saad Ibra</div>
           <div style={{ fontFamily: "'Micro 5', monospace", fontSize: 11, color: "#8a8070", letterSpacing: 1 }}>NOMADSLAND OS v1.0</div>
         </div>
       </div>
 
       {/* Controls Section */}
-      <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 19, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+      <div style={{ fontFamily: "'Just Another Hand', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
         Controls ~
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, marginBottom: 18, fontFamily: "'Micro 5', monospace", position: "relative", zIndex: 1 }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={30}>W</KeyBadge><KeyBadge minWidth={30}>A</KeyBadge><KeyBadge minWidth={30}>S</KeyBadge><KeyBadge minWidth={30}>D</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>move</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={140}>TAP / CLICK</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>move</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={55} color="#e8c0c0">A</KeyBadge><KeyBadge minWidth={78} color="#e8c0c0">SPACE</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>interact</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>interact</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={55} color="#c0d0e8">B</KeyBadge><KeyBadge minWidth={78} color="#c0d0e8">ESC</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Caveat', cursive", fontSize: 16 }}>back</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>back</span>
         </div>
       </div>
 
       {/* Links Section */}
-      <div style={{ fontFamily: "'Caveat', 'Patrick Hand', cursive", fontSize: 19, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+      <div style={{ fontFamily: "'Just Another Hand', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
         Places to find me ~
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 8px", position: "relative", zIndex: 1 }}>
@@ -409,9 +409,9 @@ const InfoPanel = ({ onClose }) => (
 
       {/* Doodles Section (flowing naturally at bottom to avoid overlapping buttons) */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 32, paddingBottom: 10, position: "relative", zIndex: 0 }}>
-        <img src="/doodle-brain.png" alt="" style={{ width: 75, height: 85, objectFit: "contain", transform: "rotate(-8deg)", opacity: 0.85 }} />
-        <img src="/doodle-island.png" alt="" style={{ width: 85, height: 65, objectFit: "contain", transform: "rotate(2deg)", opacity: 0.85, paddingBottom: 10 }} />
-        <img src="/doodle-butterflies.png" alt="" style={{ width: 170, height: 90, objectFit: "contain", transform: "rotate(-2deg)", opacity: 0.85 }} />
+        <img src="/doodle-brain.png" alt="" style={{ width: 75, height: 85, objectFit: "contain", transform: "rotate(-8deg)", opacity: 0.9, filter: "brightness(0.9) contrast(1.2)" }} />
+        <img src="/doodle-island.png" alt="" style={{ width: 85, height: 65, objectFit: "contain", transform: "rotate(2deg)", opacity: 1, filter: "brightness(0.8) contrast(1.4)", paddingBottom: 10 }} />
+        <img src="/doodle-butterflies.png" alt="" style={{ width: 170, height: 90, objectFit: "contain", transform: "rotate(-2deg)", opacity: 0.85, filter: "brightness(1.15)" }} />
       </div>
     </div>
   </div>
