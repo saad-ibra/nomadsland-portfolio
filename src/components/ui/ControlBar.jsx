@@ -409,9 +409,9 @@ const InfoPanel = ({ onClose }) => (
 
       {/* Doodles Section (flowing naturally at bottom to avoid overlapping buttons) */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 32, paddingBottom: 10, position: "relative", zIndex: 0 }}>
-        <img src="/doodle-brain.png" alt="" style={{ width: 85, height: 95, objectFit: "contain", transform: "rotate(-8deg)", opacity: 0.85 }} />
-        <img src="/doodle-island.png" alt="" style={{ width: 95, height: 75, objectFit: "contain", transform: "rotate(2deg)", opacity: 0.85, paddingBottom: 10 }} />
-        <img src="/doodle-butterflies.png" alt="" style={{ width: 90, height: 90, objectFit: "contain", transform: "rotate(-3deg)", opacity: 0.85 }} />
+        <img src="/doodle-brain.png" alt="" style={{ width: 75, height: 85, objectFit: "contain", transform: "rotate(-8deg)", opacity: 0.85 }} />
+        <img src="/doodle-island.png" alt="" style={{ width: 85, height: 65, objectFit: "contain", transform: "rotate(2deg)", opacity: 0.85, paddingBottom: 10 }} />
+        <img src="/doodle-butterflies.png" alt="" style={{ width: 170, height: 90, objectFit: "contain", transform: "rotate(-2deg)", opacity: 0.85 }} />
       </div>
     </div>
   </div>
