@@ -352,32 +352,7 @@ const InfoPanel = ({ onClose }) => (
         pointerEvents: "none"
       }} />
 
-      {/* Brain doodle - bottom left */}
-      <img src="/doodle-brain.png" alt="" style={{
-        position: "absolute", bottom: -10, left: -10, width: 110, height: 130,
-        opacity: 0.85,
-        objectFit: "contain",
-        transform: "rotate(-8deg)",
-        pointerEvents: "none",
-      }} />
 
-      {/* Butterflies doodle - top right */}
-      <img src="/doodle-butterflies.png" alt="" style={{
-        position: "absolute", top: 15, right: 15, width: 120, height: 60,
-        opacity: 0.85,
-        objectFit: "contain",
-        transform: "rotate(2deg)",
-        pointerEvents: "none",
-      }} />
-
-      {/* Island doodle - bottom right */}
-      <img src="/doodle-island.png" alt="" style={{
-        position: "absolute", bottom: -5, right: 5, width: 130, height: 95,
-        opacity: 0.85,
-        objectFit: "contain",
-        transform: "rotate(2deg)",
-        pointerEvents: "none",
-      }} />
 
       {/* Close button */}
       <button onClick={onClose} style={{
@@ -430,6 +405,13 @@ const InfoPanel = ({ onClose }) => (
         <DiaryLink label="GitHub" url="https://github.com/saad-ibra" icon={<IconComputer />} />
         <DiaryLink label="LinkedIn" url="https://linkedin.com/in/saad-ibra" icon={<IconBriefcase />} />
         <DiaryLink label="Goodreads" url="https://www.goodreads.com/user/show/155498817-saad-ibra" icon={<IconBook />} />
+      </div>
+
+      {/* Doodles Section (flowing naturally at bottom to avoid overlapping buttons) */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 32, paddingBottom: 10, position: "relative", zIndex: 0 }}>
+        <img src="/doodle-brain.png" alt="" style={{ width: 85, height: 95, objectFit: "contain", transform: "rotate(-8deg)", opacity: 0.85 }} />
+        <img src="/doodle-island.png" alt="" style={{ width: 95, height: 75, objectFit: "contain", transform: "rotate(2deg)", opacity: 0.85, paddingBottom: 10 }} />
+        <img src="/doodle-butterflies.png" alt="" style={{ width: 90, height: 90, objectFit: "contain", transform: "rotate(-3deg)", opacity: 0.85 }} />
       </div>
     </div>
   </div>
