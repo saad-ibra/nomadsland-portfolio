@@ -333,14 +333,7 @@ const InfoPanel = ({ onClose }) => (
         pointerEvents: "none"
       }} />
 
-      {/* Coffee stain watermark */}
-      <div style={{
-        position: "absolute", bottom: 20, right: 20, width: 50, height: 50,
-        borderRadius: "50%",
-        border: "3px solid rgba(160,120,60,0.08)",
-        background: "radial-gradient(circle, rgba(160,120,60,0.03) 60%, transparent 70%)",
-        pointerEvents: "none"
-      }} />
+
 
       {/* Tape strip at top */}
       <div style={{
