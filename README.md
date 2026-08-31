@@ -1,4 +1,4 @@
-# Nomadsland Portfolio
+# Nomadsland Portfolio 🧭
 
 Welcome to Nomadsland, my interactive, game-like portfolio website.
 
