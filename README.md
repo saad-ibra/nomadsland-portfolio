@@ -1,16 +1,27 @@
-# React + Vite
+# Nomadsland Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Welcome to Nomadsland, my interactive, game-like portfolio website.
 
-Currently, two official plugins are available:
+This project is a React-based interactive village that serves as my personal portfolio. It features a top-down, RPG-style interface where visitors can walk around, explore different buildings, and learn more about my work, blog, and projects.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+You can visit the live site here: http://saadibra.mooo.com
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Village Hub:** An interactive overworld to explore.
+- **Dynamic Environments:** Different buildings represent different sections of my portfolio (e.g., Library, Newsroom, Chemistry Lab).
+- **Responsive Design:** Supports both desktop keyboard controls (WASD/Arrows) and mobile touch controls (on-screen D-Pad and tap-to-move).
+- **Custom Soundtrack:** Immersive audio tailored to the experience.
 
-## Expanding the Oxlint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+- React 19
+- Vite
+- Canvas & DOM-based rendering
+- GitHub Pages for hosting
+
+## Local Development
+
+1. Clone the repository
+2. Run `npm install`
+3. Run `npm run dev` to start the local Vite development server

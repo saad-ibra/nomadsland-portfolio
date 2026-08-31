@@ -305,9 +305,10 @@ export default function NomadshomeScene() {
     musicPlaying,
     musicMuted,
     musicVolume,
+    isConsoleMinimized,
   } = useGame();
 
-  const viewport = useViewport(isLandscape);
+  const viewport = useViewport(isLandscape, isConsoleMinimized);
   const { scale, internalW, internalH } = viewport;
   
   const [phase, setPhase] = useState(() => {
@@ -529,10 +530,10 @@ export default function NomadshomeScene() {
     <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Micro 5', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
       <title>Home | Saad Ibra</title>
       <meta name="description" content="Welcome to my cozy home base. View my resume, learn more about me, and interact with my pixel art apartment." />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
         <style>{`@keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} } @keyframes dustParticle { 0% { transform: translateY(0) scale(1); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-20px) scale(0.5); opacity: 0; } } @keyframes swimRight { 0% { transform: translateX(-5px) scaleX(1); } 100% { transform: translateX(15px) scaleX(1); } } @keyframes swimLeft { 0% { transform: translateX(5px) scaleX(-1); } 100% { transform: translateX(-15px) scaleX(-1); } }`}</style>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
-          <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#000", boxShadow: "0 0 0 4px #2a1c11, 0 0 30px rgba(0,0,0,1)", imageRendering: "pixelated", borderRadius: 4 }}>
+          <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#000", boxShadow: isConsoleMinimized ? "0 0 30px rgba(0,0,0,1)" : "0 0 0 4px #2a1c11, 0 0 30px rgba(0,0,0,1)", imageRendering: "pixelated", borderRadius: 4 }}>
             {/* CAMERA CONTAINER */}
             <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, zIndex: 1 }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />

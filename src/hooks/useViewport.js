@@ -1,32 +1,43 @@
 import { useState, useEffect } from 'react';
 
-export function getViewportMetrics(isLandscape) {
+export function getViewportMetrics(isLandscape, isConsoleMinimized) {
   if (typeof window === 'undefined') return { scale: 1, internalW: 384, internalH: 288 };
   const isMobile = window.innerWidth < 768;
-  const consoleWidth = isLandscape ? 320 : 0;
-  const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-  const availableWidth = window.innerWidth - consoleWidth;
-  const availableHeight = window.innerHeight - consoleHeight;
+  
+  // Calculate the scale as if the console is fully open to keep zoom level constant
+  const nominalConsoleWidth = isLandscape ? 320 : 0;
+  const nominalConsoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
+  const nominalAvailableWidth = window.innerWidth - nominalConsoleWidth;
+  const nominalAvailableHeight = window.innerHeight - nominalConsoleHeight;
+  
   const baseW = 256;
   const baseH = 192;
-  const scale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
+  const scale = Math.max(1, Math.floor(Math.min(nominalAvailableWidth / baseW, nominalAvailableHeight / baseH)));
+  
+  // Calculate actual viewport dimensions using the locked scale
+  const actualConsoleWidth = (isLandscape && !isConsoleMinimized) ? 320 : 0;
+  const actualConsoleHeight = isConsoleMinimized ? 64 : nominalConsoleHeight;
+  const availableWidth = window.innerWidth - actualConsoleWidth;
+  const availableHeight = window.innerHeight - actualConsoleHeight;
+  
   return {
     scale,
-    internalW: Math.floor(availableWidth / scale),
-    internalH: Math.floor(availableHeight / scale)
+    internalW: Math.ceil(availableWidth / scale),
+    internalH: Math.ceil(availableHeight / scale)
   };
 }
 
-export function useViewport(isLandscape) {
-  const [viewport, setViewport] = useState(() => getViewportMetrics(isLandscape));
+export function useViewport(isLandscape, isConsoleMinimized = false) {
+  const [viewport, setViewport] = useState(() => getViewportMetrics(isLandscape, isConsoleMinimized));
 
   useEffect(() => {
+    setViewport(getViewportMetrics(isLandscape, isConsoleMinimized));
     const handleResize = () => {
-      setViewport(getViewportMetrics(isLandscape));
+      setViewport(getViewportMetrics(isLandscape, isConsoleMinimized));
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [isLandscape]);
+  }, [isLandscape, isConsoleMinimized]);
 
   return viewport;
 }

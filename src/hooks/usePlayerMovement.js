@@ -13,6 +13,7 @@ export function usePlayerMovement({
   isSailing = false,
   ignoreSavedPos = false,
   onMove,
+  onBump,
   onAction,
   onCancel
 }) {
@@ -45,6 +46,7 @@ export function usePlayerMovement({
   const turnBlockRef = useRef(false);
   const facingRef = useRef(facing);
   const onMoveRef = useRef(onMove);
+  const onBumpRef = useRef(onBump);
   const onActionRef = useRef(onAction);
   const onCancelRef = useRef(onCancel);
   const canWalkRef = useRef(canWalk);
@@ -68,10 +70,11 @@ export function usePlayerMovement({
   // Keep refs up to date
   useEffect(() => {
     onMoveRef.current = onMove;
+    onBumpRef.current = onBump;
     onActionRef.current = onAction;
     onCancelRef.current = onCancel;
     canWalkRef.current = canWalk;
-  }, [onMove, onAction, onCancel, canWalk]);
+  }, [onMove, onBump, onAction, onCancel, canWalk]);
 
   useEffect(() => {
     facingRef.current = facing;
@@ -301,6 +304,9 @@ export function usePlayerMovement({
       } else {
         momentumRef.current.stepsLeft = 0; // stop gliding on wall bump
         if (fromPath) clearPath(); // Path is blocked — cancel
+        if (onBumpRef.current) {
+          onBumpRef.current(nc, nr);
+        }
       }
     }, 30);
 

@@ -450,6 +450,7 @@ export default function LibraryScene() {
     isLandscape,
     isTransitioning,
     changeScene,
+    isConsoleMinimized,
   } = useGame();
 
   const [nearShelf, setNearShelf] = useState(null);
@@ -460,7 +461,7 @@ export default function LibraryScene() {
   const [tourIndex, setTourIndex] = useState(-1);
   const [arrived, setArrived] = useState(true);
   
-  const viewport = useViewport(isLandscape);
+  const viewport = useViewport(isLandscape, isConsoleMinimized);
   const { scale, internalW, internalH } = viewport;
   const musicRef = useRef({ audioCtx: null, interval: null });
 
@@ -831,7 +832,7 @@ export default function LibraryScene() {
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Reading List | Saad Ibra</title>
       <meta name="description" content="Browse my personal library and reading list, synced directly with my Goodreads profile." />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
       <style>{`
         body { margin: 0; padding: 0; overflow: hidden; background: #05050a; }
         @import url('https://fonts.googleapis.com/css2?family=Micro+5&display=swap');

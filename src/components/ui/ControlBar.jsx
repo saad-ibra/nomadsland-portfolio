@@ -1,4 +1,5 @@
 import React, { useEffect, useState, memo } from "react";
+import { createPortal } from "react-dom";
 import { toggleSfxMuted, getSfxMuted } from "../../engine/sfx";
 import { useGame } from "../../context/GameContext.jsx";
 
@@ -120,10 +121,11 @@ const PillBtn = ({ label, onClick, active }) => {
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, transform: "rotate(-15deg)" }}>
       <button
-        onPointerDown={(e) => { e.preventDefault(); setPressed(true); onClick(); }}
+        onClick={onClick}
+        onPointerDown={() => setPressed(true)}
         onPointerUp={() => setPressed(false)}
         onPointerLeave={() => setPressed(false)}
-        onTouchStart={(e) => { e.preventDefault(); setPressed(true); onClick(); }}
+        onTouchStart={() => setPressed(true)}
         onTouchEnd={() => setPressed(false)}
         onContextMenu={(e) => e.preventDefault()}
         style={{
@@ -173,6 +175,50 @@ const InfoButton = ({ onClick }) => {
       <span style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: "italic", fontWeight: "bold", fontSize: 22, color: "#fff", textShadow: "0 1px 1px rgba(0,0,0,0.4)", marginTop: -1 }}>
         i
       </span>
+    </button>
+  );
+};
+
+const MinimizeButton = ({ isMinimized, onClick }) => {
+  const [pressed, setPressed] = useState(false);
+  return (
+    <button
+      onClick={onClick}
+      onPointerDown={() => setPressed(true)}
+      onPointerUp={() => setPressed(false)}
+      onPointerLeave={() => setPressed(false)}
+      onTouchStart={() => setPressed(true)}
+      onTouchEnd={() => setPressed(false)}
+      style={{
+        width: 24, height: 24,
+        borderRadius: "50%",
+        background: "#808080", // Gray button
+        border: "none",
+        outline: "none",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        WebkitUserSelect: "none", userSelect: "none", WebkitTouchCallout: "none", WebkitTapHighlightColor: "transparent",
+        boxShadow: pressed 
+          ? "inset 1px 2px 4px rgba(0,0,0,0.6), 0 1px 1px rgba(0,0,0,0.2)"
+          : "inset -1px -2px 3px rgba(0,0,0,0.3), inset 1px 2px 3px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.4)",
+        transform: pressed ? "translateY(1px)" : "translateY(0)",
+        cursor: "pointer", touchAction: "none",
+        transition: "all 0.05s",
+        padding: 0
+      }}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginTop: isMinimized ? -1 : 1 }}>
+        {isMinimized ? (
+          <>
+            <polyline points="18 17 12 11 6 17" />
+            <polyline points="18 11 12 5 6 11" />
+          </>
+        ) : (
+          <>
+            <polyline points="6 7 12 13 18 7" />
+            <polyline points="6 13 12 19 18 13" />
+          </>
+        )}
+      </svg>
     </button>
   );
 };
@@ -262,7 +308,7 @@ const DiaryLink = ({ label, url, icon }) => {
         cursor: "pointer",
         transition: "all 0.15s",
         pointerEvents: "auto",
-        fontFamily: "'Just Another Hand', cursive",
+        fontFamily: "'Dawning of a New Day', cursive",
       }}
     >
       {/* Squiggly hand-drawn border */}
@@ -320,6 +366,7 @@ const InfoPanel = ({ onClose }) => (
         `,
         backgroundSize: "100% 28px",
         backgroundPosition: "0 16px",
+        textTransform: "lowercase",
       }}
     >
       {/* Left margin red line */}
@@ -348,48 +395,61 @@ const InfoPanel = ({ onClose }) => (
 
 
       {/* Close button */}
-      <button onClick={onClose} style={{
-        position: "absolute", top: 6, right: 28,
-        background: "transparent", border: "none",
-        color: "#b0a090", fontSize: 26, cursor: "pointer",
-        fontFamily: "'Just Another Hand', cursive",
-        transition: "color 0.2s",
-      }} onMouseEnter={e => e.target.style.color = "#6a4a30"} onMouseLeave={e => e.target.style.color = "#b0a090"}>x</button>
+      <button 
+        onClick={onClose} 
+        onPointerDown={e => { e.preventDefault(); e.stopPropagation(); onClose(); }}
+        onTouchStart={e => { e.preventDefault(); e.stopPropagation(); onClose(); }}
+        style={{
+          position: "absolute", top: 0, right: 8,
+          width: 56, height: 56,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "transparent", border: "none",
+          color: "#b0a090", fontSize: 36, cursor: "pointer",
+          fontFamily: "'Dawning of a New Day', cursive",
+          transition: "color 0.2s",
+          touchAction: "none",
+          zIndex: 10
+        }} 
+        onMouseEnter={e => e.target.style.color = "#6a4a30"} 
+        onMouseLeave={e => e.target.style.color = "#b0a090"}
+      >
+        <span style={{ position: "relative", top: -4, right: -4 }}>x</span>
+      </button>
 
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, paddingBottom: 10, borderBottom: "1.5px solid rgba(0,0,0,0.08)", position: "relative", zIndex: 1 }}>
         <img src="/favicon.svg" alt="Logo" style={{ width: 32, height: 32, imageRendering: "pixelated", filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.15))" }} />
         <div>
-          <div style={{ fontFamily: "'Just Another Hand', cursive", fontSize: 36, color: "#2a3a5a", letterSpacing: 0.5, lineHeight: 1 }}>Saad Ibra</div>
+          <div style={{ fontFamily: "'Dawning of a New Day', cursive", fontSize: 36, color: "#2a3a5a", letterSpacing: 0.5, lineHeight: 1 }}>Saad Ibra</div>
           <div style={{ fontFamily: "'Micro 5', monospace", fontSize: 11, color: "#8a8070", letterSpacing: 1 }}>NOMADSLAND OS v1.0</div>
         </div>
       </div>
 
       {/* Controls Section */}
-      <div style={{ fontFamily: "'Just Another Hand', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+      <div style={{ fontFamily: "'Dawning of a New Day', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
         Controls ~
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, marginBottom: 18, fontFamily: "'Micro 5', monospace", position: "relative", zIndex: 1 }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={30}>W</KeyBadge><KeyBadge minWidth={30}>A</KeyBadge><KeyBadge minWidth={30}>S</KeyBadge><KeyBadge minWidth={30}>D</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>move</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={140}>TAP / CLICK</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>move</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={55} color="#e8c0c0">A</KeyBadge><KeyBadge minWidth={78} color="#e8c0c0">SPACE</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>interact</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>interact</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={55} color="#c0d0e8">B</KeyBadge><KeyBadge minWidth={78} color="#c0d0e8">ESC</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Just Another Hand', cursive", fontSize: 22 }}>back</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>back</span>
         </div>
       </div>
 
       {/* Links Section */}
-      <div style={{ fontFamily: "'Just Another Hand', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+      <div style={{ fontFamily: "'Dawning of a New Day', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
         Places to find me ~
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 8px", position: "relative", zIndex: 1 }}>
@@ -411,7 +471,7 @@ const InfoPanel = ({ onClose }) => (
 );
 
 function ControlBarInner() {
-  const { speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted } = useGame();
+  const { speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, isConsoleMinimized, setIsConsoleMinimized } = useGame();
   const [sfxMuted, setSfxMuted] = useState(() => getSfxMuted());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [isDesktopLandscape, setIsDesktopLandscape] = useState(window.innerWidth > window.innerHeight && window.innerWidth >= 1024);
@@ -433,52 +493,63 @@ function ControlBarInner() {
 
   return (
     <div style={{
-      position: "relative",
-      width: isDesktopLandscape ? "320px" : "100%",
-      height: isDesktopLandscape ? "100dvh" : (isMobile ? "40dvh" : "33.33dvh"),
+      position: isConsoleMinimized ? "absolute" : "relative",
+      bottom: isConsoleMinimized ? 0 : "auto",
+      left: 0,
+      width: isConsoleMinimized ? "100%" : (isDesktopLandscape ? "320px" : "100%"),
+      height: isConsoleMinimized ? "64px" : (isDesktopLandscape ? "100dvh" : (isMobile ? "40dvh" : "33.33dvh")),
       flexShrink: 0,
-      background: "#d0d0c0",
-      borderTop: isDesktopLandscape ? "none" : "4px solid #b0b0a0",
-      borderLeft: isDesktopLandscape ? "4px solid #b0b0a0" : "none",
-      boxShadow: "inset 0 8px 12px rgba(255,255,255,0.5)",
+      background: isConsoleMinimized ? "rgba(208, 208, 192, 0.9)" : "#d0d0c0",
+      borderTop: (isConsoleMinimized || !isDesktopLandscape) ? "4px solid #b0b0a0" : "none",
+      borderLeft: (!isConsoleMinimized && isDesktopLandscape) ? "4px solid #b0b0a0" : "none",
+      boxShadow: isConsoleMinimized ? "none" : "inset 0 8px 12px rgba(255,255,255,0.5)",
       display: "flex", flexDirection: "column",
-      padding: isDesktopLandscape ? "48px 32px" : (isMobile ? "24px 16px" : "32px 64px"),
+      padding: isConsoleMinimized ? "0" : (isDesktopLandscape ? "48px 32px" : (isMobile ? "24px 16px" : "32px 64px")),
       boxSizing: "border-box",
       zIndex: 10000,
       overflow: "visible",
       userSelect: "none",
       WebkitUserSelect: "none",
       WebkitTouchCallout: "none",
-      touchAction: "none"
+      touchAction: "none",
+      backdropFilter: isConsoleMinimized ? "blur(4px)" : "none",
     }}>
       
       {/* Info button — top-left of the entire console */}
-      <div style={{ position: "absolute", top: 20, left: 20, zIndex: 20 }}>
+      <div style={{ position: "absolute", top: isConsoleMinimized ? 12 : 20, right: 20, zIndex: 20 }}>
         <InfoButton onClick={() => setShowInfo(true)} />
       </div>
-
-      {/* Decorative Speaker Lines — always bottom-right, like a real Gameboy */}
-      <div style={{
-        position: "absolute",
-        bottom: isDesktopLandscape ? 32 : (isMobile ? 12 : 24),
-        right: isDesktopLandscape ? 32 : (isMobile ? 16 : 24),
-        display: "flex", gap: 6,
-        transform: "rotate(-15deg)",
-        pointerEvents: "none",
-        zIndex: 1,
-      }}>
-        {[1,2,3,4,5,6].map(i => (
-          <div key={i} style={{ width: 4, height: 48, background: "#a0a090", borderRadius: 2, boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.3)" }} />
-        ))}
+      <div style={{ position: "absolute", top: isConsoleMinimized ? 12 : 20, left: isConsoleMinimized ? 20 : 20, zIndex: 20 }}>
+        <MinimizeButton 
+          isMinimized={isConsoleMinimized} 
+          onClick={() => setIsConsoleMinimized(!isConsoleMinimized)} 
+        />
       </div>
 
-      <div style={{ 
-        display: "flex", 
-        flexDirection: isDesktopLandscape ? "column" : "row",
-        justifyContent: isDesktopLandscape ? "space-evenly" : "space-between", 
-        alignItems: "center", 
-        flex: 1, position: "relative", zIndex: 10 
-      }}>
+      {!isConsoleMinimized && (
+        <>
+          {/* Decorative Speaker Lines — always bottom-right, like a real Gameboy */}
+          <div style={{
+            position: "absolute",
+            bottom: isDesktopLandscape ? 32 : (isMobile ? 12 : 24),
+            right: isDesktopLandscape ? 32 : (isMobile ? 16 : 24),
+            display: "flex", gap: 6,
+            transform: "rotate(-15deg)",
+            pointerEvents: "none",
+            zIndex: 1,
+          }}>
+            {[1,2,3,4,5,6].map(i => (
+              <div key={i} style={{ width: 4, height: 48, background: "#a0a090", borderRadius: 2, boxShadow: "inset 1px 1px 2px rgba(0,0,0,0.3)" }} />
+            ))}
+          </div>
+
+          <div style={{ 
+            display: "flex", 
+            flexDirection: isDesktopLandscape ? "column" : "row",
+            justifyContent: isDesktopLandscape ? "space-evenly" : "space-between", 
+            alignItems: "center", 
+            flex: 1, position: "relative", zIndex: 10 
+          }}>
         
         {/* D-PAD */}
         <div style={{ position: "relative", flexShrink: 0 }}>
@@ -547,9 +618,11 @@ function ControlBarInner() {
           </div>
         </div>
       </div>
+      </>
+      )}
 
       {/* Info Panel Overlay */}
-      {showInfo && <InfoPanel onClose={() => setShowInfo(false)} />}
+      {showInfo && createPortal(<InfoPanel onClose={() => setShowInfo(false)} />, document.body)}
     </div>
   );
 }

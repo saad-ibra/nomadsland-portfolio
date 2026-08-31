@@ -41,6 +41,7 @@ export function useTapToMove(worldRef, pos, canWalk, setPath, maxCols, maxRows, 
         if (canWalk(nc, nr)) {
           const path = findPath(pos.col, pos.row, nc, nr, canWalk, maxCols, maxRows);
           if (path.length > 0) {
+            path.push({ col: tileCol, row: tileRow }); // Add the unwalkable target tile as the final step to trigger a bump
             setPath(path);
             return;
           }

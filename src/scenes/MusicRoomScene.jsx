@@ -32,8 +32,8 @@ const DIALOGUE_LINES = [
 ];
 
 function MusicRoomScene() {
-  const { speedMultiplier, isLandscape, isTransitioning, changeScene } = useGame();
-  const viewport = useViewport(isLandscape);
+  const { speedMultiplier, isLandscape, isTransitioning, changeScene, isConsoleMinimized } = useGame();
+  const viewport = useViewport(isLandscape, isConsoleMinimized);
   const { scale, internalW, internalH } = viewport;
   const [phase, setPhase] = useState("intro");
   const [dialogueIndex, setDialogueIndex] = useState(0);
@@ -92,9 +92,9 @@ function MusicRoomScene() {
       display: "flex", flexDirection: isLandscape ? "row" : "column",  
       background: "#000", fontFamily: "'Micro 5', monospace", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw",
     }}>
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
         <div style={{ transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
-          <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#111", boxShadow: "0 0 0 4px #222" }}>
+          <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#111", boxShadow: isConsoleMinimized ? "none" : "0 0 0 4px #222" }}>
             
             <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", left: -cam.x, top: -cam.y, width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
               <TapMarker tapTarget={tapTarget} TILE={TILE} />

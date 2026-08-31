@@ -20,6 +20,7 @@ export function GameProvider({ children }) {
   const [isLandscape, setIsLandscape] = useState(
     () => window.innerWidth > window.innerHeight && window.innerWidth >= 1024
   );
+  const [isConsoleMinimized, setIsConsoleMinimized] = useState(false);
   const [isTabActive, setIsTabActive] = useState(!document.hidden);
 
   // ── Scene Navigation ──
@@ -105,6 +106,7 @@ export function GameProvider({ children }) {
       musicMuted, setMusicMuted,
       musicVolume, setMusicVolume,
       isLandscape,
+      isConsoleMinimized, setIsConsoleMinimized,
       isTransitioning, triggerTransition,
       scene, previousScene, changeScene,
       transitionRef,

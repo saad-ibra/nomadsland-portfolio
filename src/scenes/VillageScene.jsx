@@ -12,6 +12,7 @@ import PlayerSprite from "../components/sprites/PlayerSprite";
 import ControlBar from "../components/ui/ControlBar";
 import SaadSprite from "../components/sprites/SaadSprite";
 import { useTerrainCanvas } from "../hooks/useTerrainCanvas";
+import { useViewport } from "../hooks/useViewport";
 import {
   MAP, MAP_COLS, MAP_ROWS, SHOPS, SHOP_TILES, START_POS,
   PALETTE,
@@ -593,35 +594,17 @@ function Building({ shop, isNear }) {
   if (!Component) return null;
   return <Component shop={shop} isNear={isNear} />;
 }
-
-function getViewportMetrics(isLandscape) {
-  if (typeof window === 'undefined') return { scale: 1, w: 384, h: 288 };
-  const isMobile = window.innerWidth < 768;
-  const consoleWidth = isLandscape ? 320 : 0;
-  const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-  const availableWidth = window.innerWidth - consoleWidth;
-  const availableHeight = window.innerHeight - consoleHeight;
-  const baseW = 256;
-  const baseH = 192;
-  const scale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-  return {
-    scale,
-    w: Math.floor(availableWidth / scale),
-    h: Math.floor(availableHeight / scale)
-  };
-}
-
 // ============================================================
 //  MAIN VILLAGE SCENE
 // ============================================================
 export default function VillageScene() {
   const { isLandscape, isTransitioning, triggerTransition, previousScene, changeScene,
-    speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume } = useGame();
+    speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume, isConsoleMinimized } = useGame();
   const [nearShop, setNearShop]   = useState(null);
   const [phase, setPhase]         = useState(previousScene ? "free" : "intro");
   
-  const [viewport, setViewport] = useState(() => getViewportMetrics(isLandscape));
-  const { scale, w: internalW, h: internalH } = viewport;
+  const viewport = useViewport(isLandscape, isConsoleMinimized);
+  const { scale, internalW, internalH } = viewport;
         
   const [isSailing, setIsSailing] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
@@ -798,7 +781,42 @@ export default function VillageScene() {
   // Camera uses refs + direct DOM mutation instead of React state to avoid 60fps re-renders
   const camRef = useRef({ x: initialPos.col * TILE + TILE/2 - internalW/2, y: initialPos.row * TILE + TILE/2 - internalH/2 });
   const worldRef = useRef(null);
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
+  const baseTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
+
+  const handleWorldTap = useCallback((e) => {
+    if (phase !== "free" || isTransitioning) return;
+    if (isSailing) {
+      if (!worldRef.current) return;
+      // Ignore clicks on UI elements or buttons inside the world
+      if (e.target.tagName.toLowerCase() === 'button' || e.target.closest('button')) return;
+      
+      const rect = worldRef.current.getBoundingClientRect();
+      const scaleX = rect.width / (MAP_COLS * TILE);
+      const scaleY = rect.height / (MAP_ROWS * TILE);
+      const clickX = (e.clientX - rect.left) / scaleX;
+      const clickY = (e.clientY - rect.top) / scaleY;
+      const tileCol = Math.floor(clickX / TILE);
+      const tileRow = Math.floor(clickY / TILE);
+      
+      const dx = tileCol - pos.col;
+      const dy = tileRow - pos.row;
+      if (dx === 0 && dy === 0) return;
+      
+      const key = Math.abs(dx) > Math.abs(dy)
+        ? (dx > 0 ? "ArrowRight" : "ArrowLeft")
+        : (dy > 0 ? "ArrowDown" : "ArrowUp");
+        
+      const evtDown = new KeyboardEvent("keydown", { key, code: key, bubbles: true, cancelable: true });
+      window.dispatchEvent(evtDown);
+      setTimeout(() => {
+        const evtUp = new KeyboardEvent("keyup", { key, code: key, bubbles: true, cancelable: true });
+        window.dispatchEvent(evtUp);
+      }, 150);
+      return;
+    }
+    baseTap(e);
+  }, [phase, isTransitioning, isSailing, pos, baseTap]);
+
   // Only triggers React re-render when the visible tile window changes
   const [tileWindow, setTileWindow] = useState({ sc: 0, ec: MAP_COLS, sr: 0, er: MAP_ROWS });
 
@@ -959,14 +977,7 @@ export default function VillageScene() {
     return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, isSailing, playStep]);
 
-  useEffect(() => {
-    const resize = () => {
-      setViewport(getViewportMetrics(isLandscape));
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, [isLandscape]);
+
 
 
   useEffect(() => {
@@ -1413,7 +1424,7 @@ export default function VillageScene() {
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Village Hub | Saad Ibra</title>
       <meta name="description" content="Explore the village hub of Nomadsland. Find the Library, Chemistry Lab, Newsroom, and my Home." />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -1433,7 +1444,7 @@ export default function VillageScene() {
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: PALETTE.water[0],
-          boxShadow: "0 0 0 4px #1a5580",
+          boxShadow: isConsoleMinimized ? "none" : "0 0 0 4px #1a5580",
           imageRendering: "pixelated",
         }}>
 

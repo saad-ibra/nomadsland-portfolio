@@ -410,6 +410,7 @@ export default function ChemistryLabScene() {
     musicPlaying,
     musicMuted,
     musicVolume,
+    isConsoleMinimized,
   } = useGame();
 
   const [repos, setRepos]           = useState([]);
@@ -432,7 +433,7 @@ export default function ChemistryLabScene() {
   const [openStation,    setOpenStation]    = useState(null);
   const [phase,          setPhase]          = useState("intro");
   
-  const viewport = useViewport(isLandscape);
+  const viewport = useViewport(isLandscape, isConsoleMinimized);
   const { scale, internalW, internalH } = viewport;
 
   const musicRef    = useRef({ audioCtx: null, interval: null });
@@ -546,9 +547,12 @@ export default function ChemistryLabScene() {
   const {  pos, setPos, facing, stepping, setPath, tapTarget , triggerAction } = usePlayerMovement({
     initialPos: labLayout.startPos,
     canWalk: (c, r) => {
-      if (c === layoutRef.current.startPos.col && r === 1) { changeScene('village'); return false; }
+      if (c === layoutRef.current.startPos.col && r === 1) { return false; } // Door is unwalkable
       if (c === layoutRef.current.startPos.col + 2 && r === 3) return false;
       return canLayoutWalk(layoutRef.current, c, r);
+    },
+    onBump: (c, r) => {
+      if (c === layoutRef.current.startPos.col && r === 1) { changeScene('village'); }
     },
     speedMultiplier,
     isActive: phase === "free" && !isTransitioning && !openStation,
@@ -650,7 +654,7 @@ export default function ChemistryLabScene() {
       fontFamily: "'Micro 5', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Chemistry Lab | Saad Ibra</title>
       <meta name="description" content="Welcome to the Chemistry Lab. View my software engineering projects synced directly with GitHub." />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -670,7 +674,7 @@ export default function ChemistryLabScene() {
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#070e16",
-          boxShadow: "0 0 0 4px #1a2b3c, 0 8px 32px rgba(0,0,0,0.9)",
+          boxShadow: isConsoleMinimized ? "0 8px 32px rgba(0,0,0,0.9)" : "0 0 0 4px #1a2b3c, 0 8px 32px rgba(0,0,0,0.9)",
           imageRendering: "pixelated",
         }}>
 

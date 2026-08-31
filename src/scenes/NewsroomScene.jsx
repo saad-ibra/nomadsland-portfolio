@@ -186,6 +186,7 @@ export default function NewsroomScene() {
     isLandscape,
     isTransitioning,
     changeScene,
+    isConsoleMinimized,
   } = useGame();
 
   const layout = useMemo(() => generateNewsroomLayout(BLOG_POSTS), []);
@@ -220,7 +221,7 @@ export default function NewsroomScene() {
   const [openPost, setOpenPost]     = useState(null);
   const [phase, setPhase]           = useState("intro");
   
-  const viewport = useViewport(isLandscape);
+  const viewport = useViewport(isLandscape, isConsoleMinimized);
   const { scale, internalW, internalH } = viewport;
 
   const musicRef     = useRef({ audioCtx: null, interval: null });
@@ -254,8 +255,11 @@ export default function NewsroomScene() {
   const {  pos, facing, stepping, setPath, tapTarget , triggerAction } = usePlayerMovement({
     initialPos: layout.startPos,
     canWalk: (c, r) => {
-      if (c === 5 && r === 1) { changeScene('village'); return false; }
+      if (c === 5 && r === 1) { return false; } // Door is unwalkable
       return canLayoutWalk(layoutRef.current, c, r);
+    },
+    onBump: (c, r) => {
+      if (c === 5 && r === 1) { changeScene('village'); }
     },
     speedMultiplier,
     isActive: phase === "free" && !isTransitioning && !openPost,
@@ -451,7 +455,7 @@ export default function NewsroomScene() {
       fontFamily: "'Micro 5', monospace", userSelect: "none",  boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Newsroom | Saad Ibra</title>
       <meta name="description" content="Read my latest thoughts and articles on software engineering, game dev, and more in the Newsroom." />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -461,24 +465,31 @@ export default function NewsroomScene() {
         
         .contact-btn {
           display: flex; align-items: center; justify-content: center; gap: 8px;
-          background: #fff; color: #000; border: 2px solid #000;
+          background: #fff; color: #000;
           padding: 10px; text-decoration: none; font-size: 6px; font-weight: bold;
           transition: transform 0.1s;
         }
         .contact-btn:hover { background: #000; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 0 rgba(0,0,0,0.5); }
       `}</style>
 
+        {/* ── BACKGROUND SCROLLING TRICK ── */}
+        <div style={{ position: "absolute", inset: -50, background: "#0a0a0c" }}>
+          {Array.from({ length: 40 }).map((_, i) => (
+            <div key={i} style={{ position: "absolute", left: (i * 47) % window.innerWidth, top: -100, width: 1, height: "200dvh", background: "rgba(255,255,255,0.02)", transform: "rotate(15deg)" }} />
+          ))}
+        </div>
+
       <div style={{
         display: "flex", flexDirection: "column", alignItems: "center",
         transform: `scale(${scale})`, transformOrigin: "center",
-        imageRendering: "pixelated",
+        imageRendering: "pixelated", zIndex: 1
       }}>
 
         {/* ── GAME VIEWPORT ── */}
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: "#1a1e24",
-          boxShadow: "0 0 0 4px #222",
+          boxShadow: isConsoleMinimized ? "none" : "0 0 0 4px #222",
           imageRendering: "pixelated",
         }}>
 
