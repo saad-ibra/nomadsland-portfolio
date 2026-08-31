@@ -397,7 +397,7 @@ const InfoPanel = ({ onClose }) => (
         <DiaryLink label="Contact" url="/contact/" icon={<IconPhone />} />
         <DiaryLink label="GitHub" url="https://github.com/saad-ibra" icon={<IconComputer />} />
         <DiaryLink label="LinkedIn" url="https://linkedin.com/in/saad-ibra" icon={<IconBriefcase />} />
-        <DiaryLink label="Goodreads" url="https://www.goodreads.com/user/show/155498817-saad-ibra" icon={<IconBook />} />
+        <DiaryLink label="Goodreads" url="https://www.goodreads.com/user/show/198640001" icon={<IconBook />} />
       </div>
 
       {/* Doodles Section (flowing naturally at bottom to avoid overlapping buttons) */}

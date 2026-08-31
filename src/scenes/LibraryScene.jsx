@@ -877,7 +877,6 @@ export default function LibraryScene() {
                 key={s.id}
                 shelf={s}
                 isNear={highlightedShelfId === s.id}
-                onClick={() => { if (phase === "free") setOpenShelf(s.id); }}
               />
             ))}
 
