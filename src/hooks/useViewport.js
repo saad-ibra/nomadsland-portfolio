@@ -15,7 +15,7 @@ export function getViewportMetrics(isLandscape, isConsoleMinimized) {
   let scale = Math.floor(Math.min(nominalAvailableWidth / baseW, nominalAvailableHeight / baseH));
   
   if (window.innerWidth < 600) {
-    scale = Math.max(2, scale);
+    scale = Math.max(1.25, scale);
   } else {
     scale = Math.max(1, scale);
   }
