@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import { useGame } from '../context/GameContext.jsx';
-import { useCameraLerp } from '../hooks/useCameraLerp.js';
+import { useSmoothPixelGrid } from '../hooks/useSmoothPixelGrid.js';
 import { useViewport } from '../hooks/useViewport.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { renderControlText } from '../utils/renderControls';
@@ -635,7 +635,8 @@ export default function ChemistryLabScene() {
 
   // ---- Camera (clamped to world bounds) ----
   const layout = labLayout;
-  const cam = useCameraLerp(pos, TILE, internalW, internalH, layout.totalCols, layout.totalRows, speedMultiplier); 
+  const playerRef = useRef(null);
+  useSmoothPixelGrid({ pos, internalW, internalH, mapCols: layout.totalCols, mapRows: layout.totalRows, speedMultiplier, worldRef, playerRef }); 
   const tt   = (0.14 / speedMultiplier).toFixed(2);
 
   const activeStation    = layout.stations.find(s => s.id === nearStation);
@@ -682,7 +683,7 @@ export default function ChemistryLabScene() {
           <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: layout.totalCols * TILE, height: layout.totalRows * TILE,
-            left: -cam.x, top: -cam.y, transition: "left 0.14s linear, top 0.14s linear",
+            transform: "translate(0px, 0px)", willChange: "transform",
             
           }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
@@ -760,9 +761,9 @@ export default function ChemistryLabScene() {
             </div>
 
             {/* Player — Y-depth sorted */}
-            <div style={{
+            <div ref={playerRef} style={{
               position: "absolute",
-              left: pos.col * TILE, top: pos.row * TILE, transition: "left 0.14s linear, top 0.14s linear",
+              left: 0, top: 0, willChange: "transform",
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,

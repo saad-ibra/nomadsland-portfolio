@@ -13,6 +13,7 @@ import ControlBar from "../components/ui/ControlBar";
 import SaadSprite from "../components/sprites/SaadSprite";
 import { useTerrainCanvas } from "../hooks/useTerrainCanvas";
 import { useViewport } from "../hooks/useViewport";
+import { useSmoothPixelGrid } from "../hooks/useSmoothPixelGrid";
 import {
   MAP, MAP_COLS, MAP_ROWS, SHOPS, SHOP_TILES, START_POS,
   PALETTE,
@@ -1013,29 +1014,23 @@ export default function VillageScene() {
 
   const isFirstFrame = useRef(true);
 
-  useEffect(() => {
-    const targetX = pos.col * TILE + TILE / 2 - internalW / 2;
-    const targetY = pos.row * TILE + TILE / 2 - internalH / 2;
-    
-    const clampedTX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), targetX));
-    const clampedTY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), targetY));
+  const playerRef = useRef(null);
 
-    if (worldRef.current) {
-      worldRef.current.style.transition = (isTransitioning || isSailing) ? "none" : "transform 0.14s linear";
-      worldRef.current.style.transform = `translate(${-Math.round(clampedTX)}px, ${-Math.round(clampedTY)}px)`;
-    }
-
-    const sc = Math.max(0, Math.floor(clampedTX / TILE) - 2);
-    const ec = Math.min(MAP_COLS, Math.floor((clampedTX + internalW) / TILE) + 3);
-    const sr = Math.max(0, Math.floor(clampedTY / TILE) - 2);
-    const er = Math.min(MAP_ROWS, Math.floor((clampedTY + internalH) / TILE) + 3);
+  const handleWindowChange = useCallback((sc, ec, sr, er) => {
     setTileWindow(prev => {
       if (prev.sc !== sc || prev.ec !== ec || prev.sr !== sr || prev.er !== er) {
         return { sc, ec, sr, er };
       }
       return prev;
     });
-  }, [pos, internalW, internalH, isTransitioning, isSailing]);
+  }, []);
+
+  useSmoothPixelGrid({
+    pos, internalW, internalH,
+    mapCols: MAP_COLS, mapRows: MAP_ROWS,
+    speedMultiplier, worldRef, playerRef,
+    onWindowChange: handleWindowChange
+  });
 
   // Virtualization — driven by tileWindow state (updates ~every 32px of movement, not every frame)
   const { sc: startCol, ec: endCol, sr: startRow, er: endRow } = tileWindow;
@@ -1486,18 +1481,22 @@ export default function VillageScene() {
             </div>
 
             {/* Player */}
-            <div style={{
-              position: "absolute", left: pos.col * TILE, top: pos.row * TILE, 
-              transition: (isTransitioning || isSailing) ? "none" : "left 0.14s linear, top 0.14s linear", 
+            <div ref={playerRef} style={{
+              position: "absolute", left: 0, top: 0,
               width: TILE, height: TILE,
-              display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: playerZ,
-              animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
-              animationDelay: isSailing ? `-${(sailStartTime - mountTime) % 4000}ms` : "0ms",
+              willChange: "transform",
             }}>
-              {/* Pixel drop shadow */}
-              <div style={{ position: "absolute", bottom: 2, left: "50%", marginLeft: -7, width: 14, height: 4, background: "rgba(0,0,0,0.25)", zIndex: -1 }} />
-              <PlayerSprite direction={facing} stepping={stepping} costume="casual" />
+              <div style={{
+                width: "100%", height: "100%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
+                animationDelay: isSailing ? `-${(sailStartTime - mountTime) % 4000}ms` : "0ms",
+              }}>
+                {/* Pixel drop shadow */}
+                <div style={{ position: "absolute", bottom: 2, left: "50%", marginLeft: -7, width: 14, height: 4, background: "rgba(0,0,0,0.25)", zIndex: -1 }} />
+                <PlayerSprite direction={facing} stepping={stepping} costume="casual" />
+              </div>
             </div>
             
             {/* Wakes */}

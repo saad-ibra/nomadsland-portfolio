@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { renderControlText } from '../utils/renderControls';
-import { useCameraLerp } from '../hooks/useCameraLerp.js';
+import { useSmoothPixelGrid } from '../hooks/useSmoothPixelGrid.js';
 import { useViewport } from '../hooks/useViewport.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { Library, BookOpen, Clock, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
@@ -816,7 +816,8 @@ export default function LibraryScene() {
     ? SHELF_LAYOUT[tourIndex].id : nearShelf;
 
   // ---- Camera: center on player ----
-  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
+  const playerRef = useRef(null);
+  useSmoothPixelGrid({ pos, internalW, internalH, mapCols: MAP_COLS, mapRows: MAP_ROWS, speedMultiplier, worldRef, playerRef }); 
   
   const transitionTime = (0.14 / speedMultiplier).toFixed(2);
 
@@ -865,7 +866,7 @@ export default function LibraryScene() {
           <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            left: -cam.x, top: -cam.y, transition: "left 0.14s linear, top 0.14s linear", zIndex: 1
+            transform: "translate(0px, 0px)", willChange: "transform", zIndex: 1
           }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
@@ -899,9 +900,9 @@ export default function LibraryScene() {
             </div>
 
             {/* Player - always at grid position */}
-             <div style={{
+             <div ref={playerRef} style={{
               position: "absolute",
-              left: pos.col * TILE, top: pos.row * TILE, transition: "left 0.14s linear, top 0.14s linear",
+              left: 0, top: 0, willChange: "transform",
               width: TILE, height: TILE,
               display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: pos.row * 10 + 5,

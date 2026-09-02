@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback, memo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useForm, ValidationError } from '@formspree/react';
 import { useGame } from '../context/GameContext.jsx';
-import { useCameraLerp } from '../hooks/useCameraLerp.js';
+import { useSmoothPixelGrid } from '../hooks/useSmoothPixelGrid.js';
 import { useViewport } from '../hooks/useViewport.js';
 import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
@@ -524,7 +524,8 @@ export default function NomadshomeScene() {
   const handleWorldTap = useTapToMove(worldRef, pos, isWalkable, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
 
-  const cam = useCameraLerp(pos, TILE, internalW, internalH, MAP_COLS, MAP_ROWS, speedMultiplier); 
+  const playerRef = useRef(null);
+  useSmoothPixelGrid({ pos, internalW, internalH, mapCols: MAP_COLS, mapRows: MAP_ROWS, speedMultiplier, worldRef, playerRef }); 
 
   return (
     <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Micro 5', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
@@ -535,7 +536,7 @@ export default function NomadshomeScene() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#000", boxShadow: isConsoleMinimized ? "0 0 30px rgba(0,0,0,1)" : "0 0 0 4px #2a1c11, 0 0 30px rgba(0,0,0,1)", imageRendering: "pixelated", borderRadius: 4 }}>
             {/* CAMERA CONTAINER */}
-            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, transition: "left 0.14s linear, top 0.14s linear", zIndex: 1 }}>
+            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, transform: "translate(0px, 0px)", willChange: "transform", zIndex: 1 }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
               <StaticWorld />
@@ -565,7 +566,7 @@ export default function NomadshomeScene() {
                 <SaadSprite direction="down" />
               </div>
 
-              <div style={{ position: "absolute", left: pos.col * TILE, top: pos.row * TILE, transition: "left 0.14s linear, top 0.14s linear", width: TILE, height: TILE, display: "flex", alignItems: "center", justifyContent: "center", zIndex: pos.row * 10 + 5 }}><PlayerSprite direction={facing} stepping={stepping} costume="casual" /></div>
+              <div ref={playerRef} style={{ position: "absolute", left: 0, top: 0, willChange: "transform", width: TILE, height: TILE, display: "flex", alignItems: "center", justifyContent: "center", zIndex: pos.row * 10 + 5 }}><PlayerSprite direction={facing} stepping={stepping} costume="casual" /></div>
             </div>
             {/* Dawn Overlays */}
             <div style={{ position: "absolute", inset: 0, background: "#ff8a50", mixBlendMode: "multiply", opacity: 0.4, pointerEvents: "none", zIndex: 899 }} />
