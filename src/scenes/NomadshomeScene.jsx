@@ -535,7 +535,7 @@ export default function NomadshomeScene() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#000", boxShadow: isConsoleMinimized ? "0 0 30px rgba(0,0,0,1)" : "0 0 0 4px #2a1c11, 0 0 30px rgba(0,0,0,1)", imageRendering: "pixelated", borderRadius: 4 }}>
             {/* CAMERA CONTAINER */}
-            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, zIndex: 1 }}>
+            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", width: MAP_COLS * TILE, height: MAP_ROWS * TILE, left: -cam.x, top: -cam.y, transition: "left 0.14s linear, top 0.14s linear", zIndex: 1 }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
               <StaticWorld />

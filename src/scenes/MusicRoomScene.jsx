@@ -96,7 +96,7 @@ function MusicRoomScene() {
         <div style={{ transform: `scale(${scale})`, transformOrigin: "center", imageRendering: "pixelated" }}>
           <div style={{ position: "relative", width: internalW, height: internalH, overflow: "hidden", background: "#111", boxShadow: isConsoleMinimized ? "none" : "0 0 0 4px #222" }}>
             
-            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", left: -cam.x, top: -cam.y, width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
+            <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", left: -cam.x, top: -cam.y, transition: "left 0.14s linear, top 0.14s linear", width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
               <TapMarker tapTarget={tapTarget} TILE={TILE} />
               <StaticWorld />
 

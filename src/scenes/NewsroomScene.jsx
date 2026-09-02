@@ -497,7 +497,7 @@ export default function NewsroomScene() {
           <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: layout.totalCols * TILE, height: layout.totalRows * TILE,
-            left: -cam.x, top: -cam.y,
+            left: -cam.x, top: -cam.y, transition: "left 0.14s linear, top 0.14s linear",
             
           }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />

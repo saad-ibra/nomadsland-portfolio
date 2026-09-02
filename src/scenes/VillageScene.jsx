@@ -779,7 +779,6 @@ export default function VillageScene() {
   }, []);
 
   // Camera uses refs + direct DOM mutation instead of React state to avoid 60fps re-renders
-  const camRef = useRef({ x: initialPos.col * TILE + TILE/2 - internalW/2, y: initialPos.row * TILE + TILE/2 - internalH/2 });
   const worldRef = useRef(null);
   const baseTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
 
@@ -1014,53 +1013,29 @@ export default function VillageScene() {
 
   const isFirstFrame = useRef(true);
 
-  // Smooth Camera Lerp — uses direct DOM mutation, NOT React state
   useEffect(() => {
-    let lastTime = performance.now();
-    const updateCam = (time) => {
-      const dt = Math.min((time - lastTime) / 1000, 0.1);
-      lastTime = time;
-      
-      const targetX = pos.col * TILE + TILE / 2 - internalW / 2;
-      const targetY = pos.row * TILE + TILE / 2 - internalH / 2;
-      
-      const clampedTX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), targetX));
-      const clampedTY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), targetY));
+    const targetX = pos.col * TILE + TILE / 2 - internalW / 2;
+    const targetY = pos.row * TILE + TILE / 2 - internalH / 2;
+    
+    const clampedTX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), targetX));
+    const clampedTY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), targetY));
 
-      const cam = camRef.current;
-      
-      if (isFirstFrame.current) {
-        cam.x = clampedTX;
-        cam.y = clampedTY;
-        isFirstFrame.current = false;
-      } else {
-        const lerpFactor = 1.0 - Math.pow(0.001, dt * speedMultiplier);
-        cam.x = cam.x + (clampedTX - cam.x) * lerpFactor;
-        cam.y = cam.y + (clampedTY - cam.y) * lerpFactor;
+    if (worldRef.current) {
+      worldRef.current.style.transition = (isTransitioning || isSailing) ? "none" : "transform 0.14s linear";
+      worldRef.current.style.transform = `translate(${-Math.round(clampedTX)}px, ${-Math.round(clampedTY)}px)`;
+    }
+
+    const sc = Math.max(0, Math.floor(clampedTX / TILE) - 2);
+    const ec = Math.min(MAP_COLS, Math.floor((clampedTX + internalW) / TILE) + 3);
+    const sr = Math.max(0, Math.floor(clampedTY / TILE) - 2);
+    const er = Math.min(MAP_ROWS, Math.floor((clampedTY + internalH) / TILE) + 3);
+    setTileWindow(prev => {
+      if (prev.sc !== sc || prev.ec !== ec || prev.sr !== sr || prev.er !== er) {
+        return { sc, ec, sr, er };
       }
-
-      // Direct DOM mutation — no React re-render
-      if (worldRef.current) {
-        worldRef.current.style.transform = `translate(${-Math.round(cam.x)}px, ${-Math.round(cam.y)}px)`;
-      }
-
-      // Only trigger React re-render when the visible tile window actually changes
-      const sc = Math.max(0, Math.floor(cam.x / TILE) - 2);
-      const ec = Math.min(MAP_COLS, Math.floor((cam.x + internalW) / TILE) + 3);
-      const sr = Math.max(0, Math.floor(cam.y / TILE) - 2);
-      const er = Math.min(MAP_ROWS, Math.floor((cam.y + internalH) / TILE) + 3);
-      setTileWindow(prev => {
-        if (prev.sc !== sc || prev.ec !== ec || prev.sr !== sr || prev.er !== er) {
-          return { sc, ec, sr, er };
-        }
-        return prev;
-      });
-
-      rafRef.current = requestAnimationFrame(updateCam);
-    };
-    rafRef.current = requestAnimationFrame(updateCam);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [pos, speedMultiplier, internalW, internalH]);
+      return prev;
+    });
+  }, [pos, internalW, internalH, isTransitioning, isSailing]);
 
   // Virtualization — driven by tileWindow state (updates ~every 32px of movement, not every frame)
   const { sc: startCol, ec: endCol, sr: startRow, er: endRow } = tileWindow;
@@ -1448,11 +1423,11 @@ export default function VillageScene() {
           imageRendering: "pixelated",
         }}>
 
-          {/* Scrolling world layer — positioned by RAF via ref, not React state */}
+          {/* Scrolling world layer — positioned by CSS transition via ref */}
           <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            transform: `translate(${-Math.round(camRef.current.x)}px, ${-Math.round(camRef.current.y)}px)`,
+            transform: "translate(0px, 0px)",
             willChange: "transform",
             zIndex: 1
           }}>

@@ -865,7 +865,7 @@ export default function LibraryScene() {
           <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            left: -cam.x, top: -cam.y, zIndex: 1
+            left: -cam.x, top: -cam.y, transition: "left 0.14s linear, top 0.14s linear", zIndex: 1
           }}>
             <TapMarker tapTarget={tapTarget} TILE={TILE} />
 
