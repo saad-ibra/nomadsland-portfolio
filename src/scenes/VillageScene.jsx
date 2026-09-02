@@ -1028,7 +1028,7 @@ export default function VillageScene() {
   useSmoothPixelGrid({
     pos, internalW, internalH,
     mapCols: MAP_COLS, mapRows: MAP_ROWS,
-    speedMultiplier, worldRef, playerRef,
+    speedMultiplier: isSailing ? speedMultiplier * 1.5 : speedMultiplier, worldRef, playerRef,
     onWindowChange: handleWindowChange
   });
 

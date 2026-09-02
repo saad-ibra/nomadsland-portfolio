@@ -31,11 +31,19 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
       
       if (dx !== 0 || dy !== 0) {
         const speed = (TILE * speedMultiplier) / MOVE_COOLDOWN; 
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        const moveDist = Math.min(dist, speed * dt_ms);
+        let moveDist = speed * dt_ms;
         
-        p.x += (dx / dist) * moveDist;
-        p.y += (dy / dist) * moveDist;
+        // Strict Orthogonal Movement (Retro Style)
+        // Never move diagonally. Resolve X movement first, then Y.
+        if (Math.abs(dx) > 0) {
+          const step = Math.min(Math.abs(dx), moveDist);
+          p.x += Math.sign(dx) * step;
+          moveDist -= step;
+        }
+        if (Math.abs(dy) > 0 && moveDist > 0) {
+          const step = Math.min(Math.abs(dy), moveDist);
+          p.y += Math.sign(dy) * step;
+        }
       }
       
       if (playerRef.current) {
