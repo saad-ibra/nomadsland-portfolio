@@ -12,7 +12,13 @@ export function getViewportMetrics(isLandscape, isConsoleMinimized) {
   
   const baseW = 256;
   const baseH = 192;
-  const scale = Math.max(1, Math.floor(Math.min(nominalAvailableWidth / baseW, nominalAvailableHeight / baseH)));
+  let scale = Math.floor(Math.min(nominalAvailableWidth / baseW, nominalAvailableHeight / baseH));
+  
+  if (window.innerWidth < 600) {
+    scale = Math.max(2, scale);
+  } else {
+    scale = Math.max(1, scale);
+  }
   
   // Calculate actual viewport dimensions using the locked scale
   const actualConsoleWidth = (isLandscape && !isConsoleMinimized) ? 320 : 0;
