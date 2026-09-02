@@ -209,7 +209,10 @@ export function usePlayerMovement({
       return;
     }
 
-    const id = setInterval(() => {
+    let rafId;
+    const loop = () => {
+      rafId = requestAnimationFrame(loop);
+
       const now = Date.now();
       const currentSpeed = isSailing ? speedMultiplier * 1.5 : speedMultiplier;
       if (now - lastMoveRef.current < (MOVE_COOLDOWN / currentSpeed)) return;
@@ -277,7 +280,16 @@ export function usePlayerMovement({
 
       if (canWalkRef.current(nc, nr)) {
         setStepping(true);
-        lastMoveRef.current = now;
+        // By setting lastMoveRef.current precisely to the mathematical next tick, 
+        // we prevent timer drift (instead of using `now`).
+        // If it's been way too long, just use `now`.
+        const expectedNextTick = lastMoveRef.current + (MOVE_COOLDOWN / currentSpeed);
+        if (now - expectedNextTick > 50) {
+          lastMoveRef.current = now;
+        } else {
+          lastMoveRef.current = expectedNextTick;
+        }
+
         const newPos = { col: nc, row: nr };
         
         // Clear stepping flag shortly after
@@ -308,9 +320,10 @@ export function usePlayerMovement({
           onBumpRef.current(nc, nr);
         }
       }
-    }, 30);
+    };
+    rafId = requestAnimationFrame(loop);
 
-    return () => clearInterval(id);
+    return () => cancelAnimationFrame(rafId);
   }, [isActive, speedMultiplier, isSailing, clearPath]);
 
   return { pos, setPos, facing, setFacing, stepping, setPath, clearPath, tapTarget, triggerAction: () => { if (onActionRef.current) onActionRef.current(); } };
