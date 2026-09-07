@@ -446,7 +446,7 @@ export default function RelatrixApp() {
           <Rocket size={64} color={colors.opinion} style={{ marginBottom: 16 }} />
           <h2 style={{ fontSize: 32, margin: '0 0 12px 0' }}>You're Ready</h2>
           <Button 
-            onClick={() => window.open('https://github.com/saad-ibra/gray-matter', '_blank')}
+            onClick={() => document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' })}
             style={{ marginTop: 16, padding: '16px 32px', background: colors.opinion, color: '#000', fontSize: 18 }}
           >
             Start building your knowledge
@@ -520,7 +520,7 @@ export default function RelatrixApp() {
         </div>
       </div>
 
-      <div style={{ width: '100%', background: colors.surfaceHigh, padding: '40px 24px', borderTop: `1px solid #333` }}>
+      <div id="explore-section" style={{ width: '100%', background: colors.surfaceHigh, padding: '40px 24px', borderTop: `1px solid #333` }}>
         <h3 style={{ textAlign: 'center', color: colors.textSecondary, marginBottom: 24, fontSize: 18, fontWeight: 'normal' }}>Explore Relatrix</h3>
         <div className="links-grid">
           <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer" className="link-card">
