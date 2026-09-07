@@ -8,6 +8,7 @@ import { renderControlText } from '../utils/renderControls';
 import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-react";
 import { TILE } from '../engine/constants';
 import { useTapToMove, TapMarker } from '../hooks/useTapToMove.jsx';
+import RelatrixTerminal from '../components/RelatrixTerminal.jsx';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
 import { playTileStep } from '../engine/sfx';
 import PlayerSprite from '../components/sprites/PlayerSprite';
@@ -85,10 +86,16 @@ function generateLabLayout(publicRepos, privateRepos) {
     isPrivate: false, repoData: null,
   }];
 
-  // Public terminals every 2 cols, skipping chalkCol
+  stations.push({
+    id: "relatrix", col: chalkCol - 2, row: 1,
+    label: "Relatrix Protocol", line: "Initialize Gray Matter",
+    isPrivate: false, repoData: null,
+  });
+
+  // Public terminals every 2 cols, skipping chalkCol and Relatrix
   const pubCols = [];
   for (let c = 2; c < pubWidth - 2; c += 2)
-    if (c !== chalkCol) pubCols.push(c);
+    if (c !== chalkCol && c !== chalkCol - 2) pubCols.push(c);
 
   publicRepos.slice(0, pubCols.length).forEach((repo, i) => {
     stations.push({
@@ -565,7 +572,11 @@ export default function ChemistryLabScene() {
       if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
         setPhase("intro");
       } else if (nearStation) {
-        setOpenStation(nearStation);
+        if (nearStation === "relatrix") {
+          window.location.href = "/relatrix/";
+        } else {
+          setOpenStation(nearStation);
+        }
       }
     },
     onCancel: () => setOpenStation(null)
@@ -730,7 +741,7 @@ export default function ChemistryLabScene() {
 
             {/* Individual repo terminals */}
             {layout.stations
-              .filter(s => s.id !== "chalkboard")
+              .filter(s => s.id !== "chalkboard" && s.id !== "relatrix")
               .map(s => (
                 <RepoTerminal 
                   key={s.id} 
@@ -739,6 +750,14 @@ export default function ChemistryLabScene() {
                 />
               ))
             }
+            
+            {/* Special Relatrix Terminal */}
+            {layout.stations.find(s => s.id === "relatrix") && (
+              <RelatrixTerminal 
+                station={layout.stations.find(s => s.id === "relatrix")}
+                isNear={nearStation === "relatrix"}
+              />
+            )}
 
             {/* Exit Door */}
             <ExitDoor col={layout.startPos.col} row={1} />

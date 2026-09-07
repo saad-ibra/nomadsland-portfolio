@@ -17,7 +17,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         blogs: resolve(__dirname, 'blogs/index.html'),
-        contact: resolve(__dirname, 'contact/index.html')
+        contact: resolve(__dirname, 'contact/index.html'),
+        relatrix: resolve(__dirname, 'relatrix/index.html')
       }
     }
   }
