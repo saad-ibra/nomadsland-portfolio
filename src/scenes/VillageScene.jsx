@@ -1523,17 +1523,39 @@ export default function VillageScene() {
             })}
 
             {/* ── BOAT (HULL) ── */}
-            <div ref={isSailing ? boatHullRef : undefined} style={{
-              position: "absolute",
-              left: isSailing ? 0 : boatPos.col * TILE,
-              top: isSailing ? 0 : boatPos.row * TILE,
-              width: TILE * 2, height: TILE * 1.5,
-              animation: "floatBoat 4s ease-in-out infinite",
-              zIndex: boatHullZ,
-              pointerEvents: "auto", cursor: "pointer",
-            }} onClick={(e) => { 
-              e.stopPropagation();
-              if (!isSailing) {
+            {isSailing ? (
+              <div ref={boatHullRef} style={{
+                position: "absolute", left: 0, top: 0,
+                width: TILE * 2, height: TILE * 1.5,
+                zIndex: boatHullZ,
+                willChange: "transform",
+                pointerEvents: "none",
+              }}>
+                <div style={{ width: "100%", height: "100%", animation: "floatBoat 4s ease-in-out infinite" }}>
+                  <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
+                    {(facing === "left" || facing === "right") && (
+                      <div style={{ position: "absolute", bottom: 4, left: 4, width: TILE*2 - 8, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 14px 14px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
+                    )}
+                    {facing === "down" && (
+                      <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 18, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 18px 18px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
+                    )}
+                    {facing === "up" && (
+                      <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px", boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.3)" }} />
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{
+                position: "absolute",
+                left: boatPos.col * TILE,
+                top: boatPos.row * TILE,
+                width: TILE * 2, height: TILE * 1.5,
+                animation: "floatBoat 4s ease-in-out infinite",
+                zIndex: boatHullZ,
+                pointerEvents: "auto", cursor: "pointer",
+              }} onClick={(e) => { 
+                e.stopPropagation();
                 const adjs = [
                   {c: boatPos.col, r: boatPos.row + 1}, {c: boatPos.col, r: boatPos.row - 1},
                   {c: boatPos.col - 1, r: boatPos.row}, {c: boatPos.col + 1, r: boatPos.row},
@@ -1549,52 +1571,63 @@ export default function VillageScene() {
                   const path = findPath(pos.col, pos.row, dockCol, dockRow, canWalk, MAP_COLS, MAP_ROWS);
                   if (path.length > 0) setPath(path);
                 }
-              }
-            }}>
-              <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
-                {(!isSailing || facing === "left" || facing === "right") && (
+              }}>
+                <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
                   <div style={{ position: "absolute", bottom: 4, left: 4, width: TILE*2 - 8, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 14px 14px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
-                )}
-                {isSailing && facing === "down" && (
-                  <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 18, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 18px 18px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
-                )}
-                {isSailing && facing === "up" && (
-                  <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px", boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.3)" }} />
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* ── BOAT (SAIL & MAST) ── */}
-            <div ref={isSailing ? boatSailRef : undefined} style={{
-              position: "absolute",
-              left: isSailing ? 0 : boatPos.col * TILE,
-              top: isSailing ? 0 : boatPos.row * TILE,
-              width: TILE * 2, height: TILE * 1.5,
-              animation: "floatBoat 4s ease-in-out infinite",
-              zIndex: boatSailZ,
-              pointerEvents: "none",
-            }}>
-              <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
-                {(!isSailing || facing === "left" || facing === "right") && (
+            {isSailing ? (
+              <div ref={boatSailRef} style={{
+                position: "absolute", left: 0, top: 0,
+                width: TILE * 2, height: TILE * 1.5,
+                zIndex: boatSailZ,
+                willChange: "transform",
+                pointerEvents: "none",
+              }}>
+                <div style={{ width: "100%", height: "100%", animation: "floatBoat 4s ease-in-out infinite" }}>
+                  <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
+                    {(facing === "left" || facing === "right") && (
+                      <>
+                        <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
+                        <div style={{ position: "absolute", bottom: 22, left: TILE, width: 22, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "0 16px 16px 0", boxShadow: "inset -4px 0 0 rgba(0,0,0,0.1)" }} />
+                      </>
+                    )}
+                    {facing === "down" && (
+                      <>
+                        <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
+                        <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.1)" }} />
+                      </>
+                    )}
+                    {facing === "up" && (
+                      <>
+                        <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#e8e8e8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 4px 0 rgba(0,0,0,0.05)" }} />
+                        <div style={{ position: "absolute", bottom: 42, left: TILE - 2, width: 4, height: 8, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: "2px 2px 0 0" }} />
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{
+                position: "absolute",
+                left: boatPos.col * TILE,
+                top: boatPos.row * TILE,
+                width: TILE * 2, height: TILE * 1.5,
+                animation: "floatBoat 4s ease-in-out infinite",
+                zIndex: boatSailZ,
+                pointerEvents: "none",
+              }}>
+                <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
                   <>
                     <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
                     <div style={{ position: "absolute", bottom: 22, left: TILE, width: 22, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "0 16px 16px 0", boxShadow: "inset -4px 0 0 rgba(0,0,0,0.1)" }} />
                   </>
-                )}
-                {isSailing && facing === "down" && (
-                  <>
-                    <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
-                    <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.1)" }} />
-                  </>
-                )}
-                {isSailing && facing === "up" && (
-                  <>
-                    <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#e8e8e8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 4px 0 rgba(0,0,0,0.05)" }} />
-                    <div style={{ position: "absolute", bottom: 42, left: TILE - 2, width: 4, height: 8, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: "2px 2px 0 0" }} />
-                  </>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
 
           </div>
