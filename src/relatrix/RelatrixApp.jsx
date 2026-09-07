@@ -46,10 +46,10 @@ const Button = ({ onClick, disabled, children, style }) => (
   </button>
 );
 
-const SlideContainer = ({ children, accent }) => (
+const SlideContainer = ({ children }) => (
   <div style={{
     display: 'flex', flexDirection: 'column', alignItems: 'center', 
-    width: '100%', maxWidth: '480px', margin: '0 auto', minHeight: 'min(380px, 60vh)',
+    width: '100%', maxWidth: '480px', margin: '0 auto', height: '420px',
     justifyContent: 'center', textAlign: 'center', fontFamily: 'inherit',
     padding: '32px 24px', boxSizing: 'border-box',
     background: '#151515',
@@ -57,8 +57,6 @@ const SlideContainer = ({ children, accent }) => (
     borderRadius: 12,
     position: 'relative', overflow: 'hidden'
   }}>
-    {/* Top accent line */}
-    {accent && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent }} />}
     {children}
   </div>
 );
@@ -493,11 +491,7 @@ export default function RelatrixApp() {
                     </filter>
                   ))}
                 </defs>
-                {edges.map((e, i) => (
-                  e[0] < visibleNodes && e[1] < visibleNodes && (
-                    <line key={`e${i}`} x1={`${nodes[e[0]].x * 100}%`} y1={`${nodes[e[0]].y * 100}%`} x2={`${nodes[e[1]].x * 100}%`} y2={`${nodes[e[1]].y * 100}%`} stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" strokeDasharray="6,4" />
-                  )
-                ))}
+                
                 {nodes.map((n, i) => i < visibleNodes && (
                   <g key={`n${i}`} transform={`translate(${n.x * 480}, ${n.y * 260})`} onClick={() => { setSelNode(i); setTappedNodes(new Set(tappedNodes).add(i)); }} style={{ cursor: 'pointer' }} filter={selNode === i ? `url(#glow${i})` : undefined}>
                     {n.s === 'hex' && (
@@ -562,9 +556,9 @@ export default function RelatrixApp() {
           <div style={{ fontSize: 12, color: colors.textSecondary, marginBottom: 10, textAlign: 'left', width: '100%' }}>Select a tag:</div>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
             {[
-              { name: "important", emoji: "🔴" },
-              { name: "review", emoji: "🔄" },
-              { name: "revision", emoji: "📌" }
+              { name: "important", icon: <Tag size={14} color={colors.textSecondary} /> },
+              { name: "review", icon: <Tag size={14} color={colors.textSecondary} /> },
+              { name: "revision", icon: <Tag size={14} color={colors.textSecondary} /> }
             ].map(t => (
               <div 
                 key={t.name} onClick={() => setTag(t.name)}
@@ -576,7 +570,7 @@ export default function RelatrixApp() {
                   cursor: 'pointer', transition: 'all 0.2s', minWidth: 0
                 }}
               >
-                <span style={{ fontSize: 14 }}>{t.emoji}</span>
+                <span style={{ display: 'flex', alignItems: 'center' }}>{t.icon}</span>
                 <span style={{ color: tag === t.name ? '#fff' : colors.textSecondary, fontSize: 13, fontWeight: tag === t.name ? 600 : 400 }}>{t.name}</span>
               </div>
             ))}
@@ -590,15 +584,15 @@ export default function RelatrixApp() {
           <p style={{ color: linked ? colors.opinion : colors.textSecondary, marginBottom: 20, fontSize: 15, lineHeight: 1.5 }}>
             {linked ? "Connected! Your knowledge is now linked." : "Tap both entries below to create a link between them."}
           </p>
-          <div style={{ width: '100%', height: 180, background: '#151515', borderRadius: 12, position: 'relative', display: 'flex', border: '1px solid rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center', gap: '18%', padding: '0 10%' }}>
+          <div style={{ width: '100%', height: 180, background: '#151515', borderRadius: 12, position: 'relative', display: 'flex', border: '1px solid rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center', gap: 140, padding: 0 }}>
              {/* Dashed connection line */}
              {linked && (
-               <div style={{ position: 'absolute', left: '30%', right: '30%', height: 2, background: `repeating-linear-gradient(90deg, ${colors.opinion}, ${colors.opinion} 8px, transparent 8px, transparent 16px)`, zIndex: 0 }} />
+               <div style={{ position: 'absolute', left: '20%', right: '20%', height: 2, background: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.4), rgba(255,255,255,0.4) 8px, transparent 8px, transparent 16px)', zIndex: 0 }} />
              )}
              {/* Source node */}
              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
                <div onClick={() => setSourceSel(true)} style={{ 
-                 width: 64, height: 64, borderRadius: 18, 
+                 width: 64, height: 64, borderRadius: '50%', 
                  background: sourceSel ? '#2A2A2A' : '#1E1E1E', 
                  border: `2px solid ${sourceSel ? colors.opinion : 'rgba(255,255,255,0.1)'}`,
                  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
@@ -612,7 +606,7 @@ export default function RelatrixApp() {
              {/* Target node */}
              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
                <div onClick={() => setTargetSel(true)} style={{ 
-                 width: 64, height: 64, borderRadius: 18,
+                 width: 64, height: 64, borderRadius: '50%',
                  background: targetSel ? '#2A2A2A' : '#1E1E1E', 
                  border: `2px solid ${targetSel ? colors.template : 'rgba(255,255,255,0.1)'}`,
                  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
@@ -646,18 +640,7 @@ export default function RelatrixApp() {
           <h2 style={{ fontSize: 34, margin: '0 0 8px 0', fontWeight: 800, letterSpacing: '-0.03em' }}>You're Ready</h2>
           <p style={{ color: colors.textSecondary, fontSize: 15, marginBottom: 8, lineHeight: 1.5, maxWidth: 300 }}>You've learned to create resources, capture opinions, organize topics, and link knowledge.</p>
           
-          {/* Summary pills */}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 24, marginTop: 8 }}>
-            {[
-              { label: resource || 'Resource', color: colors.primary },
-              { label: topic || 'Topic', color: colors.bookmark },
-              { label: 'Opinion', color: colors.opinion },
-            ].map((item, i) => (
-              <div key={i} style={{ padding: '4px 12px', borderRadius: 10, background: `${item.color}15`, border: `1px solid ${item.color}25`, fontSize: 12, color: item.color, fontWeight: 500 }}>
-                ✓ {item.label}
-              </div>
-            ))}
-          </div>
+          
           
           <Button 
             onClick={() => document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' })}
@@ -802,7 +785,7 @@ export default function RelatrixApp() {
           fontSize: 'clamp(32px, 7vw, 52px)', fontWeight: 800, margin: '0 0 20px 0',
           letterSpacing: '-0.03em', lineHeight: 1.1, position: 'relative', maxWidth: 500
         }}>
-          A 3D spatial knowledge base
+          Your personal knowledge base
         </h1>
         <p style={{ 
           color: colors.textSecondary, fontSize: 'clamp(16px, 3.5vw, 18px)', maxWidth: 420, lineHeight: 1.6,
