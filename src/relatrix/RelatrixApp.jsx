@@ -3,7 +3,7 @@ import {
   FileText, Globe, Edit2, Plus, File, Book, Image as ImageIcon, 
   Bookmark, Rocket, ArrowLeft, ArrowRight, Check,
   Terminal, Smartphone, Mail, Tag, AlertCircle, Edit, Folder,
-  Highlighter, List, Camera
+  Scan, List, Camera, Highlighter
 } from 'lucide-react';
 
 const colors = {
@@ -14,12 +14,12 @@ const colors = {
   surfaceHigh: '#222222',
   textPrimary: '#ffffff',
   textSecondary: '#a0a0a0',
-  opinion: '#ffb74d',
-  annotation: '#81c784',
-  bookmark: '#64b5f6',
-  template: '#ba68c8',
-  lookup: '#4dd0e1',
-  visual: '#f06292',
+  opinion: '#ffb74d',     // yellow/orange
+  annotation: '#81c784',  // green
+  bookmark: '#64b5f6',    // blue
+  template: '#ba68c8',    // purple
+  lookup: '#4dd0e1',      // cyan
+  visual: '#f06292',      // pink
   neutral400: '#9e9e9e',
   neutral500: '#757575',
   neutral700: '#616161',
@@ -37,7 +37,7 @@ const Button = ({ onClick, disabled, children, style }) => (
       color: disabled ? colors.textSecondary : colors.onPrimary,
       cursor: disabled ? 'not-allowed' : 'pointer',
       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-      fontSize: 24, fontFamily: 'inherit',
+      fontSize: 16, fontWeight: 'bold', fontFamily: 'inherit',
       ...style
     }}
   >
@@ -48,7 +48,7 @@ const Button = ({ onClick, disabled, children, style }) => (
 const SlideContainer = ({ children }) => (
   <div style={{
     display: 'flex', flexDirection: 'column', alignItems: 'center', 
-    width: '100%', maxWidth: '550px', margin: '0 auto', minHeight: '380px',
+    width: '100%', maxWidth: '480px', margin: '0 auto', minHeight: '380px',
     justifyContent: 'center', textAlign: 'center', fontFamily: 'inherit'
   }}>
     {children}
@@ -119,8 +119,8 @@ export default function RelatrixApp() {
             alt="Relatrix Logo" 
             style={{ width: 64, height: 64, borderRadius: 16, marginBottom: 16, objectFit: 'cover' }} 
           />
-          <h1 style={{ fontSize: 40, margin: '0 0 12px 0' }}>Welcome to Relatrix</h1>
-          <p style={{ color: colors.textSecondary, fontSize: 24 }}>Let's build your first piece of knowledge.</p>
+          <h1 style={{ fontSize: 24, margin: '0 0 12px 0' }}>Welcome to Relatrix</h1>
+          <p style={{ color: colors.textSecondary, fontSize: 16 }}>Let's build your first piece of knowledge.</p>
         </SlideContainer>
       );
       case 1: return (
@@ -138,14 +138,14 @@ export default function RelatrixApp() {
               <Plus size={48} color="#fff" />
             </div>
           </div>
-          <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>This is how everything starts</h2>
-          <p style={{ color: colors.textSecondary, fontSize: 24 }}>Tap the + to begin.</p>
+          <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>This is how everything starts</h2>
+          <p style={{ color: colors.textSecondary, fontSize: 16 }}>Tap the + to begin.</p>
         </SlideContainer>
       );
       case 2: return (
         <SlideContainer>
-          <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>Add a Resource</h2>
-          <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 24 }}>What would you like to add? Pick one.</p>
+          <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>Add a Resource</h2>
+          <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 16 }}>What would you like to add? Pick one.</p>
           <div style={{ display: 'flex', gap: 12, width: '100%' }}>
             {[
               { id: 'File', icon: File },
@@ -166,12 +166,12 @@ export default function RelatrixApp() {
                   }}
                 >
                   <r.icon size={32} color={isSel ? colors.primary : colors.textPrimary} />
-                  <span style={{ marginTop: 8, fontSize: 24, color: isSel ? colors.primary : colors.textSecondary }}>{r.id}</span>
+                  <span style={{ marginTop: 8, fontSize: 16, color: isSel ? colors.primary : colors.textSecondary }}>{r.id}</span>
                 </div>
               )
             })}
           </div>
-          {resource && <p style={{ color: colors.opinion, marginTop: 16, fontSize: 24 }}>✓ {resource} added!</p>}
+          {resource && <p style={{ color: colors.opinion, marginTop: 16, fontSize: 16 }}>✓ {resource} added!</p>}
         </SlideContainer>
       );
       case 3: 
@@ -181,42 +181,42 @@ export default function RelatrixApp() {
           <SlideContainer>
             <div style={{ background: colors.neutral900, padding: 12, borderRadius: 12, width: '100%', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8, border: `1px solid ${colors.neutral800}` }}>
               <ResIcon size={20} color={colors.primary} />
-              <span style={{ fontSize: 24 }}>My First {resource || "Resource"}</span>
+              <span style={{ fontSize: 16 }}>My First {resource || "Resource"}</span>
             </div>
             
             {!opinionSaved ? (
               <>
-                <h2 style={{ fontSize: 40, margin: '0 0 4px 0' }}>Your First Opinion</h2>
-                <p style={{ color: colors.textSecondary, marginBottom: 12, fontSize: 20 }}>Capture your preconceived notion or initial thought about this {resource?.toLowerCase()}.</p>
+                <h2 style={{ fontSize: 24, margin: '0 0 4px 0' }}>Your First Opinion</h2>
+                <p style={{ color: colors.textSecondary, marginBottom: 12, fontSize: 14 }}>Capture your preconceived notion or initial thought about this {resource?.toLowerCase()}.</p>
                 
                 <input 
                   value={opinion} onChange={e => setOpinion(e.target.value)}
                   placeholder="Type your thoughts..."
                   style={{ 
                     width: '100%', padding: '16px', borderRadius: 12, background: colors.neutral900, 
-                    border: `1px solid ${colors.neutral800}`, color: '#fff', fontSize: 24, marginBottom: 12,
+                    border: `1px solid ${colors.neutral800}`, color: '#fff', fontSize: 16, marginBottom: 12,
                     fontFamily: 'inherit', boxSizing: 'border-box'
                   }}
                 />
                 
-                <div style={{ width: '100%', textAlign: 'left', color: colors.textSecondary, fontSize: 20, marginBottom: 6 }}>Suggestions:</div>
+                <div style={{ width: '100%', textAlign: 'left', color: colors.textSecondary, fontSize: 14, marginBottom: 6 }}>Suggestions:</div>
                 <div style={{ display: 'flex', gap: 8, overflowX: 'auto', width: '100%', paddingBottom: 16 }}>
                   {["Interesting concept", "Need to revisit", "Key insight"].map(s => (
                     <div 
                       key={s} onClick={() => setOpinion(s)}
-                      style={{ padding: '6px 12px', background: `${colors.opinion}1a`, border: `1px solid ${colors.opinion}4d`, borderRadius: 20, fontSize: 20, cursor: 'pointer', color: colors.opinion, whiteSpace: 'nowrap' }}
+                      style={{ padding: '6px 12px', background: `${colors.opinion}1a`, border: `1px solid ${colors.opinion}4d`, borderRadius: 20, fontSize: 14, cursor: 'pointer', color: colors.opinion, whiteSpace: 'nowrap' }}
                     >
                       {s}
                     </div>
                   ))}
                 </div>
 
-                <div style={{ width: '100%', textAlign: 'left', color: colors.textSecondary, fontSize: 20, marginTop: 16 }}>Confidence: {confidence}% · {confLabel}</div>
+                <div style={{ width: '100%', textAlign: 'left', color: colors.textSecondary, fontSize: 14, marginTop: 16 }}>Confidence: {confidence}% · {confLabel}</div>
                 <input type="range" min="0" max="100" value={confidence} onChange={e => setConfidence(e.target.value)} style={{ width: '100%', marginTop: 8, marginBottom: 16, accentColor: colors.opinion }} />
                 
                 <button 
                   onClick={() => { if(opinion) setOpinionSaved(true); }}
-                  style={{ padding: '12px', background: opinion ? colors.opinion : `${colors.opinion}4d`, color: '#000', borderRadius: 12, border: 'none', width: '100%', fontSize: 24, cursor: opinion ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}
+                  style={{ padding: '12px', background: opinion ? colors.opinion : `${colors.opinion}4d`, color: '#000', borderRadius: 12, border: 'none', width: '100%', fontSize: 16, fontWeight: 'bold', cursor: opinion ? 'pointer' : 'not-allowed', fontFamily: 'inherit' }}
                 >
                   Save Opinion
                 </button>
@@ -225,20 +225,20 @@ export default function RelatrixApp() {
               <>
                 <div style={{ width: '100%', background: `${colors.opinion}1a`, border: `1px solid ${colors.opinion}4d`, borderRadius: 12, padding: 16, textAlign: 'left' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, color: colors.opinion }}>
-                    <Edit size={16} /> <span style={{ fontSize: 20 }}>Opinion</span>
+                    <Edit size={16} /> <span style={{ fontSize: 14, fontWeight: 'bold' }}>Opinion</span>
                   </div>
-                  <div style={{ fontSize: 24, marginBottom: 4 }}>"{opinion}"</div>
-                  <div style={{ fontSize: 20, color: colors.textSecondary }}>Confidence: {confidence}%</div>
+                  <div style={{ fontSize: 18, marginBottom: 4 }}>"{opinion}"</div>
+                  <div style={{ fontSize: 14, color: colors.textSecondary }}>Confidence: {confidence}%</div>
                 </div>
-                <p style={{ color: colors.opinion, marginTop: 12, fontSize: 20 }}>This is an Opinion, your core unit of thinking.</p>
+                <p style={{ color: colors.opinion, marginTop: 12, fontSize: 14 }}>This is an Opinion, your core unit of thinking.</p>
               </>
             )}
           </SlideContainer>
         );
       case 4: return (
         <SlideContainer>
-          <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>Organize into a Topic</h2>
-          <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 24 }}>Every resource belongs to a Topic. Pick one.</p>
+          <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>Organize into a Topic</h2>
+          <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 16 }}>Every resource belongs to a Topic. Pick one.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, width: '100%' }}>
             {["Philosophy", "Science", "My Notes"].map(t => {
               const isSel = topic === t;
@@ -247,26 +247,26 @@ export default function RelatrixApp() {
                   key={t} onClick={() => setTopic(t)}
                   style={{
                     padding: 16, borderRadius: 12,
-                    background: isSel ? `${colors.bookmark}26` : colors.neutral900,
-                    border: `1px solid ${isSel ? colors.bookmark : colors.neutral800}`,
+                    background: isSel ? `${colors.opinion}26` : colors.neutral900,
+                    border: `1px solid ${isSel ? colors.opinion : colors.neutral800}`,
                     cursor: 'pointer', opacity: (topic && !isSel) ? 0.3 : 1,
                     display: 'flex', alignItems: 'center', gap: 12, transition: 'all 0.2s'
                   }}
                 >
-                  <Folder size={24} color={colors.bookmark} />
-                  <span style={{ fontSize: 24, color: isSel ? colors.bookmark : colors.textPrimary }}>{t}</span>
-                  {isSel && <span style={{ marginLeft: 'auto', fontSize: 20, color: `${colors.bookmark}b3` }}>1 resource</span>}
+                  <Folder size={24} color={colors.opinion} />
+                  <span style={{ fontSize: 18, color: isSel ? colors.opinion : colors.textPrimary }}>{t}</span>
+                  {isSel && <span style={{ marginLeft: 'auto', fontSize: 14, color: `${colors.opinion}b3` }}>1 resource</span>}
                 </div>
               )
             })}
           </div>
-          {topic && <p style={{ color: colors.bookmark, marginTop: 16, fontSize: 20 }}>✓ Organized! Topics help you synthesize later.</p>}
+          {topic && <p style={{ color: colors.opinion, marginTop: 16, fontSize: 14 }}>✓ Organized! Topics help you synthesize later.</p>}
         </SlideContainer>
       );
       case 5: return (
         <SlideContainer>
-          <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>Dedicated PDF Reader</h2>
-          <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 24 }}>Active reading with 5 entry types.</p>
+          <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>Dedicated PDF Reader</h2>
+          <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 16 }}>Active reading with 5 entry types.</p>
           <div style={{ width: '100%', height: 200, background: '#f5f5f5', borderRadius: 12, position: 'relative', overflow: 'hidden', display: 'flex' }}>
             <div style={{ flex: 1, padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ width: '90%', height: 12, background: colors.neutral700, borderRadius: 4 }} />
@@ -293,12 +293,13 @@ export default function RelatrixApp() {
         ];
         return (
           <SlideContainer>
-            <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>Types of Entries</h2>
-            <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 24 }}>Like an opinion, there are other ways to capture knowledge. Tap each to discover.</p>
+            <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>Types of Entries</h2>
+            <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 16 }}>Like an opinion, there are other ways to capture knowledge. Tap each to discover.</p>
             <div style={{ display: 'flex', justifyContent: 'space-evenly', width: '100%', marginBottom: 16 }}>
               {types.map((t, idx) => {
                 const isDisc = discovered.has(idx);
                 const isSel = selEntryType === idx;
+                const IconComp = t.icon;
                 return (
                   <div 
                     key={idx} onClick={() => { setSelEntryType(idx); setDiscovered(new Set(discovered).add(idx)); }}
@@ -309,7 +310,7 @@ export default function RelatrixApp() {
                       cursor: 'pointer'
                     }}
                   >
-                    <t.icon size={24} color={isDisc ? t.color : colors.neutral700} />
+                    <IconComp size={24} color={isDisc ? t.color : colors.neutral700} />
                   </div>
                 )
               })}
@@ -318,16 +319,16 @@ export default function RelatrixApp() {
             {selEntryType !== -1 ? (
               <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: 16, background: `${types[selEntryType].color}1a`, border: `1px solid ${types[selEntryType].color}4d`, borderRadius: 12, textAlign: 'left', minHeight: 76 }}>
                 <div style={{ minWidth: 24 }}>
-                  {(() => { const SelIcon = types[selEntryType].icon; return <SelIcon size={24} color={types[selEntryType].color} />; })()}
+                  {(() => { const SelIcon = types[selEntryType].icon; return <SelIcon size={24} color={types[selEntryType].color} /> })()}
                 </div>
                 <div>
-                  <div style={{ fontSize: 24, color: types[selEntryType].color, fontWeight: 'bold' }}>{types[selEntryType].name}</div>
-                  <div style={{ fontSize: 20, color: colors.textSecondary }}>{types[selEntryType].desc}</div>
+                  <div style={{ fontSize: 18, color: types[selEntryType].color, fontWeight: 'bold' }}>{types[selEntryType].name}</div>
+                  <div style={{ fontSize: 14, color: colors.textSecondary }}>{types[selEntryType].desc}</div>
                 </div>
               </div>
-            ) : <div style={{ height: 96 }} />}
+            ) : <div style={{ height: 76 }} />}
 
-            <p style={{ marginTop: 12, fontSize: 20, color: discovered.size >= 6 ? colors.opinion : colors.neutral500 }}>{discovered.size} / 6 discovered</p>
+            <p style={{ marginTop: 12, fontSize: 14, color: discovered.size >= 6 ? colors.opinion : colors.neutral500 }}>{discovered.size} / 6 discovered</p>
           </SlideContainer>
         );
       case 7: 
@@ -335,8 +336,8 @@ export default function RelatrixApp() {
           { l: topic || "Topic", c: colors.neutral400, x: 0.5, y: 0.2, s: 'hex', lb: "Topic [Folder]" },
           { l: `My ${resource || "Resource"}`, c: colors.neutral400, x: 0.5, y: 0.5, s: 'tri', lb: "Resource [Link, File, Note]" },
           { l: opinion || "My thought", c: colors.opinion, x: 0.2, y: 0.7, s: 'circ', lb: "Entries" },
-          { l: "Bookmark", c: colors.bookmark, x: 0.2, y: 0.85, s: 'circ' },
-          { l: "Annotation", c: colors.annotation, x: 0.35, y: 0.85, s: 'circ' },
+          { l: "Annotation", c: colors.annotation, x: 0.2, y: 0.85, s: 'circ' },
+          { l: "Bookmark", c: colors.bookmark, x: 0.35, y: 0.85, s: 'circ' },
           { l: "Template", c: colors.template, x: 0.5, y: 0.85, s: 'circ' },
           { l: "Lookup", c: colors.lookup, x: 0.65, y: 0.85, s: 'circ' },
           { l: "Vision", c: colors.visual, x: 0.8, y: 0.85, s: 'circ' }
@@ -344,59 +345,62 @@ export default function RelatrixApp() {
         const edges = [[0,1], [1,2], [1,3], [1,4], [1,5], [1,6], [1,7]];
         return (
           <SlideContainer>
-            <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>The Relatrix</h2>
-            <p style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 24 }}>Your knowledge, visualized in a 3D relationship matrix. Tap nodes to explore.</p>
+            <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>The Relatrix</h2>
+            <p style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 16 }}>Your knowledge, visualized in a 3D relationship matrix. Tap nodes to explore.</p>
             <div style={{ width: '100%', height: 260, background: 'rgba(0,0,0,0.3)', borderRadius: 16, position: 'relative' }}>
               <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
                 {edges.map((e, i) => (
                   e[0] < visibleNodes && e[1] < visibleNodes && (
-                    <line key={i} x1={`${nodes[e[0]].x * 100}%`} y1={`${nodes[e[0]].y * 100}%`} x2={`${nodes[e[1]].x * 100}%`} y2={`${nodes[e[1]].y * 100}%`} stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
+                    <line key={`e${i}`} x1={`${nodes[e[0]].x * 100}%`} y1={`${nodes[e[0]].y * 100}%`} x2={`${nodes[e[1]].x * 100}%`} y2={`${nodes[e[1]].y * 100}%`} stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
                   )
                 ))}
               </svg>
               {nodes.map((n, i) => i < visibleNodes && (
-                <div key={i}>
-                  <div 
-                    onClick={() => { setSelNode(i); setTappedNodes(new Set(tappedNodes).add(i)); }}
-                    style={{
-                      position: 'absolute', left: `${n.x * 100}%`, top: `${n.y * 100}%`,
-                      width: 24, height: 24, background: (n.s === 'hex' || n.s === 'tri') ? 'transparent' : n.c,
-                      border: (n.s === 'hex' || n.s === 'tri') ? `3px solid ${n.c}` : 'none',
-                      borderRadius: n.s === 'circ' ? '50%' : 0,
-                      transform: 'translate(-50%, -50%)',
-                      clipPath: n.s === 'hex' ? 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' : n.s === 'tri' ? 'polygon(50% 0%, 100% 100%, 0% 100%)' : 'none',
-                      cursor: 'pointer'
-                    }}
-                  />
-                  {n.lb && <div style={{ position: 'absolute', left: `calc(${n.x * 100}% + 20px)`, top: `calc(${n.y * 100}% - 10px)`, fontSize: 16, color: colors.neutral400, textAlign: 'left', width: 120, textShadow: '0 1px 2px #000' }}>{n.lb}</div>}
+                <div key={i} style={{ position: 'absolute', left: `${n.x * 100}%`, top: `${n.y * 100}%`, transform: 'translate(-50%, -50%)', cursor: 'pointer' }} onClick={() => { setSelNode(i); setTappedNodes(new Set(tappedNodes).add(i)); }}>
+                  {n.s === 'hex' && (
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                      <polygon points="16,1 31,9 31,23 16,31 1,23 1,9" fill="rgba(0,0,0,0.5)" stroke={n.c} strokeWidth="2" />
+                    </svg>
+                  )}
+                  {n.s === 'tri' && (
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                      <polygon points="16,2 30,28 2,28" fill="rgba(0,0,0,0.5)" stroke={n.c} strokeWidth="2" />
+                    </svg>
+                  )}
+                  {n.s === 'circ' && (
+                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: n.c, margin: '4px' }} />
+                  )}
                 </div>
+              ))}
+              {nodes.map((n, i) => i < visibleNodes && n.lb && (
+                <div key={`l${i}`} style={{ position: 'absolute', left: `calc(${n.x * 100}% + 20px)`, top: `calc(${n.y * 100}% - 10px)`, fontSize: 12, color: colors.neutral400, textAlign: 'left', width: 120, textShadow: '0 1px 2px #000' }}>{n.lb}</div>
               ))}
             </div>
             <div style={{ height: 40, marginTop: 12, width: '100%' }}>
               {selNode !== -1 && (
                 <div style={{ display: 'inline-flex', alignItems: 'center', background: `${nodes[selNode].c}26`, padding: '8px 12px', borderRadius: 8, gap: 8 }}>
                   <div style={{ width: 10, height: 10, borderRadius: '50%', background: nodes[selNode].c }} />
-                  <span style={{ fontSize: 24 }}>{nodes[selNode].l}</span>
+                  <span style={{ fontSize: 16 }}>{nodes[selNode].l}</span>
                 </div>
               )}
             </div>
-            <div style={{ fontSize: 20, color: tappedNodes.size >= 8 ? colors.opinion : colors.neutral500 }}>{tappedNodes.size} / 8 explored</div>
+            <div style={{ fontSize: 14, color: tappedNodes.size >= 8 ? colors.opinion : colors.neutral500 }}>{tappedNodes.size} / 8 explored</div>
           </SlideContainer>
         );
       case 8: return (
         <SlideContainer>
-          <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>Organize with Tags</h2>
-          <p style={{ color: colors.textSecondary, marginBottom: 24, fontSize: 24 }}>Group related entries instantly.<br/>Tap a tag below to categorize this thought.</p>
+          <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>Organize with Tags</h2>
+          <p style={{ color: colors.textSecondary, marginBottom: 24, fontSize: 16 }}>Group related entries instantly.<br/>Tap a tag below to categorize this thought.</p>
           
           <div style={{ background: 'rgba(0,0,0,0.2)', padding: 20, borderRadius: 16, width: '100%', marginBottom: 32, textAlign: 'left' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', background: colors.opinion }} />
-              <span style={{ fontSize: 24 }}>{opinion || "My crucial insight"}</span>
+              <span style={{ fontSize: 18 }}>{opinion || "My crucial insight"}</span>
             </div>
             {tag && (
               <div style={{ marginTop: 16, display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.15)', padding: '4px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,0.3)' }}>
                 <Tag size={14} color="#fff" />
-                <span style={{ fontSize: 20, color: '#fff' }}>{tag}</span>
+                <span style={{ fontSize: 14, color: '#fff' }}>{tag}</span>
               </div>
             )}
           </div>
@@ -413,7 +417,7 @@ export default function RelatrixApp() {
                 }}
               >
                 <Tag size={16} color={tag === t ? '#fff' : colors.textSecondary} />
-                <span style={{ color: tag === t ? '#fff' : colors.textSecondary, fontSize: 24 }}>{t}</span>
+                <span style={{ color: tag === t ? '#fff' : colors.textSecondary, fontSize: 16 }}>{t}</span>
               </div>
             ))}
           </div>
@@ -421,8 +425,8 @@ export default function RelatrixApp() {
       );
       case 9: return (
         <SlideContainer>
-          <h2 style={{ fontSize: 40, margin: '0 0 8px 0' }}>Knowledge Links</h2>
-          <p style={{ color: linked ? colors.opinion : colors.textSecondary, marginBottom: 24, height: 48, fontSize: 24 }}>
+          <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>Knowledge Links</h2>
+          <p style={{ color: linked ? colors.opinion : colors.textSecondary, marginBottom: 24, height: 48, fontSize: 16 }}>
             {linked ? "Connected! You can jump between them instantly." : "Knowledge links can connect any Topic, Resource, or Entry in your library.\nTap the entries below to link them."}
           </p>
           <div style={{ width: '100%', height: 200, background: 'rgba(0,0,0,0.3)', borderRadius: 16, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px' }}>
@@ -441,8 +445,13 @@ export default function RelatrixApp() {
       case 10: return (
         <SlideContainer>
           <Rocket size={64} color={colors.opinion} style={{ marginBottom: 16 }} />
-          <h2 style={{ fontSize: 40, margin: '0 0 12px 0' }}>You're Ready</h2>
-          <p style={{ color: colors.textSecondary, marginBottom: 32, fontSize: 24 }}>Start building your knowledge.</p>
+          <h2 style={{ fontSize: 32, margin: '0 0 12px 0' }}>You're Ready</h2>
+          <Button 
+            onClick={() => window.open('https://github.com/saad-ibra/gray-matter', '_blank')}
+            style={{ marginTop: 16, padding: '16px 32px', background: colors.opinion, color: '#000', fontSize: 18 }}
+          >
+            Start building your knowledge
+          </Button>
         </SlideContainer>
       );
     }
@@ -475,7 +484,7 @@ export default function RelatrixApp() {
           border: 1px solid ${colors.surfaceHigh};
           text-decoration: none;
           transition: background 0.2s;
-          font-size: 24px;
+          font-size: 16px;
         }
         .link-card:hover {
           background: ${colors.surfaceHigh};
@@ -513,22 +522,22 @@ export default function RelatrixApp() {
       </div>
 
       <div style={{ width: '100%', background: colors.surfaceHigh, padding: '40px 24px', borderTop: `1px solid #333` }}>
-        <h3 style={{ textAlign: 'center', color: colors.textSecondary, marginBottom: 24, fontSize: 24, fontWeight: 'normal' }}>Explore Relatrix</h3>
+        <h3 style={{ textAlign: 'center', color: colors.textSecondary, marginBottom: 24, fontSize: 18, fontWeight: 'normal' }}>Explore Relatrix</h3>
         <div className="links-grid">
           <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer" className="link-card">
-            <Terminal size={24} /> <span>GitHub Repository</span>
+            <Terminal size={20} /> <span>GitHub Repository</span>
           </a>
           <a href="https://f-droid.org/packages/com.saadibra.graymatter" target="_blank" rel="noreferrer" className="link-card">
-            <Smartphone size={24} /> <span>Get it on F-Droid</span>
+            <Smartphone size={20} /> <span>Get it on F-Droid</span>
           </a>
           <a href="https://github.com/saad-ibra/gray-matter/releases" target="_blank" rel="noreferrer" className="link-card">
-            <Tag size={24} /> <span>Releases</span>
+            <Tag size={20} /> <span>Releases</span>
           </a>
           <a href="https://github.com/saad-ibra/gray-matter/issues" target="_blank" rel="noreferrer" className="link-card">
-            <AlertCircle size={24} /> <span>Raise Issues</span>
+            <AlertCircle size={20} /> <span>Raise Issues</span>
           </a>
           <a href="https://saadibra.mooo.com/contact/" className="link-card">
-            <Mail size={24} /> <span>Contact Me</span>
+            <Mail size={20} /> <span>Contact Me</span>
           </a>
         </div>
       </div>

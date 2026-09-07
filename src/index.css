@@ -11,9 +11,9 @@
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
 
-  --sans: 'Micro 5', monospace;
-  --heading: 'Micro 5', monospace;
-  --mono: 'Micro 5', monospace;
+  --sans: system-ui, -apple-system, sans-serif;
+  --heading: system-ui, -apple-system, sans-serif;
+  --mono: system-ui, -apple-system, sans-serif;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
