@@ -658,12 +658,12 @@ export default function VillageScene() {
     speedMultiplier,
     isActive: phase === "free" && !isTransitioning,
     isSailing,
-    onMove: (nc, nr) => {
+    onMove: (nc, nr, prevCol, prevRow) => {
       if (isSailing) {
         setBoatPos({ col: nc, row: nr });
 
 
-        if (MAP[nr]?.[nc] === 4) setWakes(prev => [...prev.slice(-8), { c: nc, r: nr, id: Math.random() }]);
+        if (MAP[prevRow]?.[prevCol] === 4) setWakes(prev => [...prev.slice(-8), { c: prevCol, r: prevRow, id: Math.random() }]);
         playWoodStep();
       } else {
         const tile = MAP[nr]?.[nc];

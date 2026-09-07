@@ -305,7 +305,7 @@ export function usePlayerMovement({
         }
         
         if (onMoveRef.current) {
-          const cancelMove = onMoveRef.current(nc, nr);
+          const cancelMove = onMoveRef.current(nc, nr, p.col, p.row);
           if (cancelMove) {
             clearPath(); // Cancel path on scene transition etc.
             return;
