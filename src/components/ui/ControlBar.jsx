@@ -308,7 +308,7 @@ const DiaryLink = ({ label, url, icon }) => {
         cursor: "pointer",
         transition: "all 0.15s",
         pointerEvents: "auto",
-        fontFamily: "'Dawning of a New Day', cursive",
+        fontFamily: "'Jo Wrote A Lovesong', cursive",
       }}
     >
       {/* Squiggly hand-drawn border */}
@@ -405,7 +405,7 @@ const InfoPanel = ({ onClose }) => (
           display: "flex", alignItems: "center", justifyContent: "center",
           background: "transparent", border: "none",
           color: "#b0a090", fontSize: 36, cursor: "pointer",
-          fontFamily: "'Dawning of a New Day', cursive",
+          fontFamily: "'Jo Wrote A Lovesong', cursive",
           transition: "color 0.2s",
           touchAction: "none",
           zIndex: 10
@@ -420,36 +420,36 @@ const InfoPanel = ({ onClose }) => (
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16, paddingBottom: 10, borderBottom: "1.5px solid rgba(0,0,0,0.08)", position: "relative", zIndex: 1 }}>
         <img src="/favicon.svg" alt="Logo" style={{ width: 32, height: 32, imageRendering: "pixelated", filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.15))" }} />
         <div>
-          <div style={{ fontFamily: "'Dawning of a New Day', cursive", fontSize: 36, color: "#2a3a5a", letterSpacing: 0.5, lineHeight: 1 }}>Saad Ibra</div>
+          <div style={{ fontFamily: "'Jo Wrote A Lovesong', cursive", fontSize: 36, color: "#2a3a5a", letterSpacing: 0.5, lineHeight: 1 }}>Saad Ibra</div>
           <div style={{ fontFamily: "'Micro 5', monospace", fontSize: 11, color: "#8a8070", letterSpacing: 1 }}>NOMADSLAND OS v1.0</div>
         </div>
       </div>
 
       {/* Controls Section */}
-      <div style={{ fontFamily: "'Dawning of a New Day', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+      <div style={{ fontFamily: "'Jo Wrote A Lovesong', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
         Controls ~
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14, marginBottom: 18, fontFamily: "'Micro 5', monospace", position: "relative", zIndex: 1 }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={30}>W</KeyBadge><KeyBadge minWidth={30}>A</KeyBadge><KeyBadge minWidth={30}>S</KeyBadge><KeyBadge minWidth={30}>D</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>move</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Jo Wrote A Lovesong', cursive", fontSize: 22 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={140}>TAP / CLICK</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>move</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Jo Wrote A Lovesong', cursive", fontSize: 22 }}>move</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={55} color="#e8c0c0">A</KeyBadge><KeyBadge minWidth={78} color="#e8c0c0">SPACE</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>interact</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Jo Wrote A Lovesong', cursive", fontSize: 22 }}>interact</span>
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <KeyBadge minWidth={55} color="#c0d0e8">B</KeyBadge><KeyBadge minWidth={78} color="#c0d0e8">ESC</KeyBadge>
-          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Dawning of a New Day', cursive", fontSize: 22 }}>back</span>
+          <span style={{ marginLeft: 6, color: "#6a6050", fontFamily: "'Jo Wrote A Lovesong', cursive", fontSize: 22 }}>back</span>
         </div>
       </div>
 
       {/* Links Section */}
-      <div style={{ fontFamily: "'Dawning of a New Day', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
+      <div style={{ fontFamily: "'Jo Wrote A Lovesong', cursive", fontSize: 26, color: "#4a5a7a", marginBottom: 8, position: "relative", zIndex: 1 }}>
         Places to find me ~
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4px 8px", position: "relative", zIndex: 1 }}>

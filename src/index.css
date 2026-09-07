@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'Jo Wrote A Lovesong';
+  src: url('/JoWroteALovesong.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 :root {
   --text: #6b6375;
   --text-h: #08060d;
