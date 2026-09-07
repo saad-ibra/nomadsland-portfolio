@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { TILE, MOVE_COOLDOWN } from "../engine/constants";
 
-export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows, speedMultiplier, worldRef, playerRef, onWindowChange }) {
+export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows, speedMultiplier, worldRef, playerRef, boatHullRef, boatSailRef, isSailing, onWindowChange }) {
   const visualPlayer = useRef({ x: pos.col * TILE, y: pos.row * TILE });
   const targetQueue = useRef([]);
   const lastPos = useRef(pos);
@@ -60,8 +60,21 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
         }
       }
       
+      const roundX = Math.round(p.x);
+      const roundY = Math.round(p.y);
+      
       if (playerRef.current) {
-        playerRef.current.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y)}px)`;
+        playerRef.current.style.transform = `translate(${roundX}px, ${roundY}px)`;
+      }
+      
+      // Position boat at the same visual coordinates as the player (offset for hull width)
+      if (boatHullRef?.current) {
+        const boatX = roundX - Math.round(TILE * 0.5);
+        boatHullRef.current.style.transform = `translate(${boatX}px, ${roundY}px)`;
+      }
+      if (boatSailRef?.current) {
+        const boatX = roundX - Math.round(TILE * 0.5);
+        boatSailRef.current.style.transform = `translate(${boatX}px, ${roundY}px)`;
       }
       
       let clampedTX = 0;
@@ -90,5 +103,5 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
     
     rafRef.current = requestAnimationFrame(update);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [pos, internalW, internalH, mapCols, mapRows, speedMultiplier, worldRef, playerRef, onWindowChange]);
+  }, [pos, internalW, internalH, mapCols, mapRows, speedMultiplier, worldRef, playerRef, boatHullRef, boatSailRef, isSailing, onWindowChange]);
 }

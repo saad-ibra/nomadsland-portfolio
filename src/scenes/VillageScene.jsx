@@ -1015,6 +1015,8 @@ export default function VillageScene() {
   const isFirstFrame = useRef(true);
 
   const playerRef = useRef(null);
+  const boatHullRef = useRef(null);
+  const boatSailRef = useRef(null);
 
   const handleWindowChange = useCallback((sc, ec, sr, er) => {
     setTileWindow(prev => {
@@ -1028,7 +1030,11 @@ export default function VillageScene() {
   useSmoothPixelGrid({
     pos, internalW, internalH,
     mapCols: MAP_COLS, mapRows: MAP_ROWS,
-    speedMultiplier: isSailing ? speedMultiplier * 1.5 : speedMultiplier, worldRef, playerRef,
+    speedMultiplier: isSailing ? speedMultiplier * 1.5 : speedMultiplier,
+    worldRef, playerRef,
+    boatHullRef: isSailing ? boatHullRef : null,
+    boatSailRef: isSailing ? boatSailRef : null,
+    isSailing,
     onWindowChange: handleWindowChange
   });
 
@@ -1516,11 +1522,11 @@ export default function VillageScene() {
               );
             })}
 
-            {/* ── MOORED BOAT (HULL) ── */}
-            <div style={{
+            {/* ── BOAT (HULL) ── */}
+            <div ref={isSailing ? boatHullRef : undefined} style={{
               position: "absolute",
-              left: (isSailing ? pos.col - 0.5 : boatPos.col) * TILE,
-              top: (isSailing ? pos.row : boatPos.row) * TILE,
+              left: isSailing ? 0 : boatPos.col * TILE,
+              top: isSailing ? 0 : boatPos.row * TILE,
               width: TILE * 2, height: TILE * 1.5,
               animation: "floatBoat 4s ease-in-out infinite",
               zIndex: boatHullZ,
@@ -1558,11 +1564,11 @@ export default function VillageScene() {
               </div>
             </div>
 
-            {/* ── MOORED BOAT (SAIL & MAST) ── */}
-            <div style={{
+            {/* ── BOAT (SAIL & MAST) ── */}
+            <div ref={isSailing ? boatSailRef : undefined} style={{
               position: "absolute",
-              left: (isSailing ? pos.col - 0.5 : boatPos.col) * TILE,
-              top: (isSailing ? pos.row : boatPos.row) * TILE,
+              left: isSailing ? 0 : boatPos.col * TILE,
+              top: isSailing ? 0 : boatPos.row * TILE,
               width: TILE * 2, height: TILE * 1.5,
               animation: "floatBoat 4s ease-in-out infinite",
               zIndex: boatSailZ,
