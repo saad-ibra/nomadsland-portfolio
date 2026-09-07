@@ -14,12 +14,12 @@ const colors = {
   surfaceHigh: '#222222',
   textPrimary: '#ffffff',
   textSecondary: '#a0a0a0',
-  opinion: '#ffb74d',     // yellow/orange
-  annotation: '#81c784',  // green
-  bookmark: '#64b5f6',    // blue
-  template: '#ba68c8',    // purple
-  lookup: '#4dd0e1',      // cyan
-  visual: '#f06292',      // pink
+  opinion: '#8E9E5A',     // Green
+  bookmark: '#C4A84E',    // Yellow
+  annotation: '#C47A5A',  // Orange
+  template: '#7E6A8C',    // Purple
+  lookup: '#BF5A6A',      // Pink/Red
+  visual: '#5A9E8C',      // Teal
   neutral400: '#9e9e9e',
   neutral500: '#757575',
   neutral700: '#616161',
@@ -274,9 +274,11 @@ export default function RelatrixApp() {
               <div style={{ width: '70%', height: 12, background: colors.annotation, borderRadius: 4 }} />
               <div style={{ width: '85%', height: 12, background: colors.neutral700, borderRadius: 4 }} />
             </div>
-            <div style={{ width: 80, background: '#e0e0e0', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 16, gap: 16, borderLeft: '1px solid #ccc' }}>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: colors.annotation, border: '2px solid #fff' }} />
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: colors.opinion, border: '2px solid #fff' }} />
+            <div style={{ width: 80, background: '#e0e0e0', display: 'flex', flexDirection: 'column', alignItems: 'center', borderLeft: '1px solid #ccc' }}>
+              <div style={{ marginTop: 'auto', marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: colors.bookmark, border: '2px solid #fff' }} />
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: colors.opinion, border: '2px solid #fff' }} />
+              </div>
             </div>
             <Bookmark size={32} color={colors.bookmark} style={{ position: 'absolute', top: -4, right: 8 }} />
           </div>
@@ -335,7 +337,7 @@ export default function RelatrixApp() {
         const nodes = [
           { l: topic || "Topic", c: colors.neutral400, x: 0.5, y: 0.2, s: 'hex', lb: "Topic [Folder]" },
           { l: `My ${resource || "Resource"}`, c: colors.neutral400, x: 0.5, y: 0.5, s: 'tri', lb: "Resource [Link, File, Note]" },
-          { l: opinion || "My thought", c: colors.opinion, x: 0.2, y: 0.7, s: 'circ', lb: "Entries" },
+          { l: opinion || "Opinion", c: colors.opinion, x: 0.2, y: 0.7, s: 'circ', lb: "Entries" },
           { l: "Annotation", c: colors.annotation, x: 0.2, y: 0.85, s: 'circ' },
           { l: "Bookmark", c: colors.bookmark, x: 0.35, y: 0.85, s: 'circ' },
           { l: "Template", c: colors.template, x: 0.5, y: 0.85, s: 'circ' },
@@ -348,30 +350,26 @@ export default function RelatrixApp() {
             <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>The Relatrix</h2>
             <p style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 16 }}>Your knowledge, visualized in a 3D relationship matrix. Tap nodes to explore.</p>
             <div style={{ width: '100%', height: 260, background: 'rgba(0,0,0,0.3)', borderRadius: 16, position: 'relative' }}>
-              <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+              <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' }}>
                 {edges.map((e, i) => (
                   e[0] < visibleNodes && e[1] < visibleNodes && (
                     <line key={`e${i}`} x1={`${nodes[e[0]].x * 100}%`} y1={`${nodes[e[0]].y * 100}%`} x2={`${nodes[e[1]].x * 100}%`} y2={`${nodes[e[1]].y * 100}%`} stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
                   )
                 ))}
+                {nodes.map((n, i) => i < visibleNodes && (
+                  <g key={`n${i}`} transform={`translate(${n.x * 480}, ${n.y * 260})`} onClick={() => { setSelNode(i); setTappedNodes(new Set(tappedNodes).add(i)); }} style={{ cursor: 'pointer' }}>
+                    {n.s === 'hex' && (
+                      <polygon points="0,-16 14,-8 14,8 0,16 -14,8 -14,-8" fill="rgba(0,0,0,0.5)" stroke={n.c} strokeWidth="2" />
+                    )}
+                    {n.s === 'tri' && (
+                      <polygon points="0,-16 14,12 -14,12" fill="rgba(0,0,0,0.5)" stroke={n.c} strokeWidth="2" />
+                    )}
+                    {n.s === 'circ' && (
+                      <circle cx="0" cy="0" r="12" fill={n.c} />
+                    )}
+                  </g>
+                ))}
               </svg>
-              {nodes.map((n, i) => i < visibleNodes && (
-                <div key={i} style={{ position: 'absolute', left: `${n.x * 100}%`, top: `${n.y * 100}%`, transform: 'translate(-50%, -50%)', cursor: 'pointer' }} onClick={() => { setSelNode(i); setTappedNodes(new Set(tappedNodes).add(i)); }}>
-                  {n.s === 'hex' && (
-                    <svg width="32" height="32" viewBox="0 0 32 32">
-                      <polygon points="16,1 31,9 31,23 16,31 1,23 1,9" fill="rgba(0,0,0,0.5)" stroke={n.c} strokeWidth="2" />
-                    </svg>
-                  )}
-                  {n.s === 'tri' && (
-                    <svg width="32" height="32" viewBox="0 0 32 32">
-                      <polygon points="16,2 30,28 2,28" fill="rgba(0,0,0,0.5)" stroke={n.c} strokeWidth="2" />
-                    </svg>
-                  )}
-                  {n.s === 'circ' && (
-                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: n.c, margin: '4px' }} />
-                  )}
-                </div>
-              ))}
               {nodes.map((n, i) => i < visibleNodes && n.lb && (
                 <div key={`l${i}`} style={{ position: 'absolute', left: `calc(${n.x * 100}% + 20px)`, top: `calc(${n.y * 100}% - 10px)`, fontSize: 12, color: colors.neutral400, textAlign: 'left', width: 120, textShadow: '0 1px 2px #000' }}>{n.lb}</div>
               ))}
@@ -405,8 +403,8 @@ export default function RelatrixApp() {
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-            {["important", "review"].map(t => (
+          <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {["important", "review", "last minute revision"].map(t => (
               <div 
                 key={t} onClick={() => setTag(t)}
                 style={{
@@ -427,7 +425,7 @@ export default function RelatrixApp() {
         <SlideContainer>
           <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>Knowledge Links</h2>
           <p style={{ color: linked ? colors.opinion : colors.textSecondary, marginBottom: 24, height: 48, fontSize: 16 }}>
-            {linked ? "Connected! You can jump between them instantly." : "Knowledge links can connect any Topic, Resource, or Entry in your library.\nTap the entries below to link them."}
+            {linked ? "Connected!" : "Knowledge links can connect any Topic, Resource, or Entry in your library.\nTap the entries below to link them."}
           </p>
           <div style={{ width: '100%', height: 200, background: 'rgba(0,0,0,0.3)', borderRadius: 16, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px' }}>
              {linked && (
@@ -492,18 +490,12 @@ export default function RelatrixApp() {
       `}</style>
       
       <div style={{ flex: 1, padding: '40px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-        <div style={{ width: '100%', maxWidth: 600, display: 'flex', justifyContent: 'center', gap: 6, marginBottom: 40 }}>
-          {[...Array(totalSlides)].map((_, i) => (
-            <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i === slide ? colors.primary : colors.neutral800 }} />
-          ))}
-        </div>
-
         <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center' }}>
           {renderSlide()}
         </div>
 
-        <div style={{ width: '100%', maxWidth: 600, display: 'flex', justifyContent: 'space-between', marginTop: 40, alignItems: 'center' }}>
-          <div style={{ width: 60 }}>
+        <div style={{ width: '100%', maxWidth: 480, display: 'flex', justifyContent: 'space-between', marginTop: 40, alignItems: 'center' }}>
+          <div style={{ width: 44 }}>
             {slide > 0 && (
               <button onClick={goBack} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.neutral800, border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                 <ArrowLeft size={20} />
@@ -511,7 +503,13 @@ export default function RelatrixApp() {
             )}
           </div>
           
-          <div style={{ width: 60 }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {[...Array(totalSlides)].map((_, i) => (
+              <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i === slide ? colors.primary : colors.neutral800 }} />
+            ))}
+          </div>
+
+          <div style={{ width: 44 }}>
             {slide < totalSlides - 1 && canAdvance() && (
               <button onClick={advance} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.primary, border: 'none', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', float: 'right' }}>
                 <ArrowRight size={20} />
