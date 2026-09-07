@@ -48,7 +48,7 @@ const Button = ({ onClick, disabled, children, style }) => (
 const SlideContainer = ({ children }) => (
   <div style={{
     display: 'flex', flexDirection: 'column', alignItems: 'center', 
-    width: '100%', maxWidth: '480px', margin: '0 auto', minHeight: '380px',
+    width: '100%', maxWidth: '480px', margin: '0 auto', minHeight: 'min(380px, 60vh)',
     justifyContent: 'center', textAlign: 'center', fontFamily: 'inherit'
   }}>
     {children}
@@ -351,7 +351,7 @@ export default function RelatrixApp() {
             <h2 style={{ fontSize: 24, margin: '0 0 8px 0' }}>The Relatrix</h2>
             <p style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 16 }}>Your knowledge, visualized in a 3D relationship matrix. Tap nodes to explore.</p>
             <div style={{ width: '100%', height: 260, background: 'rgba(0,0,0,0.3)', borderRadius: 16, position: 'relative' }}>
-              <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' }}>
+              <svg viewBox="0 0 480 260" preserveAspectRatio="xMidYMid meet" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' }}>
                 {edges.map((e, i) => (
                   e[0] < visibleNodes && e[1] < visibleNodes && (
                     <line key={`e${i}`} x1={`${nodes[e[0]].x * 100}%`} y1={`${nodes[e[0]].y * 100}%`} x2={`${nodes[e[1]].x * 100}%`} y2={`${nodes[e[1]].y * 100}%`} stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
@@ -428,9 +428,9 @@ export default function RelatrixApp() {
           <p style={{ color: linked ? colors.opinion : colors.textSecondary, marginBottom: 24, height: 48, fontSize: 16 }}>
             {linked ? "Connected!" : "Knowledge links can connect any Topic, Resource, or Entry in your library.\nTap the entries below to link them."}
           </p>
-          <div style={{ width: '100%', height: 200, background: 'rgba(0,0,0,0.3)', borderRadius: 16, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px' }}>
+          <div style={{ width: '100%', height: 160, background: 'rgba(0,0,0,0.3)', borderRadius: 16, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 15%' }}>
              {linked && (
-               <div style={{ position: 'absolute', left: 80, right: 80, height: 6, background: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.8) 15px, transparent 15px, transparent 25px)', opacity: 0.8, zIndex: 0 }} />
+               <div style={{ position: 'absolute', left: '25%', right: '25%', height: 6, background: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.8), rgba(255,255,255,0.8) 15px, transparent 15px, transparent 25px)', opacity: 0.8, zIndex: 0 }} />
              )}
              <div onClick={() => setSourceSel(true)} style={{ width: 64, height: 64, borderRadius: '50%', background: sourceSel ? colors.opinion : colors.neutral800, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1 }}>
                <Book color={sourceSel ? '#000' : '#fff'} size={32} />
@@ -512,9 +512,15 @@ export default function RelatrixApp() {
         .link-card:hover {
           background: ${colors.surfaceHigh};
         }
+        @media (max-width: 400px) {
+          h2 { font-size: 24px !important; margin-bottom: 8px !important; }
+          p { font-size: 14px !important; }
+          .link-card { padding: 12px; font-size: 14px; }
+        }
+
       `}</style>
       
-      <div style={{ flex: 1, padding: '40px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+      <div style={{ flex: 1, padding: 'clamp(20px, 5vh, 40px) 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
         <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center' }}>
           {renderSlide()}
         </div>
