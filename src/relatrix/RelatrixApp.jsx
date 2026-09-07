@@ -3,7 +3,8 @@ import {
   FileText, Globe, Edit2, Plus, File, Book, Image as ImageIcon, 
   Bookmark, Rocket, ArrowLeft, ArrowRight, Check,
   Terminal, Smartphone, Mail, Tag, AlertCircle, Edit, Folder,
-  Scan, List, Camera, Highlighter
+  Scan, List, Camera, Highlighter, ExternalLink, ChevronDown,
+  Layers, Zap, GitBranch
 } from 'lucide-react';
 
 const colors = {
@@ -52,6 +53,25 @@ const SlideContainer = ({ children }) => (
     justifyContent: 'center', textAlign: 'center', fontFamily: 'inherit'
   }}>
     {children}
+  </div>
+);
+
+/* ── Feature pill for the features section ── */
+const FeatureCard = ({ icon: Icon, color, title, desc }) => (
+  <div style={{
+    padding: 20, borderRadius: 16, background: colors.surface,
+    border: `1px solid ${colors.surfaceHigh}`,
+    display: 'flex', flexDirection: 'column', gap: 12,
+    transition: 'border-color 0.25s, transform 0.25s',
+  }}
+    onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+    onMouseLeave={e => { e.currentTarget.style.borderColor = colors.surfaceHigh; e.currentTarget.style.transform = 'translateY(0)'; }}
+  >
+    <div style={{ width: 40, height: 40, borderRadius: 10, background: `${color}1a`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Icon size={20} color={color} />
+    </div>
+    <div style={{ fontSize: 16, fontWeight: 600 }}>{title}</div>
+    <div style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 1.5 }}>{desc}</div>
   </div>
 );
 
@@ -458,72 +478,208 @@ export default function RelatrixApp() {
 
   return (
     <div style={{ background: colors.bg, color: colors.textPrimary }}>
-      <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
-        <header style={{ 
-          width: '100%', borderBottom: `1px solid ${colors.surfaceHigh}`, background: colors.surface,
-          position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'center'
+      <style>{`
+        @keyframes pulse {
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+          70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .rltx-link-card {
+          padding: 14px 18px;
+          background: ${colors.surface};
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          color: #fff;
+          border: 1px solid ${colors.surfaceHigh};
+          text-decoration: none;
+          transition: all 0.25s;
+          font-size: 15px;
+        }
+        .rltx-link-card:hover {
+          background: ${colors.surfaceHigh};
+          border-color: ${colors.neutral500};
+          transform: translateY(-1px);
+        }
+        @media (max-width: 480px) {
+          .rltx-features-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
+      {/* ─── STICKY HEADER ─── */}
+      <header style={{ 
+        width: '100%', borderBottom: `1px solid ${colors.surfaceHigh}`,
+        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        position: 'sticky', top: 0, zIndex: 100, display: 'flex', justifyContent: 'center'
+      }}>
+        <div style={{
+          width: '100%', maxWidth: 560, padding: '14px 24px', boxSizing: 'border-box',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between'
         }}>
-          <div style={{
-            width: '100%', maxWidth: 480, padding: '16px 24px', boxSizing: 'border-box',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <img 
-                src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
-                alt="Relatrix Logo" 
-                style={{ width: 32, height: 32, borderRadius: 8 }} 
-              />
-              <span style={{ fontSize: 20, fontWeight: 'bold' }}>Relatrix</span>
-            </div>
-            <a 
-              href="/" 
-              style={{ 
-                color: colors.textSecondary, textDecoration: 'none', fontSize: 14,
-                display: 'flex', alignItems: 'center', gap: 6 
-              }}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img 
+              src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
+              alt="Relatrix Logo" 
+              style={{ width: 28, height: 28, borderRadius: 7 }} 
+            />
+            <span style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>Relatrix</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
+              style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: 13, display: 'flex', alignItems: 'center', gap: 5, transition: 'color 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+              onMouseLeave={e => e.currentTarget.style.color = colors.textSecondary}
             >
-              <ArrowLeft size={16} /> Back to Lab
+              <Terminal size={14} /> GitHub
+            </a>
+            <a href="/" style={{ 
+              color: colors.textSecondary, textDecoration: 'none', fontSize: 13,
+              display: 'flex', alignItems: 'center', gap: 5, transition: 'color 0.2s'
+            }}
+              onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+              onMouseLeave={e => e.currentTarget.style.color = colors.textSecondary}
+            >
+              <ArrowLeft size={14} /> Lab
             </a>
           </div>
-        </header>
-        <style>{`
-          @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-          }
-          .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-          }
-          .link-card {
-            padding: 16px;
-            background: ${colors.surface};
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-            border: 1px solid ${colors.surfaceHigh};
-            text-decoration: none;
-            transition: background 0.2s;
-            font-size: 16px;
-          }
-          .link-card:hover {
-            background: ${colors.surfaceHigh};
-          }
-          @media (max-width: 400px) {
-            h2 { font-size: 24px !important; margin-bottom: 8px !important; }
-            p { font-size: 14px !important; }
-            .link-card { padding: 12px; font-size: 14px; }
-          }
-        `}</style>
-        
-        <div style={{ flex: 1, padding: 'clamp(16px, 4vh, 32px) 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', boxSizing: 'border-box' }}>
+        </div>
+      </header>
+
+      {/* ─── HERO SECTION ─── */}
+      <section style={{
+        minHeight: '85dvh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: '60px 24px 40px', position: 'relative', overflow: 'hidden', textAlign: 'center'
+      }}>
+        {/* Subtle radial glow behind logo */}
+        <div style={{
+          position: 'absolute', width: 400, height: 400, borderRadius: '50%',
+          background: `radial-gradient(circle, ${colors.opinion}15 0%, transparent 70%)`,
+          top: '15%', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none'
+        }} />
+
+        {/* Floating color orbs */}
+        <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', background: `${colors.opinion}08`, top: '10%', left: '10%', animation: 'float 6s ease-in-out infinite', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', width: 120, height: 120, borderRadius: '50%', background: `${colors.template}08`, bottom: '20%', right: '10%', animation: 'float 8s ease-in-out infinite 1s', pointerEvents: 'none' }} />
+
+        <img 
+          src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
+          alt="Relatrix" 
+          style={{ width: 80, height: 80, borderRadius: 20, marginBottom: 28, position: 'relative', animation: 'float 4s ease-in-out infinite' }} 
+        />
+        <div style={{
+          fontSize: 'clamp(14px, 3vw, 15px)', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
+          color: colors.opinion, marginBottom: 16, position: 'relative'
+        }}>
+          Gray Matter
+        </div>
+        <h1 style={{ 
+          fontSize: 'clamp(32px, 7vw, 52px)', fontWeight: 800, margin: '0 0 20px 0',
+          letterSpacing: '-0.03em', lineHeight: 1.1, position: 'relative', maxWidth: 500
+        }}>
+          A 3D spatial knowledge base
+        </h1>
+        <p style={{ 
+          color: colors.textSecondary, fontSize: 'clamp(16px, 3.5vw, 18px)', maxWidth: 420, lineHeight: 1.6,
+          margin: '0 0 36px 0', position: 'relative'
+        }}>
+          Capture thoughts, annotate documents, and watch your ideas form a living, interconnected matrix.
+        </p>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', position: 'relative' }}>
+          <a href="#tutorial" onClick={e => { e.preventDefault(); document.getElementById('tutorial')?.scrollIntoView({ behavior: 'smooth' }); }}
+            style={{
+              padding: '14px 28px', borderRadius: 28, background: colors.opinion, color: '#000',
+              fontSize: 16, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8,
+              transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: `0 0 20px ${colors.opinion}40`
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 4px 24px ${colors.opinion}60`; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = `0 0 20px ${colors.opinion}40`; }}
+          >
+            Try the Tutorial <ChevronDown size={18} />
+          </a>
+          <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
+            style={{
+              padding: '14px 28px', borderRadius: 28, background: 'transparent',
+              border: `1px solid ${colors.neutral700}`, color: '#fff',
+              fontSize: 16, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8,
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#fff'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = colors.neutral700; }}
+          >
+            <Terminal size={16} /> View Source
+          </a>
+        </div>
+      </section>
+
+      {/* ─── FEATURES SECTION ─── */}
+      <section style={{ padding: '60px 24px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '100%', maxWidth: 560 }}>
+          <div style={{ textAlign: 'center', marginBottom: 40 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: colors.opinion, marginBottom: 8 }}>Features</div>
+            <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Built for deep thinking</h2>
+          </div>
+          <div className="rltx-features-grid" style={{
+            display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16
+          }}>
+            <FeatureCard icon={Edit2} color={colors.opinion} title="Opinions" desc="Capture your gut feeling about any resource before diving deeper." />
+            <FeatureCard icon={Layers} color={colors.annotation} title="6 Entry Types" desc="Opinions, annotations, bookmarks, templates, lookups, and vision entries." />
+            <FeatureCard icon={GitBranch} color={colors.template} title="Knowledge Links" desc="Connect any topic, resource, or entry to reveal hidden relationships." />
+            <FeatureCard icon={Zap} color={colors.visual} title="3D Relatrix" desc="Visualize your entire knowledge base as an interactive spatial graph." />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── COLOR PALETTE STRIP ─── */}
+      <section style={{ padding: '0 24px 48px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '100%', maxWidth: 560 }}>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {[
+              { name: 'Opinion', color: colors.opinion },
+              { name: 'Bookmark', color: colors.bookmark },
+              { name: 'Annotation', color: colors.annotation },
+              { name: 'Template', color: colors.template },
+              { name: 'Lookup', color: colors.lookup },
+              { name: 'Vision', color: colors.visual },
+            ].map(c => (
+              <div key={c.name} style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '6px 14px', borderRadius: 20,
+                background: `${c.color}15`, border: `1px solid ${c.color}30`,
+                fontSize: 13, color: c.color
+              }}>
+                <div style={{ width: 8, height: 8, borderRadius: '50%', background: c.color }} />
+                {c.name}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── INTERACTIVE TUTORIAL ─── */}
+      <section id="tutorial" style={{
+        borderTop: `1px solid ${colors.surfaceHigh}`, borderBottom: `1px solid ${colors.surfaceHigh}`,
+        background: `linear-gradient(180deg, ${colors.surface} 0%, ${colors.bg} 100%)`
+      }}>
+        <div style={{ textAlign: 'center', padding: '48px 24px 0' }}>
+          <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: colors.opinion, marginBottom: 8 }}>Interactive</div>
+          <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>Try it yourself</h2>
+          <p style={{ color: colors.textSecondary, fontSize: 15, margin: '0 0 32px 0' }}>Walk through the onboarding — no download needed.</p>
+        </div>
+        <div style={{ minHeight: '75dvh', display: 'flex', flexDirection: 'column', padding: 'clamp(16px, 4vh, 32px) 16px', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             {renderSlide()}
           </div>
@@ -531,7 +687,10 @@ export default function RelatrixApp() {
           <div style={{ width: '100%', maxWidth: 480, display: 'flex', justifyContent: 'space-between', marginTop: 'clamp(24px, 5vh, 40px)', alignItems: 'center', flexShrink: 0 }}>
             <div style={{ width: 44 }}>
               {slide > 0 && (
-                <button onClick={goBack} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.neutral800, border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                <button onClick={goBack} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.neutral800, border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'background 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.background = colors.neutral700}
+                  onMouseLeave={e => e.currentTarget.style.background = colors.neutral800}
+                >
                   <ArrowLeft size={20} />
                 </button>
               )}
@@ -539,41 +698,83 @@ export default function RelatrixApp() {
             
             <div style={{ display: 'flex', gap: 6 }}>
               {[...Array(totalSlides)].map((_, i) => (
-                <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i === slide ? colors.primary : colors.neutral800 }} />
+                <div key={i} style={{ 
+                  width: i === slide ? 24 : 8, height: 8, borderRadius: 4,
+                  background: i === slide ? colors.opinion : colors.neutral800,
+                  transition: 'all 0.3s'
+                }} />
               ))}
             </div>
 
             <div style={{ width: 44 }}>
               {slide < totalSlides - 1 && canAdvance() && (
-                <button onClick={advance} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.primary, border: 'none', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', float: 'right' }}>
+                <button onClick={advance} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.primary, border: 'none', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', float: 'right', transition: 'transform 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
+                  onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                >
                   <ArrowRight size={20} />
                 </button>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div id="explore-section" style={{ width: '100%', background: colors.surfaceHigh, padding: '40px 24px', borderTop: `1px solid #333` }}>
-        <h3 style={{ textAlign: 'center', color: colors.textSecondary, marginBottom: 24, fontSize: 18, fontWeight: 'normal' }}>Explore Relatrix</h3>
-        <div className="links-grid">
-          <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer" className="link-card">
-            <Terminal size={20} /> <span>GitHub Repository</span>
-          </a>
-          <a href="https://f-droid.org/packages/com.saadibra.graymatter" target="_blank" rel="noreferrer" className="link-card">
-            <Smartphone size={20} /> <span>Get it on F-Droid</span>
-          </a>
-          <a href="https://github.com/saad-ibra/gray-matter/releases" target="_blank" rel="noreferrer" className="link-card">
-            <Tag size={20} /> <span>Releases</span>
-          </a>
-          <a href="https://github.com/saad-ibra/gray-matter/issues" target="_blank" rel="noreferrer" className="link-card">
-            <AlertCircle size={20} /> <span>Raise Issues</span>
-          </a>
-          <a href="https://saadibra.mooo.com/contact/" className="link-card">
-            <Mail size={20} /> <span>Contact Me</span>
+      {/* ─── GET IT / EXPLORE SECTION ─── */}
+      <section id="explore-section" style={{ padding: '60px 24px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ width: '100%', maxWidth: 560 }}>
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: colors.opinion, marginBottom: 8 }}>Get Started</div>
+            <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>Explore Relatrix</h2>
+            <p style={{ color: colors.textSecondary, fontSize: 15, margin: 0, lineHeight: 1.6 }}>Open source. Privacy-first. Available on F-Droid.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <Terminal size={18} /> <span>GitHub</span> <ExternalLink size={12} style={{ marginLeft: 'auto', opacity: 0.4 }} />
+            </a>
+            <a href="https://f-droid.org/packages/com.saadibra.graymatter" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <Smartphone size={18} /> <span>F-Droid</span> <ExternalLink size={12} style={{ marginLeft: 'auto', opacity: 0.4 }} />
+            </a>
+            <a href="https://github.com/saad-ibra/gray-matter/releases" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <Tag size={18} /> <span>Releases</span> <ExternalLink size={12} style={{ marginLeft: 'auto', opacity: 0.4 }} />
+            </a>
+            <a href="https://github.com/saad-ibra/gray-matter/issues" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <AlertCircle size={18} /> <span>Issues</span> <ExternalLink size={12} style={{ marginLeft: 'auto', opacity: 0.4 }} />
+            </a>
+          </div>
+          <div style={{ marginTop: 12 }}>
+            <a href="https://saadibra.mooo.com/contact/" className="rltx-link-card" style={{ justifyContent: 'center' }}>
+              <Mail size={18} /> <span>Contact the Developer</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ─── */}
+      <footer style={{
+        borderTop: `1px solid ${colors.surfaceHigh}`, padding: '32px 24px',
+        display: 'flex', justifyContent: 'center'
+      }}>
+        <div style={{
+          width: '100%', maxWidth: 560,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          fontSize: 13, color: colors.neutral500
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <img 
+              src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
+              alt="" style={{ width: 16, height: 16, borderRadius: 4, opacity: 0.6 }} 
+            />
+            Relatrix · by Saad Ibra
+          </div>
+          <a href="/" style={{ color: colors.neutral500, textDecoration: 'none', transition: 'color 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+            onMouseLeave={e => e.currentTarget.style.color = colors.neutral500}
+          >
+            saadibra.mooo.com
           </a>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }
