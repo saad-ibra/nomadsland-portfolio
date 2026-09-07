@@ -458,6 +458,7 @@ const InfoPanel = ({ onClose }) => (
         <DiaryLink label="GitHub" url="https://github.com/saad-ibra" icon={<IconComputer />} />
         <DiaryLink label="LinkedIn" url="https://linkedin.com/in/saad-ibra" icon={<IconBriefcase />} />
         <DiaryLink label="Goodreads" url="https://www.goodreads.com/user/show/198640001" icon={<IconBook />} />
+        <DiaryLink label="Relatrix" url="/relatrix/" icon={<IconComputer />} />
       </div>
 
       {/* Doodles Section (flowing naturally at bottom to avoid overlapping buttons) */}
