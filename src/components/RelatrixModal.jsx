@@ -11,7 +11,7 @@ export default function RelatrixModal({ onClose }) {
       zIndex: 100000
     }} onClick={onClose}>
       <div style={{
-        width: 300, maxWidth: "95%",
+        width: 240, maxWidth: "90%",
         background: "#0a1218", border: "4px solid #eef7f2", borderRadius: 2,
         boxShadow: `0 0 0 2px #0a1218, 0 0 0 6px ${accent}, 0 12px 32px rgba(0,0,0,0.95)`,
         color: "#fff", display: "flex", flexDirection: "column",
@@ -24,33 +24,33 @@ export default function RelatrixModal({ onClose }) {
           background: accent,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
-          <div style={{ fontSize: 16, color: "#fff", display: "flex", alignItems: "center", gap: 6, fontWeight: "bold" }}>
-            Relatrix Protocol
+          <div style={{ fontSize: 12.5, color: "#fff", display: "flex", alignItems: "center", gap: 6, fontWeight: "bold" }}>
+            Relatrix
           </div>
           <button onClick={onClose} style={{
-            fontSize: 14, fontWeight: "bold",
+            fontFamily: "'Micro 5', monospace", fontSize: 12,
             background: "#c03030", color: "#fff", border: "2px solid #eef7f2",
-            padding: "2px 8px", borderRadius: 2, cursor: "pointer",
+            padding: "2px 5px", borderRadius: 2, cursor: "pointer",
           }}>X</button>
         </div>
 
         {/* Modal body */}
-        <div style={{ padding: "16px", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
           <img 
             src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
             alt="Relatrix Logo" 
-            style={{ width: 64, height: 64, borderRadius: 12, marginBottom: 16 }} 
+            style={{ width: 48, height: 48, borderRadius: 8 }} 
           />
-          <p style={{ color: "#a0a0a0", fontSize: 14, marginBottom: 20, lineHeight: 1.4 }}>
-            Initialize the neural link to access the Gray Matter tutorial.
+          <p style={{ color: "#90b8c8", fontSize: 9.5, lineHeight: "11px", margin: 0 }}>
+            A 3D spatial knowledge base.
           </p>
           <button 
             onClick={() => window.location.href = '/relatrix/'}
             style={{
-              padding: "10px 20px", background: accent, color: "#fff",
-              border: "2px solid #eef7f2", borderRadius: 2, fontWeight: "bold",
-              cursor: "pointer", width: "100%", fontSize: 16,
-              textTransform: "uppercase"
+              padding: "6px 12px", background: accent, color: "#fff",
+              border: "2px solid #eef7f2", borderRadius: 2,
+              cursor: "pointer", width: "100%", fontSize: 14, fontFamily: "'Micro 5', monospace",
+              textTransform: "uppercase", marginTop: 4
             }}
           >
             Connect
