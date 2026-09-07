@@ -457,95 +457,96 @@ export default function RelatrixApp() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: colors.bg, color: colors.textPrimary, display: 'flex', flexDirection: 'column' }}>
-      <header style={{ 
-        width: '100%', padding: '16px 24px', boxSizing: 'border-box',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        borderBottom: `1px solid ${colors.surfaceHigh}`, background: colors.surface,
-        position: 'sticky', top: 0, zIndex: 10
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <img 
-            src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
-            alt="Relatrix Logo" 
-            style={{ width: 32, height: 32, borderRadius: 8 }} 
-          />
-          <span style={{ fontSize: 20, fontWeight: 'bold' }}>Relatrix</span>
-        </div>
-        <a 
-          href="/" 
-          style={{ 
-            color: colors.textSecondary, textDecoration: 'none', fontSize: 14,
-            display: 'flex', alignItems: 'center', gap: 6 
-          }}
-        >
-          <ArrowLeft size={16} /> Back to Lab
-        </a>
-      </header>
-      <style>{`
-        @keyframes pulse {
-          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
-          70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-        }
-        .links-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 12px;
-          width: 100%;
-          max-width: 800px;
-          margin: 0 auto;
-        }
-        .link-card {
-          padding: 16px;
-          background: ${colors.surface};
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          color: #fff;
-          border: 1px solid ${colors.surfaceHigh};
-          text-decoration: none;
-          transition: background 0.2s;
-          font-size: 16px;
-        }
-        .link-card:hover {
-          background: ${colors.surfaceHigh};
-        }
-        @media (max-width: 400px) {
-          h2 { font-size: 24px !important; margin-bottom: 8px !important; }
-          p { font-size: 14px !important; }
-          .link-card { padding: 12px; font-size: 14px; }
-        }
-
-      `}</style>
-      
-      <div style={{ flex: 1, padding: 'clamp(20px, 5vh, 40px) 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-        <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center' }}>
-          {renderSlide()}
-        </div>
-
-        <div style={{ width: '100%', maxWidth: 480, display: 'flex', justifyContent: 'space-between', marginTop: 40, alignItems: 'center' }}>
-          <div style={{ width: 44 }}>
-            {slide > 0 && (
-              <button onClick={goBack} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.neutral800, border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                <ArrowLeft size={20} />
-              </button>
-            )}
+    <div style={{ background: colors.bg, color: colors.textPrimary }}>
+      <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+        <header style={{ 
+          width: '100%', padding: '16px 24px', boxSizing: 'border-box',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          borderBottom: `1px solid ${colors.surfaceHigh}`, background: colors.surface,
+          position: 'sticky', top: 0, zIndex: 10
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <img 
+              src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
+              alt="Relatrix Logo" 
+              style={{ width: 32, height: 32, borderRadius: 8 }} 
+            />
+            <span style={{ fontSize: 20, fontWeight: 'bold' }}>Relatrix</span>
           </div>
-          
-          <div style={{ display: 'flex', gap: 6 }}>
-            {[...Array(totalSlides)].map((_, i) => (
-              <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i === slide ? colors.primary : colors.neutral800 }} />
-            ))}
+          <a 
+            href="/" 
+            style={{ 
+              color: colors.textSecondary, textDecoration: 'none', fontSize: 14,
+              display: 'flex', alignItems: 'center', gap: 6 
+            }}
+          >
+            <ArrowLeft size={16} /> Back to Lab
+          </a>
+        </header>
+        <style>{`
+          @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+          }
+          .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+          }
+          .link-card {
+            padding: 16px;
+            background: ${colors.surface};
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            border: 1px solid ${colors.surfaceHigh};
+            text-decoration: none;
+            transition: background 0.2s;
+            font-size: 16px;
+          }
+          .link-card:hover {
+            background: ${colors.surfaceHigh};
+          }
+          @media (max-width: 400px) {
+            h2 { font-size: 24px !important; margin-bottom: 8px !important; }
+            p { font-size: 14px !important; }
+            .link-card { padding: 12px; font-size: 14px; }
+          }
+        `}</style>
+        
+        <div style={{ flex: 1, padding: 'clamp(16px, 4vh, 32px) 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {renderSlide()}
           </div>
 
-          <div style={{ width: 44 }}>
-            {slide < totalSlides - 1 && canAdvance() && (
-              <button onClick={advance} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.primary, border: 'none', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', float: 'right' }}>
-                <ArrowRight size={20} />
-              </button>
-            )}
+          <div style={{ width: '100%', maxWidth: 480, display: 'flex', justifyContent: 'space-between', marginTop: 'clamp(24px, 5vh, 40px)', alignItems: 'center', flexShrink: 0 }}>
+            <div style={{ width: 44 }}>
+              {slide > 0 && (
+                <button onClick={goBack} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.neutral800, border: 'none', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                  <ArrowLeft size={20} />
+                </button>
+              )}
+            </div>
+            
+            <div style={{ display: 'flex', gap: 6 }}>
+              {[...Array(totalSlides)].map((_, i) => (
+                <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: i === slide ? colors.primary : colors.neutral800 }} />
+              ))}
+            </div>
+
+            <div style={{ width: 44 }}>
+              {slide < totalSlides - 1 && canAdvance() && (
+                <button onClick={advance} style={{ width: 44, height: 44, borderRadius: '50%', background: colors.primary, border: 'none', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', float: 'right' }}>
+                  <ArrowRight size={20} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
