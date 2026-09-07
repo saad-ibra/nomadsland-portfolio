@@ -87,17 +87,18 @@ function generateLabLayout(publicRepos, privateRepos) {
   }];
 
   stations.push({
-    id: "relatrix", col: chalkCol - 2, row: 1,
+    id: "relatrix", col: 2, row: 6,
     label: "Relatrix Protocol", line: "Initialize Gray Matter",
     isPrivate: false, repoData: null,
   });
 
-  // Public terminals every 2 cols, skipping chalkCol and Relatrix
+  // Public terminals every 2 cols, skipping chalkCol
   const pubCols = [];
   for (let c = 2; c < pubWidth - 2; c += 2)
-    if (c !== chalkCol && c !== chalkCol - 2) pubCols.push(c);
+    if (c !== chalkCol) pubCols.push(c);
 
-  publicRepos.slice(0, pubCols.length).forEach((repo, i) => {
+  const filteredPublic = publicRepos.filter(r => r.name !== "gray-matter");
+  filteredPublic.slice(0, pubCols.length).forEach((repo, i) => {
     stations.push({
       id: `pub-${i}`, col: pubCols[i], row: 2,
       label: repo.name,
