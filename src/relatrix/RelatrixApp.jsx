@@ -460,28 +460,31 @@ export default function RelatrixApp() {
     <div style={{ background: colors.bg, color: colors.textPrimary }}>
       <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
         <header style={{ 
-          width: '100%', padding: '16px 24px', boxSizing: 'border-box',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          borderBottom: `1px solid ${colors.surfaceHigh}`, background: colors.surface,
-          position: 'sticky', top: 0, zIndex: 10
+          width: '100%', borderBottom: `1px solid ${colors.surfaceHigh}`, background: colors.surface,
+          position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'center'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img 
-              src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
-              alt="Relatrix Logo" 
-              style={{ width: 32, height: 32, borderRadius: 8 }} 
-            />
-            <span style={{ fontSize: 20, fontWeight: 'bold' }}>Relatrix</span>
+          <div style={{
+            width: '100%', maxWidth: 480, padding: '16px 24px', boxSizing: 'border-box',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <img 
+                src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
+                alt="Relatrix Logo" 
+                style={{ width: 32, height: 32, borderRadius: 8 }} 
+              />
+              <span style={{ fontSize: 20, fontWeight: 'bold' }}>Relatrix</span>
+            </div>
+            <a 
+              href="/" 
+              style={{ 
+                color: colors.textSecondary, textDecoration: 'none', fontSize: 14,
+                display: 'flex', alignItems: 'center', gap: 6 
+              }}
+            >
+              <ArrowLeft size={16} /> Back to Lab
+            </a>
           </div>
-          <a 
-            href="/" 
-            style={{ 
-              color: colors.textSecondary, textDecoration: 'none', fontSize: 14,
-              display: 'flex', alignItems: 'center', gap: 6 
-            }}
-          >
-            <ArrowLeft size={16} /> Back to Lab
-          </a>
         </header>
         <style>{`
           @keyframes pulse {
@@ -494,7 +497,7 @@ export default function RelatrixApp() {
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
             width: 100%;
-            max-width: 800px;
+            max-width: 480px;
             margin: 0 auto;
           }
           .link-card {
