@@ -458,6 +458,30 @@ export default function RelatrixApp() {
 
   return (
     <div style={{ minHeight: '100vh', background: colors.bg, color: colors.textPrimary, display: 'flex', flexDirection: 'column' }}>
+      <header style={{ 
+        width: '100%', padding: '16px 24px', boxSizing: 'border-box',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        borderBottom: `1px solid ${colors.surfaceHigh}`, background: colors.surface,
+        position: 'sticky', top: 0, zIndex: 10
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <img 
+            src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
+            alt="Relatrix Logo" 
+            style={{ width: 32, height: 32, borderRadius: 8 }} 
+          />
+          <span style={{ fontSize: 20, fontWeight: 'bold' }}>Relatrix</span>
+        </div>
+        <a 
+          href="/" 
+          style={{ 
+            color: colors.textSecondary, textDecoration: 'none', fontSize: 14,
+            display: 'flex', alignItems: 'center', gap: 6 
+          }}
+        >
+          <ArrowLeft size={16} /> Back to Lab
+        </a>
+      </header>
       <style>{`
         @keyframes pulse {
           0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
