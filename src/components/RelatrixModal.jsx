@@ -45,7 +45,7 @@ export default function RelatrixModal({ onClose }) {
             A 3D spatial knowledge base.
           </p>
           <button 
-            onClick={() => window.location.href = '/relatrix/'}
+            onClick={() => window.open('/relatrix/', '_blank')}
             style={{
               padding: "6px 12px", background: accent, color: "#fff",
               border: "2px solid #eef7f2", borderRadius: 2,
