@@ -97,8 +97,7 @@ function generateLabLayout(publicRepos, privateRepos) {
   for (let c = 2; c < pubWidth - 2; c += 2)
     if (c !== chalkCol) pubCols.push(c);
 
-  const filteredPublic = publicRepos.filter(r => r.name !== "gray-matter");
-  filteredPublic.slice(0, pubCols.length).forEach((repo, i) => {
+  publicRepos.slice(0, pubCols.length).forEach((repo, i) => {
     stations.push({
       id: `pub-${i}`, col: pubCols[i], row: 2,
       label: repo.name,
