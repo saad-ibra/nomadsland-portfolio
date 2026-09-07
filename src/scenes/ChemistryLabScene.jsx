@@ -87,7 +87,7 @@ function generateLabLayout(publicRepos, privateRepos) {
   }];
 
   stations.push({
-    id: "relatrix", col: 2, row: 6,
+    id: "relatrix", col: 1, row: 5,
     label: "Relatrix Protocol", line: "Initialize Gray Matter",
     isPrivate: false, repoData: null,
   });
@@ -763,7 +763,7 @@ export default function ChemistryLabScene() {
             <ExitDoor col={layout.startPos.col} row={1} />
 
             {/* Decorative carts (only in public wing to avoid blocking vault) */}
-            <ChemicalCart col={1} row={5} />
+            <ChemicalCart col={1} row={3} />
 
             {/* NPC Saad */}
             <div style={{
