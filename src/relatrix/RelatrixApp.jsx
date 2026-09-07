@@ -96,6 +96,7 @@ export default function RelatrixApp() {
 
   const canAdvance = () => {
     switch(slide) {
+      case 1: return false;
       case 2: return !!resource;
       case 3: return opinionSaved;
       case 4: return !!topic;
@@ -247,20 +248,20 @@ export default function RelatrixApp() {
                   key={t} onClick={() => setTopic(t)}
                   style={{
                     padding: 16, borderRadius: 12,
-                    background: isSel ? `${colors.opinion}26` : colors.neutral900,
-                    border: `1px solid ${isSel ? colors.opinion : colors.neutral800}`,
+                    background: isSel ? `${colors.bookmark}26` : colors.neutral900,
+                    border: `1px solid ${isSel ? colors.bookmark : colors.neutral800}`,
                     cursor: 'pointer', opacity: (topic && !isSel) ? 0.3 : 1,
                     display: 'flex', alignItems: 'center', gap: 12, transition: 'all 0.2s'
                   }}
                 >
-                  <Folder size={24} color={colors.opinion} />
-                  <span style={{ fontSize: 18, color: isSel ? colors.opinion : colors.textPrimary }}>{t}</span>
-                  {isSel && <span style={{ marginLeft: 'auto', fontSize: 14, color: `${colors.opinion}b3` }}>1 resource</span>}
+                  <Folder size={24} color={colors.bookmark} />
+                  <span style={{ fontSize: 18, color: isSel ? colors.bookmark : colors.textPrimary }}>{t}</span>
+                  {isSel && <span style={{ marginLeft: 'auto', fontSize: 14, color: `${colors.bookmark}b3` }}>1 resource</span>}
                 </div>
               )
             })}
           </div>
-          {topic && <p style={{ color: colors.opinion, marginTop: 16, fontSize: 14 }}>✓ Organized! Topics help you synthesize later.</p>}
+          {topic && <p style={{ color: colors.bookmark, marginTop: 16, fontSize: 14 }}>✓ Organized! Topics help you synthesize later.</p>}
         </SlideContainer>
       );
       case 5: return (
