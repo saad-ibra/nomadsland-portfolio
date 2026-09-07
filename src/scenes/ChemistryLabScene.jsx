@@ -389,24 +389,6 @@ function RepoTerminal({ station, isNear }) {
 }
 
 // ============================================================
-//  CHEM CART  — pure decoration
-// ============================================================
-function ChemicalCart({ col, row }) {
-  return (
-    <div style={{ position:"absolute", left: col*TILE+4, top: row*TILE, width: 24, height: TILE, zIndex: row*10 }}>
-      <div style={{ width:"100%", height:28, background:"#9ab0bc", border:"2px solid #304050", borderRadius:2, position:"relative", boxSizing:"border-box" }}>
-        <div style={{ position:"absolute", top:2, left:2, width:4, height:6, background:"#ff3d00", borderRadius:1 }} />
-        <div style={{ position:"absolute", top:2, left:8, width:4, height:8, background:"#29b6f6", borderRadius:1 }} />
-        <div style={{ position:"absolute", top:13, left:4, width:6, height:5, background:"#ffeb3b", borderRadius:1 }} />
-        <div style={{ position:"absolute", bottom:-4, left:1, width:4, height:4, background:"#304050", borderRadius:"50%" }} />
-        <div style={{ position:"absolute", bottom:-4, right:1, width:4, height:4, background:"#304050", borderRadius:"50%" }} />
-      </div>
-    </div>
-  );
-}
-
-// ============================================================
-//  MAIN CHEMISTRY LAB COMPONENT
 // ============================================================
 export default function ChemistryLabScene() {
   const {
