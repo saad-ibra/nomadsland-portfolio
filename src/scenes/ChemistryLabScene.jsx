@@ -516,7 +516,7 @@ export default function ChemistryLabScene() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch("/github.json");
+        const res = await fetch(`/github.json?t=${Date.now()}`);
         if (!res.ok) throw new Error(`Failed to fetch github.json: ${res.status}`);
         const data = await res.json();
 
@@ -761,9 +761,6 @@ export default function ChemistryLabScene() {
 
             {/* Exit Door */}
             <ExitDoor col={layout.startPos.col} row={1} />
-
-            {/* Decorative carts (only in public wing to avoid blocking vault) */}
-            <ChemicalCart col={1} row={3} />
 
             {/* NPC Saad */}
             <div style={{
