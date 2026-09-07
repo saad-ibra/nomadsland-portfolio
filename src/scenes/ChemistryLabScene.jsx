@@ -9,6 +9,7 @@ import { ArrowLeft, Terminal, ScrollText, Lock, Hexagon, Star } from "lucide-rea
 import { TILE } from '../engine/constants';
 import { useTapToMove, TapMarker } from '../hooks/useTapToMove.jsx';
 import RelatrixTerminal from '../components/RelatrixTerminal.jsx';
+import RelatrixModal from '../components/RelatrixModal.jsx';
 import { usePlayerMovement } from '../hooks/usePlayerMovement';
 import { playTileStep } from '../engine/sfx';
 import PlayerSprite from '../components/sprites/PlayerSprite';
@@ -554,11 +555,7 @@ export default function ChemistryLabScene() {
       if ((dc + dr) === 1 || (dc === 1 && dr === 1)) {
         setPhase("intro");
       } else if (nearStation) {
-        if (nearStation === "relatrix") {
-          window.location.href = "/relatrix/";
-        } else {
-          setOpenStation(nearStation);
-        }
+        setOpenStation(nearStation);
       }
     },
     onCancel: () => setOpenStation(null)
@@ -877,9 +874,13 @@ export default function ChemistryLabScene() {
           {openStation === "chalkboard" && (
             <ChalkboardModal commitStats={commitStats} onClose={() => setOpenStation(null)} />
           )}
+          
+          {openStation === "relatrix" && (
+            <RelatrixModal onClose={() => setOpenStation(null)} />
+          )}
 
           {/* Repo detail modal — one per repo, focused */}
-          {openStation && openStation !== "chalkboard" && openStationData && (
+          {openStation && openStation !== "chalkboard" && openStation !== "relatrix" && openStationData && (
             <div
               onClick={() => setOpenStation(null)}
               style={{
