@@ -240,7 +240,7 @@ export default function RelatrixApp() {
                     <span style={{ fontSize: 12, color: colors.textSecondary }}>Confidence</span>
                     <span style={{ fontSize: 12, fontWeight: 600, color: confColor, fontFamily: 'monospace' }}>{confidence}% {confLabel}</span>
                   </div>
-                  <input type="range" min="0" max="100" value={confidence} onChange={e => setConfidence(e.target.value)} style={{ width: '100%', marginBottom: 14 }} />
+                  <input type="range" min="0" max="100" value={confidence} onChange={e => setConfidence(e.target.value)} style={{ width: '100%', marginBottom: 14, background: `linear-gradient(to right, ${colors.opinion} ${confidence}%, #1F1F1F ${confidence}%)` }} />
                 </div>
                 
                 <button 
@@ -455,7 +455,7 @@ export default function RelatrixApp() {
                 </defs>
                 {edges.map((e, i) => (
                   e[0] < visibleNodes && e[1] < visibleNodes && (
-                    <line key={`e${i}`} x1={`${nodes[e[0]].x * 100}%`} y1={`${nodes[e[0]].y * 100}%`} x2={`${nodes[e[1]].x * 100}%`} y2={`${nodes[e[1]].y * 100}%`} stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeDasharray="4,4" />
+                    <line key={`e${i}`} x1={`${nodes[e[0]].x * 100}%`} y1={`${nodes[e[0]].y * 100}%`} x2={`${nodes[e[1]].x * 100}%`} y2={`${nodes[e[1]].y * 100}%`} stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
                   )
                 ))}
                 {nodes.map((n, i) => i < visibleNodes && (
@@ -642,7 +642,6 @@ export default function RelatrixApp() {
           width: 100%;
           height: 6px;
           border-radius: 3px;
-          background: #1F1F1F;
           outline: none;
           border: 1px solid #2A2A2A;
         }
