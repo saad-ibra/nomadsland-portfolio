@@ -52,35 +52,14 @@ const SlideContainer = ({ children, accent }) => (
     width: '100%', maxWidth: '480px', margin: '0 auto', minHeight: 'min(380px, 60vh)',
     justifyContent: 'center', textAlign: 'center', fontFamily: 'inherit',
     padding: '32px 24px', boxSizing: 'border-box',
-    background: `linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.005) 100%)`,
-    border: '1px solid rgba(255,255,255,0.06)',
-    borderRadius: 24,
-    backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
-    boxShadow: '0 4px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)',
+    background: '#151515',
+    border: '1px solid #2A2A2A',
+    borderRadius: 12,
     position: 'relative', overflow: 'hidden'
   }}>
     {/* Top accent line */}
-    {accent && <div style={{ position: 'absolute', top: 0, left: '20%', right: '20%', height: 2, borderRadius: '0 0 4px 4px', background: `linear-gradient(90deg, transparent, ${accent}, transparent)`, opacity: 0.5 }} />}
+    {accent && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: accent }} />}
     {children}
-  </div>
-);
-
-/* ── Feature pill for the features section ── */
-const FeatureCard = ({ icon: Icon, color, title, desc }) => (
-  <div style={{
-    padding: 20, borderRadius: 16, background: colors.surface,
-    border: `1px solid ${colors.surfaceHigh}`,
-    display: 'flex', flexDirection: 'column', gap: 12,
-    transition: 'border-color 0.25s, transform 0.25s',
-  }}
-    onMouseEnter={e => { e.currentTarget.style.borderColor = color; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-    onMouseLeave={e => { e.currentTarget.style.borderColor = colors.surfaceHigh; e.currentTarget.style.transform = 'translateY(0)'; }}
-  >
-    <div style={{ width: 40, height: 40, borderRadius: 10, background: `${color}1a`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Icon size={20} color={color} />
-    </div>
-    <div style={{ fontSize: 16, fontWeight: 600 }}>{title}</div>
-    <div style={{ fontSize: 14, color: colors.textSecondary, lineHeight: 1.5 }}>{desc}</div>
   </div>
 );
 
@@ -145,11 +124,11 @@ export default function RelatrixApp() {
       case 0: return (
         <SlideContainer accent={colors.opinion}>
           <div style={{ position: 'relative', marginBottom: 28 }}>
-            <div style={{ position: 'absolute', inset: -16, borderRadius: 32, background: `radial-gradient(circle, ${colors.opinion}20 0%, transparent 70%)`, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: -16, borderRadius: 12, background: 'transparent', pointerEvents: 'none' }} />
             <img 
               src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
               alt="Relatrix Logo" 
-              style={{ width: 80, height: 80, borderRadius: 20, objectFit: 'cover', position: 'relative', boxShadow: `0 0 32px ${colors.opinion}30` }} 
+              style={{ width: 80, height: 80, borderRadius: 12, objectFit: 'cover', position: 'relative', boxShadow: 'none' }} 
             />
           </div>
           <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: colors.opinion, marginBottom: 12 }}>Interactive Tutorial</div>
@@ -172,7 +151,7 @@ export default function RelatrixApp() {
       case 1: return (
         <SlideContainer>
           <div style={{ position: 'relative', width: 120, height: 120, marginBottom: 36, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'absolute', inset: -24, borderRadius: '50%', background: `radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: -24, borderRadius: '50%', background: 'transparent', pointerEvents: 'none' }} />
             {/* Orbit ring */}
             <div style={{ position: 'absolute', inset: -8, borderRadius: '50%', border: '1px dashed rgba(255,255,255,0.1)' }} />
             <div 
@@ -210,15 +189,15 @@ export default function RelatrixApp() {
                 <div 
                   key={r.id} onClick={() => setResource(r.id)}
                   style={{
-                    flex: 1, borderRadius: 20, padding: '20px 8px',
-                    background: isSel ? `rgba(224,224,224,0.10)` : 'rgba(33,33,33,0.5)',
-                    border: `1.5px solid ${isSel ? colors.primary : 'rgba(255,255,255,0.06)'}`,
+                    flex: 1, borderRadius: 12, padding: '20px 8px',
+                    background: isSel ? `rgba(224,224,224,0.10)` : '#1E1E1E',
+                    border: `1px solid ${isSel ? colors.primary : '#2A2A2A'}`,
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
                     cursor: 'pointer', opacity: op, transition: 'all 0.25s',
-                    boxShadow: isSel ? `0 0 16px rgba(224,224,224,0.08)` : 'none'
+                    boxShadow: 'none'
                   }}
                 >
-                  <div style={{ width: 48, height: 48, borderRadius: 14, background: isSel ? 'rgba(224,224,224,0.12)' : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 48, height: 48, borderRadius: 8, background: isSel ? '#2A2A2A' : '#2A2A2A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <r.icon size={24} color={isSel ? colors.primary : colors.neutral500} strokeWidth={1.5} />
                   </div>
                   <span style={{ fontSize: 15, fontWeight: 600, color: isSel ? colors.primary : colors.textPrimary }}>{r.id}</span>
@@ -228,7 +207,7 @@ export default function RelatrixApp() {
             })}
           </div>
           {resource && (
-            <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 12, background: `${colors.opinion}15`, border: `1px solid ${colors.opinion}30` }}>
+            <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 12, background: '#222', border: `1px solid ${colors.opinion}30` }}>
               <Check size={16} color={colors.opinion} />
               <span style={{ color: colors.opinion, fontSize: 14, fontWeight: 500 }}>{resource} selected</span>
             </div>
@@ -242,8 +221,8 @@ export default function RelatrixApp() {
         return (
           <SlideContainer accent={colors.opinion}>
             {/* Resource context bar */}
-            <div style={{ background: 'rgba(33,33,33,0.5)', padding: '10px 14px', borderRadius: 14, width: '100%', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ background: '#1E1E1E', padding: '10px 14px', borderRadius: 8, width: '100%', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10, border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: '#2A2A2A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ResIcon size={16} color={colors.primary} strokeWidth={1.5} />
               </div>
               <div style={{ textAlign: 'left' }}>
@@ -262,8 +241,8 @@ export default function RelatrixApp() {
                   value={opinion} onChange={e => setOpinion(e.target.value)}
                   placeholder="Type your thoughts..."
                   style={{ 
-                    width: '100%', padding: '14px 16px', borderRadius: 14, background: 'rgba(33,33,33,0.6)', 
-                    border: `1.5px solid rgba(255,255,255,0.08)`, color: '#fff', fontSize: 15,
+                    width: '100%', padding: '14px 16px', borderRadius: 8, background: '#1E1E1E', 
+                    border: `1px solid rgba(255,255,255,0.08)`, color: '#fff', fontSize: 15,
                     fontFamily: 'inherit', boxSizing: 'border-box', marginBottom: 10,
                     transition: 'border-color 0.2s'
                   }}
@@ -274,9 +253,9 @@ export default function RelatrixApp() {
                     <div 
                       key={s} onClick={() => setOpinion(s)}
                       style={{ 
-                        padding: '7px 14px', background: opinion === s ? `${colors.opinion}25` : `${colors.opinion}0d`, 
-                        border: `1px solid ${opinion === s ? colors.opinion : `${colors.opinion}30`}`, 
-                        borderRadius: 20, fontSize: 13, cursor: 'pointer', color: colors.opinion, whiteSpace: 'nowrap',
+                        padding: '7px 14px', background: opinion === s ? '#333' : `${colors.opinion}0d`, 
+                        border: `1px solid ${opinion === s ? colors.opinion : '#444'}`, 
+                        borderRadius: 12, fontSize: 13, cursor: 'pointer', color: colors.opinion, whiteSpace: 'nowrap',
                         transition: 'all 0.2s', fontWeight: opinion === s ? 600 : 400
                       }}
                     >
@@ -297,9 +276,9 @@ export default function RelatrixApp() {
                   onClick={() => { if(opinion) setOpinionSaved(true); }}
                   style={{ 
                     padding: '14px', background: opinion ? colors.opinion : `${colors.opinion}4d`, color: '#000', 
-                    borderRadius: 16, border: 'none', width: '100%', fontSize: 15, fontWeight: 700, 
+                    borderRadius: 12, border: 'none', width: '100%', fontSize: 15, fontWeight: 700, 
                     cursor: opinion ? 'pointer' : 'not-allowed', fontFamily: 'inherit',
-                    boxShadow: opinion ? `0 0 20px ${colors.opinion}30` : 'none',
+                    boxShadow: 'none',
                     transition: 'all 0.25s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8
                   }}
                 >
@@ -308,9 +287,9 @@ export default function RelatrixApp() {
               </>
             ) : (
               <>
-                <div style={{ width: '100%', background: `${colors.opinion}12`, border: `1px solid ${colors.opinion}30`, borderRadius: 16, padding: 20, textAlign: 'left' }}>
+                <div style={{ width: '100%', background: '#222', border: `1px solid ${colors.opinion}30`, borderRadius: 12, padding: 20, textAlign: 'left' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 8, background: `${colors.opinion}25`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 8, background: '#333', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Edit size={14} color={colors.opinion} />
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 600, color: colors.opinion, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Opinion</span>
@@ -344,15 +323,15 @@ export default function RelatrixApp() {
                 <div 
                   key={t.name} onClick={() => setTopic(t.name)}
                   style={{
-                    padding: '14px 16px', borderRadius: 16,
-                    background: isSel ? `${colors.bookmark}15` : 'rgba(33,33,33,0.5)',
-                    border: `1.5px solid ${isSel ? colors.bookmark : 'rgba(255,255,255,0.06)'}`,
+                    padding: '14px 16px', borderRadius: 12,
+                    background: isSel ? '#222' : '#1E1E1E',
+                    border: `1px solid ${isSel ? colors.bookmark : '#2A2A2A'}`,
                     cursor: 'pointer', opacity: (topic && !isSel) ? 0.3 : 1,
                     display: 'flex', alignItems: 'center', gap: 14, transition: 'all 0.25s',
-                    boxShadow: isSel ? `0 0 12px ${colors.bookmark}15` : 'none'
+                    boxShadow: 'none'
                   }}
                 >
-                  <div style={{ width: 40, height: 40, borderRadius: 12, background: isSel ? `${colors.bookmark}20` : 'rgba(255,255,255,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 12, background: isSel ? '#2A2A2A' : '#2A2A2A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
                     {t.emoji}
                   </div>
                   <div style={{ textAlign: 'left', flex: 1 }}>
@@ -365,7 +344,7 @@ export default function RelatrixApp() {
             })}
           </div>
           {topic && (
-            <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 12, background: `${colors.bookmark}12`, border: `1px solid ${colors.bookmark}25` }}>
+            <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 12, background: '#222', border: `1px solid ${colors.bookmark}25` }}>
               <Folder size={14} color={colors.bookmark} />
               <span style={{ color: colors.bookmark, fontSize: 13 }}>Topics help you synthesize knowledge later.</span>
             </div>
@@ -378,7 +357,7 @@ export default function RelatrixApp() {
           <h2 style={{ fontSize: 24, margin: '0 0 6px 0', fontWeight: 700, letterSpacing: '-0.02em' }}>Dedicated PDF Reader</h2>
           <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 15 }}>Read actively with inline entries.</p>
           {/* Realistic PDF reader mockup */}
-          <div style={{ width: '100%', borderRadius: 16, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+          <div style={{ width: '100%', borderRadius: 12, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', boxShadow: 'none' }}>
             {/* Title bar */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: '#1a1a1a', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
               <div style={{ display: 'flex', gap: 5 }}>
@@ -406,7 +385,7 @@ export default function RelatrixApp() {
                 {/* Bookmarked line */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                   <Bookmark size={10} color={colors.bookmark} fill={colors.bookmark} />
-                  <div style={{ width: '80%', height: 6, background: `${colors.bookmark}30`, borderRadius: 2 }} />
+                  <div style={{ width: '80%', height: 6, background: '#444', borderRadius: 2 }} />
                 </div>
                 <div style={{ width: '70%', height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 2 }} />
               </div>
@@ -451,11 +430,11 @@ export default function RelatrixApp() {
                   <div 
                     key={idx} onClick={() => { setSelEntryType(idx); setDiscovered(new Set(discovered).add(idx)); }}
                     style={{
-                      padding: '14px 8px', borderRadius: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
-                      background: isSel ? `${t.color}18` : isDisc ? `${t.color}0a` : 'rgba(33,33,33,0.5)',
-                      border: `1.5px solid ${isSel ? `${t.color}60` : isDisc ? `${t.color}25` : 'rgba(255,255,255,0.04)'}`,
+                      padding: '14px 8px', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                      background: isSel ? `${t.color}18` : isDisc ? `${t.color}0a` : '#1E1E1E',
+                      border: `1px solid ${isSel ? `${t.color}60` : isDisc ? `${t.color}25` : '#2A2A2A'}`,
                       cursor: 'pointer', transition: 'all 0.2s',
-                      boxShadow: isSel ? `0 0 12px ${t.color}15` : 'none'
+                      boxShadow: 'none'
                     }}
                   >
                     <IconComp size={20} color={isDisc ? t.color : colors.neutral700} strokeWidth={1.5} />
@@ -466,7 +445,7 @@ export default function RelatrixApp() {
             </div>
             
             {selEntryType !== -1 ? (
-              <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px', background: `${types[selEntryType].color}12`, border: `1px solid ${types[selEntryType].color}30`, borderRadius: 16, textAlign: 'left', minHeight: 72 }}>
+              <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px', background: `${types[selEntryType].color}12`, border: `1px solid ${types[selEntryType].color}30`, borderRadius: 12, textAlign: 'left', minHeight: 72 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 12, background: `${types[selEntryType].color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   {(() => { const SelIcon = types[selEntryType].icon; return <SelIcon size={20} color={types[selEntryType].color} /> })()}
                 </div>
@@ -502,7 +481,7 @@ export default function RelatrixApp() {
             <div style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: colors.neutral500, marginBottom: 8 }}>Visualization</div>
             <h2 style={{ fontSize: 24, margin: '0 0 6px 0', fontWeight: 700, letterSpacing: '-0.02em' }}>The Relatrix</h2>
             <p style={{ color: colors.textSecondary, marginBottom: 16, fontSize: 15 }}>Your knowledge as an interactive graph. Tap to explore.</p>
-            <div style={{ width: '100%', height: 260, background: 'rgba(0,0,0,0.4)', borderRadius: 20, position: 'relative', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: 260, background: '#151515', borderRadius: 12, position: 'relative', border: '1px solid rgba(255,255,255,0.05)', overflow: 'hidden' }}>
               {/* Grid pattern background */}
               <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '20px 20px', pointerEvents: 'none' }} />
               <svg viewBox="0 0 480 260" preserveAspectRatio="xMidYMid meet" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' }}>
@@ -560,9 +539,9 @@ export default function RelatrixApp() {
           <p style={{ color: colors.textSecondary, marginBottom: 20, fontSize: 15 }}>Group related entries instantly.</p>
           
           {/* Entry preview card */}
-          <div style={{ background: 'rgba(0,0,0,0.35)', padding: '16px 18px', borderRadius: 16, width: '100%', marginBottom: 24, textAlign: 'left', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ background: '#1A1A1A', padding: '16px 18px', borderRadius: 12, width: '100%', marginBottom: 24, textAlign: 'left', border: '1px solid rgba(255,255,255,0.05)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: tag ? 14 : 0 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: `${colors.opinion}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#2A2A2A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Edit2 size={16} color={colors.opinion} />
               </div>
               <div>
@@ -590,9 +569,9 @@ export default function RelatrixApp() {
               <div 
                 key={t.name} onClick={() => setTag(t.name)}
                 style={{
-                  flex: 1, padding: '12px 14px', borderRadius: 14,
-                  background: tag === t.name ? 'rgba(255,255,255,0.12)' : 'rgba(33,33,33,0.5)',
-                  border: `1.5px solid ${tag === t.name ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.04)'}`,
+                  flex: 1, padding: '12px 14px', borderRadius: 8,
+                  background: tag === t.name ? 'rgba(255,255,255,0.12)' : '#1E1E1E',
+                  border: `1px solid ${tag === t.name ? 'rgba(255,255,255,0.25)' : '#2A2A2A'}`,
                   display: 'flex', alignItems: 'center', gap: 8,
                   cursor: 'pointer', transition: 'all 0.2s', minWidth: 0
                 }}
@@ -611,7 +590,7 @@ export default function RelatrixApp() {
           <p style={{ color: linked ? colors.opinion : colors.textSecondary, marginBottom: 20, fontSize: 15, lineHeight: 1.5 }}>
             {linked ? "Connected! Your knowledge is now linked." : "Tap both entries below to create a link between them."}
           </p>
-          <div style={{ width: '100%', height: 180, background: 'rgba(0,0,0,0.4)', borderRadius: 20, position: 'relative', display: 'flex', border: '1px solid rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center', gap: '18%', padding: '0 10%' }}>
+          <div style={{ width: '100%', height: 180, background: '#151515', borderRadius: 12, position: 'relative', display: 'flex', border: '1px solid rgba(255,255,255,0.05)', alignItems: 'center', justifyContent: 'center', gap: '18%', padding: '0 10%' }}>
              {/* Dashed connection line */}
              {linked && (
                <div style={{ position: 'absolute', left: '30%', right: '30%', height: 2, background: `repeating-linear-gradient(90deg, ${colors.opinion}, ${colors.opinion} 8px, transparent 8px, transparent 16px)`, zIndex: 0 }} />
@@ -620,10 +599,10 @@ export default function RelatrixApp() {
              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
                <div onClick={() => setSourceSel(true)} style={{ 
                  width: 64, height: 64, borderRadius: 18, 
-                 background: sourceSel ? `${colors.opinion}20` : 'rgba(33,33,33,0.8)', 
+                 background: sourceSel ? '#2A2A2A' : '#1E1E1E', 
                  border: `2px solid ${sourceSel ? colors.opinion : 'rgba(255,255,255,0.1)'}`,
                  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                 boxShadow: sourceSel ? `0 0 16px ${colors.opinion}25` : 'none',
+                 boxShadow: 'none',
                  transition: 'all 0.25s'
                }}>
                  <Book color={sourceSel ? colors.opinion : colors.neutral500} size={26} strokeWidth={1.5} />
@@ -634,10 +613,10 @@ export default function RelatrixApp() {
              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
                <div onClick={() => setTargetSel(true)} style={{ 
                  width: 64, height: 64, borderRadius: 18,
-                 background: targetSel ? `${colors.template}20` : 'rgba(33,33,33,0.8)', 
+                 background: targetSel ? '#2A2A2A' : '#1E1E1E', 
                  border: `2px solid ${targetSel ? colors.template : 'rgba(255,255,255,0.1)'}`,
                  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                 boxShadow: targetSel ? `0 0 16px ${colors.template}25` : 'none',
+                 boxShadow: 'none',
                  transition: 'all 0.25s'
                }}>
                  <FileText color={targetSel ? colors.template : colors.neutral500} size={26} strokeWidth={1.5} />
@@ -646,7 +625,7 @@ export default function RelatrixApp() {
              </div>
           </div>
           {linked && (
-            <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 12, background: `${colors.opinion}12`, border: `1px solid ${colors.opinion}25` }}>
+            <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 12, background: '#222', border: `1px solid ${colors.opinion}25` }}>
               <Check size={14} color={colors.opinion} />
               <span style={{ color: colors.opinion, fontSize: 13 }}>Link created between resource and entry.</span>
             </div>
@@ -656,12 +635,12 @@ export default function RelatrixApp() {
       case 10: return (
         <SlideContainer accent={colors.opinion}>
           {/* Sparkle decorations */}
-          <div style={{ position: 'absolute', top: 40, left: 30, width: 6, height: 6, borderRadius: '50%', background: colors.opinion, opacity: 0.3, animation: 'float 3s ease-in-out infinite' }} />
-          <div style={{ position: 'absolute', top: 60, right: 40, width: 4, height: 4, borderRadius: '50%', background: colors.bookmark, opacity: 0.4, animation: 'float 4s ease-in-out infinite 1s' }} />
-          <div style={{ position: 'absolute', bottom: 80, left: 50, width: 5, height: 5, borderRadius: '50%', background: colors.visual, opacity: 0.3, animation: 'float 3.5s ease-in-out infinite 0.5s' }} />
+          <div style={{ position: 'absolute', top: 40, left: 30, width: 6, height: 6, borderRadius: '50%', background: colors.opinion, opacity: 0.3, animation: 'none' }} />
+          <div style={{ position: 'absolute', top: 60, right: 40, width: 4, height: 4, borderRadius: '50%', background: colors.bookmark, opacity: 0.4, animation: 'none' }} />
+          <div style={{ position: 'absolute', bottom: 80, left: 50, width: 5, height: 5, borderRadius: '50%', background: colors.visual, opacity: 0.3, animation: 'none' }} />
           
           <div style={{ position: 'relative', marginBottom: 20 }}>
-            <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: `radial-gradient(circle, ${colors.opinion}20 0%, transparent 70%)`, pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: 'transparent', pointerEvents: 'none' }} />
             <Rocket size={56} color={colors.opinion} strokeWidth={1.5} style={{ position: 'relative' }} />
           </div>
           <h2 style={{ fontSize: 34, margin: '0 0 8px 0', fontWeight: 800, letterSpacing: '-0.03em' }}>You're Ready</h2>
@@ -682,7 +661,7 @@ export default function RelatrixApp() {
           
           <Button 
             onClick={() => document.getElementById('explore-section')?.scrollIntoView({ behavior: 'smooth' })}
-            style={{ padding: '16px 36px', background: colors.opinion, color: '#000', fontSize: 16, boxShadow: `0 0 24px ${colors.opinion}40`, borderRadius: 28, fontWeight: 700 }}
+            style={{ padding: '16px 36px', background: colors.opinion, color: '#000', fontSize: 16, boxShadow: 'none', borderRadius: 12, fontWeight: 700 }}
           >
             Start building your knowledge <ArrowRight size={18} />
           </Button>
@@ -768,7 +747,7 @@ export default function RelatrixApp() {
       {/* ─── STICKY HEADER ─── */}
       <header style={{ 
         width: '100%', borderBottom: `1px solid ${colors.surfaceHigh}`,
-        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+        background: colors.bg,
         position: 'sticky', top: 0, zIndex: 100, display: 'flex', justifyContent: 'center'
       }}>
         <div style={{
@@ -791,15 +770,7 @@ export default function RelatrixApp() {
             >
               <Terminal size={14} /> GitHub
             </a>
-            <a href="/" style={{ 
-              color: colors.textSecondary, textDecoration: 'none', fontSize: 13,
-              display: 'flex', alignItems: 'center', gap: 5, transition: 'color 0.2s'
-            }}
-              onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-              onMouseLeave={e => e.currentTarget.style.color = colors.textSecondary}
-            >
-              <ArrowLeft size={14} /> Lab
-            </a>
+            
           </div>
         </div>
       </header>
@@ -810,26 +781,22 @@ export default function RelatrixApp() {
         padding: '60px 24px 40px', position: 'relative', overflow: 'hidden', textAlign: 'center'
       }}>
         {/* Subtle radial glow behind logo */}
-        <div style={{
-          position: 'absolute', width: 400, height: 400, borderRadius: '50%',
-          background: `radial-gradient(circle, ${colors.opinion}15 0%, transparent 70%)`,
-          top: '15%', left: '50%', transform: 'translateX(-50%)', pointerEvents: 'none'
-        }} />
+        
 
         {/* Floating color orbs */}
-        <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', background: `${colors.opinion}08`, top: '10%', left: '10%', animation: 'float 6s ease-in-out infinite', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', width: 120, height: 120, borderRadius: '50%', background: `${colors.template}08`, bottom: '20%', right: '10%', animation: 'float 8s ease-in-out infinite 1s', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', width: 180, height: 180, borderRadius: '50%', background: `${colors.opinion}08`, top: '10%', left: '10%', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', width: 120, height: 120, borderRadius: '50%', background: `${colors.template}08`, bottom: '20%', right: '10%', pointerEvents: 'none' }} />
 
         <img 
           src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png" 
           alt="Relatrix" 
-          style={{ width: 80, height: 80, borderRadius: 20, marginBottom: 28, position: 'relative', animation: 'float 4s ease-in-out infinite' }} 
+          style={{ width: 80, height: 80, borderRadius: 12, marginBottom: 28, position: 'relative',  }} 
         />
         <div style={{
           fontSize: 'clamp(14px, 3vw, 15px)', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase',
           color: colors.opinion, marginBottom: 16, position: 'relative'
         }}>
-          Gray Matter
+          Relatrix App
         </div>
         <h1 style={{ 
           fontSize: 'clamp(32px, 7vw, 52px)', fontWeight: 800, margin: '0 0 20px 0',
@@ -846,18 +813,18 @@ export default function RelatrixApp() {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', position: 'relative' }}>
           <a href="#tutorial" onClick={e => { e.preventDefault(); document.getElementById('tutorial')?.scrollIntoView({ behavior: 'smooth' }); }}
             style={{
-              padding: '14px 28px', borderRadius: 28, background: colors.opinion, color: '#000',
+              padding: '14px 28px', borderRadius: 12, background: colors.opinion, color: '#000',
               fontSize: 16, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8,
-              transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: `0 0 20px ${colors.opinion}40`
+              transition: 'transform 0.2s, box-shadow 0.2s', boxShadow: 'none'
             }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = `0 4px 24px ${colors.opinion}60`; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = `0 0 20px ${colors.opinion}40`; }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)';  }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)';  }}
           >
             Try the Tutorial <ChevronDown size={18} />
           </a>
           <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
             style={{
-              padding: '14px 28px', borderRadius: 28, background: 'transparent',
+              padding: '14px 28px', borderRadius: 12, background: 'transparent',
               border: `1px solid ${colors.neutral700}`, color: '#fff',
               fontSize: 16, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8,
               transition: 'all 0.2s'
@@ -867,24 +834,6 @@ export default function RelatrixApp() {
           >
             <Terminal size={16} /> View Source
           </a>
-        </div>
-      </section>
-
-      {/* ─── FEATURES SECTION ─── */}
-      <section style={{ padding: '60px 24px', display: 'flex', justifyContent: 'center' }}>
-        <div style={{ width: '100%', maxWidth: 560 }}>
-          <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: colors.opinion, marginBottom: 8 }}>Features</div>
-            <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Built for deep thinking</h2>
-          </div>
-          <div className="rltx-features-grid" style={{
-            display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16
-          }}>
-            <FeatureCard icon={Edit2} color={colors.opinion} title="Opinions" desc="Capture your gut feeling about any resource before diving deeper." />
-            <FeatureCard icon={Layers} color={colors.annotation} title="6 Entry Types" desc="Opinions, annotations, bookmarks, templates, lookups, and vision entries." />
-            <FeatureCard icon={GitBranch} color={colors.template} title="Knowledge Links" desc="Connect any topic, resource, or entry to reveal hidden relationships." />
-            <FeatureCard icon={Zap} color={colors.visual} title="3D Relatrix" desc="Visualize your entire knowledge base as an interactive spatial graph." />
-          </div>
         </div>
       </section>
 
@@ -902,7 +851,7 @@ export default function RelatrixApp() {
             ].map(c => (
               <div key={c.name} style={{
                 display: 'flex', alignItems: 'center', gap: 6,
-                padding: '6px 14px', borderRadius: 20,
+                padding: '6px 14px', borderRadius: 12,
                 background: `${c.color}15`, border: `1px solid ${c.color}30`,
                 fontSize: 13, color: c.color
               }}>
@@ -917,12 +866,12 @@ export default function RelatrixApp() {
       {/* ─── INTERACTIVE TUTORIAL ─── */}
       <section id="tutorial" style={{
         borderTop: `1px solid ${colors.surfaceHigh}`, borderBottom: `1px solid ${colors.surfaceHigh}`,
-        background: `linear-gradient(180deg, ${colors.surface} 0%, ${colors.bg} 100%)`
+        background: colors.bg
       }}>
         <div style={{ textAlign: 'center', padding: '48px 24px 0' }}>
           <div style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: colors.opinion, marginBottom: 8 }}>Interactive</div>
           <h2 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 700, margin: '0 0 4px 0', letterSpacing: '-0.02em' }}>Try it yourself</h2>
-          <p style={{ color: colors.textSecondary, fontSize: 15, margin: '0 0 32px 0' }}>Walk through the onboarding — no download needed.</p>
+          <p style={{ color: colors.textSecondary, fontSize: 15, margin: '0 0 32px 0' }}>Walk through the onboarding. No download needed.</p>
         </div>
         <div style={{ minHeight: '75dvh', display: 'flex', flexDirection: 'column', padding: 'clamp(16px, 4vh, 32px) 16px', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box' }}>
           <div key={slide} className="rltx-slide-wrap" style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
