@@ -189,7 +189,7 @@ const Pill = ({ children, bg, color }) => (
 function HeroPanel() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
-      <div style={{ animation: 'float 5s ease-in-out infinite', transformStyle: 'preserve-3d', perspective: 1000 }}>
+      <div style={{  }}>
         <img
           src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
           alt="Relatrix Logo" 
@@ -197,14 +197,14 @@ function HeroPanel() {
             width: 86, height: 86, borderRadius: 20, 
             boxShadow: `0 0 40px rgba(142,158,90,0.4), 0 0 80px rgba(142,158,90,0.15)`,
             border: '1px solid rgba(255,255,255,0.15)',
-            animation: 'tilt3d 8s ease-in-out infinite'
+            
           }}
         />
       </div>
       <h1 style={{ 
         fontSize: 'clamp(44px, 12vw, 84px)', fontWeight: 800, margin: '12px 0 0 0', 
         letterSpacing: '-0.04em', lineHeight: 1.1, color: '#fff',
-        animation: 'glow 4s ease-in-out infinite'
+        
       }}>
         Relatrix
       </h1>
@@ -449,7 +449,7 @@ function DiagramPanel() {
 
         {/* Topic Node */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, zIndex: 2 }}>
-          <div style={{ position: 'relative', width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'float 4s ease-in-out infinite' }}>
+          <div style={{ position: 'relative', width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',  }}>
             <svg width="56" height="56" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0, filter: 'drop-shadow(0 0 12px rgba(234,179,8,0.5))' }}>
               <polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="rgba(234,179,8,0.1)" stroke="#EAB308" strokeWidth="2.5" />
             </svg>
@@ -463,7 +463,7 @@ function DiagramPanel() {
         
         {/* Resource Node */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, zIndex: 2 }}>
-          <div style={{ position: 'relative', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'float 4s ease-in-out infinite', animationDelay: '-2s' }}>
+          <div style={{ position: 'relative', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <svg width="60" height="60" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0, filter: 'drop-shadow(0 0 12px rgba(255,255,255,0.3))' }}>
               <polygon points="24,4 46,44 2,44" fill="rgba(255,255,255,0.05)" stroke="#fff" strokeWidth="2.5" />
             </svg>
