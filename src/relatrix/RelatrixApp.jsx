@@ -345,27 +345,46 @@ function OpinionPanel() {
 }
 
 function TopicPanel() {
-  const hexPoints = "24,2 44,13 44,35 24,46 4,35 4,13";
+  const topics = [
+    { name: 'Philosophy', count: 5 },
+    { name: 'Science', count: 3, active: true },
+    { name: 'My Notes', count: 8 },
+  ];
+  const hexClip = 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)';
+  const HexCell = ({ topic }) => (
+    <div style={{
+      width: 150, height: 130,
+      clipPath: hexClip, WebkitClipPath: hexClip,
+      background: topic.active ? 'rgba(234,179,8,0.1)' : 'rgba(255,255,255,0.04)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+      position: 'relative',
+    }}>
+      {/* Hex border via inset pseudo-hex */}
+      <div style={{
+        position: 'absolute', inset: 1.5,
+        clipPath: hexClip, WebkitClipPath: hexClip,
+        background: topic.active ? 'rgba(234,179,8,0.08)' : 'rgba(10,10,10,0.9)',
+      }} />
+      <Folder size={20} color="#EAB308" strokeWidth={1.5} style={{ zIndex: 1 }} />
+      <span style={{ fontSize: 13, fontWeight: 700, color: topic.active ? '#fff' : C.dim, zIndex: 1 }}>{topic.name}</span>
+      <span style={{ fontSize: 10, color: C.dim, zIndex: 1 }}>{topic.count} resources</span>
+    </div>
+  );
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
       <Label>Step 3</Label>
       <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Organize into topics</h2>
       <p style={{ color: C.dim, fontSize: 14, margin: 0 }}>Topics are folders for your resources.</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%', maxWidth: 360, marginTop: 4 }}>
-        {['Philosophy', 'Science', 'My Notes'].map((name, i) => (
-          <Card key={name} style={{
-            padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12,
-            border: i === 1 ? `1px solid ${C.bookmark}` : `1px solid ${C.border}`,
-          }}>
-            <div style={{ position: 'relative', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="28" height="28" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
-                <polygon points={hexPoints} fill={i === 1 ? 'rgba(234,179,8,0.12)' : 'rgba(234,179,8,0.06)'} stroke="#EAB308" strokeWidth="2" />
-              </svg>
-            </div>
-            <span style={{ fontSize: 14, fontWeight: 600, color: i === 1 ? '#fff' : C.dim }}>{name}</span>
-            {i === 1 && <span style={{ fontSize: 11, color: C.dim, marginLeft: 'auto' }}>3 resources</span>}
-          </Card>
-        ))}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 4 }}>
+        {/* Top row: 2 hexagons side by side */}
+        <div style={{ display: 'flex', gap: 4 }}>
+          <HexCell topic={topics[0]} />
+          <HexCell topic={topics[1]} />
+        </div>
+        {/* Bottom row: 1 hexagon centered, overlapping upward */}
+        <div style={{ marginTop: -18 }}>
+          <HexCell topic={topics[2]} />
+        </div>
       </div>
     </div>
   );
