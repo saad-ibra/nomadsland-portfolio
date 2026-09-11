@@ -142,17 +142,14 @@ function createGraph(isMobile) {
    ═══════════════════════════════════════════════════ */
 // Adjusted cues to fit 7 panels now since Explore is moved back to the bottom
 const PANELS = [
-  { id: 'hero', cue: [0.00, 0.04, 0.06, 0.09] },
-  { id: 'plus', cue: [0.09, 0.12, 0.14, 0.17] },
-  { id: 'resource', cue: [0.17, 0.20, 0.23, 0.26] },
-  { id: 'opinion', cue: [0.26, 0.29, 0.32, 0.35] },
-  { id: 'topic', cue: [0.35, 0.38, 0.41, 0.44] },
-  { id: 'reader', cue: [0.44, 0.47, 0.50, 0.53] },
-  { id: 'entries', cue: [0.53, 0.56, 0.59, 0.62] },
-  { id: 'graph', cue: [0.62, 0.65, 0.68, 0.71] },
-  { id: 'tags', cue: [0.71, 0.74, 0.77, 0.80] },
-  { id: 'links', cue: [0.80, 0.83, 0.86, 0.89] },
-  { id: 'done', cue: [0.89, 0.92, 0.95, 0.97] } // Fades out completely by 0.97, right as the footer scrolls up
+  { id: 'hero', cue: [0.00, 0.04, 0.08, 0.12] },
+  { id: 'plus', cue: [0.12, 0.16, 0.20, 0.24] },
+  { id: 'resource', cue: [0.24, 0.28, 0.32, 0.36] },
+  { id: 'opinion', cue: [0.36, 0.40, 0.44, 0.48] },
+  { id: 'topic', cue: [0.48, 0.52, 0.56, 0.60] },
+  { id: 'reader', cue: [0.60, 0.64, 0.68, 0.72] },
+  { id: 'entries', cue: [0.72, 0.76, 0.80, 0.84] },
+  { id: 'tags_and_links', cue: [0.84, 0.88, 0.94, 0.97] } // Fades out right before footer
 ];
 
 /* ─── Shared Panel Card ─── */
@@ -400,53 +397,16 @@ function EntriesPanel() {
 }
 
 
-function GraphPanel() {
+function TagsAndLinksPanel() {
   return (
     <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-      <Label>Visualization</Label>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>The Relatrix</h2>
-      <p style={{ color: C.dim, fontSize: 14, margin: 0, maxWidth: 360, lineHeight: 1.5 }}>Look behind these cards. Your knowledge forms an interactive, living 3D graph.</p>
-      <Card style={{ marginTop: 4, display: 'flex', gap: 12, alignItems: 'center', width: '100%', maxWidth: 340, justifyContent: 'center' }}>
-        <div style={{ width: 12, height: 12, borderRadius: '50%', background: C.opinion, boxShadow: `0 0 14px ${C.opinion}` }} />
-        <span style={{ fontSize: 14, fontWeight: 500, color: '#fff' }}>Every node is a thought</span>
-      </Card>
-    </div>
-  );
-}
-
-function TagsPanel() {
-  return (
-    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-      <Label>Organize</Label>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Organize with tags</h2>
-      <p style={{ color: C.dim, fontSize: 14, margin: 0 }}>Group related entries instantly and flexibly.</p>
-      <Card style={{ marginTop: 4, width: '100%', maxWidth: 340 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 6, background: 'rgba(142,158,90,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Edit2 size={14} color={C.opinion} />
-          </div>
-          <div style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>My insight</div>
-            <div style={{ fontSize: 10, color: C.dim, marginTop: 2, fontFamily: 'monospace' }}>Opinion · 78%</div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> important</Pill>
-          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> review</Pill>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-function LinksPanel() {
-  return (
-    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-      <Label>Connections</Label>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Knowledge Links</h2>
-      <p style={{ color: C.dim, fontSize: 14, margin: 0, maxWidth: 320, lineHeight: 1.5 }}>Connect any two nodes to establish a relationship.</p>
-      <Card style={{ marginTop: 4, width: '100%', maxWidth: 340, padding: '36px 20px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 220, margin: '0 auto' }}>
+      <Label>Connect & Organize</Label>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Tags and Links</h2>
+      <p style={{ color: C.dim, fontSize: 14, margin: 0, maxWidth: 320, lineHeight: 1.5 }}>
+        Establish relationships between nodes with links, or group them flexibly using tags.
+      </p>
+      <Card style={{ marginTop: 4, width: '100%', maxWidth: 340, padding: '28px 20px 20px' }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 220, margin: '0 auto 24px' }}>
           <div style={{ position: 'absolute', left: 40, right: 40, top: 22, height: 2, background: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.6) 0, rgba(255,255,255,0.6) 6px, transparent 6px, transparent 12px)', backgroundSize: '12px 2px', animation: 'march 0.5s linear infinite', zIndex: 0 }} />
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
             <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#111', border: `1px solid ${C.opinion}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px rgba(142,158,90,0.15)` }}>
@@ -461,24 +421,17 @@ function LinksPanel() {
             <span style={{ fontSize: 10, color: C.template, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entry</span>
           </div>
         </div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', borderTop: `1px solid ${C.border}`, paddingTop: 20 }}>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> important</Pill>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> review</Pill>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> research</Pill>
+        </div>
       </Card>
     </div>
   );
 }
 
-function DonePanel() {
-  return (
-    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-      <Rocket size={48} color={C.opinion} strokeWidth={1.5} style={{ marginBottom: 4 }} />
-      <h2 style={{ fontSize: 'clamp(28px, 6vw, 36px)', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', color: '#fff' }}>You're Ready</h2>
-      <p style={{ color: C.dim, fontSize: 15, margin: 0, lineHeight: 1.6, maxWidth: 320 }}>
-        You've learned the core workflow. Keep scrolling to download Relatrix and start building your graph.
-      </p>
-    </div>
-  );
-}
-
-const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel, GraphPanel, TagsPanel, LinksPanel, DonePanel];
+const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel, TagsAndLinksPanel];
 
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT
@@ -705,7 +658,7 @@ export default function RelatrixApp() {
           to { background-position: -12px 0; }
         }
         
-        .rltx-track { height: 1000vh; position: relative; }
+        .rltx-track { height: 800vh; position: relative; }
         
         .rltx-stage { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #000; }
         .rltx-stage canvas { width: 100%; height: 100%; display: block; }
