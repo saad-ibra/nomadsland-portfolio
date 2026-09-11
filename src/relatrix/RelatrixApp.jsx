@@ -272,24 +272,39 @@ function PlusPanel() {
 }
 
 function ResourcePanel() {
+  const items = [
+    { id: 'File', icon: File, sub: 'Any file' },
+    { id: 'Link', icon: Globe, sub: 'URL or webpage' },
+    { id: 'Note', icon: Edit2, sub: 'Write from scratch' },
+  ];
+  // SVG triangle: pointy up = "24,4 44,40 4,40", pointy down = "4,8 44,8 24,44"
+  const triUp = "24,4 44,40 4,40";
+  const triDown = "4,8 44,8 24,44";
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
       <Label>Step 1</Label>
       <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Add a resource</h2>
       <p style={{ color: C.dim, fontSize: 14, margin: 0 }}>Pick what you want to capture.</p>
-      <div style={{ display: 'flex', gap: 10, width: '100%', maxWidth: 360, marginTop: 4 }}>
-        {[
-          { id: 'File', icon: File, sub: 'PDF, doc, image' },
-          { id: 'Link', icon: Globe, sub: 'URL or webpage' },
-          { id: 'Note', icon: Edit2, sub: 'Write from scratch' },
-        ].map((r, i) => (
-          <Card key={r.id} style={{ flex: 1, padding: '16px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, border: i === 1 ? `1px solid ${C.opinion}` : `1px solid ${C.border}` }}>
-            <r.icon size={20} color={i === 1 ? '#fff' : C.dim} strokeWidth={1.5} />
-            <span style={{ fontSize: 13, fontWeight: 600, color: i === 1 ? '#fff' : C.dim }}>{r.id}</span>
-            <span style={{ fontSize: 10, color: C.dim }}>{r.sub}</span>
-          </Card>
-        ))}
+      <div style={{ display: 'flex', gap: 14, width: '100%', maxWidth: 360, marginTop: 4, justifyContent: 'center' }}>
+        {items.map((r, i) => {
+          const points = i === 1 ? triDown : triUp;
+          return (
+            <div key={r.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+              <div style={{ position: 'relative', width: 72, height: 72, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="72" height="72" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
+                  <polygon points={points} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+                </svg>
+                <r.icon size={18} color="#fff" strokeWidth={1.5} style={{ zIndex: 1, marginTop: i === 1 ? -6 : 6 }} />
+              </div>
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#fff' }}>{r.id}</span>
+              <span style={{ fontSize: 10, color: C.dim }}>{r.sub}</span>
+            </div>
+          );
+        })}
       </div>
+      <p style={{ color: C.dim, fontSize: 11, margin: '4px 0 0 0', fontStyle: 'italic', maxWidth: 300, lineHeight: 1.5 }}>
+        If the file is a PDF, there is a built-in PDF reader.
+      </p>
     </div>
   );
 }
@@ -322,6 +337,7 @@ function OpinionPanel() {
 }
 
 function TopicPanel() {
+  const hexPoints = "24,2 44,13 44,35 24,46 4,35 4,13";
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
       <Label>Step 3</Label>
@@ -333,7 +349,11 @@ function TopicPanel() {
             padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12,
             border: i === 1 ? `1px solid ${C.bookmark}` : `1px solid ${C.border}`,
           }}>
-            <Folder size={18} color="#EAB308" strokeWidth={1.5} />
+            <div style={{ position: 'relative', width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="28" height="28" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
+                <polygon points={hexPoints} fill={i === 1 ? 'rgba(234,179,8,0.12)' : 'rgba(234,179,8,0.06)'} stroke="#EAB308" strokeWidth="2" />
+              </svg>
+            </div>
             <span style={{ fontSize: 14, fontWeight: 600, color: i === 1 ? '#fff' : C.dim }}>{name}</span>
             {i === 1 && <span style={{ fontSize: 11, color: C.dim, marginLeft: 'auto' }}>3 resources</span>}
           </Card>
