@@ -413,7 +413,7 @@ function EntriesPanel() {
                 background: `radial-gradient(circle at 30% 25%, ${t.color}35 0%, rgba(15,15,15,0.7) 80%)`,
                 border: `1px solid ${t.color}50`,
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
-                marginLeft: i === 0 ? 0 : -18,
+                marginLeft: i === 0 ? 0 : -8,
                 backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
                 boxShadow: `0 8px 30px rgba(0,0,0,0.5), inset 0 2px 12px ${t.color}20`,
                 position: 'relative', zIndex: 3 - i
@@ -425,7 +425,7 @@ function EntriesPanel() {
           })}
         </div>
         {/* Bottom Row */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: -18, zIndex: 1 }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: -8, zIndex: 1 }}>
           {types.slice(3, 6).map((t, i) => {
             const I = t.icon;
             return (
@@ -434,7 +434,7 @@ function EntriesPanel() {
                 background: `radial-gradient(circle at 30% 25%, ${t.color}35 0%, rgba(15,15,15,0.7) 80%)`,
                 border: `1px solid ${t.color}50`,
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
-                marginLeft: i === 0 ? 0 : -18,
+                marginLeft: i === 0 ? 0 : -8,
                 backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
                 boxShadow: `0 8px 30px rgba(0,0,0,0.5), inset 0 2px 12px ${t.color}20`,
                 position: 'relative', zIndex: 3 - i
