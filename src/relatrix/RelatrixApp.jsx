@@ -457,8 +457,8 @@ function TagsAndLinksPanel() {
 function DiagramPanel() {
   return (
     <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-      <Label>Hierarchy</Label>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>The Architecture of Knowledge</h2>
+      <Label>3D Canvas</Label>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em', lineHeight: 1.3 }}>Explore it as a 3D graph in the app</h2>
       <Card style={{ marginTop: 8, width: '100%', maxWidth: 380, padding: '36px 20px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
         
         {/* Background grid lines for techy feel */}
