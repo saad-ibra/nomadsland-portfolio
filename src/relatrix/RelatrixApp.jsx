@@ -18,73 +18,137 @@ const C = {
 const NODE_COLORS = [C.opinion, C.template, C.annotation, C.bookmark, C.lookup, C.visual];
 
 /* ═══════════════════════════════════════════════════
-   3D GRAPH ENGINE
-   Procedural node generation + perspective projection
+   3D GRAPH ENGINE (Clusters + Points + Links)
    ═══════════════════════════════════════════════════ */
-function createGraph(count) {
-  const nodes = [];
+const FOCAL = 900;
+const CAM_BASE = 1300;
+const ZSPAN = 2200;
+const TRAVEL = ZSPAN * 1.6;
+
+function buildEdgesFromFaces(faces) {
+  const seen = {};
   const edges = [];
-  for (let i = 0; i < count; i++) {
-    nodes.push({
-      x: (Math.random() - 0.5) * 600,
-      y: (Math.random() - 0.5) * 600,
-      z: (Math.random() - 0.5) * 600,
-      r: 2 + Math.random() * 3,
-      color: NODE_COLORS[i % 6],
-    });
-  }
-  // Connect each node to 1-3 nearby neighbors
-  for (let i = 0; i < count; i++) {
-    const links = 1 + Math.floor(Math.random() * 2);
-    for (let l = 0; l < links; l++) {
-      const j = (i + 1 + Math.floor(Math.random() * 8)) % count;
-      if (j !== i) edges.push([i, j]);
+  for (let f = 0; f < faces.length; f++) {
+    const face = faces[f];
+    for (let i = 0; i < face.length; i++) {
+      const a = face[i], b = face[(i + 1) % face.length];
+      const key = Math.min(a, b) + '_' + Math.max(a, b);
+      if (!seen[key]) {
+        seen[key] = true;
+        edges.push([Math.min(a, b), Math.max(a, b)]);
+      }
     }
   }
-  return { nodes, edges };
+  return edges;
 }
 
-function project(x, y, z, cx, cy, cz, rx, ry, w, h) {
-  // Translate by camera
-  let dx = x - cx, dy = y - cy, dz = z - cz;
-  // Rotate Y
-  const cosY = Math.cos(ry), sinY = Math.sin(ry);
-  const tx = dx * cosY - dz * sinY;
-  const tz = dx * sinY + dz * cosY;
-  dx = tx; dz = tz;
-  // Rotate X
-  const cosX = Math.cos(rx), sinX = Math.sin(rx);
-  const ty = dy * cosX - dz * sinX;
-  const tz2 = dy * sinX + dz * cosX;
-  dy = ty; dz = tz2;
-  // Perspective
-  const fov = 500;
-  const scale = fov / (fov + dz);
-  if (scale <= 0 || dz < -fov * 0.95) return null;
-  return {
-    sx: w / 2 + dx * scale,
-    sy: h / 2 + dy * scale,
-    scale,
-    depth: dz,
-  };
+const PHI = (1 + Math.sqrt(5)) / 2;
+const ICO_VERTS = [
+  [-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0],
+  [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI],
+  [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1]
+];
+const ICO_FACES = [
+  [0, 11, 5], [0, 5, 1], [0, 1, 7], [0, 7, 10], [0, 10, 11],
+  [1, 5, 9], [5, 11, 4], [11, 10, 2], [10, 7, 6], [7, 1, 8],
+  [3, 9, 4], [3, 4, 2], [3, 2, 6], [3, 6, 8], [3, 8, 9],
+  [4, 9, 5], [2, 4, 11], [6, 2, 10], [8, 6, 7], [9, 8, 1]
+];
+const ICO_EDGES = buildEdgesFromFaces(ICO_FACES);
+
+const TET_VERTS = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]];
+const TET_FACES = [[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]];
+const TET_EDGES = buildEdgesFromFaces(TET_FACES);
+
+function rotateY(v, angle) {
+  const cos = Math.cos(angle), sin = Math.sin(angle);
+  return [v[0] * cos - v[2] * sin, v[1], v[0] * sin + v[2] * cos];
+}
+
+function projectCluster(x, y, z, rotX, rotY, cx0, cy0) {
+  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+  const x1 = x * cosY - z * sinY;
+  const z1 = x * sinY + z * cosY;
+  const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+  const y1 = y * cosX - z1 * sinX;
+  const z2 = y * sinX + z1 * cosX;
+  let depth = z2 + CAM_BASE;
+  if (depth < 150) depth = 150;
+  const scale = FOCAL / (FOCAL + depth);
+  const op = Math.max(0.04, Math.min(1, scale * 1.6 - 0.25));
+  return { x: cx0 + x1 * scale, y: cy0 + y1 * scale, scale, depth, op };
+}
+
+function createGraph(isMobile) {
+  const rand = (min, max) => min + Math.random() * (max - min);
+
+  const clusters = [];
+  const numClusters = isMobile ? 5 : 9;
+  for (let i = 0; i < numClusters; i++) {
+    const isIco = i % 2 === 0;
+    clusters.push({
+      verts: isIco ? ICO_VERTS : TET_VERTS,
+      edges: isIco ? ICO_EDGES : TET_EDGES,
+      isIco,
+      cx: rand(-950, 950),
+      cy: rand(-520, 520),
+      cz0: rand(0, ZSPAN),
+      scale: isIco ? rand(60, 110) : rand(45, 90),
+      spinSpeed: rand(0.05, 0.16) * (Math.random() < 0.5 ? -1 : 1),
+      phase: rand(0, Math.PI * 2)
+    });
+  }
+
+  const points = [];
+  const numPoints = isMobile ? 15 : 26;
+  for (let i = 0; i < numPoints; i++) {
+    points.push({
+      x: rand(-1050, 1050),
+      y: rand(-620, 620),
+      z0: rand(0, ZSPAN),
+      r: rand(2, 4.5),
+      color: NODE_COLORS[i % 6], // Cycle through Relatrix colors
+      _sx: 0, _sy: 0, _scale: 0, _depth: 0, _op: 0
+    });
+  }
+
+  const links = [];
+  const seen = {};
+  for (let i = 0; i < points.length; i++) {
+    const dists = [];
+    for (let j = 0; j < points.length; j++) {
+      if (i === j) continue;
+      const dx = points[i].x - points[j].x;
+      const dy = points[i].y - points[j].y;
+      const dz = points[i].z0 - points[j].z0;
+      dists.push({ j, d: dx * dx + dy * dy + dz * dz });
+    }
+    dists.sort((a, b) => a.d - b.d);
+    for (let k = 0; k < 2 && k < dists.length; k++) {
+      const a = Math.min(i, dists[k].j), b = Math.max(i, dists[k].j);
+      const key = a + '_' + b;
+      if (!seen[key]) {
+        seen[key] = true;
+        links.push([a, b]);
+      }
+    }
+  }
+
+  return { clusters, points, links };
 }
 
 /* ═══════════════════════════════════════════════════
-   PANEL DEFINITIONS
-   Each panel teaches a concept from the old tutorial.
-   Copy is written to avoid AI writing tropes:
-   no em dashes, no "delve/pivotal/robust/showcase",
-   no rule-of-three, no "serves as" circumlocutions.
+   PANEL DEFINITIONS (Scroll-driven content)
    ═══════════════════════════════════════════════════ */
+// Adjusted cues to fit 7 panels now since Explore is moved back to the bottom
 const PANELS = [
-  { id: 'hero', cue: [0, 0.06, 0.09, 0.13] },
-  { id: 'plus', cue: [0.14, 0.18, 0.21, 0.25] },
-  { id: 'resource', cue: [0.26, 0.30, 0.33, 0.37] },
-  { id: 'opinion', cue: [0.38, 0.42, 0.45, 0.49] },
-  { id: 'topic', cue: [0.50, 0.54, 0.57, 0.61] },
-  { id: 'reader', cue: [0.62, 0.66, 0.69, 0.73] },
-  { id: 'entries', cue: [0.74, 0.78, 0.81, 0.85] },
-  { id: 'explore', cue: [0.86, 0.90, 0.94, 1.0] },
+  { id: 'hero', cue: [0, 0.05, 0.10, 0.15] },
+  { id: 'plus', cue: [0.16, 0.21, 0.26, 0.31] },
+  { id: 'resource', cue: [0.32, 0.37, 0.42, 0.47] },
+  { id: 'opinion', cue: [0.48, 0.53, 0.58, 0.63] },
+  { id: 'topic', cue: [0.64, 0.69, 0.74, 0.79] },
+  { id: 'reader', cue: [0.80, 0.85, 0.90, 0.95] },
+  { id: 'entries', cue: [0.96, 1.0, 1.05, 1.05] }, // 1.05 so it stays visible at very bottom of track
 ];
 
 /* ─── Shared Panel Card ─── */
@@ -317,46 +381,7 @@ function EntriesPanel() {
   );
 }
 
-function ExplorePanel() {
-  const links = [
-    { href: 'https://github.com/saad-ibra/gray-matter', icon: Terminal, label: 'GitHub' },
-    { href: 'https://f-droid.org/packages/com.saadibra.graymatter', icon: Smartphone, label: 'F-Droid' },
-    { href: 'https://github.com/saad-ibra/gray-matter/releases', icon: Tag, label: 'Releases' },
-    { href: 'https://github.com/saad-ibra/gray-matter/issues', icon: AlertCircle, label: 'Issues' },
-  ];
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
-      <Rocket size={40} color={C.opinion} strokeWidth={1.5} />
-      <h2 style={{ fontSize: 24, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Start building</h2>
-      <p style={{ color: C.dim, fontSize: 14, margin: 0, lineHeight: 1.6 }}>Open source. Privacy-first. Available on F-Droid.</p>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, width: '100%', maxWidth: 360, marginTop: 4 }}>
-        {links.map(l => {
-          const I = l.icon;
-          return (
-            <a key={l.label} href={l.href} target="_blank" rel="noreferrer"
-              style={{
-                padding: '12px 14px', background: C.glass, border: `1px solid ${C.border}`,
-                borderRadius: 8, display: 'flex', alignItems: 'center', gap: 8,
-                color: '#fff', textDecoration: 'none', fontSize: 13,
-              }}>
-              <I size={15} /> {l.label} <ExternalLink size={10} style={{ marginLeft: 'auto', opacity: 0.3 }} />
-            </a>
-          );
-        })}
-      </div>
-      <a href="https://saadibra.mooo.com/contact/"
-        style={{
-          padding: '12px 14px', background: C.glass, border: `1px solid ${C.border}`,
-          borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-          color: '#fff', textDecoration: 'none', fontSize: 13, width: '100%', maxWidth: 360,
-        }}>
-        <Mail size={15} /> Contact the developer
-      </a>
-    </div>
-  );
-}
-
-const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel, ExplorePanel];
+const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel];
 
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT
@@ -381,8 +406,7 @@ export default function RelatrixApp() {
 
   // Build graph once
   useEffect(() => {
-    const count = window.innerWidth < 768 ? 40 : 70;
-    graphRef.current = createGraph(count);
+    graphRef.current = createGraph(window.innerWidth < 768);
   }, []);
 
   // Smoothstep helper
@@ -409,80 +433,107 @@ export default function RelatrixApp() {
     }
   }, [ramp]);
 
-  // Draw 3D graph
-  const drawGraph = useCallback((seekAt, canvas) => {
+  // Draw 3D graph (Clusters + Points)
+  const drawGraph = useCallback((seekAt, canvas, time, reducedMotion) => {
     if (!canvas || !graphRef.current) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2); // cap DPR for perf
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
-    if (canvas.width !== w * dpr || canvas.height !== h * dpr) {
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
+    if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
       ctx.scale(dpr, dpr);
     }
     ctx.clearRect(0, 0, w, h);
 
-    const { nodes, edges } = graphRef.current;
+    const { clusters, points, links } = graphRef.current;
+    const mod = (n, m) => ((n % m) + m) % m;
 
-    // Camera travels along Z, slight orbit
-    const cz = -400 + seekAt * 800;
-    const cx = Math.sin(seekAt * 1.5) * 80;
-    const cy = Math.cos(seekAt * 1.2) * 60;
-    const rx = Math.sin(seekAt * 0.8) * 0.15;
-    const ry = seekAt * 1.2;
+    const t = reducedMotion ? 0 : time * 0.00015;
+    const rotY = seekAt * Math.PI * 1.4 + t * 0.03;
+    const rotX = Math.sin(seekAt * Math.PI * 0.8) * 0.35 + t * 0.02;
+    const cx0 = w / 2, cy0 = h / 2;
 
-    // Project all nodes
-    const projected = nodes.map(n => project(n.x, n.y, n.z, cx, cy, cz, rx, ry, w, h));
+    const drawables = [];
 
-    // Draw edges
-    for (const [a, b] of edges) {
-      const pa = projected[a], pb = projected[b];
-      if (!pa || !pb) continue;
-      const alpha = Math.min(pa.scale, pb.scale) * 0.12;
-      if (alpha < 0.01) continue;
-      ctx.beginPath();
-      ctx.moveTo(pa.sx, pa.sy);
-      ctx.lineTo(pb.sx, pb.sy);
-      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-      ctx.lineWidth = 1;
-      ctx.stroke();
+    // Points
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i];
+      const zc = mod(p.z0 - seekAt * TRAVEL, ZSPAN) - ZSPAN / 2;
+      const proj = projectCluster(p.x, p.y, zc, rotX, rotY, cx0, cy0);
+      p._sx = proj.x; p._sy = proj.y; p._scale = proj.scale; p._depth = proj.depth; p._op = proj.op;
+      drawables.push({ type: 'point', ref: p, depth: proj.depth });
     }
 
-    // Draw nodes sorted by depth (back to front)
-    const sorted = projected.map((p, i) => ({ p, i })).filter(o => o.p).sort((a, b) => b.p.depth - a.p.depth);
-    for (const { p, i } of sorted) {
-      const n = nodes[i];
-      const r = n.r * p.scale;
-      if (r < 0.3) continue;
-      const alpha = Math.min(p.scale * 0.8, 1);
+    // Links between points
+    for (let i = 0; i < links.length; i++) {
+      const a = points[links[i][0]], b = points[links[i][1]];
+      drawables.push({ type: 'link', a, b, depth: (a._depth + b._depth) / 2 });
+    }
 
-      // Glow
-      ctx.beginPath();
-      ctx.arc(p.sx, p.sy, r * 3, 0, Math.PI * 2);
-      ctx.fillStyle = n.color.replace(')', `,${alpha * 0.08})`).replace('rgb', 'rgba');
-      ctx.fill();
+    // Clusters (Wireframes)
+    for (let ci = 0; ci < clusters.length; ci++) {
+      const cl = clusters[ci];
+      const czc = mod(cl.cz0 - seekAt * TRAVEL, ZSPAN) - ZSPAN / 2;
+      const spin = cl.phase + t * cl.spinSpeed * 14;
+      const projVerts = [];
+      for (let vi = 0; vi < cl.verts.length; vi++) {
+        const v = cl.verts[vi];
+        const spun = rotateY([v[0] * cl.scale, v[1] * cl.scale, v[2] * cl.scale], spin);
+        const wx = spun[0] + cl.cx, wy = spun[1] + cl.cy, wz = spun[2] + czc;
+        projVerts.push(projectCluster(wx, wy, wz, rotX, rotY, cx0, cy0));
+      }
+      for (let ei = 0; ei < cl.edges.length; ei++) {
+        const e = cl.edges[ei];
+        const pa = projVerts[e[0]], pb = projVerts[e[1]];
+        drawables.push({ type: 'edge', a: pa, b: pb, depth: (pa.depth + pb.depth) / 2, accent: !cl.isIco });
+      }
+    }
 
-      // Dot
-      ctx.beginPath();
-      ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
-      ctx.fillStyle = n.color.replace(')', `,${alpha})`).replace('rgb', 'rgba');
-      // For hex colors, convert
-      const hexToRgba = (hex, a) => {
-        const rr = parseInt(hex.slice(1, 3), 16);
-        const gg = parseInt(hex.slice(3, 5), 16);
-        const bb = parseInt(hex.slice(5, 7), 16);
-        return `rgba(${rr},${gg},${bb},${a})`;
-      };
-      ctx.fillStyle = hexToRgba(n.color, alpha);
-      ctx.fill();
+    drawables.sort((x, y) => y.depth - x.depth);
 
-      // Also draw glow properly
-      ctx.beginPath();
-      ctx.arc(p.sx, p.sy, r * 3, 0, Math.PI * 2);
-      ctx.fillStyle = hexToRgba(n.color, alpha * 0.06);
-      ctx.fill();
+    const hexToRgba = (hex, a) => {
+      const rr = parseInt(hex.slice(1, 3), 16);
+      const gg = parseInt(hex.slice(3, 5), 16);
+      const bb = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${rr},${gg},${bb},${a})`;
+    };
+
+    for (let i = 0; i < drawables.length; i++) {
+      const d = drawables[i];
+      if (d.type === 'link') {
+        const lop = Math.min(d.a._op, d.b._op) * 0.14;
+        if (lop > 0.01) {
+          ctx.strokeStyle = `rgba(255,255,255,${lop})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(d.a._sx, d.a._sy); ctx.lineTo(d.b._sx, d.b._sy); ctx.stroke();
+        }
+      } else if (d.type === 'edge') {
+        const eop = Math.min(d.a.op, d.b.op);
+        if (eop > 0.01) {
+          ctx.strokeStyle = d.accent
+            ? `rgba(140,165,255,${eop * 0.42})`
+            : `rgba(255,255,255,${eop * 0.32})`;
+          ctx.lineWidth = 1.4;
+          ctx.beginPath(); ctx.moveTo(d.a.x, d.a.y); ctx.lineTo(d.b.x, d.b.y); ctx.stroke();
+        }
+      } else {
+        const pt = d.ref;
+        const r = Math.max(0.7, pt.r * pt._scale * 2.4);
+        
+        // Subtle Colored Glow
+        const grad = ctx.createRadialGradient(pt._sx, pt._sy, 0, pt._sx, pt._sy, r * 2.5);
+        grad.addColorStop(0, hexToRgba(pt.color, pt._op * 0.7)); 
+        grad.addColorStop(1, hexToRgba(pt.color, 0));
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(pt._sx, pt._sy, r * 2.5, 0, Math.PI * 2); ctx.fill();
+
+        // Inner solid core
+        ctx.fillStyle = hexToRgba(pt.color, pt._op);
+        ctx.beginPath(); ctx.arc(pt._sx, pt._sy, r * 0.6, 0, Math.PI * 2); ctx.fill();
+      }
     }
   }, []);
 
@@ -492,13 +543,15 @@ export default function RelatrixApp() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const readScroll = () => {
+      // documentElement.scrollHeight represents the entire page (including the footer/explore sections)
+      // We map the scroll progress so that 1.0 is reached when scrolled to the very bottom
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const raw = max > 0 ? window.pageYOffset / max : 0;
       stateRef.current.progress = Math.max(0, Math.min(1, raw));
       stateRef.current.seekTo = stateRef.current.progress;
     };
 
-    const frame = () => {
+    const frame = (time) => {
       readScroll();
       const s = stateRef.current;
 
@@ -513,9 +566,9 @@ export default function RelatrixApp() {
         s.seekAt += gap * 0.115;
       }
 
-      // Draw graph (skip on reduced motion)
+      // Draw graph
       if (!reducedMotion) {
-        drawGraph(s.seekAt, canvas);
+        drawGraph(s.seekAt, canvas, time, reducedMotion);
       }
 
       // Paint panels
@@ -533,13 +586,13 @@ export default function RelatrixApp() {
     };
   }, [drawGraph, paint]);
 
-  // Handle resize for canvas
+  // Handle resize for canvas graph reconstruction
   useEffect(() => {
     const onResize = () => {
-      // Graph node count changes on resize across breakpoint
-      const count = window.innerWidth < 768 ? 40 : 70;
-      if (graphRef.current && graphRef.current.nodes.length !== count) {
-        graphRef.current = createGraph(count);
+      const isMob = window.innerWidth < 768;
+      const currentIsMob = graphRef.current && graphRef.current.points.length === 15;
+      if (isMob !== currentIsMob) {
+        graphRef.current = createGraph(isMob);
       }
     };
     window.addEventListener('resize', onResize, { passive: true });
@@ -551,18 +604,21 @@ export default function RelatrixApp() {
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
         html { scroll-behavior: auto; }
-        .rltx-track { height: 560vh; position: relative; }
+        
+        .rltx-track { height: 500vh; position: relative; }
+        
         .rltx-stage { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #000; }
         .rltx-stage canvas { width: 100%; height: 100%; display: block; }
         .rltx-veil {
           position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.7) 100%);
+          background: radial-gradient(ellipse 90% 70% at 50% 42%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.35) 58%, rgba(0,0,0,0.8) 100%),
+                      linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.8) 100%);
         }
         .rltx-grain {
-          position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-          background-size: 128px 128px;
+          position: absolute; inset: 0; pointer-events: none; opacity: 0.045; mix-blend-mode: overlay;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
+        
         .rltx-chrome {
           position: fixed; top: 0; left: 0; right: 0; z-index: 40;
           display: flex; justify-content: center;
@@ -577,6 +633,7 @@ export default function RelatrixApp() {
           background: ${C.opinion};
           will-change: transform;
         }
+        
         .rltx-panels {
           position: fixed; inset: 0; z-index: 20;
           pointer-events: none;
@@ -595,39 +652,52 @@ export default function RelatrixApp() {
         @media (max-width: 480px) {
           .rltx-panel { padding: 70px 16px 24px; }
         }
+
+        /* Standard flow for footer */
+        .rltx-explore {
+          position: relative; z-index: 30;
+          padding: 80px 24px; display: flex; justify-content: center;
+          background: #000;
+          border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .rltx-link-card {
+          padding: 14px 18px; background: rgba(255,255,255,0.04); border-radius: 8px;
+          display: flex; align-items: center; gap: 12px; color: #fff;
+          border: 1px solid rgba(255,255,255,0.1); text-decoration: none;
+          transition: all 0.2s; font-size: 14px;
+        }
+        .rltx-link-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
       `}</style>
 
-      {/* Scroll track (only element with height) */}
-      <div className="rltx-track">
+      {/* Fixed 3D graph background */}
+      <div className="rltx-stage">
+        <canvas ref={canvasRef} id="graph-canvas" />
+        <div className="rltx-veil" />
+        <div className="rltx-grain" />
+      </div>
 
-        {/* Fixed 3D graph background */}
-        <div className="rltx-stage">
-          <canvas ref={canvasRef} id="graph-canvas" />
-          <div className="rltx-veil" />
-          <div className="rltx-grain" />
-        </div>
+      {/* Scroll meter */}
+      <i className="rltx-meter" ref={meterRef} />
 
-        {/* Scroll meter */}
-        <i className="rltx-meter" ref={meterRef} />
-
-        {/* Chrome header */}
-        <header className="rltx-chrome">
-          <div style={{ width: '100%', maxWidth: 560, padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <img
-                src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
-                alt="Relatrix" style={{ width: 22, height: 22, borderRadius: 5 }}
-              />
-              <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em' }}>Relatrix</span>
-            </div>
-            <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
-              style={{ color: C.dim, textDecoration: 'none', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
-              <Terminal size={13} /> GitHub
-            </a>
+      {/* Chrome header */}
+      <header className="rltx-chrome">
+        <div style={{ width: '100%', maxWidth: 560, padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <img
+              src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
+              alt="Relatrix" style={{ width: 22, height: 22, borderRadius: 5 }}
+            />
+            <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-0.02em' }}>Relatrix</span>
           </div>
-        </header>
+          <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
+            style={{ color: C.dim, textDecoration: 'none', fontSize: 12, display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Terminal size={13} /> GitHub
+          </a>
+        </div>
+      </header>
 
-        {/* Panel layer */}
+      {/* Scroll track (gives page height, but panels are fixed) */}
+      <div className="rltx-track">
         <main className="rltx-panels">
           {PANELS.map((p, i) => {
             const PanelContent = PANEL_COMPONENTS[i];
@@ -644,10 +714,39 @@ export default function RelatrixApp() {
             );
           })}
         </main>
-
       </div>
 
-      {/* Footer (after the scroll track, at the very bottom) */}
+      {/* Explore Section (normal flow, scrolls UP over the graph at the end of the track) */}
+      <section className="rltx-explore">
+        <div style={{ width: '100%', maxWidth: 560 }}>
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.opinion, marginBottom: 8, fontFamily: 'monospace' }}>Get Started</div>
+            <h2 style={{ fontSize: 'clamp(22px, 5vw, 28px)', fontWeight: 700, margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>Explore Relatrix</h2>
+            <p style={{ color: C.dim, fontSize: 14, margin: 0, lineHeight: 1.6 }}>Open source. Privacy-first. Available on F-Droid.</p>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+            <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <Terminal size={16} /> <span>GitHub</span> <ExternalLink size={11} style={{ marginLeft: 'auto', opacity: 0.3 }} />
+            </a>
+            <a href="https://f-droid.org/packages/com.saadibra.graymatter" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <Smartphone size={16} /> <span>F-Droid</span> <ExternalLink size={11} style={{ marginLeft: 'auto', opacity: 0.3 }} />
+            </a>
+            <a href="https://github.com/saad-ibra/gray-matter/releases" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <Tag size={16} /> <span>Releases</span> <ExternalLink size={11} style={{ marginLeft: 'auto', opacity: 0.3 }} />
+            </a>
+            <a href="https://github.com/saad-ibra/gray-matter/issues" target="_blank" rel="noreferrer" className="rltx-link-card">
+              <AlertCircle size={16} /> <span>Issues</span> <ExternalLink size={11} style={{ marginLeft: 'auto', opacity: 0.3 }} />
+            </a>
+          </div>
+          <div style={{ marginTop: 8 }}>
+            <a href="https://saadibra.mooo.com/contact/" className="rltx-link-card" style={{ justifyContent: 'center' }}>
+              <Mail size={16} /> <span>Contact the Developer</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer (normal flow) */}
       <footer style={{
         borderTop: `1px solid rgba(255,255,255,0.08)`, padding: '24px 20px',
         display: 'flex', justifyContent: 'center', background: '#000', position: 'relative', zIndex: 30,
