@@ -2,9 +2,9 @@
   "repos": [
     {
       "name": "gray-matter",
-      "description": "",
+      "description": "Relatrix is a note taking app where you can save files and write chronologically organized opinion cards (of different types). Group these cards using tags and draw direct links between related ideas across your library, all visualized in an interactive 3D space called Relatrix. Built for privacy, all data remains strictly offline and encrypted.",
       "language": "Kotlin",
-      "stars": 24,
+      "stars": 39,
       "url": "https://github.com/saad-ibra/gray-matter",
       "isPrivate": false
     },
@@ -131,7 +131,7 @@
     "years": [
       {
         "year": 2026,
-        "total": 642,
+        "total": 711,
         "months": [
           0,
           0,
@@ -141,7 +141,7 @@
           23,
           5,
           383,
-          74,
+          143,
           0,
           0,
           0

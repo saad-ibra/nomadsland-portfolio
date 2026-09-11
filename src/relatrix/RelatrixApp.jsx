@@ -142,14 +142,15 @@ function createGraph(isMobile) {
    ═══════════════════════════════════════════════════ */
 // Adjusted cues to fit 7 panels now since Explore is moved back to the bottom
 const PANELS = [
-  { id: 'hero', cue: [0.00, 0.04, 0.08, 0.12] },
-  { id: 'plus', cue: [0.12, 0.16, 0.20, 0.24] },
-  { id: 'resource', cue: [0.24, 0.28, 0.32, 0.36] },
-  { id: 'opinion', cue: [0.36, 0.40, 0.44, 0.48] },
-  { id: 'topic', cue: [0.48, 0.52, 0.56, 0.60] },
-  { id: 'reader', cue: [0.60, 0.64, 0.68, 0.72] },
-  { id: 'entries', cue: [0.72, 0.76, 0.80, 0.84] },
-  { id: 'tags_and_links', cue: [0.84, 0.88, 0.94, 0.97] } // Fades out right before footer
+  { id: 'hero', cue: [0.00, 0.04, 0.07, 0.10] },
+  { id: 'plus', cue: [0.10, 0.13, 0.16, 0.19] },
+  { id: 'resource', cue: [0.19, 0.22, 0.25, 0.28] },
+  { id: 'opinion', cue: [0.28, 0.31, 0.34, 0.37] },
+  { id: 'topic', cue: [0.37, 0.40, 0.43, 0.46] },
+  { id: 'reader', cue: [0.46, 0.49, 0.52, 0.55] },
+  { id: 'entries', cue: [0.55, 0.58, 0.61, 0.64] },
+  { id: 'tags_and_links', cue: [0.64, 0.67, 0.70, 0.73] },
+  { id: 'diagram', cue: [0.73, 0.76, 0.94, 0.97] } // Fades out right before footer
 ];
 
 /* ─── Shared Panel Card ─── */
@@ -375,7 +376,7 @@ function EntriesPanel() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
       <Label>6 entry types</Label>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Six ways to capture knowledge</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Six types of cards to capture knowledge</h2>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, width: '100%', maxWidth: 360, marginTop: 4 }}>
         {types.map(t => {
           const I = t.icon;
@@ -396,6 +397,60 @@ function EntriesPanel() {
   );
 }
 
+
+
+function DiagramPanel() {
+  return (
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <Label>Hierarchy</Label>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>The Architecture of Knowledge</h2>
+      <Card style={{ marginTop: 8, width: '100%', maxWidth: 360, padding: '36px 20px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        
+        {/* Topic Hexagon */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}>
+          <div style={{ position: 'relative', width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 0 8px rgba(234,179,8,0.3))' }}>
+            <svg width="48" height="48" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
+              <polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="#111" stroke="#EAB308" strokeWidth="2" />
+            </svg>
+            <Folder size={18} color="#EAB308" style={{ zIndex: 1 }} />
+          </div>
+          <span style={{ fontSize: 10, color: '#EAB308', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Topic</span>
+        </div>
+        
+        <div style={{ width: 2, height: 24, background: 'rgba(255,255,255,0.2)', margin: '-4px 0' }} />
+        
+        {/* Resource Triangle */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}>
+          <div style={{ position: 'relative', width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))' }}>
+            <svg width="48" height="48" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
+              <polygon points="24,6 44,42 4,42" fill="#111" stroke="#fff" strokeWidth="2" />
+            </svg>
+            <Globe size={16} color="#fff" style={{ zIndex: 1, marginTop: 6 }} />
+          </div>
+          <span style={{ fontSize: 10, color: '#fff', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Resource</span>
+        </div>
+        
+        <div style={{ position: 'relative', width: 260, height: 28, borderTop: `2px solid rgba(255,255,255,0.2)`, borderLeft: `2px solid rgba(255,255,255,0.2)`, borderRight: `2px solid rgba(255,255,255,0.2)`, borderTopLeftRadius: 8, borderTopRightRadius: 8, margin: '-2px auto 0' }}>
+          <div style={{ position: 'absolute', top: -22, left: '50%', width: 2, height: 22, background: 'rgba(255,255,255,0.2)', transform: 'translateX(-50%)' }} />
+        </div>
+        
+        {/* 6 colored entries */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: 280, marginTop: -14, zIndex: 2 }}>
+          {[
+            { c: C.opinion, icon: Edit2 }, { c: C.template, icon: List }, 
+            { c: C.annotation, icon: Highlighter }, { c: C.bookmark, icon: Bookmark }, 
+            { c: C.lookup, icon: Book }, { c: C.visual, icon: Camera }
+          ].map((t, i) => (
+            <div key={i} style={{ width: 28, height: 32, borderRadius: 6, background: '#111', border: `1px solid ${t.c}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 12px ${t.c}40` }}>
+              <t.icon size={12} color={t.c} />
+            </div>
+          ))}
+        </div>
+        
+      </Card>
+    </div>
+  );
+}
 
 function TagsAndLinksPanel() {
   return (
@@ -431,7 +486,7 @@ function TagsAndLinksPanel() {
   );
 }
 
-const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel, TagsAndLinksPanel];
+const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel, TagsAndLinksPanel, DiagramPanel];
 
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT
@@ -658,7 +713,7 @@ export default function RelatrixApp() {
           to { background-position: -12px 0; }
         }
         
-        .rltx-track { height: 800vh; position: relative; }
+        .rltx-track { height: 900vh; position: relative; }
         
         .rltx-stage { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #000; }
         .rltx-stage canvas { width: 100%; height: 100%; display: block; }
