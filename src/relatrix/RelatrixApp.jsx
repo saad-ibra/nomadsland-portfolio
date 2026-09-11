@@ -189,44 +189,48 @@ const Pill = ({ children, bg, color }) => (
 function HeroPanel() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
-      <img
-        src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
-        alt="Relatrix Logo" 
-        style={{ 
-          width: 80, height: 80, borderRadius: 20, 
-          boxShadow: `0 0 40px rgba(142,158,90,0.4)`
-        }}
-      />
+      <div style={{ animation: 'float 5s ease-in-out infinite', transformStyle: 'preserve-3d', perspective: 1000 }}>
+        <img
+          src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
+          alt="Relatrix Logo" 
+          style={{ 
+            width: 86, height: 86, borderRadius: 20, 
+            boxShadow: `0 0 40px rgba(142,158,90,0.4), 0 0 80px rgba(142,158,90,0.15)`,
+            border: '1px solid rgba(255,255,255,0.15)',
+            animation: 'tilt3d 8s ease-in-out infinite'
+          }}
+        />
+      </div>
       <h1 style={{ 
-        fontSize: 'clamp(44px, 12vw, 84px)', fontWeight: 800, margin: '8px 0 0 0', 
-        letterSpacing: '-0.04em', lineHeight: 1.1,
-        background: 'linear-gradient(135deg, #ffffff 0%, #909090 100%)',
-        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
+        fontSize: 'clamp(44px, 12vw, 84px)', fontWeight: 800, margin: '12px 0 0 0', 
+        letterSpacing: '-0.04em', lineHeight: 1.1, color: '#fff',
+        animation: 'glow 4s ease-in-out infinite'
       }}>
         Relatrix
       </h1>
       <h2 style={{ 
         fontSize: 'clamp(18px, 4vw, 22px)', fontWeight: 500, margin: '0 0 8px 0', 
-        letterSpacing: '-0.01em', color: '#fff' 
+        letterSpacing: '-0.01em', color: 'rgba(255,255,255,0.8)' 
       }}>
         Your personal knowledge base.
       </h2>
       <p style={{ color: C.dim, fontSize: 'clamp(14px, 3vw, 16px)', maxWidth: 420, lineHeight: 1.6, margin: 0 }}>
         Capture thoughts, annotate documents, and connect your ideas into a living, spatial graph.
       </p>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 12 }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 16 }}>
         <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
-          style={{ padding: '12px 24px', borderRadius: 8, background: C.opinion, color: '#000', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'transform 0.2s' }}>
+          style={{ padding: '12px 24px', borderRadius: 8, background: C.opinion, color: '#000', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'transform 0.2s', boxShadow: `0 4px 15px rgba(142,158,90,0.3)` }}>
           <Terminal size={15} /> View Source
         </a>
         <a href="https://f-droid.org/packages/com.saadibra.graymatter" target="_blank" rel="noreferrer"
-          style={{ padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: '#fff', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'background 0.2s' }}>
+          style={{ padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: '#fff', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'background 0.2s', backdropFilter: 'blur(10px)' }}>
           <Smartphone size={15} /> Get on F-Droid
         </a>
       </div>
     </div>
   );
 }
+
 
 function PlusPanel() {
   return (
@@ -404,83 +408,56 @@ function DiagramPanel() {
     <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
       <Label>Hierarchy</Label>
       <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>The Architecture of Knowledge</h2>
-      <Card style={{ marginTop: 8, width: '100%', maxWidth: 360, padding: '36px 20px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Card style={{ marginTop: 8, width: '100%', maxWidth: 380, padding: '36px 20px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
         
-        {/* Topic Hexagon */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}>
-          <div style={{ position: 'relative', width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 0 8px rgba(234,179,8,0.3))' }}>
-            <svg width="48" height="48" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
-              <polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="#111" stroke="#EAB308" strokeWidth="2" />
+        {/* Background grid lines for techy feel */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '24px 24px', pointerEvents: 'none', borderRadius: 16 }} />
+
+        {/* Topic Node */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, zIndex: 2 }}>
+          <div style={{ position: 'relative', width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'float 4s ease-in-out infinite' }}>
+            <svg width="56" height="56" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0, filter: 'drop-shadow(0 0 12px rgba(234,179,8,0.5))' }}>
+              <polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="rgba(234,179,8,0.1)" stroke="#EAB308" strokeWidth="2.5" />
             </svg>
-            <Folder size={18} color="#EAB308" style={{ zIndex: 1 }} />
+            <Folder size={20} color="#EAB308" style={{ zIndex: 1 }} />
           </div>
-          <span style={{ fontSize: 10, color: '#EAB308', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Topic</span>
+          <span style={{ fontSize: 11, color: '#EAB308', fontWeight: 700, letterSpacing: '0.1em' }}>TOPIC</span>
         </div>
         
-        <div style={{ width: 2, height: 24, background: 'rgba(255,255,255,0.2)', margin: '-4px 0' }} />
+        {/* Animated Connection Line */}
+        <div style={{ width: 2, height: 28, background: 'repeating-linear-gradient(180deg, rgba(255,255,255,0.4) 0, rgba(255,255,255,0.4) 4px, transparent 4px, transparent 8px)', margin: '4px 0', animation: 'march-down 0.5s linear infinite', backgroundSize: '2px 8px' }} />
         
-        {/* Resource Triangle */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 2 }}>
-          <div style={{ position: 'relative', width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))' }}>
-            <svg width="48" height="48" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
-              <polygon points="24,6 44,42 4,42" fill="#111" stroke="#fff" strokeWidth="2" />
+        {/* Resource Node */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, zIndex: 2 }}>
+          <div style={{ position: 'relative', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', animation: 'float 4s ease-in-out infinite', animationDelay: '-2s' }}>
+            <svg width="60" height="60" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0, filter: 'drop-shadow(0 0 12px rgba(255,255,255,0.3))' }}>
+              <polygon points="24,4 46,44 2,44" fill="rgba(255,255,255,0.05)" stroke="#fff" strokeWidth="2.5" />
             </svg>
-            <Globe size={16} color="#fff" style={{ zIndex: 1, marginTop: 6 }} />
+            <Globe size={18} color="#fff" style={{ zIndex: 1, marginTop: 8 }} />
           </div>
-          <span style={{ fontSize: 10, color: '#fff', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Resource</span>
+          <span style={{ fontSize: 11, color: '#fff', fontWeight: 700, letterSpacing: '0.1em' }}>RESOURCE</span>
         </div>
         
-        <div style={{ position: 'relative', width: 260, height: 28, borderTop: `2px solid rgba(255,255,255,0.2)`, borderLeft: `2px solid rgba(255,255,255,0.2)`, borderRight: `2px solid rgba(255,255,255,0.2)`, borderTopLeftRadius: 8, borderTopRightRadius: 8, margin: '-2px auto 0' }}>
-          <div style={{ position: 'absolute', top: -22, left: '50%', width: 2, height: 22, background: 'rgba(255,255,255,0.2)', transform: 'translateX(-50%)' }} />
-        </div>
+        {/* Static Connection Line */}
+        <div style={{ width: 2, height: 20, background: 'rgba(255,255,255,0.2)', marginTop: 8 }} />
+        
+        {/* Horizontal Branching Line */}
+        <div style={{ width: 300, height: 16, borderTop: `2px solid rgba(255,255,255,0.2)`, borderLeft: `2px solid rgba(255,255,255,0.2)`, borderRight: `2px solid rgba(255,255,255,0.2)`, borderTopLeftRadius: 8, borderTopRightRadius: 8 }} />
         
         {/* 6 colored entries */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: 280, marginTop: -14, zIndex: 2 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: 316, marginTop: -2, zIndex: 2 }}>
           {[
             { c: C.opinion, icon: Edit2 }, { c: C.template, icon: List }, 
             { c: C.annotation, icon: Highlighter }, { c: C.bookmark, icon: Bookmark }, 
             { c: C.lookup, icon: Book }, { c: C.visual, icon: Camera }
           ].map((t, i) => (
-            <div key={i} style={{ width: 28, height: 32, borderRadius: 6, background: '#111', border: `1px solid ${t.c}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 12px ${t.c}40` }}>
-              <t.icon size={12} color={t.c} />
+            <div key={i} style={{ width: 34, height: 34, borderRadius: 8, background: '#0a0a0a', border: `1.5px solid ${t.c}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 15px ${t.c}50`, position: 'relative', overflow: 'hidden' }}>
+               <div style={{ position: 'absolute', inset: 0, background: t.c, opacity: 0.15 }} />
+               <t.icon size={14} color={t.c} style={{ zIndex: 1 }} />
             </div>
           ))}
         </div>
         
-      </Card>
-    </div>
-  );
-}
-
-function TagsAndLinksPanel() {
-  return (
-    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
-      <Label>Connect & Organize</Label>
-      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Tags and Links</h2>
-      <p style={{ color: C.dim, fontSize: 14, margin: 0, maxWidth: 320, lineHeight: 1.5 }}>
-        Establish relationships between nodes with links, or group them flexibly using tags.
-      </p>
-      <Card style={{ marginTop: 4, width: '100%', maxWidth: 340, padding: '28px 20px 20px' }}>
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 220, margin: '0 auto 24px' }}>
-          <div style={{ position: 'absolute', left: 40, right: 40, top: 22, height: 2, background: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.6) 0, rgba(255,255,255,0.6) 6px, transparent 6px, transparent 12px)', backgroundSize: '12px 2px', animation: 'march 0.5s linear infinite', zIndex: 0 }} />
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#111', border: `1px solid ${C.opinion}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px rgba(142,158,90,0.15)` }}>
-              <Book color={C.opinion} size={18} strokeWidth={1.5} />
-            </div>
-            <span style={{ fontSize: 10, color: C.opinion, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Resource</span>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
-            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#111', border: `1px solid ${C.template}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px rgba(126,106,140,0.15)` }}>
-              <FileText color={C.template} size={18} strokeWidth={1.5} />
-            </div>
-            <span style={{ fontSize: 10, color: C.template, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entry</span>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', borderTop: `1px solid ${C.border}`, paddingTop: 20 }}>
-          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> important</Pill>
-          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> review</Pill>
-          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> research</Pill>
-        </div>
       </Card>
     </div>
   );
@@ -776,7 +753,23 @@ export default function RelatrixApp() {
           transition: all 0.2s; font-size: 14px;
         }
         .rltx-link-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-      `}</style>
+      
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-12px); }
+        }
+        @keyframes tilt3d {
+          0%, 100% { transform: rotateY(-10deg) rotateX(4deg); }
+          50% { transform: rotateY(10deg) rotateX(-4deg); }
+        }
+        @keyframes glow {
+          0%, 100% { text-shadow: 0 0 10px rgba(255,255,255,0.05); }
+          50% { text-shadow: 0 0 25px rgba(255,255,255,0.3), 0 0 45px rgba(255,255,255,0.1); }
+        }
+        @keyframes march-down {
+          to { background-position: 0 8px; }
+        }
+`}</style>
 
       {/* Fixed 3D graph background */}
       <div className="rltx-stage">
