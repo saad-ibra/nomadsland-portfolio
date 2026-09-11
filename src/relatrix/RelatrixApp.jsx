@@ -402,18 +402,50 @@ function EntriesPanel() {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
       <Label>6 entry types</Label>
       <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Six types of cards to capture knowledge</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, width: '100%', maxWidth: 360, marginTop: 4 }}>
-        {types.map(t => {
-          const I = t.icon;
-          return (
-            <Card key={t.name} style={{ padding: '14px 8px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-              <I size={18} color={t.color} strokeWidth={1.5} />
-              <span style={{ fontSize: 10, fontWeight: 600, color: t.color }}>{t.name}</span>
-            </Card>
-          );
-        })}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 12 }}>
+        {/* Top Row */}
+        <div style={{ display: 'flex', justifyContent: 'center', zIndex: 2 }}>
+          {types.slice(0, 3).map((t, i) => {
+            const I = t.icon;
+            return (
+              <div key={t.name} style={{
+                width: 90, height: 90, borderRadius: '50%',
+                background: `radial-gradient(circle at 30% 25%, ${t.color}35 0%, rgba(15,15,15,0.7) 80%)`,
+                border: `1px solid ${t.color}50`,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+                marginLeft: i === 0 ? 0 : -18,
+                backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+                boxShadow: `0 8px 30px rgba(0,0,0,0.5), inset 0 2px 12px ${t.color}20`,
+                position: 'relative', zIndex: 3 - i
+              }}>
+                <I size={20} color={t.color} strokeWidth={1.5} />
+                <span style={{ fontSize: 10, fontWeight: 700, color: t.color, letterSpacing: '0.02em' }}>{t.name}</span>
+              </div>
+            );
+          })}
+        </div>
+        {/* Bottom Row */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: -18, zIndex: 1 }}>
+          {types.slice(3, 6).map((t, i) => {
+            const I = t.icon;
+            return (
+              <div key={t.name} style={{
+                width: 90, height: 90, borderRadius: '50%',
+                background: `radial-gradient(circle at 30% 25%, ${t.color}35 0%, rgba(15,15,15,0.7) 80%)`,
+                border: `1px solid ${t.color}50`,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+                marginLeft: i === 0 ? 0 : -18,
+                backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+                boxShadow: `0 8px 30px rgba(0,0,0,0.5), inset 0 2px 12px ${t.color}20`,
+                position: 'relative', zIndex: 3 - i
+              }}>
+                <I size={20} color={t.color} strokeWidth={1.5} />
+                <span style={{ fontSize: 10, fontWeight: 700, color: t.color, letterSpacing: '0.02em' }}>{t.name}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
-
     </div>
   );
 }
