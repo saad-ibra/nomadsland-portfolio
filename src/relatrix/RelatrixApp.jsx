@@ -413,11 +413,7 @@ function EntriesPanel() {
           );
         })}
       </div>
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 }}>
-        <Pill bg="rgba(142,158,90,0.12)" color={C.opinion}><Tag size={10} /> important</Pill>
-        <Pill bg="rgba(126,106,140,0.12)" color={C.template}><Tag size={10} /> review</Pill>
-        <Pill bg="rgba(196,168,78,0.12)" color={C.bookmark}><Tag size={10} /> revision</Pill>
-      </div>
+
     </div>
   );
 }
