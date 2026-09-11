@@ -459,63 +459,60 @@ function TagsAndLinksPanel() {
 }
 
 function DiagramPanel() {
-  const entries = [
-    { c: C.opinion, icon: Edit2, label: 'Opinion' },
-    { c: C.template, icon: List, label: 'Template' },
-    { c: C.annotation, icon: Highlighter, label: 'Annotation' },
-    { c: C.bookmark, icon: Bookmark, label: 'Bookmark' },
-    { c: C.lookup, icon: Book, label: 'Lookup' },
-    { c: C.visual, icon: Camera, label: 'Vision' },
-  ];
   return (
     <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
       <Label>Hierarchy</Label>
       <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>The Architecture of Knowledge</h2>
-      <Card style={{ marginTop: 8, width: '100%', maxWidth: 360, padding: '28px 16px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Card style={{ marginTop: 8, width: '100%', maxWidth: 380, padding: '36px 20px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+        
+        {/* Background grid lines for techy feel */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '24px 24px', pointerEvents: 'none', borderRadius: 16 }} />
 
-        {/* Topic */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', borderRadius: 10, background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)' }}>
-          <Folder size={16} color="#EAB308" />
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#EAB308', letterSpacing: '0.02em' }}>Topic</span>
+        {/* Topic Node */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, zIndex: 2 }}>
+          <div style={{ position: 'relative', width: 56, height: 56, display: 'flex', alignItems: 'center', justifyContent: 'center',  }}>
+            <svg width="56" height="56" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0, filter: 'drop-shadow(0 0 12px rgba(234,179,8,0.5))' }}>
+              <polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="rgba(234,179,8,0.1)" stroke="#EAB308" strokeWidth="2.5" />
+            </svg>
+            <Folder size={20} color="#EAB308" style={{ zIndex: 1 }} />
+          </div>
+          <span style={{ fontSize: 11, color: '#EAB308', fontWeight: 700, letterSpacing: '0.1em' }}>TOPIC</span>
         </div>
-
-        {/* Connector */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '6px 0' }}>
-          <div style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.15)' }} />
-          <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace', letterSpacing: '0.08em' }}>contains</span>
-          <div style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.15)' }} />
+        
+        {/* Animated Connection Line */}
+        <div style={{ width: 2, height: 28, background: 'rgba(255,255,255,0.2)', margin: '4px 0' }} />
+        
+        {/* Resource Node */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, zIndex: 2 }}>
+          <div style={{ position: 'relative', width: 60, height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="60" height="60" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0, filter: 'drop-shadow(0 0 12px rgba(255,255,255,0.3))' }}>
+              <polygon points="24,4 46,44 2,44" fill="rgba(255,255,255,0.05)" stroke="#fff" strokeWidth="2.5" />
+            </svg>
+            <Globe size={18} color="#fff" style={{ zIndex: 1, marginTop: 8 }} />
+          </div>
+          <span style={{ fontSize: 11, color: '#fff', fontWeight: 700, letterSpacing: '0.1em' }}>RESOURCE</span>
         </div>
-
-        {/* Resource */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', borderRadius: 10, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.15)' }}>
-          <Globe size={16} color="#fff" />
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', letterSpacing: '0.02em' }}>Resource</span>
+        
+        {/* Static Connection Line */}
+        <div style={{ width: 2, height: 20, background: 'rgba(255,255,255,0.2)', marginTop: 8 }} />
+        
+        {/* Horizontal Branching Line */}
+        <div style={{ width: 300, height: 16, borderTop: `2px solid rgba(255,255,255,0.2)`, borderLeft: `2px solid rgba(255,255,255,0.2)`, borderRight: `2px solid rgba(255,255,255,0.2)`, borderTopLeftRadius: 8, borderTopRightRadius: 8 }} />
+        
+        {/* 6 colored entries */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: 316, marginTop: -2, zIndex: 2 }}>
+          {[
+            { c: C.opinion, icon: Edit2 }, { c: C.template, icon: List }, 
+            { c: C.annotation, icon: Highlighter }, { c: C.bookmark, icon: Bookmark }, 
+            { c: C.lookup, icon: Book }, { c: C.visual, icon: Camera }
+          ].map((t, i) => (
+            <div key={i} style={{ width: 34, height: 34, borderRadius: 8, background: '#0a0a0a', border: `1.5px solid ${t.c}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 15px ${t.c}50`, position: 'relative', overflow: 'hidden' }}>
+               <div style={{ position: 'absolute', inset: 0, background: t.c, opacity: 0.15 }} />
+               <t.icon size={14} color={t.c} style={{ zIndex: 1 }} />
+            </div>
+          ))}
         </div>
-
-        {/* Connector */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: '6px 0' }}>
-          <div style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.15)' }} />
-          <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace', letterSpacing: '0.08em' }}>holds</span>
-          <div style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.15)' }} />
-        </div>
-
-        {/* 6 Entry Types */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, width: '100%' }}>
-          {entries.map((t, i) => {
-            const I = t.icon;
-            return (
-              <div key={i} style={{
-                display: 'flex', alignItems: 'center', gap: 7,
-                padding: '7px 10px', borderRadius: 8,
-                background: 'rgba(255,255,255,0.03)', border: `1px solid ${t.c}30`,
-              }}>
-                <I size={13} color={t.c} strokeWidth={1.5} />
-                <span style={{ fontSize: 10, fontWeight: 600, color: t.c }}>{t.label}</span>
-              </div>
-            );
-          })}
-        </div>
-
+        
       </Card>
     </div>
   );
