@@ -186,45 +186,66 @@ const Pill = ({ children, bg, color }) => (
 );
 
 /* ─── Individual Panel Content ─── */
+const HERO_LETTERS = 'Relatrix'.split('');
+
 function HeroPanel() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
-      <div style={{  }}>
-        <img
-          src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
-          alt="Relatrix Logo" 
-          style={{ 
-            width: 86, height: 86, borderRadius: 20, 
-            boxShadow: `0 0 40px rgba(142,158,90,0.4), 0 0 80px rgba(142,158,90,0.15)`,
-            border: '1px solid rgba(255,255,255,0.15)',
-            
-          }}
-        />
-      </div>
-      <h1 style={{ 
-        fontSize: 'clamp(44px, 12vw, 84px)', fontWeight: 800, margin: '12px 0 0 0', 
-        letterSpacing: '-0.04em', lineHeight: 1.1, color: '#fff',
-        
-      }}>
-        Relatrix
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 16 }}>
+      <img
+        src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
+        alt="Relatrix Logo"
+        style={{
+          width: 72, height: 72, borderRadius: 18,
+          boxShadow: '0 0 30px rgba(142,158,90,0.35)',
+          border: '1px solid rgba(255,255,255,0.12)',
+        }}
+      />
+      <h1
+        className="rltx-hero-title"
+        style={{
+          fontSize: 'clamp(48px, 14vw, 96px)', fontWeight: 800, margin: 0,
+          letterSpacing: '-0.04em', lineHeight: 1, color: '#fff',
+          display: 'flex',
+        }}
+      >
+        {HERO_LETTERS.map((ch, i) => (
+          <span key={i} className="rltx-hero-letter" data-index={i} style={{ display: 'inline-block' }}>
+            {ch}
+          </span>
+        ))}
       </h1>
-      <h2 style={{ 
-        fontSize: 'clamp(18px, 4vw, 22px)', fontWeight: 500, margin: '0 0 8px 0', 
-        letterSpacing: '-0.01em', color: 'rgba(255,255,255,0.8)' 
-      }}>
-        Your personal knowledge base.
-      </h2>
-      <p style={{ color: C.dim, fontSize: 'clamp(14px, 3vw, 16px)', maxWidth: 420, lineHeight: 1.6, margin: 0 }}>
-        Capture thoughts, annotate documents, and connect your ideas into a living, spatial graph.
+      <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'clamp(15px, 3.5vw, 18px)', maxWidth: 380, lineHeight: 1.5, margin: 0, fontWeight: 400 }}>
+        Your personal knowledge base. Capture thoughts, annotate what you read, and connect everything into a spatial graph.
       </p>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 16 }}>
+      <div style={{ display: 'flex', gap: 20, marginTop: 4, justifyContent: 'center' }}>
+        {[
+          { icon: Edit2, label: 'Capture', c: C.opinion },
+          { icon: Globe, label: 'Connect', c: C.visual },
+          { icon: Folder, label: 'Organize', c: C.bookmark },
+        ].map(f => {
+          const I = f.icon;
+          return (
+            <div key={f.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <div style={{
+                width: 40, height: 40, borderRadius: 10,
+                background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.12)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <I size={17} color={f.c} strokeWidth={1.5} />
+              </div>
+              <span style={{ fontSize: 10, fontWeight: 600, color: C.dim, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{f.label}</span>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 8 }}>
         <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
-          style={{ padding: '12px 24px', borderRadius: 8, background: C.opinion, color: '#000', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'transform 0.2s', boxShadow: `0 4px 15px rgba(142,158,90,0.3)` }}>
-          <Terminal size={15} /> View Source
+          style={{ padding: '11px 22px', borderRadius: 8, background: C.opinion, color: '#000', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Terminal size={14} /> View Source
         </a>
         <a href="https://f-droid.org/packages/com.saadibra.graymatter" target="_blank" rel="noreferrer"
-          style={{ padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: '#fff', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'background 0.2s', backdropFilter: 'blur(10px)' }}>
-          <Smartphone size={15} /> Get on F-Droid
+          style={{ padding: '11px 22px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: '#fff', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Smartphone size={14} /> Get on F-Droid
         </a>
       </div>
     </div>
@@ -533,7 +554,7 @@ export default function RelatrixApp() {
     return x * x * (3 - 2 * x);
   }, []);
 
-  // Paint panels
+  // Paint panels + hero letter scrubbing
   const paint = useCallback((progress) => {
     for (let i = 0; i < PANELS.length; i++) {
       const el = panelRefs.current[i];
@@ -543,9 +564,40 @@ export default function RelatrixApp() {
       const leave = 1 - ramp(progress, fos, foe);
       const opacity = Math.min(enter, leave);
       const drift = (1 - opacity) * 18;
-      el.style.opacity = opacity;
+      el.style.opacity = PANELS[i].id === 'hero' ? 1 : opacity; // Hero panel stays opacity 1; letters handle their own fade
       el.style.transform = `translateY(${drift}px)`;
       el.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
+
+      // Per-letter scrubbing for hero title
+      if (PANELS[i].id === 'hero') {
+        const letters = el.querySelectorAll('.rltx-hero-letter');
+        const numLetters = letters.length;
+        // Fade in: all letters follow the panel enter opacity
+        // Fade out: each letter fades individually from right to left
+        const fadeOutProgress = ramp(progress, fos, foe); // 0 = fully visible, 1 = fully gone
+        for (let li = 0; li < numLetters; li++) {
+          // Right-to-left: last letter fades first
+          const reverseIndex = numLetters - 1 - li;
+          // Each letter gets its own slice of the fadeOut progress
+          const letterStart = reverseIndex / numLetters;
+          const letterEnd = (reverseIndex + 1) / numLetters;
+          const letterFade = 1 - ramp(fadeOutProgress, letterStart, letterEnd);
+          const letterOpacity = Math.min(enter, letterFade);
+          letters[li].style.opacity = letterOpacity;
+          letters[li].style.transform = `translateY(${(1 - letterFade) * 12}px)`;
+        }
+        // Also fade the rest of the hero content (not the letters) using the normal opacity
+        const heroInner = el.querySelector('.rltx-panel-inner');
+        if (heroInner) {
+          // Apply overall opacity to images, paragraphs, buttons (children except the h1)
+          const children = heroInner.querySelectorAll('img, p, a, div:not(.rltx-hero-title)');
+          children.forEach(child => {
+            if (!child.classList.contains('rltx-hero-letter')) {
+              child.style.opacity = opacity;
+            }
+          });
+        }
+      }
     }
   }, [ramp]);
 
@@ -580,6 +632,20 @@ export default function RelatrixApp() {
       const zc = mod(p.z0 - seekAt * TRAVEL, ZSPAN) - ZSPAN / 2;
       const proj = projectCluster(p.x, p.y, zc, rotX, rotY, cx0, cy0);
       p._sx = proj.x; p._sy = proj.y; p._scale = proj.scale; p._depth = proj.depth; p._op = proj.op;
+
+      // Node repulsion: push nodes away from center during hero phase
+      const repulsionRadius = Math.min(w, h) * 0.32;
+      const dx = p._sx - cx0;
+      const dy = p._sy - cy0;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < repulsionRadius && dist > 0.1) {
+        const push = (1 - dist / repulsionRadius);
+        const pushAmount = push * push * repulsionRadius * 0.6;
+        const angle = Math.atan2(dy, dx);
+        p._sx += Math.cos(angle) * pushAmount;
+        p._sy += Math.sin(angle) * pushAmount;
+      }
+
       drawables.push({ type: 'point', ref: p, depth: proj.depth });
     }
 
