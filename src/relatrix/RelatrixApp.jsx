@@ -295,9 +295,9 @@ function ResourcePanel() {
               </svg>
               {isDown ? (
                 <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, paddingTop: 14 }}>
-                  <r.icon size={15} color="#fff" strokeWidth={1.5} />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{r.id}</span>
                   <span style={{ fontSize: 9, color: C.dim, lineHeight: 1.2 }}>{r.sub}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{r.id}</span>
+                  <r.icon size={15} color="#fff" strokeWidth={1.5} style={{ marginTop: 2 }} />
                 </div>
               ) : (
                 <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, paddingBottom: 16 }}>
