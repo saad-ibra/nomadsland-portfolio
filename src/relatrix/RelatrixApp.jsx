@@ -459,7 +459,7 @@ function DiagramPanel() {
         </div>
         
         {/* Animated Connection Line */}
-        <div style={{ width: 2, height: 28, background: 'repeating-linear-gradient(180deg, rgba(255,255,255,0.4) 0, rgba(255,255,255,0.4) 4px, transparent 4px, transparent 8px)', margin: '4px 0', animation: 'march-down 0.5s linear infinite', backgroundSize: '2px 8px' }} />
+        <div style={{ width: 2, height: 28, background: 'rgba(255,255,255,0.2)', margin: '4px 0' }} />
         
         {/* Resource Node */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, zIndex: 2 }}>
