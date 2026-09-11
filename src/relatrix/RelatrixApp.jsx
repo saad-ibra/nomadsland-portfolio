@@ -506,7 +506,7 @@ function DiagramPanel() {
             { c: C.annotation, icon: Highlighter }, { c: C.bookmark, icon: Bookmark }, 
             { c: C.lookup, icon: Book }, { c: C.visual, icon: Camera }
           ].map((t, i) => (
-            <div key={i} style={{ width: 34, height: 34, borderRadius: 8, background: '#0a0a0a', border: `1.5px solid ${t.c}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 15px ${t.c}50`, position: 'relative', overflow: 'hidden' }}>
+            <div key={i} style={{ width: 34, height: 34, borderRadius: '50%', background: '#0a0a0a', border: `1.5px solid ${t.c}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 15px ${t.c}50`, position: 'relative', overflow: 'hidden' }}>
                <div style={{ position: 'absolute', inset: 0, background: t.c, opacity: 0.15 }} />
                <t.icon size={14} color={t.c} style={{ zIndex: 1 }} />
             </div>
