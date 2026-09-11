@@ -403,6 +403,40 @@ function EntriesPanel() {
 
 
 
+function TagsAndLinksPanel() {
+  return (
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <Label>Connect & Organize</Label>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Tags and Links</h2>
+      <p style={{ color: C.dim, fontSize: 14, margin: 0, maxWidth: 320, lineHeight: 1.5 }}>
+        Establish relationships between nodes with links, or group them flexibly using tags.
+      </p>
+      <Card style={{ marginTop: 4, width: '100%', maxWidth: 340, padding: '28px 20px 20px' }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 220, margin: '0 auto 24px' }}>
+          <div style={{ position: 'absolute', left: 40, right: 40, top: 22, height: 2, background: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.6) 0, rgba(255,255,255,0.6) 6px, transparent 6px, transparent 12px)', backgroundSize: '12px 2px', animation: 'march 0.5s linear infinite', zIndex: 0 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#111', border: `1px solid ${C.opinion}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px rgba(142,158,90,0.15)` }}>
+              <Book color={C.opinion} size={18} strokeWidth={1.5} />
+            </div>
+            <span style={{ fontSize: 10, color: C.opinion, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Resource</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#111', border: `1px solid ${C.template}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px rgba(126,106,140,0.15)` }}>
+              <FileText color={C.template} size={18} strokeWidth={1.5} />
+            </div>
+            <span style={{ fontSize: 10, color: C.template, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entry</span>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', borderTop: `1px solid ${C.border}`, paddingTop: 20 }}>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> important</Pill>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> review</Pill>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> research</Pill>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
 function DiagramPanel() {
   return (
     <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
