@@ -277,32 +277,40 @@ function ResourcePanel() {
     { id: 'Link', icon: Globe, sub: 'URL or webpage' },
     { id: 'Note', icon: Edit2, sub: 'Write from scratch' },
   ];
-  // SVG triangle: pointy up = "24,4 44,40 4,40", pointy down = "4,8 44,8 24,44"
-  const triUp = "24,4 44,40 4,40";
-  const triDown = "4,8 44,8 24,44";
+  const triUp = "24,2 47,44 1,44";
+  const triDown = "1,4 47,4 24,46";
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14 }}>
       <Label>Step 1</Label>
       <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Add a resource</h2>
       <p style={{ color: C.dim, fontSize: 14, margin: 0 }}>Pick what you want to capture.</p>
-      <div style={{ display: 'flex', gap: 14, width: '100%', maxWidth: 360, marginTop: 4, justifyContent: 'center' }}>
+      <div style={{ display: 'flex', gap: 8, width: '100%', maxWidth: 370, marginTop: 4, justifyContent: 'center', alignItems: 'center' }}>
         {items.map((r, i) => {
-          const points = i === 1 ? triDown : triUp;
+          const isDown = i === 1;
+          const points = isDown ? triDown : triUp;
           return (
-            <div key={r.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <div style={{ position: 'relative', width: 72, height: 72, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="72" height="72" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
-                  <polygon points={points} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-                </svg>
-                <r.icon size={18} color="#fff" strokeWidth={1.5} style={{ zIndex: 1, marginTop: i === 1 ? -6 : 6 }} />
-              </div>
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#fff' }}>{r.id}</span>
-              <span style={{ fontSize: 10, color: C.dim }}>{r.sub}</span>
+            <div key={r.id} style={{ position: 'relative', width: 110, height: 110, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: isDown ? 'flex-start' : 'flex-end' }}>
+              <svg width="110" height="110" viewBox="0 0 48 48" style={{ position: 'absolute', inset: 0 }}>
+                <polygon points={points} fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
+              </svg>
+              {isDown ? (
+                <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, paddingTop: 14 }}>
+                  <r.icon size={15} color="#fff" strokeWidth={1.5} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{r.id}</span>
+                  <span style={{ fontSize: 9, color: C.dim, lineHeight: 1.2 }}>{r.sub}</span>
+                </div>
+              ) : (
+                <div style={{ zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, paddingBottom: 16 }}>
+                  <r.icon size={15} color="#fff" strokeWidth={1.5} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{r.id}</span>
+                  <span style={{ fontSize: 9, color: C.dim, lineHeight: 1.2 }}>{r.sub}</span>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
-      <p style={{ color: C.dim, fontSize: 11, margin: '4px 0 0 0', fontStyle: 'italic', maxWidth: 300, lineHeight: 1.5 }}>
+      <p style={{ color: C.dim, fontSize: 11, margin: '2px 0 0 0', fontStyle: 'italic', maxWidth: 300, lineHeight: 1.5 }}>
         If the file is a PDF, there is a built-in PDF reader.
       </p>
     </div>
