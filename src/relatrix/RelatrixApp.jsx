@@ -142,13 +142,17 @@ function createGraph(isMobile) {
    ═══════════════════════════════════════════════════ */
 // Adjusted cues to fit 7 panels now since Explore is moved back to the bottom
 const PANELS = [
-  { id: 'hero', cue: [0, 0.05, 0.10, 0.15] },
-  { id: 'plus', cue: [0.16, 0.21, 0.26, 0.31] },
-  { id: 'resource', cue: [0.32, 0.37, 0.42, 0.47] },
-  { id: 'opinion', cue: [0.48, 0.53, 0.58, 0.63] },
-  { id: 'topic', cue: [0.64, 0.69, 0.74, 0.79] },
-  { id: 'reader', cue: [0.80, 0.85, 0.90, 0.95] },
-  { id: 'entries', cue: [0.96, 1.0, 1.05, 1.05] }, // 1.05 so it stays visible at very bottom of track
+  { id: 'hero', cue: [0.00, 0.04, 0.06, 0.09] },
+  { id: 'plus', cue: [0.09, 0.12, 0.14, 0.17] },
+  { id: 'resource', cue: [0.17, 0.20, 0.23, 0.26] },
+  { id: 'opinion', cue: [0.26, 0.29, 0.32, 0.35] },
+  { id: 'topic', cue: [0.35, 0.38, 0.41, 0.44] },
+  { id: 'reader', cue: [0.44, 0.47, 0.50, 0.53] },
+  { id: 'entries', cue: [0.53, 0.56, 0.59, 0.62] },
+  { id: 'graph', cue: [0.62, 0.65, 0.68, 0.71] },
+  { id: 'tags', cue: [0.71, 0.74, 0.77, 0.80] },
+  { id: 'links', cue: [0.80, 0.83, 0.86, 0.89] },
+  { id: 'done', cue: [0.89, 0.92, 0.95, 0.97] } // Fades out completely by 0.97, right as the footer scrolls up
 ];
 
 /* ─── Shared Panel Card ─── */
@@ -186,26 +190,40 @@ const Pill = ({ children, bg, color }) => (
 /* ─── Individual Panel Content ─── */
 function HeroPanel() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 12 }}>
       <img
         src="https://raw.githubusercontent.com/saad-ibra/gray-matter/main/core/designsystem/src/main/res/drawable/app_logo_full.png"
-        alt="Relatrix" style={{ width: 64, height: 64, borderRadius: 14 }}
+        alt="Relatrix Logo" 
+        style={{ 
+          width: 80, height: 80, borderRadius: 20, 
+          boxShadow: `0 0 40px rgba(142,158,90,0.4)`
+        }}
       />
-      <Label color={C.opinion}>Relatrix</Label>
-      <h1 style={{ fontSize: 'clamp(28px, 6vw, 44px)', fontWeight: 700, margin: 0, letterSpacing: '-0.03em', lineHeight: 1.1, maxWidth: 440 }}>
-        Your personal knowledge base
+      <h1 style={{ 
+        fontSize: 'clamp(44px, 12vw, 84px)', fontWeight: 800, margin: '8px 0 0 0', 
+        letterSpacing: '-0.04em', lineHeight: 1.1,
+        background: 'linear-gradient(135deg, #ffffff 0%, #909090 100%)',
+        WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
+      }}>
+        Relatrix
       </h1>
-      <p style={{ color: C.dim, fontSize: 'clamp(14px, 3vw, 16px)', maxWidth: 380, lineHeight: 1.6, margin: 0 }}>
+      <h2 style={{ 
+        fontSize: 'clamp(18px, 4vw, 22px)', fontWeight: 500, margin: '0 0 8px 0', 
+        letterSpacing: '-0.01em', color: '#fff' 
+      }}>
+        Your personal knowledge base.
+      </h2>
+      <p style={{ color: C.dim, fontSize: 'clamp(14px, 3vw, 16px)', maxWidth: 420, lineHeight: 1.6, margin: 0 }}>
         Capture thoughts, annotate documents, and connect your ideas into a living, spatial graph.
       </p>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 8 }}>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 12 }}>
         <a href="https://github.com/saad-ibra/gray-matter" target="_blank" rel="noreferrer"
-          style={{ padding: '10px 20px', borderRadius: 6, background: C.opinion, color: '#000', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Terminal size={14} /> View Source
+          style={{ padding: '12px 24px', borderRadius: 8, background: C.opinion, color: '#000', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'transform 0.2s' }}>
+          <Terminal size={15} /> View Source
         </a>
         <a href="https://f-droid.org/packages/com.saadibra.graymatter" target="_blank" rel="noreferrer"
-          style={{ padding: '10px 20px', borderRadius: 6, background: 'transparent', border: `1px solid ${C.border}`, color: '#fff', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 6 }}>
-          <Smartphone size={14} /> Get on F-Droid
+          style={{ padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.06)', border: `1px solid ${C.border}`, color: '#fff', fontSize: 14, fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 8, transition: 'background 0.2s' }}>
+          <Smartphone size={15} /> Get on F-Droid
         </a>
       </div>
     </div>
@@ -381,7 +399,86 @@ function EntriesPanel() {
   );
 }
 
-const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel];
+
+function GraphPanel() {
+  return (
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <Label>Visualization</Label>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>The Relatrix</h2>
+      <p style={{ color: C.dim, fontSize: 14, margin: 0, maxWidth: 360, lineHeight: 1.5 }}>Look behind these cards. Your knowledge forms an interactive, living 3D graph.</p>
+      <Card style={{ marginTop: 4, display: 'flex', gap: 12, alignItems: 'center', width: '100%', maxWidth: 340, justifyContent: 'center' }}>
+        <div style={{ width: 12, height: 12, borderRadius: '50%', background: C.opinion, boxShadow: `0 0 14px ${C.opinion}` }} />
+        <span style={{ fontSize: 14, fontWeight: 500, color: '#fff' }}>Every node is a thought</span>
+      </Card>
+    </div>
+  );
+}
+
+function TagsPanel() {
+  return (
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <Label>Organize</Label>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Organize with tags</h2>
+      <p style={{ color: C.dim, fontSize: 14, margin: 0 }}>Group related entries instantly and flexibly.</p>
+      <Card style={{ marginTop: 4, width: '100%', maxWidth: 340 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 6, background: 'rgba(142,158,90,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Edit2 size={14} color={C.opinion} />
+          </div>
+          <div style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>My insight</div>
+            <div style={{ fontSize: 10, color: C.dim, marginTop: 2, fontFamily: 'monospace' }}>Opinion · 78%</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> important</Pill>
+          <Pill bg="rgba(255,255,255,0.06)" color="#fff"><Tag size={12}/> review</Pill>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function LinksPanel() {
+  return (
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <Label>Connections</Label>
+      <h2 style={{ fontSize: 22, fontWeight: 700, margin: 0, letterSpacing: '-0.02em' }}>Knowledge Links</h2>
+      <p style={{ color: C.dim, fontSize: 14, margin: 0, maxWidth: 320, lineHeight: 1.5 }}>Connect any two nodes to establish a relationship.</p>
+      <Card style={{ marginTop: 4, width: '100%', maxWidth: 340, padding: '36px 20px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', maxWidth: 220, margin: '0 auto' }}>
+          <div style={{ position: 'absolute', left: 40, right: 40, top: 22, height: 2, background: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.6) 0, rgba(255,255,255,0.6) 6px, transparent 6px, transparent 12px)', backgroundSize: '12px 2px', animation: 'march 0.5s linear infinite', zIndex: 0 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#111', border: `1px solid ${C.opinion}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px rgba(142,158,90,0.15)` }}>
+              <Book color={C.opinion} size={18} strokeWidth={1.5} />
+            </div>
+            <span style={{ fontSize: 10, color: C.opinion, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Resource</span>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, zIndex: 1 }}>
+            <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#111', border: `1px solid ${C.template}`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 0 20px rgba(126,106,140,0.15)` }}>
+              <FileText color={C.template} size={18} strokeWidth={1.5} />
+            </div>
+            <span style={{ fontSize: 10, color: C.template, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Entry</span>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function DonePanel() {
+  return (
+    <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <Rocket size={48} color={C.opinion} strokeWidth={1.5} style={{ marginBottom: 4 }} />
+      <h2 style={{ fontSize: 'clamp(28px, 6vw, 36px)', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', color: '#fff' }}>You're Ready</h2>
+      <p style={{ color: C.dim, fontSize: 15, margin: 0, lineHeight: 1.6, maxWidth: 320 }}>
+        You've learned the core workflow. Keep scrolling to download Relatrix and start building your graph.
+      </p>
+    </div>
+  );
+}
+
+const PANEL_COMPONENTS = [HeroPanel, PlusPanel, ResourcePanel, OpinionPanel, TopicPanel, ReaderPanel, EntriesPanel, GraphPanel, TagsPanel, LinksPanel, DonePanel];
 
 /* ═══════════════════════════════════════════════════
    MAIN COMPONENT
@@ -604,8 +701,11 @@ export default function RelatrixApp() {
       <style>{`
         *, *::before, *::after { box-sizing: border-box; }
         html { scroll-behavior: auto; }
+        @keyframes march {
+          to { background-position: -12px 0; }
+        }
         
-        .rltx-track { height: 500vh; position: relative; }
+        .rltx-track { height: 1000vh; position: relative; }
         
         .rltx-stage { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: #000; }
         .rltx-stage canvas { width: 100%; height: 100%; display: block; }
@@ -657,7 +757,8 @@ export default function RelatrixApp() {
         .rltx-explore {
           position: relative; z-index: 30;
           padding: 80px 24px; display: flex; justify-content: center;
-          background: #000;
+          background: rgba(0,0,0,0.8);
+          backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
           border-top: 1px solid rgba(255,255,255,0.1);
         }
         .rltx-link-card {
@@ -749,7 +850,8 @@ export default function RelatrixApp() {
       {/* Footer (normal flow) */}
       <footer style={{
         borderTop: `1px solid rgba(255,255,255,0.08)`, padding: '24px 20px',
-        display: 'flex', justifyContent: 'center', background: '#000', position: 'relative', zIndex: 30,
+        display: 'flex', justifyContent: 'center', background: 'rgba(0,0,0,0.8)',
+        backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)', position: 'relative', zIndex: 30,
       }}>
         <div style={{
           width: '100%', maxWidth: 560,
