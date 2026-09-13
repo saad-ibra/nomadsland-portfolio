@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
+import { useViewport } from "../hooks/useViewport.js";
 import { getSharedAudioCtx } from '../engine/sfx.js';
 import { useGame } from '../context/GameContext.jsx';
 import { DoorOpen } from "lucide-react";
@@ -594,34 +595,16 @@ function Building({ shop, isNear }) {
   return <Component shop={shop} isNear={isNear} />;
 }
 
-function getViewportMetrics(isLandscape) {
-  if (typeof window === 'undefined') return { scale: 1, w: 384, h: 288 };
-  const isMobile = window.innerWidth < 768;
-  const consoleWidth = isLandscape ? 320 : 0;
-  const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
-  const availableWidth = window.innerWidth - consoleWidth;
-  const availableHeight = window.innerHeight - consoleHeight;
-  const baseW = 256;
-  const baseH = 192;
-  const scale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
-  return {
-    scale,
-    w: Math.floor(availableWidth / scale),
-    h: Math.floor(availableHeight / scale)
-  };
-}
-
 // ============================================================
 //  MAIN VILLAGE SCENE
 // ============================================================
 export default function VillageScene() {
   const { isLandscape, isTransitioning, triggerTransition, previousScene, changeScene,
-    speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume } = useGame();
+    speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume, isConsoleMinimized } = useGame();
   const [nearShop, setNearShop]   = useState(null);
   const [phase, setPhase]         = useState(previousScene ? "free" : "intro");
   
-  const [viewport, setViewport] = useState(() => getViewportMetrics(isLandscape));
-  const { scale, w: internalW, h: internalH } = viewport;
+  const { scale, internalW, internalH } = useViewport(isLandscape, isConsoleMinimized);
         
   const [isSailing, setIsSailing] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
@@ -1415,7 +1398,7 @@ export default function VillageScene() {
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Village Hub | Saad Ibra</title>
       <meta name="description" content="Explore the village hub of Nomadsland. Find the Library, Chemistry Lab, Newsroom, and my Home." />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
