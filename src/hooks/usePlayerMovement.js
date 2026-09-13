@@ -44,6 +44,7 @@ export function usePlayerMovement({
   const lastMoveRef = useRef(0);
   const momentumRef = useRef({ dc: 0, dr: 0, stepsLeft: 0 });
   const turnBlockRef = useRef(false);
+  const steppingRef = useRef(false);
   const facingRef = useRef(facing);
   const onMoveRef = useRef(onMove);
   const onBumpRef = useRef(onBump);
@@ -79,6 +80,10 @@ export function usePlayerMovement({
   useEffect(() => {
     facingRef.current = facing;
   }, [facing]);
+
+  useEffect(() => {
+    steppingRef.current = stepping;
+  }, [stepping]);
 
   useEffect(() => {
     if (sceneId && pos) {
@@ -144,12 +149,20 @@ export function usePlayerMovement({
         if (facingRef.current !== pressedDir) {
           setFacing(pressedDir);
           facingRef.current = pressedDir;
-          turnBlockRef.current = true;
-          setTimeout(() => {
-            if (keysRef.current[k]) {
-              turnBlockRef.current = false;
-            }
-          }, 120); // 120ms long press delay
+          // Only block movement for turn-in-place when NOT already moving.
+          // If already stepping, the new direction should apply on the next
+          // movement tick with zero delay — the player is already in motion.
+          if (!steppingRef.current) {
+            turnBlockRef.current = true;
+            setTimeout(() => {
+              if (keysRef.current[k]) {
+                turnBlockRef.current = false;
+              }
+            }, 80);
+          } else {
+            // Already moving — immediately clear any lingering turn block
+            turnBlockRef.current = false;
+          }
         }
       }
 
@@ -209,10 +222,7 @@ export function usePlayerMovement({
       return;
     }
 
-    let rafId;
-    const loop = () => {
-      rafId = requestAnimationFrame(loop);
-
+    const id = setInterval(() => {
       const now = Date.now();
       const currentSpeed = isSailing ? speedMultiplier * 1.5 : speedMultiplier;
       if (now - lastMoveRef.current < (MOVE_COOLDOWN / currentSpeed)) return;
@@ -280,20 +290,12 @@ export function usePlayerMovement({
 
       if (canWalkRef.current(nc, nr)) {
         setStepping(true);
-        // By setting lastMoveRef.current precisely to the mathematical next tick, 
-        // we prevent timer drift (instead of using `now`).
-        // If it's been way too long, just use `now`.
-        const expectedNextTick = lastMoveRef.current + (MOVE_COOLDOWN / currentSpeed);
-        if (now - expectedNextTick > 50) {
-          lastMoveRef.current = now;
-        } else {
-          lastMoveRef.current = expectedNextTick;
-        }
-
+        steppingRef.current = true;
+        lastMoveRef.current = now;
         const newPos = { col: nc, row: nr };
         
         // Clear stepping flag shortly after
-        setTimeout(() => setStepping(false), 90);
+        setTimeout(() => { setStepping(false); steppingRef.current = false; }, 90);
 
         // Consume the path step
         if (fromPath) {
@@ -305,7 +307,7 @@ export function usePlayerMovement({
         }
         
         if (onMoveRef.current) {
-          const cancelMove = onMoveRef.current(nc, nr, p.col, p.row);
+          const cancelMove = onMoveRef.current(nc, nr, dir, p.col, p.row);
           if (cancelMove) {
             clearPath(); // Cancel path on scene transition etc.
             return;
@@ -320,10 +322,9 @@ export function usePlayerMovement({
           onBumpRef.current(nc, nr);
         }
       }
-    };
-    rafId = requestAnimationFrame(loop);
+    }, 30);
 
-    return () => cancelAnimationFrame(rafId);
+    return () => clearInterval(id);
   }, [isActive, speedMultiplier, isSailing, clearPath]);
 
   return { pos, setPos, facing, setFacing, stepping, setPath, clearPath, tapTarget, triggerAction: () => { if (onActionRef.current) onActionRef.current(); } };

@@ -12,8 +12,6 @@ import PlayerSprite from "../components/sprites/PlayerSprite";
 import ControlBar from "../components/ui/ControlBar";
 import SaadSprite from "../components/sprites/SaadSprite";
 import { useTerrainCanvas } from "../hooks/useTerrainCanvas";
-import { useViewport } from "../hooks/useViewport";
-import { useSmoothPixelGrid } from "../hooks/useSmoothPixelGrid";
 import {
   MAP, MAP_COLS, MAP_ROWS, SHOPS, SHOP_TILES, START_POS,
   PALETTE,
@@ -595,17 +593,35 @@ function Building({ shop, isNear }) {
   if (!Component) return null;
   return <Component shop={shop} isNear={isNear} />;
 }
+
+function getViewportMetrics(isLandscape) {
+  if (typeof window === 'undefined') return { scale: 1, w: 384, h: 288 };
+  const isMobile = window.innerWidth < 768;
+  const consoleWidth = isLandscape ? 320 : 0;
+  const consoleHeight = isLandscape ? 0 : window.innerHeight * (isMobile ? 0.4 : 0.333);
+  const availableWidth = window.innerWidth - consoleWidth;
+  const availableHeight = window.innerHeight - consoleHeight;
+  const baseW = 256;
+  const baseH = 192;
+  const scale = Math.max(1, Math.floor(Math.min(availableWidth / baseW, availableHeight / baseH)));
+  return {
+    scale,
+    w: Math.floor(availableWidth / scale),
+    h: Math.floor(availableHeight / scale)
+  };
+}
+
 // ============================================================
 //  MAIN VILLAGE SCENE
 // ============================================================
 export default function VillageScene() {
   const { isLandscape, isTransitioning, triggerTransition, previousScene, changeScene,
-    speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume, isConsoleMinimized } = useGame();
+    speedMultiplier, setSpeedMultiplier, musicPlaying, setMusicPlaying, musicMuted, setMusicMuted, musicVolume, setMusicVolume } = useGame();
   const [nearShop, setNearShop]   = useState(null);
   const [phase, setPhase]         = useState(previousScene ? "free" : "intro");
   
-  const viewport = useViewport(isLandscape, isConsoleMinimized);
-  const { scale, internalW, internalH } = viewport;
+  const [viewport, setViewport] = useState(() => getViewportMetrics(isLandscape));
+  const { scale, w: internalW, h: internalH } = viewport;
         
   const [isSailing, setIsSailing] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
@@ -658,12 +674,14 @@ export default function VillageScene() {
     speedMultiplier,
     isActive: phase === "free" && !isTransitioning,
     isSailing,
-    onMove: (nc, nr, prevCol, prevRow) => {
+    onMove: (nc, nr, dir, pCol, pRow) => {
       if (isSailing) {
         setBoatPos({ col: nc, row: nr });
 
 
-        if (MAP[prevRow]?.[prevCol] === 4) setWakes(prev => [...prev.slice(-8), { c: prevCol, r: prevRow, id: Math.random() }]);
+        if (MAP[nr]?.[nc] === 4 && pCol !== undefined && pRow !== undefined) {
+          setWakes(prev => [...prev.slice(-8), { c: pCol, r: pRow, id: Math.random() }]);
+        }
         playWoodStep();
       } else {
         const tile = MAP[nr]?.[nc];
@@ -780,43 +798,9 @@ export default function VillageScene() {
   }, []);
 
   // Camera uses refs + direct DOM mutation instead of React state to avoid 60fps re-renders
+  const camRef = useRef({ x: initialPos.col * TILE + TILE/2 - internalW/2, y: initialPos.row * TILE + TILE/2 - internalH/2 });
   const worldRef = useRef(null);
-  const baseTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
-
-  const handleWorldTap = useCallback((e) => {
-    if (phase !== "free" || isTransitioning) return;
-    if (isSailing) {
-      if (!worldRef.current) return;
-      // Ignore clicks on UI elements or buttons inside the world
-      if (e.target.tagName.toLowerCase() === 'button' || e.target.closest('button')) return;
-      
-      const rect = worldRef.current.getBoundingClientRect();
-      const scaleX = rect.width / (MAP_COLS * TILE);
-      const scaleY = rect.height / (MAP_ROWS * TILE);
-      const clickX = (e.clientX - rect.left) / scaleX;
-      const clickY = (e.clientY - rect.top) / scaleY;
-      const tileCol = Math.floor(clickX / TILE);
-      const tileRow = Math.floor(clickY / TILE);
-      
-      const dx = tileCol - pos.col;
-      const dy = tileRow - pos.row;
-      if (dx === 0 && dy === 0) return;
-      
-      const key = Math.abs(dx) > Math.abs(dy)
-        ? (dx > 0 ? "ArrowRight" : "ArrowLeft")
-        : (dy > 0 ? "ArrowDown" : "ArrowUp");
-        
-      const evtDown = new KeyboardEvent("keydown", { key, code: key, bubbles: true, cancelable: true });
-      window.dispatchEvent(evtDown);
-      setTimeout(() => {
-        const evtUp = new KeyboardEvent("keyup", { key, code: key, bubbles: true, cancelable: true });
-        window.dispatchEvent(evtUp);
-      }, 150);
-      return;
-    }
-    baseTap(e);
-  }, [phase, isTransitioning, isSailing, pos, baseTap]);
-
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
   // Only triggers React re-render when the visible tile window changes
   const [tileWindow, setTileWindow] = useState({ sc: 0, ec: MAP_COLS, sr: 0, er: MAP_ROWS });
 
@@ -977,7 +961,14 @@ export default function VillageScene() {
     return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, isSailing, playStep]);
 
-
+  useEffect(() => {
+    const resize = () => {
+      setViewport(getViewportMetrics(isLandscape));
+    };
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, [isLandscape]);
 
 
   useEffect(() => {
@@ -1014,29 +1005,53 @@ export default function VillageScene() {
 
   const isFirstFrame = useRef(true);
 
-  const playerRef = useRef(null);
-  const boatHullRef = useRef(null);
-  const boatSailRef = useRef(null);
+  // Smooth Camera Lerp — uses direct DOM mutation, NOT React state
+  useEffect(() => {
+    let lastTime = performance.now();
+    const updateCam = (time) => {
+      const dt = Math.min((time - lastTime) / 1000, 0.1);
+      lastTime = time;
+      
+      const targetX = pos.col * TILE + TILE / 2 - internalW / 2;
+      const targetY = pos.row * TILE + TILE / 2 - internalH / 2;
+      
+      const clampedTX = Math.max(0, Math.min(Math.max(0, MAP_COLS * TILE - internalW), targetX));
+      const clampedTY = Math.max(0, Math.min(Math.max(0, MAP_ROWS * TILE - internalH), targetY));
 
-  const handleWindowChange = useCallback((sc, ec, sr, er) => {
-    setTileWindow(prev => {
-      if (prev.sc !== sc || prev.ec !== ec || prev.sr !== sr || prev.er !== er) {
-        return { sc, ec, sr, er };
+      const cam = camRef.current;
+      
+      if (isFirstFrame.current) {
+        cam.x = clampedTX;
+        cam.y = clampedTY;
+        isFirstFrame.current = false;
+      } else {
+        const lerpFactor = 1.0 - Math.pow(0.001, dt * speedMultiplier);
+        cam.x = cam.x + (clampedTX - cam.x) * lerpFactor;
+        cam.y = cam.y + (clampedTY - cam.y) * lerpFactor;
       }
-      return prev;
-    });
-  }, []);
 
-  useSmoothPixelGrid({
-    pos, internalW, internalH,
-    mapCols: MAP_COLS, mapRows: MAP_ROWS,
-    speedMultiplier: isSailing ? speedMultiplier * 1.5 : speedMultiplier,
-    worldRef, playerRef,
-    boatHullRef: isSailing ? boatHullRef : null,
-    boatSailRef: isSailing ? boatSailRef : null,
-    isSailing,
-    onWindowChange: handleWindowChange
-  });
+      // Direct DOM mutation — no React re-render
+      if (worldRef.current) {
+        worldRef.current.style.transform = `translate(${-Math.round(cam.x)}px, ${-Math.round(cam.y)}px)`;
+      }
+
+      // Only trigger React re-render when the visible tile window actually changes
+      const sc = Math.max(0, Math.floor(cam.x / TILE) - 2);
+      const ec = Math.min(MAP_COLS, Math.floor((cam.x + internalW) / TILE) + 3);
+      const sr = Math.max(0, Math.floor(cam.y / TILE) - 2);
+      const er = Math.min(MAP_ROWS, Math.floor((cam.y + internalH) / TILE) + 3);
+      setTileWindow(prev => {
+        if (prev.sc !== sc || prev.ec !== ec || prev.sr !== sr || prev.er !== er) {
+          return { sc, ec, sr, er };
+        }
+        return prev;
+      });
+
+      rafRef.current = requestAnimationFrame(updateCam);
+    };
+    rafRef.current = requestAnimationFrame(updateCam);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [pos, speedMultiplier, internalW, internalH]);
 
   // Virtualization — driven by tileWindow state (updates ~every 32px of movement, not every frame)
   const { sc: startCol, ec: endCol, sr: startRow, er: endRow } = tileWindow;
@@ -1400,7 +1415,7 @@ export default function VillageScene() {
       boxSizing: "border-box", height: "100dvh", width: "100dvw", }}>
       <title>Village Hub | Saad Ibra</title>
       <meta name="description" content="Explore the village hub of Nomadsland. Find the Library, Chemistry Lab, Newsroom, and my Home." />
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden", paddingBottom: isConsoleMinimized ? 64 : 0 }}>
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
       <style>{`
         @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes dialogSlideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -1420,15 +1435,15 @@ export default function VillageScene() {
         <div style={{
           position: "relative", width: internalW, height: internalH,
           overflow: "hidden", background: PALETTE.water[0],
-          boxShadow: isConsoleMinimized ? "none" : "0 0 0 4px #1a5580",
+          boxShadow: "0 0 0 4px #1a5580",
           imageRendering: "pixelated",
         }}>
 
-          {/* Scrolling world layer — positioned by CSS transition via ref */}
+          {/* Scrolling world layer — positioned by RAF via ref, not React state */}
           <div ref={worldRef} onPointerDown={handleWorldTap} style={{
             position: "absolute",
             width: MAP_COLS * TILE, height: MAP_ROWS * TILE,
-            transform: "translate(0px, 0px)",
+            transform: `translate(${-Math.round(camRef.current.x)}px, ${-Math.round(camRef.current.y)}px)`,
             willChange: "transform",
             zIndex: 1
           }}>
@@ -1487,22 +1502,18 @@ export default function VillageScene() {
             </div>
 
             {/* Player */}
-            <div ref={playerRef} style={{
-              position: "absolute", left: 0, top: 0,
+            <div style={{
+              position: "absolute", left: pos.col * TILE, top: pos.row * TILE, 
+              transition: isTransitioning ? "none" : isSailing ? "left 0.09s linear, top 0.09s linear" : "left 0.14s linear, top 0.14s linear",
               width: TILE, height: TILE,
+              display: "flex", alignItems: "center", justifyContent: "center",
               zIndex: playerZ,
-              willChange: "transform",
+              animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
+              animationDelay: isSailing ? `-${(sailStartTime - mountTime) % 4000}ms` : "0ms",
             }}>
-              <div style={{
-                width: "100%", height: "100%",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                animation: isSailing ? "floatBoat 4s ease-in-out infinite" : "none",
-                animationDelay: isSailing ? `-${(sailStartTime - mountTime) % 4000}ms` : "0ms",
-              }}>
-                {/* Pixel drop shadow */}
-                <div style={{ position: "absolute", bottom: 2, left: "50%", marginLeft: -7, width: 14, height: 4, background: "rgba(0,0,0,0.25)", zIndex: -1 }} />
-                <PlayerSprite direction={facing} stepping={stepping} costume="casual" />
-              </div>
+              {/* Pixel drop shadow */}
+              <div style={{ position: "absolute", bottom: 2, left: "50%", marginLeft: -7, width: 14, height: 4, background: "rgba(0,0,0,0.25)", zIndex: -1 }} />
+              <PlayerSprite direction={facing} stepping={stepping} costume="casual" />
             </div>
             
             {/* Wakes */}
@@ -1522,40 +1533,19 @@ export default function VillageScene() {
               );
             })}
 
-            {/* ── BOAT (HULL) ── */}
-            {isSailing ? (
-              <div ref={boatHullRef} style={{
-                position: "absolute", left: 0, top: 0,
-                width: TILE * 2, height: TILE * 1.5,
-                zIndex: boatHullZ,
-                willChange: "transform",
-                pointerEvents: "none",
-              }}>
-                <div style={{ width: "100%", height: "100%", animation: "floatBoat 4s ease-in-out infinite" }}>
-                  <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
-                    {(facing === "left" || facing === "right") && (
-                      <div style={{ position: "absolute", bottom: 4, left: 4, width: TILE*2 - 8, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 14px 14px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
-                    )}
-                    {facing === "down" && (
-                      <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 18, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 18px 18px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
-                    )}
-                    {facing === "up" && (
-                      <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px", boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.3)" }} />
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div style={{
-                position: "absolute",
-                left: boatPos.col * TILE,
-                top: boatPos.row * TILE,
-                width: TILE * 2, height: TILE * 1.5,
-                animation: "floatBoat 4s ease-in-out infinite",
-                zIndex: boatHullZ,
-                pointerEvents: "auto", cursor: "pointer",
-              }} onClick={(e) => { 
-                e.stopPropagation();
+            {/* ── MOORED BOAT (HULL) ── */}
+            <div style={{
+              position: "absolute",
+              left: (isSailing ? pos.col - 0.5 : boatPos.col) * TILE,
+              top: (isSailing ? pos.row : boatPos.row) * TILE,
+              transition: isTransitioning ? "none" : isSailing ? "left 0.09s linear, top 0.09s linear" : "left 0.14s linear, top 0.14s linear",
+              width: TILE * 2, height: TILE * 1.5,
+              animation: "floatBoat 4s ease-in-out infinite",
+              zIndex: boatHullZ,
+              pointerEvents: "auto", cursor: "pointer",
+            }} onClick={(e) => { 
+              e.stopPropagation();
+              if (!isSailing) {
                 const adjs = [
                   {c: boatPos.col, r: boatPos.row + 1}, {c: boatPos.col, r: boatPos.row - 1},
                   {c: boatPos.col - 1, r: boatPos.row}, {c: boatPos.col + 1, r: boatPos.row},
@@ -1571,63 +1561,53 @@ export default function VillageScene() {
                   const path = findPath(pos.col, pos.row, dockCol, dockRow, canWalk, MAP_COLS, MAP_ROWS);
                   if (path.length > 0) setPath(path);
                 }
-              }}>
-                <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
+              }
+            }}>
+              <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
+                {(!isSailing || facing === "left" || facing === "right") && (
                   <div style={{ position: "absolute", bottom: 4, left: 4, width: TILE*2 - 8, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 14px 14px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
-                </div>
+                )}
+                {isSailing && facing === "down" && (
+                  <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 18, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px 4px 18px 18px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.3)" }} />
+                )}
+                {isSailing && facing === "up" && (
+                  <div style={{ position: "absolute", bottom: 4, left: TILE - 10, width: 20, height: 14, background: "#a05a2c", border: "2px solid #3a1c0a", borderRadius: "4px", boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.3)" }} />
+                )}
               </div>
-            )}
+            </div>
 
-            {/* ── BOAT (SAIL & MAST) ── */}
-            {isSailing ? (
-              <div ref={boatSailRef} style={{
-                position: "absolute", left: 0, top: 0,
-                width: TILE * 2, height: TILE * 1.5,
-                zIndex: boatSailZ,
-                willChange: "transform",
-                pointerEvents: "none",
-              }}>
-                <div style={{ width: "100%", height: "100%", animation: "floatBoat 4s ease-in-out infinite" }}>
-                  <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
-                    {(facing === "left" || facing === "right") && (
-                      <>
-                        <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
-                        <div style={{ position: "absolute", bottom: 22, left: TILE, width: 22, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "0 16px 16px 0", boxShadow: "inset -4px 0 0 rgba(0,0,0,0.1)" }} />
-                      </>
-                    )}
-                    {facing === "down" && (
-                      <>
-                        <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
-                        <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.1)" }} />
-                      </>
-                    )}
-                    {facing === "up" && (
-                      <>
-                        <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#e8e8e8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 4px 0 rgba(0,0,0,0.05)" }} />
-                        <div style={{ position: "absolute", bottom: 42, left: TILE - 2, width: 4, height: 8, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: "2px 2px 0 0" }} />
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div style={{
-                position: "absolute",
-                left: boatPos.col * TILE,
-                top: boatPos.row * TILE,
-                width: TILE * 2, height: TILE * 1.5,
-                animation: "floatBoat 4s ease-in-out infinite",
-                zIndex: boatSailZ,
-                pointerEvents: "none",
-              }}>
-                <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
+            {/* ── MOORED BOAT (SAIL & MAST) ── */}
+            <div style={{
+              position: "absolute",
+              left: (isSailing ? pos.col - 0.5 : boatPos.col) * TILE,
+              top: (isSailing ? pos.row : boatPos.row) * TILE,
+              transition: isTransitioning ? "none" : isSailing ? "left 0.09s linear, top 0.09s linear" : "left 0.14s linear, top 0.14s linear",
+              width: TILE * 2, height: TILE * 1.5,
+              animation: "floatBoat 4s ease-in-out infinite",
+              zIndex: boatSailZ,
+              pointerEvents: "none",
+            }}>
+              <div style={{ transform: getBoatTransform(), width: "100%", height: "100%", transition: "transform 0.2s" }}>
+                {(!isSailing || facing === "left" || facing === "right") && (
                   <>
                     <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
                     <div style={{ position: "absolute", bottom: 22, left: TILE, width: 22, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "0 16px 16px 0", boxShadow: "inset -4px 0 0 rgba(0,0,0,0.1)" }} />
                   </>
-                </div>
+                )}
+                {isSailing && facing === "down" && (
+                  <>
+                    <div style={{ position: "absolute", bottom: 18, left: TILE - 2, width: 4, height: 32, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: 2 }} />
+                    <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#f8f8f8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.1)" }} />
+                  </>
+                )}
+                {isSailing && facing === "up" && (
+                  <>
+                    <div style={{ position: "absolute", bottom: 22, left: TILE - 14, width: 28, height: 20, background: "#e8e8e8", border: "2px solid #3a1c0a", borderRadius: "14px 14px 4px 4px", boxShadow: "inset 0 4px 0 rgba(0,0,0,0.05)" }} />
+                    <div style={{ position: "absolute", bottom: 42, left: TILE - 2, width: 4, height: 8, background: "#d4a520", border: "2px solid #3a1c0a", borderRadius: "2px 2px 0 0" }} />
+                  </>
+                )}
               </div>
-            )}
+            </div>
 
 
           </div>
