@@ -2,19 +2,15 @@ import { useCallback } from "react";
 import { findPath } from "../engine/pathfinding.js";
 import { TILE } from "../engine/constants.js";
 
-export function useTapToMove(worldRef, pos, canWalk, setPath, maxCols, maxRows, isActive = true) {
+export function useTapToMove(worldRef, pos, canWalk, setPath, maxCols, maxRows, isActive = true, isSailing = false) {
   const handleWorldTap = useCallback((e) => {
     if (!isActive) return;
     if (!worldRef.current) return;
     
     // Ignore clicks on UI elements or buttons inside the world
     if (e.target.tagName.toLowerCase() === 'button' || e.target.closest('button')) return;
-    // Let's also check if it's clicking on a specific interactive entity if needed, but buttons cover most of it.
 
     const rect = worldRef.current.getBoundingClientRect();
-    // In our engine, worldRef has a scale applied by the parent. 
-    // getBoundingClientRect() returns the SCALED bounding box.
-    // So the width of the rect is (maxCols * TILE * scale).
     const scaleX = rect.width / (maxCols * TILE);
     const scaleY = rect.height / (maxRows * TILE);
 
@@ -26,22 +22,23 @@ export function useTapToMove(worldRef, pos, canWalk, setPath, maxCols, maxRows, 
 
     if (tileCol < 0 || tileCol >= maxCols || tileRow < 0 || tileRow >= maxRows) return;
     if (!canWalk(tileCol, tileRow)) {
-      // Maybe try adjacent? 
-      // For now, if unwalkable, just ignore, or maybe we can auto-route to adjacent if it's an NPC?
-      // Simple approach: if unwalkable, check neighbors to see if it's an interactive object.
-      // We'll just route to the closest walkable neighbor if the exact tile is unwalkable.
-      
       const DIRS = [
         {dc: 0, dr: 1}, {dc: 0, dr: -1}, {dc: 1, dr: 0}, {dc: -1, dr: 0}
       ];
-      let found = false;
       for (const d of DIRS) {
         const nc = tileCol + d.dc;
         const nr = tileRow + d.dr;
         if (canWalk(nc, nr)) {
-          const path = findPath(pos.col, pos.row, nc, nr, canWalk, maxCols, maxRows);
-          if (path.length > 0) {
-            path.push({ col: tileCol, row: tileRow }); // Add the unwalkable target tile as the final step to trigger a bump
+          let path = [];
+          if (pos.col === nc && pos.row === nr) {
+            // Already adjacent to the target!
+          } else {
+            path = findPath(pos.col, pos.row, nc, nr, canWalk, maxCols, maxRows);
+          }
+          
+          if (path.length > 0 || (pos.col === nc && pos.row === nr)) {
+            path.push({ col: tileCol, row: tileRow });
+            if (isSailing) path = path.slice(0, 3);
             setPath(path);
             return;
           }
@@ -50,11 +47,12 @@ export function useTapToMove(worldRef, pos, canWalk, setPath, maxCols, maxRows, 
       return;
     }
 
-    const path = findPath(pos.col, pos.row, tileCol, tileRow, canWalk, maxCols, maxRows);
+    let path = findPath(pos.col, pos.row, tileCol, tileRow, canWalk, maxCols, maxRows);
     if (path.length > 0) {
+      if (isSailing) path = path.slice(0, 3);
       setPath(path);
     }
-  }, [isActive, worldRef, maxCols, maxRows, pos.col, pos.row, canWalk, setPath]);
+  }, [isActive, isSailing, worldRef, maxCols, maxRows, pos.col, pos.row, canWalk, setPath]);
 
   return handleWorldTap;
 }

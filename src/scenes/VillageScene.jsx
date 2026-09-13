@@ -800,7 +800,7 @@ export default function VillageScene() {
   // Camera uses refs + direct DOM mutation instead of React state to avoid 60fps re-renders
   const camRef = useRef({ x: initialPos.col * TILE + TILE/2 - internalW/2, y: initialPos.row * TILE + TILE/2 - internalH/2 });
   const worldRef = useRef(null);
-  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !isSailing);
+  const handleWorldTap = useTapToMove(worldRef, pos, canWalk, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning, isSailing);
   // Only triggers React re-render when the visible tile window changes
   const [tileWindow, setTileWindow] = useState({ sc: 0, ec: MAP_COLS, sr: 0, er: MAP_ROWS });
 

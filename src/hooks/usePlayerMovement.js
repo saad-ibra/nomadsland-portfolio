@@ -271,6 +271,9 @@ export function usePlayerMovement({
         } else {
           momentumRef.current = { dc: 0, dr: 0, stepsLeft: 0 };
         }
+      } else {
+        // fromPath is true, ensure no residual momentum from previous manual moves
+        momentumRef.current = { dc: 0, dr: 0, stepsLeft: 0 };
       }
 
       const dir = dr < 0 ? "up" : dr > 0 ? "down" : dc < 0 ? "left" : "right";
