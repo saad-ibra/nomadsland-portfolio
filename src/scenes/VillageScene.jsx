@@ -1449,7 +1449,8 @@ export default function VillageScene() {
           }}>
             <canvas ref={waterCanvasRef} style={{ position: "absolute", left: 0, top: 0, zIndex: -10, pointerEvents: "none" }} />
             <canvas ref={landCanvasRef} style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }} />
-            <TapMarker tapTarget={tapTarget} TILE={TILE} />
+            {/* Tap-to-move visual marker */}
+            <TapMarker tapTarget={tapTarget} TILE={TILE} isSailing={isSailing} />
             
             {visibleTiles}
 
