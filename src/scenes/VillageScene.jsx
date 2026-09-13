@@ -944,15 +944,6 @@ export default function VillageScene() {
     return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, isSailing, playStep]);
 
-  useEffect(() => {
-    const resize = () => {
-      setViewport(getViewportMetrics(isLandscape));
-    };
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, [isLandscape]);
-
 
   useEffect(() => {
     const resume = () => {
