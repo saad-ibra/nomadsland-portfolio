@@ -517,7 +517,7 @@ export default function NewsroomScene() {
                 article={r}
                 isNear={nearObject === r.id}
                 onClick={() => {
-                  if (phase === "free") setOpenPost(r.post);
+                  if (phase === "free" && nearObject === r.id) setOpenPost(r.post);
                 }}
               />
             ))}
