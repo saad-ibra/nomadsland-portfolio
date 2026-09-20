@@ -551,7 +551,7 @@ export default function NomadshomeScene() {
                 );
               })}
 
-              <TipLinePhone isNear={nearPhone} onClick={() => { if (phase === "free") setOpenTipLine(true); }} />
+              <TipLinePhone isNear={nearPhone} onClick={() => { if (phase === "free" && nearPhone) setOpenTipLine(true); }} />
               
               <div style={{
                 position: "absolute",
