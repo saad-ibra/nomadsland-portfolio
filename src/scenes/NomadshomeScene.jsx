@@ -78,16 +78,16 @@ const FurnitureSprite = ({ item }) => {
 // ============================================================
 //  DESK TELEPHONE (Tip Line) & CONTACT FORM
 // ============================================================
-function TipLinePhone({ isNear, onClick }) {
+function TipLinePhone({ isNear }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
   return (
     <div
-      onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
       style={{
         position: "absolute", left: 5 * TILE, top: 1 * TILE - 8,
         width: TILE, height: TILE,
-        display: "flex", alignItems: "flex-end", justifyContent: "center", cursor: "pointer",
+        display: "flex", alignItems: "flex-end", justifyContent: "center",
         filter: active ? "brightness(1.2)" : "none",
         transition: "filter 0.15s", zIndex: 11,
       }}
@@ -571,7 +571,7 @@ export default function NomadshomeScene() {
                 );
               })}
 
-              <TipLinePhone isNear={nearPhone} onClick={() => { if (phase === "free" && nearPhone) setOpenTipLine(true); }} />
+              <TipLinePhone isNear={nearPhone} />
               
               <div style={{
                 position: "absolute",
