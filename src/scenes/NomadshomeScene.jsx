@@ -529,7 +529,7 @@ export default function NomadshomeScene() {
 
   // Compute what the player is facing for the proximity prompt
   const activePrompt = useMemo(() => {
-    if (phase !== "free") return null;
+    if (phase !== "free" || openResume || openTipLine) return null;
     if (nearPhone) return "USE PHONE";
     
     let checkR = pos.row; let checkC = pos.col;
@@ -545,7 +545,7 @@ export default function NomadshomeScene() {
       if (item.type === "bookshelf") return "EXAMINE BOOKS";
     }
     return null;
-  }, [pos, facing, nearPhone, phase]);
+  }, [pos, facing, nearPhone, phase, openResume, openTipLine]);
 
   return (
     <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Micro 5', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
