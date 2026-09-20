@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useForm, ValidationError } from '@formspree/react';
 import { useGame } from '../context/GameContext.jsx';
