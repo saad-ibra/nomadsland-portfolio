@@ -598,15 +598,15 @@ export default function NomadshomeScene() {
             <div 
               onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
-              position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "5px 12px",
-              background: "#f8f8f8", border: `2px solid #302820`, borderRadius: 4,
+              position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "4px 8px",
+              background: "rgba(10,10,20,0.85)", border: "2px solid #f4e8d0", borderRadius: 4,
               zIndex: 6000, pointerEvents: "auto", cursor: "pointer", display: "flex", gap: 8, alignItems: "center",
-              boxShadow: `0 4px 0 rgba(0,0,0,0.2)`, whiteSpace: "nowrap", color: "#302820"
+              boxShadow: "0 4px 12px rgba(0,0,0,0.6)", whiteSpace: "nowrap"
             }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 10.5, color: "#302820", fontFamily: "'Inter', sans-serif", fontWeight: 700, letterSpacing: "0.5px" }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: "#f4e8d0" }}>
                 <span>{activePrompt}</span>
               </div>
-              <div style={{ fontSize: 10, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2, fontFamily: "'Inter', sans-serif", fontWeight: "bold" }}>SPACE/A</div>
+              <div style={{ fontSize: 10, color: "#ffbaba", background: "rgba(0,0,0,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</div>
             </div>
           )}
 
