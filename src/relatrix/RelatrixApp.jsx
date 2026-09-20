@@ -606,6 +606,9 @@ export default function RelatrixApp() {
   const stateRef = useRef({ seekTo: 0, seekAt: 0, progress: 0 });
   const rafRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
+  const heroLettersRef = useRef([]);
+  const heroChildrenRef = useRef([]);
+  const maxScrollRef = useRef(1);
 
   // Detect mobile + reduced motion
   useEffect(() => {
@@ -614,6 +617,28 @@ export default function RelatrixApp() {
     const handler = (e) => setIsMobile(e.matches);
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  
+  // Cache DOM nodes and scroll bounds to prevent layout thrashing
+  useEffect(() => {
+    const updateBounds = () => {
+      maxScrollRef.current = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    };
+    updateBounds();
+    window.addEventListener('resize', updateBounds);
+    
+    // Cache hero panel children
+    const heroEl = panelRefs.current.find(el => el && el.querySelector('.rltx-hero-title'));
+    if (heroEl) {
+      heroLettersRef.current = Array.from(heroEl.querySelectorAll('.rltx-hero-letter'));
+      const inner = heroEl.querySelector('.rltx-panel-inner');
+      if (inner) {
+        heroChildrenRef.current = Array.from(inner.querySelectorAll('img, p, a, div:not(.rltx-hero-title)')).filter(c => !c.classList.contains('rltx-hero-letter'));
+      }
+    }
+    
+    return () => window.removeEventListener('resize', updateBounds);
   }, []);
 
   // Build graph once
@@ -645,32 +670,25 @@ export default function RelatrixApp() {
 
       // Per-letter scrubbing for hero title
       if (PANELS[i].id === 'hero') {
-        const letters = el.querySelectorAll('.rltx-hero-letter');
+        const letters = heroLettersRef.current;
         const numLetters = letters.length;
-        // Fade in: all letters follow the panel enter opacity
-        // Fade out: each letter fades individually from right to left
-        const fadeOutProgress = ramp(progress, fos, foe); // 0 = fully visible, 1 = fully gone
-        for (let li = 0; li < numLetters; li++) {
-          // Right-to-left: last letter fades first
-          const reverseIndex = numLetters - 1 - li;
-          // Each letter gets its own slice of the fadeOut progress
-          const letterStart = reverseIndex / numLetters;
-          const letterEnd = (reverseIndex + 1) / numLetters;
-          const letterFade = 1 - ramp(fadeOutProgress, letterStart, letterEnd);
-          const letterOpacity = Math.min(enter, letterFade);
-          letters[li].style.opacity = letterOpacity;
-          letters[li].style.transform = `translateY(${(1 - letterFade) * 12}px)`;
+        if (numLetters > 0) {
+          const fadeOutProgress = ramp(progress, fos, foe); 
+          for (let li = 0; li < numLetters; li++) {
+            const reverseIndex = numLetters - 1 - li;
+            const letterStart = reverseIndex / numLetters;
+            const letterEnd = (reverseIndex + 1) / numLetters;
+            const letterFade = 1 - ramp(fadeOutProgress, letterStart, letterEnd);
+            const letterOpacity = Math.min(enter, letterFade);
+            letters[li].style.opacity = letterOpacity;
+            letters[li].style.transform = `translateY(${(1 - letterFade) * 12}px)`;
+          }
         }
-        // Also fade the rest of the hero content (not the letters) using the normal opacity
-        const heroInner = el.querySelector('.rltx-panel-inner');
-        if (heroInner) {
-          // Apply overall opacity to images, paragraphs, buttons (children except the h1)
-          const children = heroInner.querySelectorAll('img, p, a, div:not(.rltx-hero-title)');
-          children.forEach(child => {
-            if (!child.classList.contains('rltx-hero-letter')) {
-              child.style.opacity = opacity;
-            }
-          });
+        
+        // Apply overall opacity to other children
+        const children = heroChildrenRef.current;
+        for (let ci = 0; ci < children.length; ci++) {
+          children[ci].style.opacity = opacity;
         }
       }
     }
@@ -682,8 +700,9 @@ export default function RelatrixApp() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2); // cap DPR for perf
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
+    // Use window innerWidth/Height to avoid layout thrashing since canvas fills viewport
+    const w = window.innerWidth;
+    const h = window.innerHeight;
     if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
@@ -800,36 +819,43 @@ export default function RelatrixApp() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     const readScroll = () => {
-      // documentElement.scrollHeight represents the entire page (including the footer/explore sections)
-      // We map the scroll progress so that 1.0 is reached when scrolled to the very bottom
-      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const max = maxScrollRef.current;
       const raw = max > 0 ? window.pageYOffset / max : 0;
       stateRef.current.progress = Math.max(0, Math.min(1, raw));
       stateRef.current.seekTo = stateRef.current.progress;
     };
+    
+    // Call once initially
+    readScroll();
 
+    let lastProgress = -1;
     const frame = (time) => {
-      readScroll();
       const s = stateRef.current;
-
-      // Update meter
-      if (meterRef.current) {
-        meterRef.current.style.transform = `scaleX(${s.progress})`;
-      }
 
       // Ease camera
       const gap = s.seekTo - s.seekAt;
-      if (Math.abs(gap) > 0.0008) {
+      const cameraMoving = Math.abs(gap) > 0.0008;
+      if (cameraMoving) {
         s.seekAt += gap * 0.115;
       }
 
-      // Draw graph
+      // Draw graph continuously for slow spin, or only when camera moves?
+      // The graph spins slowly over time (t = time * 0.00015), so we MUST draw it every frame
       if (!reducedMotion) {
         drawGraph(s.seekAt, canvas, time, reducedMotion);
       }
 
-      // Paint panels
-      paint(s.progress);
+      // Paint panels ONLY if progress actually changed
+      if (s.progress !== lastProgress) {
+        lastProgress = s.progress;
+        
+        // Update meter
+        if (meterRef.current) {
+          meterRef.current.style.transform = `scaleX(${s.progress})`;
+        }
+        
+        paint(s.progress);
+      }
 
       rafRef.current = requestAnimationFrame(frame);
     };
