@@ -81,27 +81,6 @@ const FurnitureSprite = ({ item }) => {
 function TipLinePhone({ isNear, onClick }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
-
-  // Compute what the player is facing for the proximity prompt
-  const activePrompt = useMemo(() => {
-    if (phase !== "free") return null;
-    if (nearPhone) return "USE PHONE";
-    
-    let checkR = pos.row; let checkC = pos.col;
-    if (facing === "up") checkR--; else if (facing === "down") checkR++; else if (facing === "left") checkC--; else if (facing === "right") checkC++;
-    
-    if (checkC === NPC_POS.col && checkR === NPC_POS.row) return "TALK TO SAAD";
-    
-    const item = FURNITURE.find(f => checkC >= f.col && checkC < f.col + f.w && checkR >= f.row && checkR < f.row + f.h);
-    if (item) {
-      if (item.type === "resume") return "READ RESUME";
-      if (item.type === "pc_desk") return "EXAMINE PC";
-      if (item.type === "bed") return "EXAMINE BED";
-      if (item.type === "bookshelf") return "EXAMINE BOOKS";
-    }
-    return null;
-  }, [pos, facing, nearPhone, phase]);
-
   return (
     <div
       onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
@@ -547,6 +526,26 @@ export default function NomadshomeScene() {
 
   const playerRef = useRef(null);
   useSmoothPixelGrid({ pos, internalW, internalH, mapCols: MAP_COLS, mapRows: MAP_ROWS, speedMultiplier, worldRef, playerRef }); 
+
+  // Compute what the player is facing for the proximity prompt
+  const activePrompt = useMemo(() => {
+    if (phase !== "free") return null;
+    if (nearPhone) return "USE PHONE";
+    
+    let checkR = pos.row; let checkC = pos.col;
+    if (facing === "up") checkR--; else if (facing === "down") checkR++; else if (facing === "left") checkC--; else if (facing === "right") checkC++;
+    
+    if (checkC === NPC_POS.col && checkR === NPC_POS.row) return "TALK TO SAAD";
+    
+    const item = FURNITURE.find(f => checkC >= f.col && checkC < f.col + f.w && checkR >= f.row && checkR < f.row + f.h);
+    if (item) {
+      if (item.type === "resume") return "READ RESUME";
+      if (item.type === "pc_desk") return "EXAMINE PC";
+      if (item.type === "bed") return "EXAMINE BED";
+      if (item.type === "bookshelf") return "EXAMINE BOOKS";
+    }
+    return null;
+  }, [pos, facing, nearPhone, phase]);
 
   return (
     <div ref={containerRef} tabIndex={0} style={{ position: "fixed", inset: 0, display: "flex", flexDirection: isLandscape ? "row" : "column", background: "#05050a", overflow: "hidden", margin: 0, padding: 0, fontFamily: "'Micro 5', monospace", color: "#f4e8d0", userSelect: "none", boxSizing: "border-box", height: "100dvh", width: "100dvw", outline: "none" }}>
