@@ -81,6 +81,27 @@ const FurnitureSprite = ({ item }) => {
 function TipLinePhone({ isNear, onClick }) {
   const [hovered, setHovered] = useState(false);
   const active = isNear || hovered;
+
+  // Compute what the player is facing for the proximity prompt
+  const activePrompt = useMemo(() => {
+    if (phase !== "free") return null;
+    if (nearPhone) return "USE PHONE";
+    
+    let checkR = pos.row; let checkC = pos.col;
+    if (facing === "up") checkR--; else if (facing === "down") checkR++; else if (facing === "left") checkC--; else if (facing === "right") checkC++;
+    
+    if (checkC === NPC_POS.col && checkR === NPC_POS.row) return "TALK TO SAAD";
+    
+    const item = FURNITURE.find(f => checkC >= f.col && checkC < f.col + f.w && checkR >= f.row && checkR < f.row + f.h);
+    if (item) {
+      if (item.type === "resume") return "READ RESUME";
+      if (item.type === "pc_desk") return "EXAMINE PC";
+      if (item.type === "bed") return "EXAMINE BED";
+      if (item.type === "bookshelf") return "EXAMINE BOOKS";
+    }
+    return null;
+  }, [pos, facing, nearPhone, phase]);
+
   return (
     <div
       onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
@@ -469,7 +490,7 @@ export default function NomadshomeScene() {
     return true;
   }, []);
 
-  const { pos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
+  const { pos, facing, stepping, setPath, tapTarget, triggerAction } = usePlayerMovement({
     sceneId: "nomadshome_studio",
     initialPos: START_POS,
     isActive: phase === "free" && !isTransitioning && !openResume && !openTipLine,
@@ -572,6 +593,24 @@ export default function NomadshomeScene() {
             <div style={{ position: "absolute", inset: 0, background: "#ff8a50", mixBlendMode: "multiply", opacity: 0.4, pointerEvents: "none", zIndex: 899 }} />
             <div style={{ position: "absolute", inset: 0, background: "#603080", mixBlendMode: "overlay", opacity: 0.3, pointerEvents: "none", zIndex: 900 }} />
           </div>
+
+          {/* Proximity prompt */}
+          {activePrompt && (
+            <div 
+              onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
+              style={{
+              position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "5px 12px",
+              background: "#f8f8f8", border: `2px solid #302820`, borderRadius: 4,
+              zIndex: 6000, pointerEvents: "auto", cursor: "pointer", display: "flex", gap: 8, alignItems: "center",
+              boxShadow: `0 4px 0 rgba(0,0,0,0.2)`, whiteSpace: "nowrap", color: "#302820"
+            }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 10.5, color: "#302820", fontFamily: "'Inter', sans-serif", fontWeight: 700, letterSpacing: "0.5px" }}>
+                <span>{activePrompt}</span>
+              </div>
+              <div style={{ fontSize: 10, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2, fontFamily: "'Inter', sans-serif", fontWeight: "bold" }}>SPACE/A</div>
+            </div>
+          )}
+
           <button onClick={() => changeScene('village')} style={{ position: "absolute", top: 8, right: 8, fontFamily: "'Micro 5', monospace", fontSize: 12, background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto", zIndex: 500 }}><div style={{ display: "flex", alignItems: "center", gap: 4 }}><ArrowLeft size={6} /> VILLAGE</div></button>
           {(phase === "intro" || phase === "talking") && (
             <DialogueBox lines={dynamicDialogue || INTRO_DIALOGUE} lineIndex={dialogueIndex} onAdvance={() => { playBlip(); setDialogueIndex(i => i + 1); }} onDismiss={() => { setPhase("free"); setDynamicDialogue(null); }} speaker={dynamicDialogue ? null : "SAAD IBRA"} theme="home" lastButtonLabel="GOT IT" />
