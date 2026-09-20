@@ -57,7 +57,7 @@ function MusicRoomScene() {
     return true;
   };
 
-  const { pos, facing, stepping, setPath, tapTarget } = usePlayerMovement({
+  const { pos, facing, stepping, setPath, tapTarget, triggerAction } = usePlayerMovement({
     initialPos: { col: 2, row: 2 }, // spawn near stairs
     isActive: phase === "free" && !isTransitioning,
     canWalk: isWalkable,
@@ -114,14 +114,7 @@ function MusicRoomScene() {
                 transition: "filter 0.2s",
               }}>
                 <SaadSprite direction="left" />
-                {(Math.abs(NPC_POS.col - pos.col) <= 1 && Math.abs(NPC_POS.row - pos.row) <= 1) && phase === "free" && (
-                  <div style={{
-                    position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)",
-                    background: "#fff", border: "2px solid #000", borderRadius: 4, padding: "1px 4px",
-                    fontFamily: "'Micro 5', monospace", fontSize: 10, color: "#000",
-                    animation: "npcBounce 1s infinite", zIndex: 100,
-                  }}>!</div>
-                )}
+
               </div>
 
               <div ref={playerRef} style={{
@@ -132,6 +125,23 @@ function MusicRoomScene() {
               </div>
             </div>
             
+          {/* Proximity prompt */}
+          {phase === "free" && Math.abs(NPC_POS.col - pos.col) <= 1 && Math.abs(NPC_POS.row - pos.row) <= 1 && (
+            <div 
+              onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
+              style={{
+              position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", padding: "4px 8px",
+              background: "rgba(10,10,20,0.85)", border: "2px solid #DAA520", borderRadius: 4,
+              zIndex: 6000, pointerEvents: "auto", cursor: "pointer", display: "flex", gap: 8, alignItems: "center",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.6)", whiteSpace: "nowrap"
+            }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: "#DAA520" }}>
+                <span>TALK TO SAAD</span>
+              </div>
+              <div style={{ fontSize: 10, color: "#fff", background: "rgba(0,0,0,0.4)", padding: "2px 4px", borderRadius: 2 }}>SPACE/A</div>
+            </div>
+          )}
+
             <button onClick={() => changeScene('village')} style={{
               position: "absolute", top: 8, left: 8, fontFamily: "'Micro 5', monospace", fontSize: 12,
               background: "#222", color: "#fff", border: "2px solid #fff", padding: "4px 8px", cursor: "pointer", pointerEvents: "auto",

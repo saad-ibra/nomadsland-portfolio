@@ -169,7 +169,7 @@ export default function VillageScene() {
         const nx = pos.col + (facing === "right" ? 1 : facing === "left" ? -1 : 0);
         const ny = pos.row + (facing === "down" ? 1 : facing === "up" ? -1 : 0);
         
-        if (nx === 9 && ny === 22) {
+        if ((nx === 9 && ny === 22) || (Math.abs(pos.col - 9) <= 1 && Math.abs(pos.row - 22) <= 1)) {
           setPhase("intro");
           return;
         }
@@ -1105,7 +1105,7 @@ export default function VillageScene() {
           )}
 
           {/* Proximity prompt */}
-          {phase === "free" && (activeShop || isOnBoat || isNearDockWhileSailing || (isStandingOnDock && !isOnBoat)) && (
+          {phase === "free" && (activeShop || isOnBoat || isNearDockWhileSailing || (isStandingOnDock && !isOnBoat) || (Math.abs(pos.col - 9) <= 1 && Math.abs(pos.row - 22) <= 1)) && (
             <div 
               onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
@@ -1115,10 +1115,11 @@ export default function VillageScene() {
               boxShadow: `0 4px 0 rgba(0,0,0,0.2)`, whiteSpace: "nowrap", color: "#302820"
             }}>
               <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 10.5, color: "#302820" }}>
-                {activeShop && <><DoorOpen size={8} /><span>ENTER {activeShop.label}</span></>}
-                {isOnBoat && <span>SAIL BOAT</span>}
-                {isNearDockWhileSailing && <span>DROP ANCHOR</span>}
-                {isStandingOnDock && !isOnBoat && <span>SUMMON & SAIL</span>}
+                {(Math.abs(pos.col - 9) <= 1 && Math.abs(pos.row - 22) <= 1) && <span>TALK TO SAAD</span>}
+                {(! (Math.abs(pos.col - 9) <= 1 && Math.abs(pos.row - 22) <= 1)) && activeShop && <><DoorOpen size={8} /><span>ENTER {activeShop.label}</span></>}
+                {(! (Math.abs(pos.col - 9) <= 1 && Math.abs(pos.row - 22) <= 1)) && isOnBoat && <span>SAIL BOAT</span>}
+                {(! (Math.abs(pos.col - 9) <= 1 && Math.abs(pos.row - 22) <= 1)) && isNearDockWhileSailing && <span>DROP ANCHOR</span>}
+                {(! (Math.abs(pos.col - 9) <= 1 && Math.abs(pos.row - 22) <= 1)) && isStandingOnDock && !isOnBoat && <span>SUMMON & SAIL</span>}
               </div>
               <div style={{ fontSize: 10, color: "#fff", background: "#302820", padding: "2px 5px", borderRadius: 2 }}>SPACE/A</div>
             </div>
