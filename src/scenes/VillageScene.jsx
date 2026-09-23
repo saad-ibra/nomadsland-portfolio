@@ -64,7 +64,7 @@ export default function VillageScene() {
   const canWalk = useCallback((c, r) => {
     if (c < 0 || c >= MAP_COLS || r < 0 || r >= MAP_ROWS) return false;
     if (c === 9 && r === 22) return false; // Saad NPC
-    if (!isSailing && c >= 15 && c <= 20 && r === 9) return false; // Block top bridge to music room
+    
     if (!isSailing && SHOP_TILES.has(`${c},${r}`)) return false; // doors
 
     const t = MAP[r][c];
@@ -173,10 +173,7 @@ export default function VillageScene() {
           setPhase("intro");
           return;
         }
-        if (nx >= 15 && nx <= 20 && ny === 9) {
-          setShowComingSoon(true);
-          return;
-        }
+
 
         if (nearShop) {
           const shop = SHOPS.find(s => s.id === nearShop);
@@ -720,87 +717,6 @@ export default function VillageScene() {
         );
       }
 
-      // Render a road construction barricade on the bridge entrance
-      if (r === 9 && c === 15) {
-        const BX = 17 * TILE; // center x of barricade group
-        const BY = 9 * TILE;  // top y
-        const Z  = 9 * 10 + 5;
-        const coneColor = "#ff6600";
-
-        visibleTiles.push(
-          <div key="bridge-barricade" style={{ position: "absolute", left: 0, top: 0, zIndex: Z, pointerEvents: "none" }}>
-
-            {/* ── LEFT TRAFFIC CONE ── */}
-            <div style={{ position: "absolute", left: BX - TILE * 1.5, top: BY + 4 }}>
-              {/* cone body */}
-              <div style={{ width: 10, height: 14, background: coneColor,
-                clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", margin: "0 auto" }} />
-              {/* white stripe */}
-              <div style={{ position: "absolute", top: 6, left: 1, width: 8, height: 2, background: "#fff", opacity: 0.8 }} />
-              {/* base */}
-              <div style={{ width: 14, height: 3, background: "#cc4400", borderRadius: 1, marginTop: -1 }} />
-            </div>
-
-            {/* ── RIGHT TRAFFIC CONE ── */}
-            <div style={{ position: "absolute", left: BX + TILE * 1.5 - 4, top: BY + 4 }}>
-              <div style={{ width: 10, height: 14, background: coneColor,
-                clipPath: "polygon(50% 0%, 0% 100%, 100% 100%)", margin: "0 auto" }} />
-              <div style={{ position: "absolute", top: 6, left: 1, width: 8, height: 2, background: "#fff", opacity: 0.8 }} />
-              <div style={{ width: 14, height: 3, background: "#cc4400", borderRadius: 1, marginTop: -1 }} />
-            </div>
-
-            {/* ── SAWHORSE BARRICADE ── */}
-            {/* Striped board - top */}
-            <div style={{
-              position: "absolute", left: BX - TILE * 1.2, top: BY + 5,
-              width: TILE * 2.4, height: 7,
-              background: "repeating-linear-gradient(90deg, #ff6600 0px, #ff6600 8px, #fff 8px, #fff 16px)",
-              border: "1px solid #aa3300", borderRadius: 1,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.7)",
-            }} />
-            {/* Striped board - bottom */}
-            <div style={{
-              position: "absolute", left: BX - TILE * 1.2, top: BY + 14,
-              width: TILE * 2.4, height: 7,
-              background: "repeating-linear-gradient(90deg, #fff 0px, #fff 8px, #ff6600 8px, #ff6600 16px)",
-              border: "1px solid #aa3300", borderRadius: 1,
-              boxShadow: "0 1px 3px rgba(0,0,0,0.7)",
-            }} />
-            {/* Left leg */}
-            <div style={{
-              position: "absolute", left: BX - TILE * 0.8, top: BY + 19,
-              width: 4, height: 10, background: "#8b6200",
-              transform: "rotate(-12deg)", transformOrigin: "top center",
-            }} />
-            {/* Right leg */}
-            <div style={{
-              position: "absolute", left: BX + TILE * 0.7, top: BY + 19,
-              width: 4, height: 10, background: "#8b6200",
-              transform: "rotate(12deg)", transformOrigin: "top center",
-            }} />
-            {/* Center support post */}
-            <div style={{
-              position: "absolute", left: BX - 2, top: BY + 5,
-              width: 4, height: 24, background: "#7a5500",
-            }} />
-
-            {/* ── FLASHING AMBER BEACON ── */}
-            <div style={{
-              position: "absolute", left: BX - 5, top: BY - 6,
-              width: 10, height: 6,
-              background: "#ffcc00",
-              borderRadius: "50% 50% 2px 2px",
-              boxShadow: "0 0 6px 3px rgba(255,204,0,0.7)",
-              animation: "beaconFlash 1.2s step-end infinite",
-            }} />
-            {/* Beacon pole */}
-            <div style={{
-              position: "absolute", left: BX - 1, top: BY - 1,
-              width: 2, height: 7, background: "#555",
-            }} />
-          </div>
-        );
-      }
     }
   }
 
