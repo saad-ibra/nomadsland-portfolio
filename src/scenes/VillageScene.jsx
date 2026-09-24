@@ -973,11 +973,11 @@ export default function VillageScene() {
                 {SHOPS.map(shop => {
                   const colors = {
                     newsroom: "#d84040", library: "#8a40d8",
-                    musicroom: "#886633", lab: "#40d860",
+                    musicroom: "#d8a040", lab: "#40d860",
                     nomadshome: "#408ad8", dock: "#a07040",
                   };
-                  // Music room shows on minimap but greyed out (locked)
-                  const isLocked = shop.id === "musicroom";
+                  // Music room is now unlocked and colored
+                  const isLocked = false;
                   return (
                     <rect
                       key={shop.id}
