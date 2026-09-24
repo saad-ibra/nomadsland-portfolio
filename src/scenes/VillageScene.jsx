@@ -953,9 +953,6 @@ export default function VillageScene() {
                           }
                           if (shop.id === "dock") {
                             setPos({ col: 29, row: 27 });
-                          } else if (shop.id === "musicroom") {
-                            // Place player at the entrance of the bridge on the left
-                            setPos({ col: 13, row: 8 });
                           } else {
                             setPos({ col: shop.col, row: shop.row + 1 });
                           }
