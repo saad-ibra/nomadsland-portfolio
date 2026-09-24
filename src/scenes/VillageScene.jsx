@@ -929,9 +929,9 @@ export default function VillageScene() {
                 {/* Building markers — clickable */}
                 {SHOPS.map(shop => {
                   const colors = {
-                    newsroom: "#d84040", library: "#8a40d8",
-                    musicroom: "#d8a040", lab: "#40d860",
-                    nomadshome: "#408ad8", dock: "#a07040",
+                    newsroom: "#2A3F5C", library: "#8B4A3C",
+                    musicroom: "#5C2A4D", lab: "#4A5560",
+                    nomadshome: "#C99A4A", dock: "#8e5c26",
                   };
                   // Music room is now unlocked and colored
                   const isLocked = false;
