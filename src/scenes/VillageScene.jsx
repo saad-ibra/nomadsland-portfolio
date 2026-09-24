@@ -789,49 +789,6 @@ export default function VillageScene() {
               <Building key={shop.id} shop={shop} isNear={nearShop === shop.id} />
             ))}
 
-            {/* Under Construction Sign for Music Room Dock — visual hazard icon */}
-            <div style={{
-              position: "absolute",
-              left: 33 * TILE + 4,
-              top: 5 * TILE,
-              width: TILE - 8,
-              height: TILE + 4,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              zIndex: 5 * 10 + 4
-            }}>
-              {/* Sign Board with hazard stripes */}
-              <div style={{
-                width: 26, height: 18, border: "2px solid #8e5c26",
-                background: "repeating-linear-gradient(135deg, #ff9900 0px, #ff9900 4px, #222 4px, #222 8px)",
-                boxShadow: "0 2px 0 rgba(0,0,0,0.3)",
-                position: "relative",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                {/* Warning triangle */}
-                <div style={{
-                  width: 0, height: 0,
-                  borderLeft: "6px solid transparent",
-                  borderRight: "6px solid transparent",
-                  borderBottom: "10px solid #ffcc00",
-                  filter: "drop-shadow(0 0 2px rgba(0,0,0,0.5))",
-                }} />
-                {/* Exclamation dot */}
-                <div style={{
-                  position: "absolute", top: 11, left: "50%", marginLeft: -1,
-                  width: 2, height: 2, background: "#222",
-                }} />
-                {/* Exclamation line */}
-                <div style={{
-                  position: "absolute", top: 6, left: "50%", marginLeft: -1,
-                  width: 2, height: 4, background: "#222",
-                }} />
-              </div>
-              {/* Sign Post */}
-              <div style={{ width: 4, height: 12, background: "#8e5c26" }} />
-            </div>
-
             {/* Player */}
             <div style={{
               position: "absolute", left: pos.col * TILE, top: pos.row * TILE, 
