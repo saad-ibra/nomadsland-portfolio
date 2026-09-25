@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useEffect, useRef, memo, useMemo } from "react";
+import React, { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import { useSmoothPixelGrid } from '../hooks/useSmoothPixelGrid.js';
 import { useViewport } from '../hooks/useViewport.js';
 import { getSharedAudioCtx } from '../engine/sfx.js';
-import { ArrowLeft, Play, Square, Disc } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import SaadSprite from "../components/sprites/SaadSprite";
@@ -12,7 +12,7 @@ import ExitDoor from "../components/sprites/ExitDoor";
 import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
-import { playWoodStep, playBlip } from "../engine/sfx";
+import { playWoodStep } from "../engine/sfx";
 import { useGame } from '../context/GameContext.jsx';
 
 const MAP_COLS = 24;
@@ -28,8 +28,8 @@ const MAP = Array.from({ length: MAP_ROWS }, (_, r) =>
 const NPC_POS = { col: 6, row: 8 };
 const DIALOGUE_LINES = [
   "Welcome to the studio.",
-  "I've got a gamified 8-bit cover of 'Follow You' loaded on the mixing desk.",
-  "Check it out when you're ready."
+  "I'm working on an 8-bit cover of 'Follow You' by Bring Me The Horizon.",
+  "Take a look around. The mixing desk is visualizing the track right now."
 ];
 
 // === BMTH FOLLOW YOU 8-BIT SYNTH ENGINE ===
@@ -56,228 +56,122 @@ const CHORDS = [
   { root: "E2", third: "G#2", fifth: "B2", t: 12, l: 4 }
 ];
 
-function SynthPlayerModal({ onClose }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [visualizerBars, setVisualizerBars] = useState(Array(16).fill(0));
-  
-  const ctxRef = useRef(null);
-  const startTimeRef = useRef(0);
-  const animRef = useRef(null);
-  const activeNodesRef = useRef([]); // To keep track and stop them
-  const loopLength = 16;
-  const bpm = 90;
-  const beatLen = 60 / bpm; // 0.666 seconds per beat
+const MELODY_STEPS = new Array(64).fill(null);
+MELODY.forEach(m => { MELODY_STEPS[Math.round(m.t * 4)] = { n: m.n, len: Math.round(m.l * 4) }; });
 
-  const scheduleNote = (ctx, freq, type, time, duration, vol) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, time);
-    
-    // Envelope
-    gain.gain.setValueAtTime(0, time);
-    gain.gain.linearRampToValueAtTime(vol, time + 0.05);
-    gain.gain.setValueAtTime(vol, time + duration - 0.1);
-    gain.gain.linearRampToValueAtTime(0, time + duration);
+const CHORD_STEPS = new Array(64).fill(null);
+CHORDS.forEach(c => { CHORD_STEPS[Math.round(c.t * 4)] = { root: c.root, third: c.third, fifth: c.fifth, len: Math.round(c.l * 4) }; });
 
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(time);
-    osc.stop(time + duration);
-    
-    activeNodesRef.current.push({ osc, gain });
-  };
-
-  const playSequence = () => {
-    stopSequence(); // Ensure we clear anything first
-    
-    if (!ctxRef.current) ctxRef.current = getSharedAudioCtx();
-    const ctx = ctxRef.current;
-    if (ctx.state === "suspended") ctx.resume();
-    
-    setIsPlaying(true);
-    startTimeRef.current = ctx.currentTime;
-    
-    // Schedule one loop
-    const t0 = ctx.currentTime + 0.1;
-
-    // Schedule Melody (Square wave)
-    MELODY.forEach(note => {
-      if (FREQ[note.n]) scheduleNote(ctx, FREQ[note.n], "square", t0 + note.t * beatLen, note.l * beatLen, 0.1);
-    });
-
-    // Schedule Chords (Sawtooth wave with filter)
-    CHORDS.forEach(chord => {
-      [chord.root, chord.third, chord.fifth].forEach(note => {
-        if (FREQ[note]) scheduleNote(ctx, FREQ[note], "sawtooth", t0 + chord.t * beatLen, chord.l * beatLen, 0.05);
-      });
-      // Arpeggiator overlay
-      for (let i = 0; i < chord.l * 4; i++) {
-         const arpNotes = [chord.root, chord.third, chord.fifth, chord.third];
-         const n = arpNotes[i % 4];
-         if (FREQ[n]) scheduleNote(ctx, FREQ[n] * 2, "sine", t0 + chord.t * beatLen + i * (beatLen/4), beatLen/4, 0.03);
-      }
-    });
-
-    // Schedule Drums
-    for (let i = 0; i < loopLength; i++) {
-      const time = t0 + i * beatLen;
-      // Kick
-      const kOsc = ctx.createOscillator();
-      const kGain = ctx.createGain();
-      kOsc.frequency.setValueAtTime(150, time);
-      kOsc.frequency.exponentialRampToValueAtTime(0.01, time + 0.5);
-      kGain.gain.setValueAtTime(0.5, time);
-      kGain.gain.exponentialRampToValueAtTime(0.01, time + 0.5);
-      kOsc.connect(kGain);
-      kGain.connect(ctx.destination);
-      kOsc.start(time);
-      kOsc.stop(time + 0.5);
-      activeNodesRef.current.push({ osc: kOsc, gain: kGain });
-      
-      // Snare on 2 and 4
-      if (i % 2 === 1) {
-         const nOsc = ctx.createOscillator();
-         const nGain = ctx.createGain();
-         nOsc.type = "square";
-         nOsc.frequency.setValueAtTime(200, time);
-         nGain.gain.setValueAtTime(0.2, time);
-         nGain.gain.exponentialRampToValueAtTime(0.01, time + 0.2);
-         nOsc.connect(nGain);
-         nGain.connect(ctx.destination);
-         nOsc.start(time);
-         nOsc.stop(time + 0.2);
-         activeNodesRef.current.push({ osc: nOsc, gain: nGain });
-      }
-    }
-
-    const updateUI = () => {
-       const elapsed = ctx.currentTime - startTimeRef.current;
-       const totalTime = loopLength * beatLen;
-       if (elapsed >= totalTime) {
-         setIsPlaying(false);
-         setProgress(0);
-         setVisualizerBars(Array(16).fill(0));
-         return;
-       }
-       setProgress((elapsed / totalTime) * 100);
-       setVisualizerBars(bars => bars.map(() => Math.random() * 100));
-       animRef.current = requestAnimationFrame(updateUI);
-    };
-    animRef.current = requestAnimationFrame(updateUI);
-  };
-
-  const stopSequence = () => {
-    setIsPlaying(false);
-    setProgress(0);
-    setVisualizerBars(Array(16).fill(0));
-    if (animRef.current) cancelAnimationFrame(animRef.current);
-    
-    // Stop all active nodes gracefully
-    if (ctxRef.current) {
-        const t = ctxRef.current.currentTime;
-        activeNodesRef.current.forEach(({ osc, gain }) => {
-            try {
-                gain.gain.cancelScheduledValues(t);
-                gain.gain.setValueAtTime(gain.gain.value, t);
-                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-                osc.stop(t + 0.05);
-            } catch (e) {}
-        });
-    }
-    activeNodesRef.current = [];
-  };
-
-  useEffect(() => {
-    return () => {
-      stopSequence();
-    };
-  }, []);
-
-  return (
-    <div onClick={onClose} style={{
-      position: "absolute", inset: 0, background: "rgba(0,0,0,0.85)",
-      display: "flex", alignItems: "center", justifyContent: "center", zIndex: 6000
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        background: "#18181b", border: "4px solid #3f3f46", borderRadius: 12,
-        width: 480, maxWidth: "90%", padding: 24, boxShadow: "0 20px 50px rgba(0,0,0,0.8), inset 0 0 0 2px #000",
-        display: "flex", flexDirection: "column", gap: 20
-      }}>
-        {/* Screen */}
-        <div style={{
-          background: "#020617", border: "2px solid #000", borderRadius: 8, padding: 16,
-          boxShadow: "inset 0 0 20px rgba(16, 185, 129, 0.1)", position: "relative", overflow: "hidden"
-        }}>
-          {/* Scanlines */}
-          <div style={{ position: "absolute", inset: 0, background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.4) 2px, rgba(0,0,0,0.4) 4px)", pointerEvents: "none" }} />
-          
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div style={{ color: "#10b981", fontSize: 14, fontFamily: "'Micro 5', monospace", textTransform: "uppercase", letterSpacing: 2, display: "flex", alignItems: "center", gap: 8 }}>
-              <Disc size={14} className={isPlaying ? "spin-anim" : ""} />
-              BMTH - Follow You (8-Bit)
-            </div>
-            <div style={{ color: isPlaying ? "#10b981" : "#ef4444", fontSize: 12, fontFamily: "'Micro 5', monospace", animation: isPlaying ? "pulse 1s infinite" : "none" }}>
-              {isPlaying ? "● PLAYING" : "■ STOPPED"}
-            </div>
-          </div>
-
-          {/* Visualizer */}
-          <div style={{ height: 60, display: "flex", alignItems: "flex-end", gap: 4, margin: "16px 0" }}>
-            {visualizerBars.map((h, i) => (
-              <div key={i} style={{
-                flex: 1, background: `linear-gradient(to top, #10b981, #34d399, #6ee7b7)`,
-                height: `${isPlaying ? Math.max(10, h) : 5}%`, transition: "height 0.1s ease",
-                borderRadius: "2px 2px 0 0", opacity: 0.8
-              }} />
-            ))}
-          </div>
-
-          {/* Progress bar */}
-          <div style={{ width: "100%", height: 4, background: "#1f2937", borderRadius: 2, overflow: "hidden", marginTop: 8 }}>
-            <div style={{ width: `${progress}%`, height: "100%", background: "#10b981", transition: "width 0.1s linear" }} />
-          </div>
-        </div>
-
-        {/* Controls */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", gap: 12 }}>
-            <button onClick={isPlaying ? stopSequence : playSequence} style={{
-              background: isPlaying ? "#3f3f46" : "#10b981", color: isPlaying ? "#a1a1aa" : "#022c22",
-              border: "none", padding: "12px 24px", borderRadius: 6, cursor: "pointer",
-              fontFamily: "'Micro 5', monospace", fontSize: 18, display: "flex", alignItems: "center", gap: 8,
-              boxShadow: isPlaying ? "inset 0 4px 8px rgba(0,0,0,0.5)" : "0 4px 0 #047857",
-              transform: isPlaying ? "translateY(4px)" : "translateY(0)", transition: "all 0.1s"
-            }}>
-              {isPlaying ? <Square size={16} fill="currentColor" /> : <Play size={16} fill="currentColor" />}
-              {isPlaying ? "STOP" : "PLAY LOOP"}
-            </button>
-          </div>
-          <button onClick={onClose} style={{
-            background: "transparent", color: "#a1a1aa", border: "2px solid #52525b",
-            padding: "8px 16px", borderRadius: 6, cursor: "pointer", fontFamily: "'Micro 5', monospace", fontSize: 16
-          }}>CLOSE</button>
-        </div>
-        
-        <style>{`
-          @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-          .spin-anim { animation: spin 2s linear infinite; }
-          @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        `}</style>
-      </div>
-    </div>
-  );
-}
 
 function MusicRoomScene() {
-  const { speedMultiplier, isLandscape, isTransitioning, changeScene, isConsoleMinimized } = useGame();
+  const { speedMultiplier, isLandscape, isTransitioning, changeScene, isConsoleMinimized, musicPlaying, musicMuted, musicVolume } = useGame();
   const viewport = useViewport(isLandscape, isConsoleMinimized);
   const { scale, internalW, internalH } = viewport;
   const [phase, setPhase] = useState("intro");
   const [dialogueIndex, setDialogueIndex] = useState(0);
-  const [showSynth, setShowSynth] = useState(false);
   const containerRef = useRef(null);
+  const musicRef = useRef({ audioCtx: null, interval: null });
+
+  // === BACKGROUND MUSIC LOOP ===
+  const playStep = useCallback((idx, vol, muted) => {
+    if (muted || vol === 0) return;
+    try {
+      if (!musicRef.current.audioCtx) musicRef.current.audioCtx = getSharedAudioCtx();
+      const ctx = musicRef.current.audioCtx;
+      if (ctx.state === "suspended") ctx.resume();
+
+      const t = ctx.currentTime;
+      const si = idx % 64; // 64 sixteenth notes in a 16-beat loop
+      const beatLen = 60 / 90; // 90 BPM = 0.666s per beat
+      const stepLen = beatLen / 4; // ~0.166s per 16th note
+
+      // Helper to schedule notes
+      const scheduleNote = (freq, type, duration, amp) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, t);
+        
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(amp * vol, t + 0.02);
+        gain.gain.setValueAtTime(amp * vol, t + duration - 0.05);
+        gain.gain.linearRampToValueAtTime(0, t + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + duration);
+      };
+
+      // Play Melody
+      const mNote = MELODY_STEPS[si];
+      if (mNote && FREQ[mNote.n]) {
+        scheduleNote(FREQ[mNote.n], "square", mNote.len * stepLen, 0.1);
+      }
+
+      // Play Chords
+      const cNote = CHORD_STEPS[si];
+      if (cNote) {
+        [cNote.root, cNote.third, cNote.fifth].forEach(n => {
+          if (FREQ[n]) scheduleNote(FREQ[n], "sawtooth", cNote.len * stepLen, 0.05);
+        });
+      }
+
+      // Continuous Arpeggio over the chords (every 16th note)
+      // Find active chord
+      const activeChordIdx = Math.floor(si / 16); // 16 steps per chord
+      const c = CHORDS[activeChordIdx];
+      if (c) {
+         const arpNotes = [c.root, c.third, c.fifth, c.third];
+         const n = arpNotes[si % 4];
+         if (FREQ[n]) scheduleNote(FREQ[n] * 2, "sine", stepLen, 0.03);
+      }
+
+      // Drums
+      // Kick on every beat (steps 0, 4, 8, 12...)
+      if (si % 4 === 0) {
+        const kOsc = ctx.createOscillator();
+        const kGain = ctx.createGain();
+        kOsc.frequency.setValueAtTime(150, t);
+        kOsc.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
+        kGain.gain.setValueAtTime(0.5 * vol, t);
+        kGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+        kOsc.connect(kGain);
+        kGain.connect(ctx.destination);
+        kOsc.start(t);
+        kOsc.stop(t + 0.5);
+      }
+      
+      // Snare on beat 2 and 4 (steps 4, 12, 20, 28...)
+      if (si % 8 === 4) {
+         const nOsc = ctx.createOscillator();
+         const nGain = ctx.createGain();
+         nOsc.type = "square";
+         nOsc.frequency.setValueAtTime(200, t);
+         nGain.gain.setValueAtTime(0.2 * vol, t);
+         nGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
+         nOsc.connect(nGain);
+         nGain.connect(ctx.destination);
+         nOsc.start(t);
+         nOsc.stop(t + 0.2);
+      }
+
+    } catch (e) {}
+  }, []);
+
+  useEffect(() => {
+    if (!musicPlaying) {
+      if (musicRef.current.interval) clearInterval(musicRef.current.interval);
+      return;
+    }
+    let step = 0;
+    const ms = Math.round(((60 / 90) / 4) * 1000 / speedMultiplier);
+    musicRef.current.interval = setInterval(() => {
+      playStep(step++, musicVolume, musicMuted);
+    }, ms);
+    return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
+  }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
+
 
   const isWalkable = (c, r) => {
     if (c === NPC_POS.col && r === NPC_POS.row) return false;
@@ -297,7 +191,7 @@ function MusicRoomScene() {
 
   const { pos, facing, stepping, setPath, tapTarget, triggerAction } = usePlayerMovement({
     initialPos: { col: 3, row: 2 },
-    isActive: phase === "free" && !isTransitioning && !showSynth,
+    isActive: phase === "free" && !isTransitioning,
     canWalk: isWalkable,
     speedMultiplier,
     onBump: (c, r) => {
@@ -311,30 +205,26 @@ function MusicRoomScene() {
       if (checkC === NPC_POS.col && checkR === NPC_POS.row) {
         setDialogueIndex(0); setPhase("talking"); return;
       }
-      if (checkC >= 9 && checkC <= 15 && checkR >= 4 && checkR <= 5) {
-        playBlip(); setShowSynth(true); return;
-      }
     }
   });
 
   const playerRef = useRef(null);
   const worldRef = useRef(null);
   useSmoothPixelGrid({ pos, internalW, internalH, mapCols: MAP_COLS, mapRows: MAP_ROWS, speedMultiplier, worldRef, playerRef });
-  const handleWorldTap = useTapToMove(worldRef, pos, isWalkable, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning && !showSynth);
+  const handleWorldTap = useTapToMove(worldRef, pos, isWalkable, setPath, MAP_COLS, MAP_ROWS, phase === "free" && !isTransitioning);
 
   const activePrompt = useMemo(() => {
-    if (phase !== "free" || isTransitioning || showSynth) return null;
+    if (phase !== "free" || isTransitioning) return null;
     let checkR = pos.row; let checkC = pos.col;
     if (facing === "up") checkR--; else if (facing === "down") checkR++; else if (facing === "left") checkC--; else if (facing === "right") checkC++;
     
     if (checkC === NPC_POS.col && checkR === NPC_POS.row) return "TALK TO SAAD";
-    if (checkC >= 9 && checkC <= 15 && checkR >= 4 && checkR <= 5) return "USE MIXING DESK";
     if (checkC >= 3 && checkC <= 5 && checkR >= 13 && checkR <= 15) return "GUITARS";
     if (checkC >= 18 && checkC <= 21 && checkR >= 12 && checkR <= 15) return "DRUM KIT";
     if (checkC >= 20 && checkC <= 22 && checkR >= 2 && checkR <= 4) return "VINYL CRATES";
     
     return null;
-  }, [pos, facing, phase, isTransitioning, showSynth]);
+  }, [pos, facing, phase, isTransitioning]);
 
   return (
     <div ref={containerRef} style={{
@@ -347,7 +237,7 @@ function MusicRoomScene() {
             
             <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", transform: "translate(0px, 0px)", willChange: "transform", width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
               <TapMarker tapTarget={tapTarget} TILE={TILE} />
-              <StaticWorld />
+              <StaticWorld musicPlaying={musicPlaying} />
               <ExitDoor col={3} row={0} />
 
               <div style={{
@@ -393,11 +283,10 @@ function MusicRoomScene() {
               <DialogueBox lines={DIALOGUE_LINES} lineIndex={dialogueIndex} onAdvance={() => setDialogueIndex(i => i + 1)} onDismiss={() => setPhase("free")} speaker="SAAD IBRA" theme="music" lastButtonLabel="GOT IT" />
             )}
             
-            {showSynth && <SynthPlayerModal onClose={() => setShowSynth(false)} />}
-            
             <style>{`
               @keyframes dialogBlink { 0%,100%{opacity:1} 50%{opacity:0} }
               @keyframes npcBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+              @keyframes eqBounce { 0% { height: 10%; } 100% { height: 95%; } }
             `}</style>
           </div>
         </div>
@@ -407,7 +296,7 @@ function MusicRoomScene() {
   );
 }
 
-const StaticWorld = memo(() => (
+const StaticWorld = memo(({ musicPlaying }) => (
   <>
     {/* Floor */}
     <div style={{ position: "absolute", left: TILE, top: TILE, width: (MAP_COLS-2)*TILE, height: (MAP_ROWS-2)*TILE, background: "#2C1B18" }}>
@@ -429,9 +318,17 @@ const StaticWorld = memo(() => (
     
     {/* Mixing Desk */}
     <div style={{ position: "absolute", left: 9*TILE, top: 4*TILE, width: 7*TILE, height: 2*TILE, background: "#222", border: "2px solid #000", borderRadius: 4, display: "flex", justifyContent: "center", alignItems: "center", gap: 16 }}>
-        <div style={{ width: 64, height: 32, background: "#111", border: "1px solid #444", display: "flex", flexDirection: "column", gap: 2, padding: 2 }}>
-          <div style={{ display: "flex", gap: 2, flex: 1 }}>
-              {Array.from({length: 12}).map((_,i) => <div key={i} style={{ flex: 1, background: i%3===0 ? "#f00" : "#0f0", height: Math.random() * 20 + 4, alignSelf: "flex-end" }} />)}
+        {/* Mixing Screen (Animated Equalizer) */}
+        <div style={{ width: 64, height: 32, background: "#111", border: "1px solid #444", display: "flex", flexDirection: "column", gap: 2, padding: 2, overflow: "hidden" }}>
+          <div style={{ display: "flex", gap: 2, flex: 1, alignItems: "flex-end" }}>
+              {Array.from({length: 14}).map((_,i) => (
+                <div key={i} style={{ 
+                  flex: 1, 
+                  background: i % 4 === 0 ? "#ef4444" : (i % 2 === 0 ? "#f59e0b" : "#10b981"), 
+                  height: "20%",
+                  animation: musicPlaying ? `eqBounce ${0.2 + (i%5)*0.1}s infinite alternate ease-in-out` : "none" 
+                }} />
+              ))}
           </div>
         </div>
         <div style={{ position: "absolute", top: 2.2*TILE, left: "50%", transform: "translateX(-50%)", width: 24, height: 24, background: "#1A1A1A", borderRadius: "50%", border: "2px solid #000" }} />
