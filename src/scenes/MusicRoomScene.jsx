@@ -19,48 +19,145 @@ const MAP_COLS = 24;
 const MAP_ROWS = 18;
 const MAP = Array.from({ length: MAP_ROWS }, (_, r) => 
   Array.from({ length: MAP_COLS }, (_, c) => {
-    if (r === 0 || r === MAP_ROWS - 1 || c === 0 || c === MAP_COLS - 1) return 2; // walls
-    if (c >= 6 && c <= 18 && r >= 6 && r <= 12) return 3; // studio rug
-    return 1; // floor
+    if (r === 0 || r === MAP_ROWS - 1 || c === 0 || c === MAP_COLS - 1) return 2;
+    if (c >= 6 && c <= 18 && r >= 6 && r <= 12) return 3;
+    return 1;
   })
 );
 
 const NPC_POS = { col: 6, row: 8 };
 const DIALOGUE_LINES = [
   "Welcome to the studio.",
-  "I'm working on an 8-bit cover of 'Follow You' by Bring Me The Horizon.",
+  "I've got an 8-bit cover of 'Follow You' by Bring Me The Horizon playing.",
   "Take a look around. The mixing desk is visualizing the track right now."
 ];
 
-// === BMTH FOLLOW YOU 8-BIT SYNTH ENGINE ===
-const FREQ = {
-  "E2": 82.41, "F#2": 92.50, "G#2": 103.83, "A2": 110.00, "B2": 123.47, "C#3": 138.59, "D3": 146.83,
-  "E3": 164.81, "F#3": 185.00, "G#3": 207.65, "A3": 220.00, "B3": 246.94, "C#4": 277.18, "D4": 293.66, "E4": 329.63,
-  "F#4": 369.99, "G#4": 415.30, "A4": 440.00, "B4": 493.88
+// =====================================================================
+//  BMTH "FOLLOW YOU" — FULL 8-BIT CHIPTUNE ARRANGEMENT
+//  Key: B major / G# minor (simplified from Eb minor for cleaner freqs)
+//  BPM: 145 (original tempo)
+//  Structure: 32-beat loop = 8-bar verse phrase + 8-bar chorus phrase
+// =====================================================================
+
+const NOTE = {
+  // Octave 2
+  "B2":  123.47, "C#3": 138.59, "D#3": 155.56, "E3":  164.81, "F#3": 185.00, "G#3": 207.65, "A3":  220.00,
+  // Octave 3
+  "B3":  246.94, "C#4": 277.18, "D#4": 311.13, "E4":  329.63, "F#4": 369.99, "G#4": 415.30, "A4":  440.00,
+  // Octave 4
+  "B4":  493.88, "C#5": 554.37, "D#5": 622.25, "E5":  659.26, "F#5": 739.99, "G#5": 830.61,
+  // Bass octave
+  "E2":  82.41, "F#2": 92.50, "G#2": 103.83, "A2":  110.00,
+  "D#2": 77.78, "C#2": 69.30, "B1": 61.74,
 };
 
-const MELODY = [
-  { n: "C#4", t: 0, l: 0.5 }, { n: "C#4", t: 0.5, l: 0.5 }, { n: "C#4", t: 1, l: 0.5 }, { n: "B3",  t: 1.5, l: 0.5 },
-  { n: "A3",  t: 2, l: 0.5 }, { n: "F#3", t: 2.5, l: 0.5 }, { n: "F#3", t: 3, l: 1 },
-  { n: "F#3", t: 4, l: 0.5 }, { n: "C#4", t: 4.5, l: 0.5 }, { n: "C#4", t: 5, l: 0.5 }, { n: "B3",  t: 5.5, l: 0.5 },
-  { n: "A3",  t: 6, l: 0.5 }, { n: "B3",  t: 6.5, l: 0.5 }, { n: "A3",  t: 7, l: 1 },
-  { n: "A3",  t: 8, l: 0.5 }, { n: "A3",  t: 8.5, l: 0.5 }, { n: "B3",  t: 9, l: 0.5 }, { n: "C#4", t: 9.5, l: 1.5 },
-  { n: "A3",  t: 11, l: 0.5 }, { n: "C#4", t: 11.5, l: 0.5 }, { n: "B3",  t: 12, l: 0.5 }, { n: "A3",  t: 12.5, l: 0.5 },
-  { n: "F#3", t: 13, l: 0.5 }, { n: "F#3", t: 13.5, l: 1.5 }
+// Each beat = 1 quarter note at 145 BPM
+// 32 beats total, 128 sixteenth-note steps
+
+// ── CHORD PROGRESSION (per 4 beats) ──
+// Verse:  B  | G#m | E   | F#
+// Chorus: B  | G#m | E   | F#
+const CHORD_MAP = [
+  // Verse (beats 0-15)
+  { notes: ["B2","D#3","F#3"],  bass: "B1",  from: 0,  to: 4  },
+  { notes: ["G#3","B3","D#4"], bass: "G#2", from: 4,  to: 8  },
+  { notes: ["E3","G#3","B3"],  bass: "E2",  from: 8,  to: 12 },
+  { notes: ["F#3","A3","C#4"], bass: "F#2", from: 12, to: 16 },
+  // Chorus (beats 16-31)
+  { notes: ["B3","D#4","F#4"],  bass: "B2",  from: 16, to: 20 },
+  { notes: ["G#3","B3","D#4"], bass: "G#2", from: 20, to: 24 },
+  { notes: ["E3","G#3","B3"],  bass: "E2",  from: 24, to: 28 },
+  { notes: ["F#3","A3","C#4"], bass: "F#2", from: 28, to: 32 },
 ];
 
-const CHORDS = [
-  { root: "F#2", third: "A2", fifth: "C#3", t: 0, l: 4 },
-  { root: "D3", third: "F#3", fifth: "A3", t: 4, l: 4 },
-  { root: "A2", third: "C#3", fifth: "E3", t: 8, l: 4 },
-  { root: "E2", third: "G#2", fifth: "B2", t: 12, l: 4 }
+// ── VERSE MELODY (beats 0-15) ──
+// "So you can drag me through hell / if it meant I could hold your hand"
+const VERSE_MELODY = [
+  // Phrase 1: "So you can drag me through hell"
+  { n: "F#4", t: 0,    l: 0.5 },
+  { n: "F#4", t: 0.5,  l: 0.5 },
+  { n: "F#4", t: 1,    l: 0.5 },
+  { n: "E4",  t: 1.5,  l: 0.5 },
+  { n: "D#4", t: 2,    l: 0.5 },
+  { n: "C#4", t: 2.5,  l: 0.5 },
+  { n: "B3",  t: 3,    l: 1   },
+  // Phrase 2: "if it meant I could hold your hand"
+  { n: "B3",  t: 4,    l: 0.5 },
+  { n: "C#4", t: 4.5,  l: 0.5 },
+  { n: "D#4", t: 5,    l: 0.5 },
+  { n: "D#4", t: 5.5,  l: 0.5 },
+  { n: "C#4", t: 6,    l: 0.5 },
+  { n: "B3",  t: 6.5,  l: 0.5 },
+  { n: "G#3", t: 7,    l: 1   },
+  // Phrase 3: "I will follow you"
+  { n: "E4",  t: 8,    l: 0.75 },
+  { n: "D#4", t: 8.75, l: 0.25 },
+  { n: "C#4", t: 9,    l: 0.5  },
+  { n: "B3",  t: 9.5,  l: 1.5  },
+  // Phrase 4: "cause I'm under your spell"
+  { n: "B3",  t: 11,   l: 0.5 },
+  { n: "C#4", t: 11.5, l: 0.5 },
+  { n: "D#4", t: 12,   l: 0.5 },
+  { n: "F#4", t: 12.5, l: 0.5 },
+  { n: "E4",  t: 13,   l: 0.5 },
+  { n: "D#4", t: 13.5, l: 0.5 },
+  { n: "C#4", t: 14,   l: 2   },
 ];
 
-const MELODY_STEPS = new Array(64).fill(null);
-MELODY.forEach(m => { MELODY_STEPS[Math.round(m.t * 4)] = { n: m.n, len: Math.round(m.l * 4) }; });
+// ── CHORUS MELODY (beats 16-31) ──
+// "I will follow you / 'cause I'm under your spell"
+const CHORUS_MELODY = [
+  // "I will follow you" — big, soaring
+  { n: "F#4", t: 16,   l: 1   },
+  { n: "G#4", t: 17,   l: 0.5 },
+  { n: "F#4", t: 17.5, l: 0.5 },
+  { n: "E4",  t: 18,   l: 0.5 },
+  { n: "D#4", t: 18.5, l: 0.5 },
+  { n: "B3",  t: 19,   l: 1   },
+  // "I will follow you" — repeat up
+  { n: "F#4", t: 20,   l: 1   },
+  { n: "G#4", t: 21,   l: 0.5 },
+  { n: "B4",  t: 21.5, l: 0.5 },
+  { n: "G#4", t: 22,   l: 0.5 },
+  { n: "F#4", t: 22.5, l: 0.5 },
+  { n: "E4",  t: 23,   l: 1   },
+  // "'cause I'm under your spell"
+  { n: "E4",  t: 24,   l: 0.5 },
+  { n: "F#4", t: 24.5, l: 0.5 },
+  { n: "G#4", t: 25,   l: 0.5 },
+  { n: "F#4", t: 25.5, l: 0.5 },
+  { n: "E4",  t: 26,   l: 0.5 },
+  { n: "D#4", t: 26.5, l: 0.5 },
+  { n: "B3",  t: 27,   l: 1   },
+  // Resolution
+  { n: "C#4", t: 28,   l: 0.5 },
+  { n: "D#4", t: 28.5, l: 0.5 },
+  { n: "E4",  t: 29,   l: 0.5 },
+  { n: "F#4", t: 29.5, l: 0.5 },
+  { n: "D#4", t: 30,   l: 1   },
+  { n: "B3",  t: 31,   l: 1   },
+];
 
-const CHORD_STEPS = new Array(64).fill(null);
-CHORDS.forEach(c => { CHORD_STEPS[Math.round(c.t * 4)] = { root: c.root, third: c.third, fifth: c.fifth, len: Math.round(c.l * 4) }; });
+const ALL_MELODY = [...VERSE_MELODY, ...CHORUS_MELODY];
+
+// ── BASS PATTERN ──
+// Root-octave pulse pattern — plays root on beat, octave on "and"
+function getBassNote(beat) {
+  const chord = CHORD_MAP.find(c => beat >= c.from && beat < c.to);
+  if (!chord) return null;
+  return chord.bass;
+}
+
+// ── DRUM PATTERN (per beat, 0-3 = subdivisions) ──
+// Kick: beats 1 and 3 of each 4-beat bar
+// Snare: beats 2 and 4
+// Hi-hat: every 8th note
+// Open hat: on the "and" of beat 4
+
+const TOTAL_STEPS = 128; // 32 beats * 4 subdivisions
+const BPM = 145;
+const BEAT_LEN = 60 / BPM;
+const STEP_LEN = BEAT_LEN / 4;
 
 
 function MusicRoomScene() {
@@ -72,7 +169,7 @@ function MusicRoomScene() {
   const containerRef = useRef(null);
   const musicRef = useRef({ audioCtx: null, interval: null });
 
-  // === BACKGROUND MUSIC LOOP ===
+  // === BACKGROUND MUSIC — STEP SEQUENCER ===
   const playStep = useCallback((idx, vol, muted) => {
     if (muted || vol === 0) return;
     try {
@@ -81,79 +178,228 @@ function MusicRoomScene() {
       if (ctx.state === "suspended") ctx.resume();
 
       const t = ctx.currentTime;
-      const si = idx % 64; // 64 sixteenth notes in a 16-beat loop
-      const beatLen = 60 / 90; // 90 BPM = 0.666s per beat
-      const stepLen = beatLen / 4; // ~0.166s per 16th note
+      const si = idx % TOTAL_STEPS; // 0-127
+      const beat = si / 4;          // 0.00 - 31.75
 
-      // Helper to schedule notes
-      const scheduleNote = (freq, type, duration, amp) => {
+      // ── LEAD MELODY (pulse wave + lowpass filter) ──
+      const melodyNote = ALL_MELODY.find(m => Math.abs(m.t * 4 - si) < 0.5 && si === Math.round(m.t * 4));
+      if (melodyNote && NOTE[melodyNote.n]) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, t);
+        const filter = ctx.createBiquadFilter();
         
+        osc.type = "square";
+        osc.frequency.setValueAtTime(NOTE[melodyNote.n], t);
+        
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(2400, t);
+        filter.Q.setValueAtTime(2, t);
+        
+        const dur = melodyNote.l * BEAT_LEN;
+        const amp = (beat >= 16 ? 0.1 : 0.07) * vol; // chorus louder
         gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(amp * vol, t + 0.02);
-        gain.gain.setValueAtTime(amp * vol, t + duration - 0.05);
-        gain.gain.linearRampToValueAtTime(0, t + duration);
-
-        osc.connect(gain);
+        gain.gain.linearRampToValueAtTime(amp, t + 0.015);
+        gain.gain.setValueAtTime(amp * 0.8, t + dur * 0.7);
+        gain.gain.linearRampToValueAtTime(0, t + dur);
+        
+        osc.connect(filter);
+        filter.connect(gain);
         gain.connect(ctx.destination);
         osc.start(t);
-        osc.stop(t + duration);
-      };
-
-      // Play Melody
-      const mNote = MELODY_STEPS[si];
-      if (mNote && FREQ[mNote.n]) {
-        scheduleNote(FREQ[mNote.n], "square", mNote.len * stepLen, 0.1);
+        osc.stop(t + dur + 0.01);
       }
 
-      // Play Chords
-      const cNote = CHORD_STEPS[si];
-      if (cNote) {
-        [cNote.root, cNote.third, cNote.fifth].forEach(n => {
-          if (FREQ[n]) scheduleNote(FREQ[n], "sawtooth", cNote.len * stepLen, 0.05);
+      // ── CHORD PAD (sawtooth, filtered, quiet) ──
+      const chordData = CHORD_MAP.find(c => beat >= c.from && beat < c.to);
+      // Play chord on the first step of each chord change
+      if (chordData && si === chordData.from * 4) {
+        chordData.notes.forEach(n => {
+          if (!NOTE[n]) return;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const filter = ctx.createBiquadFilter();
+          
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(NOTE[n], t);
+          // Slight detune for width
+          osc.detune.setValueAtTime(Math.random() * 10 - 5, t);
+          
+          filter.type = "lowpass";
+          filter.frequency.setValueAtTime(800, t);
+          filter.frequency.exponentialRampToValueAtTime(400, t + 2);
+          
+          const dur = (chordData.to - chordData.from) * BEAT_LEN;
+          const amp = (beat >= 16 ? 0.04 : 0.025) * vol;
+          gain.gain.setValueAtTime(amp, t);
+          gain.gain.setValueAtTime(amp, t + dur * 0.8);
+          gain.gain.linearRampToValueAtTime(0, t + dur);
+          
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + dur + 0.01);
         });
       }
 
-      // Continuous Arpeggio over the chords (every 16th note)
-      // Find active chord
-      const activeChordIdx = Math.floor(si / 16); // 16 steps per chord
-      const c = CHORDS[activeChordIdx];
-      if (c) {
-         const arpNotes = [c.root, c.third, c.fifth, c.third];
-         const n = arpNotes[si % 4];
-         if (FREQ[n]) scheduleNote(FREQ[n] * 2, "sine", stepLen, 0.03);
+      // ── BASS (triangle wave — NES-style) ──
+      // Plays on every beat (every 4 steps) with an octave pulse on the "and"
+      if (si % 4 === 0) {
+        const bassNote = getBassNote(Math.floor(beat));
+        if (bassNote && NOTE[bassNote]) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(NOTE[bassNote], t);
+          
+          const amp = (beat >= 16 ? 0.22 : 0.16) * vol;
+          gain.gain.setValueAtTime(amp, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + BEAT_LEN * 0.9);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + BEAT_LEN);
+        }
+      }
+      // Bass octave hop on the "and" (step 2 of each beat)
+      if (si % 4 === 2) {
+        const bassNote = getBassNote(Math.floor(beat));
+        if (bassNote && NOTE[bassNote]) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(NOTE[bassNote] * 2, t);
+          
+          const amp = (beat >= 16 ? 0.12 : 0.08) * vol;
+          gain.gain.setValueAtTime(amp, t);
+          gain.gain.exponentialRampToValueAtTime(0.01, t + STEP_LEN * 1.5);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + STEP_LEN * 2);
+        }
       }
 
-      // Drums
-      // Kick on every beat (steps 0, 4, 8, 12...)
-      if (si % 4 === 0) {
-        const kOsc = ctx.createOscillator();
-        const kGain = ctx.createGain();
-        kOsc.frequency.setValueAtTime(150, t);
-        kOsc.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
-        kGain.gain.setValueAtTime(0.5 * vol, t);
-        kGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-        kOsc.connect(kGain);
-        kGain.connect(ctx.destination);
-        kOsc.start(t);
-        kOsc.stop(t + 0.5);
+      // ── ARPEGGIO (sine, chorus section only) ──
+      if (beat >= 16 && chordData) {
+        const arpIdx = si % 4;
+        const arpNote = chordData.notes[arpIdx % chordData.notes.length];
+        if (arpNote && NOTE[arpNote]) {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(NOTE[arpNote] * 2, t);
+          
+          gain.gain.setValueAtTime(0.03 * vol, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + STEP_LEN * 0.9);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + STEP_LEN);
+        }
       }
+
+      // ── DRUMS ──
+      const beatInBar = Math.floor(beat) % 4;
       
-      // Snare on beat 2 and 4 (steps 4, 12, 20, 28...)
-      if (si % 8 === 4) {
-         const nOsc = ctx.createOscillator();
-         const nGain = ctx.createGain();
-         nOsc.type = "square";
-         nOsc.frequency.setValueAtTime(200, t);
-         nGain.gain.setValueAtTime(0.2 * vol, t);
-         nGain.gain.exponentialRampToValueAtTime(0.01, t + 0.2);
-         nOsc.connect(nGain);
-         nGain.connect(ctx.destination);
-         nOsc.start(t);
-         nOsc.stop(t + 0.2);
+      // Kick on beats 0 and 2 of each bar
+      if (si % 4 === 0 && (beatInBar === 0 || beatInBar === 2)) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.frequency.setValueAtTime(160, t);
+        osc.frequency.exponentialRampToValueAtTime(40, t + 0.08);
+        osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.3);
+        gain.gain.setValueAtTime(0.45 * vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.3);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.35);
+      }
+
+      // Snare on beats 1 and 3
+      if (si % 4 === 0 && (beatInBar === 1 || beatInBar === 3)) {
+        // Tone body
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(220, t);
+        osc.frequency.exponentialRampToValueAtTime(120, t + 0.05);
+        gain.gain.setValueAtTime(0.2 * vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 0.12);
+        
+        // Noise burst
+        const bufSize = ctx.sampleRate * 0.08;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const nFilter = ctx.createBiquadFilter();
+        nFilter.type = "highpass";
+        nFilter.frequency.value = 3000;
+        const nGain = ctx.createGain();
+        nGain.gain.setValueAtTime(0.15 * vol, t);
+        nGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+        noise.connect(nFilter);
+        nFilter.connect(nGain);
+        nGain.connect(ctx.destination);
+        noise.start(t);
+        noise.stop(t + 0.08);
+      }
+
+      // Hi-hat: every 8th note (every 2 steps)
+      if (si % 2 === 0) {
+        const bufSize = ctx.sampleRate * 0.03;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "highpass";
+        filter.frequency.value = 7000;
+        const gain = ctx.createGain();
+        // Accent on downbeats
+        const isDown = si % 4 === 0;
+        const hhVol = (isDown ? 0.06 : 0.03) * vol;
+        gain.gain.setValueAtTime(hhVol, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start(t);
+        noise.stop(t + 0.03);
+      }
+
+      // Open hi-hat on "and" of beat 4 (step 14 of each 16-step bar)
+      if (si % 16 === 14) {
+        const bufSize = ctx.sampleRate * 0.12;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const filter = ctx.createBiquadFilter();
+        filter.type = "highpass";
+        filter.frequency.value = 5000;
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.07 * vol, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start(t);
+        noise.stop(t + 0.12);
       }
 
     } catch (e) {}
@@ -165,7 +411,7 @@ function MusicRoomScene() {
       return;
     }
     let step = 0;
-    const ms = Math.round(((60 / 90) / 4) * 1000 / speedMultiplier);
+    const ms = Math.round(STEP_LEN * 1000 / speedMultiplier);
     musicRef.current.interval = setInterval(() => {
       playStep(step++, musicVolume, musicMuted);
     }, ms);
@@ -176,15 +422,10 @@ function MusicRoomScene() {
   const isWalkable = (c, r) => {
     if (c === NPC_POS.col && r === NPC_POS.row) return false;
     if (c < 1 || c >= MAP_COLS - 1 || r < 1 || r >= MAP_ROWS - 1) return false;
-    // Mixing Desk
     if (c >= 9 && c <= 15 && r >= 4 && r <= 5) return false;
-    // Speakers
     if ((c === 8 || c === 16) && r === 4) return false;
-    // Drum Kit
     if (c >= 18 && c <= 21 && r >= 12 && r <= 15) return false;
-    // Guitars on stands
     if (c >= 3 && c <= 5 && r >= 13 && r <= 15) return false;
-    // Vinyl Crates
     if (c >= 20 && c <= 22 && r >= 2 && r <= 4) return false;
     return true;
   };
@@ -303,7 +544,6 @@ const StaticWorld = memo(({ musicPlaying }) => (
         {Array.from({ length: MAP_ROWS - 2 }).map((_, r) => (
           <div key={r} style={{ position: "absolute", top: r * TILE, left: 0, right: 0, height: 1, background: "rgba(0,0,0,0.3)" }} />
         ))}
-        {/* Studio Rug */}
         <div style={{ position: "absolute", left: 5*TILE, top: 5*TILE, width: 13*TILE, height: 7*TILE, background: "#1A1A1A", border: "2px solid #333", borderRadius: 8 }}>
           <div style={{ position: "absolute", inset: 4, background: "#222", borderRadius: 4 }} />
         </div>
@@ -318,7 +558,6 @@ const StaticWorld = memo(({ musicPlaying }) => (
     
     {/* Mixing Desk */}
     <div style={{ position: "absolute", left: 9*TILE, top: 4*TILE, width: 7*TILE, height: 2*TILE, background: "#222", border: "2px solid #000", borderRadius: 4, display: "flex", justifyContent: "center", alignItems: "center", gap: 16 }}>
-        {/* Mixing Screen (Animated Equalizer) */}
         <div style={{ width: 64, height: 32, background: "#111", border: "1px solid #444", display: "flex", flexDirection: "column", gap: 2, padding: 2, overflow: "hidden" }}>
           <div style={{ display: "flex", gap: 2, flex: 1, alignItems: "flex-end" }}>
               {Array.from({length: 14}).map((_,i) => (
@@ -326,7 +565,7 @@ const StaticWorld = memo(({ musicPlaying }) => (
                   flex: 1, 
                   background: i % 4 === 0 ? "#ef4444" : (i % 2 === 0 ? "#f59e0b" : "#10b981"), 
                   height: "20%",
-                  animation: musicPlaying ? `eqBounce ${0.2 + (i%5)*0.1}s infinite alternate ease-in-out` : "none" 
+                  animation: musicPlaying ? `eqBounce ${0.15 + (i%7)*0.05}s infinite alternate ease-in-out` : "none" 
                 }} />
               ))}
           </div>
