@@ -8,6 +8,7 @@ import { TILE } from '../engine/constants';
 import PlayerSprite from "../components/sprites/PlayerSprite";
 import SaadSprite from "../components/sprites/SaadSprite";
 import ControlBar from "../components/ui/ControlBar";
+import ExitDoor from "../components/sprites/ExitDoor";
 import DialogueBox from "../components/ui/DialogueBox";
 import { usePlayerMovement } from "../hooks/usePlayerMovement";
 import { useTapToMove, TapMarker } from "../hooks/useTapToMove.jsx";
@@ -100,6 +101,9 @@ function MusicRoomScene() {
             <div ref={worldRef} onPointerDown={handleWorldTap} style={{ position: "absolute", transform: "translate(0px, 0px)", willChange: "transform", width: MAP_COLS * TILE, height: MAP_ROWS * TILE }}>
               <TapMarker tapTarget={tapTarget} TILE={TILE} />
               <StaticWorld />
+
+              {/* Exit Door */}
+              <ExitDoor col={2} row={1} />
 
 
               {/* NPC Saad */}
@@ -194,11 +198,7 @@ const StaticWorld = memo(() => (
         ))}
     </div>
     
-    {/* Stairs Down */}
-    <div style={{ position: "absolute", left: TILE, top: TILE, width: 2*TILE, height: 2*TILE, background: "#1A0F0D", borderRight: "2px solid #000", display: "flex", flexDirection: "column" }}>
-      {[1,2,3,4].map(i => <div key={i} style={{ flex: 1, borderBottom: "2px solid #0A0504", borderTop: "1px solid #3A221C" }} />)}
-      <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", color: "#fff", opacity: 0.5 }}><ArrowDown size={12} /></div>
-    </div>
+    
 
     {/* Mixing Desk & Monitors */}
     <div style={{ position: "absolute", left: 9*TILE, top: 4*TILE, width: 7*TILE, height: 2*TILE, background: "#222", border: "2px solid #000", borderRadius: 4, display: "flex", justifyContent: "center", alignItems: "center", gap: 16 }}>
