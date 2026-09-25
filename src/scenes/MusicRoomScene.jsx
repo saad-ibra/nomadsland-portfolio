@@ -59,12 +59,12 @@ function MusicRoomScene() {
   };
 
   const { pos, facing, stepping, setPath, tapTarget, triggerAction } = usePlayerMovement({
-    initialPos: { col: 2, row: 2 }, // spawn near stairs
+    initialPos: { col: 3, row: 2 }, // spawn near stairs
     isActive: phase === "free" && !isTransitioning,
     canWalk: isWalkable,
     speedMultiplier,
     onBump: (c, r) => {
-      if (c === 2 && r === 0) {
+      if (c === 3 && r === 0) {
         changeScene('village');
       }
     },
@@ -103,7 +103,7 @@ function MusicRoomScene() {
               <StaticWorld />
 
               {/* Exit Door */}
-              <ExitDoor col={2} row={0} />
+              <ExitDoor col={3} row={0} />
 
 
               {/* NPC Saad */}
