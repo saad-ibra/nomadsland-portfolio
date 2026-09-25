@@ -517,6 +517,12 @@ export default function NomadshomeScene() {
       if (item.type === "pc_desk") return "EXAMINE PC";
       if (item.type === "bed") return "EXAMINE BED";
       if (item.type === "bookshelf") return "EXAMINE BOOKS";
+      if (item.type === "kitchen") return "EXAMINE KITCHEN";
+      if (item.type === "fridge") return "EXAMINE FRIDGE";
+      if (item.type === "toilet") return "EXAMINE TOILET";
+      if (item.type === "aquarium") return "EXAMINE AQUARIUM";
+      if (item.type === "nightstand") return "EXAMINE NIGHTSTAND";
+      if (item.type === "plant") return "EXAMINE PLANT";
     }
     return null;
   }, [pos, facing, nearPhone, phase, openResume, openTipLine]);
