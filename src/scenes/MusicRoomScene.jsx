@@ -92,7 +92,7 @@ function MusicRoomScene() {
         osc.start(time);
         osc.stop(time + 0.5);
       }
-    } catch (e) {}
+    } catch (e) { console.error("Audio error in MusicRoom:", e); }
   }, []);
 
   // Sync Audio interval — slower tempo for calm feel
@@ -114,6 +114,26 @@ function MusicRoomScene() {
       if (musicRef.current.interval) clearInterval(musicRef.current.interval);
     };
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
+
+  // ---- Keyboard & Audio Resume ----
+  useEffect(() => {
+    const resumeAudio = () => {
+      if (!musicRef.current.audioCtx) {
+        musicRef.current.audioCtx = getSharedAudioCtx();
+      }
+      if (musicRef.current.audioCtx.state === "suspended") {
+        musicRef.current.audioCtx.resume();
+      }
+    };
+    window.addEventListener("keydown", resumeAudio);
+    window.addEventListener("click", resumeAudio);
+    window.addEventListener("touchstart", resumeAudio);
+    return () => {
+      window.removeEventListener("keydown", resumeAudio);
+      window.removeEventListener("click", resumeAudio);
+      window.removeEventListener("touchstart", resumeAudio);
+    };
+  }, []);
 
 
   const isWalkable = (c, r) => {
