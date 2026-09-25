@@ -589,7 +589,7 @@ export default function NewsroomScene() {
           </div>
 
           {/* Proximity prompt */}
-          {phase === "free" && nearObject && !openPost && (
+          {phase === "free" && !openPost && (nearObject || (Math.abs(NPC_POS.col - pos.col) <= 1 && Math.abs(NPC_POS.row - pos.row) <= 1)) && (
             <div 
               onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
@@ -599,7 +599,7 @@ export default function NewsroomScene() {
               zIndex: 500, display: "flex", alignItems: "center", gap: 6, cursor: "pointer", pointerEvents: "auto",
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#fff" }}>
-                <FileText size={8} /><span>{activeArticle?.label}</span>
+                {nearObject ? <FileText size={8} /> : null}<span>{nearObject ? activeArticle?.label : "TALK TO SAAD"}</span>
               </div>
               <div style={{
                 fontSize: 10, color: "#000", background: "#fff",

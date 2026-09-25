@@ -802,7 +802,7 @@ export default function ChemistryLabScene() {
           )}
 
           {/* Proximity prompt */}
-          {phase === "free" && activeStation && !openStation && (
+          {phase === "free" && !openStation && (activeStation || (Math.abs((layout.startPos.col + 2) - pos.col) <= 1 && Math.abs(3 - pos.row) <= 1)) && (
             <div 
               onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
@@ -813,9 +813,9 @@ export default function ChemistryLabScene() {
               display: "flex", gap: 8, alignItems: "center",
               boxShadow: "0 4px 12px rgba(0,0,0,0.9)", whiteSpace: "nowrap",
             }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 10, color: activeStation.id === "chalkboard" ? "#b0f0b8" : activeStation.isPrivate ? "#ff5252" : "#00ffcc" }}>
-                {activeStation.id === "chalkboard" ? <ScrollText size={7} /> : <Terminal size={7} />}
-                <span>{activeStation.label.slice(0, 22).toUpperCase()}</span>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 10, color: activeStation ? (activeStation.id === "chalkboard" ? "#b0f0b8" : activeStation.isPrivate ? "#ff5252" : "#00ffcc") : "#eef7f2" }}>
+                {activeStation ? (activeStation.id === "chalkboard" ? <ScrollText size={7} /> : <Terminal size={7} />) : null}
+                <span>{activeStation ? activeStation.label.slice(0, 22).toUpperCase() : "TALK TO SAAD"}</span>
               </div>
               <div style={{
                 fontSize: 10, color: "#a8e8a8", background: "rgba(0,0,0,0.4)",

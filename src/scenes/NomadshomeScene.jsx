@@ -325,33 +325,7 @@ export default function NomadshomeScene() {
   const containerRef = useRef(null);
   const resumeScrollRef = useRef(null);
 
-  useEffect(() => {
-    const handleIntroDismiss = (e) => {
-      const isTap = !e.key;
-      if (phase === "intro" && (isTap || e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
-        e.preventDefault();
-        setPhase("free");
-      } else if (phase === "talking" && (isTap || e.key === " " || e.key === "Enter" || e.key?.toLowerCase() === "a")) {
-        e.preventDefault();
-        const activeLines = dynamicDialogue || INTRO_DIALOGUE;
-        if (dialogueIndex < activeLines.length - 1) {
-          setDialogueIndex(prev => prev + 1);
-        } else {
-          setPhase("free");
-        }
-      }
-    };
-    window.addEventListener("keydown", handleIntroDismiss);
-    window.addEventListener("click", handleIntroDismiss);
-    window.addEventListener("touchstart", handleIntroDismiss, { passive: false });
-    window.addEventListener("pointerdown", handleIntroDismiss);
-    return () => {
-      window.removeEventListener("keydown", handleIntroDismiss);
-      window.removeEventListener("click", handleIntroDismiss);
-      window.removeEventListener("touchstart", handleIntroDismiss);
-      window.removeEventListener("pointerdown", handleIntroDismiss);
-    };
-  }, [phase, dialogueIndex, dynamicDialogue]);
+
 
   useEffect(() => {
     if (!openResume) return;

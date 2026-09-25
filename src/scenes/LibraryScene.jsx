@@ -931,7 +931,7 @@ export default function LibraryScene() {
           </button>
 
           {/* Proximity prompt */}
-          {phase === "free" && activeShelf && !openShelf && (
+          {phase === "free" && !openShelf && (activeShelf || (Math.abs(NPC_POS.col - pos.col) <= 1 && Math.abs(NPC_POS.row - pos.row) <= 1)) && (
             <div 
               onPointerDown={(e) => e.stopPropagation()} onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerAction(); }}
               style={{
@@ -941,14 +941,14 @@ export default function LibraryScene() {
               zIndex: 650, pointerEvents: "auto", cursor: "pointer", display: "flex", gap: 8, alignItems: "center",
               boxShadow: "0 4px 12px rgba(0,0,0,0.6)"
             }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: TYPE_COLORS[activeShelf.type].light }}>
-                {getShelfIcon(activeShelf.id, 8)}
-                <span>{activeShelf.label.toUpperCase()}</span>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: activeShelf ? TYPE_COLORS[activeShelf.type].light : "#f4e8d0" }}>
+                {activeShelf ? getShelfIcon(activeShelf.id, 8) : null}
+                <span>{activeShelf ? activeShelf.label.toUpperCase() : "TALK TO SAAD"}</span>
               </div>
               <div style={{
                 fontSize: 10, color: "#ffbaba", background: "rgba(0,0,0,0.4)",
                 padding: "2px 4px", borderRadius: 2
-              }}>SPACE</div>
+              }}>SPACE/A</div>
             </div>
           )}
 
