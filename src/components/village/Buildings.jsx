@@ -427,18 +427,21 @@ function MusicRoomBuilding({ shop, isNear }) {
           </svg>
         </div>
 
-        {/* ── DOOR: solid with brass handle ── */}
+        {/* ── DOOR: piano-key pattern ── */}
         <div style={{
           position: "absolute", left: "50%", bottom: 0, transform: "translateX(-50%)",
-          width: TILE - 8, height: TILE - 4, background: "#1a1a1a",
-          border: "2px solid #0a0a0a", borderBottom: "none", borderRadius: "2px 2px 0 0",
-          boxShadow: active ? "inset 0 0 8px rgba(255,255,255,0.3)" : "inset 0 0 4px rgba(0,0,0,0.6)",
+          width: TILE - 8, height: TILE - 4,
+          border: "2px solid #1a0a18", borderBottom: "none", borderRadius: "2px 2px 0 0",
+          boxShadow: active ? "inset 0 0 8px rgba(255,255,255,0.5)" : "inset 0 0 4px rgba(0,0,0,0.4)",
           pointerEvents: "auto", cursor: "pointer",
+          display: "flex", overflow: "hidden",
         }}>
-          {/* Vertical inset panels */}
-          <div style={{ position: "absolute", left: 2, top: 2, right: 8, bottom: 2, border: "1px solid rgba(255,255,255,0.1)", borderRadius: 1 }} />
-          {/* Brass door knob */}
-          <div style={{ position: "absolute", right: 3, top: "55%", width: 3, height: 3, background: "#D4AF37", borderRadius: "50%" }} />
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i} style={{
+              flex: 1, background: i % 2 === 0 ? "#f0f0f0" : "#1a1a1a",
+              borderRight: i < 5 ? "1px solid rgba(0,0,0,0.2)" : "none",
+            }} />
+          ))}
         </div>
       </>)}
     </BuildingShell>
