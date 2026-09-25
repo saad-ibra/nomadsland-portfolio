@@ -63,12 +63,12 @@ function MusicRoomScene() {
     isActive: phase === "free" && !isTransitioning,
     canWalk: isWalkable,
     speedMultiplier,
-    onMove: (c, r) => {
-      // Stairs Down (top left corner)
-      if (c >= 1 && c <= 2 && r === 1) {
+    onBump: (c, r) => {
+      if (c === 2 && r === 0) {
         changeScene('village');
-        return true;
       }
+    },
+    onMove: (c, r) => {
       playWoodStep();
       return false;
     },
@@ -103,7 +103,7 @@ function MusicRoomScene() {
               <StaticWorld />
 
               {/* Exit Door */}
-              <ExitDoor col={2} row={1} />
+              <ExitDoor col={2} row={0} />
 
 
               {/* NPC Saad */}
