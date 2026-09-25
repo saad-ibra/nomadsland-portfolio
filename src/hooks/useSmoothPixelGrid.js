@@ -7,6 +7,7 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
   const lastPos = useRef(pos);
   const rafRef = useRef(null);
 
+  // Queue new positions as they come in from the logic
   if (pos.col !== lastPos.current.col || pos.row !== lastPos.current.row) {
     targetQueue.current.push({ x: pos.col * TILE, y: pos.row * TILE });
     lastPos.current = pos;
@@ -27,10 +28,11 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
       if (targetQueue.current.length > 0) {
         const target = targetQueue.current[0];
         
+        // Handle teleportation (e.g., initial load or massive jump)
         if (Math.abs(target.x - p.x) > TILE * 3 || Math.abs(target.y - p.y) > TILE * 3) {
           p.x = target.x;
           p.y = target.y;
-          targetQueue.current = [];
+          targetQueue.current = []; // Clear queue on teleport
         } else {
           const dx = target.x - p.x;
           const dy = target.y - p.y;
@@ -39,6 +41,7 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
             const speed = (TILE * speedMultiplier) / MOVE_COOLDOWN; 
             let moveDist = speed * dt_ms;
             
+            // Resolve X first, then Y (Strict orthogonal retro movement)
             if (Math.abs(dx) > 0) {
               const step = Math.min(Math.abs(dx), moveDist);
               p.x += Math.sign(dx) * step;
@@ -50,6 +53,7 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
             }
           }
           
+          // If we reached the target precisely, pop it from the queue
           if (p.x === target.x && p.y === target.y) {
             targetQueue.current.shift();
           }
@@ -63,6 +67,7 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
         playerRef.current.style.transform = `translate(${roundX}px, ${roundY}px)`;
       }
       
+      // Position boat at the same visual coordinates as the player (offset for hull width)
       if (boatHullRef?.current) {
         const boatX = roundX - Math.round(TILE * 0.5);
         boatHullRef.current.style.transform = `translate(${boatX}px, ${roundY}px)`;
@@ -79,17 +84,8 @@ export function useSmoothPixelGrid({ pos, internalW, internalH, mapCols, mapRows
         const camTargetX = p.x + TILE / 2 - internalW / 2;
         const camTargetY = p.y + TILE / 2 - internalH / 2;
         
-        if (mapCols * TILE < internalW) {
-          clampedTX = (mapCols * TILE - internalW) / 2;
-        } else {
-          clampedTX = Math.max(0, Math.min(mapCols * TILE - internalW, camTargetX));
-        }
-
-        if (mapRows * TILE < internalH) {
-          clampedTY = (mapRows * TILE - internalH) / 2;
-        } else {
-          clampedTY = Math.max(0, Math.min(mapRows * TILE - internalH, camTargetY));
-        }
+        clampedTX = Math.max(0, Math.min(Math.max(0, mapCols * TILE - internalW), camTargetX));
+        clampedTY = Math.max(0, Math.min(Math.max(0, mapRows * TILE - internalH), camTargetY));
         
         worldRef.current.style.transform = `translate(${-Math.round(clampedTX)}px, ${-Math.round(clampedTY)}px)`;
       }
