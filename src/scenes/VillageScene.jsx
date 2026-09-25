@@ -48,7 +48,7 @@ export default function VillageScene() {
         
   const [isSailing, setIsSailing] = useState(false);
   const [showComingSoon, setShowComingSoon] = useState(false);
-  const [boatPos, setBoatPos] = useState({ col: 28.5, row: 29 });
+  const [boatPos, setBoatPos] = useState({ col: 29.5, row: 29 });
   const [wakes, setWakes] = useState([]);
   
   const [mountTime] = useState(() => Date.now());
@@ -212,7 +212,7 @@ export default function VillageScene() {
   useEffect(() => {
     const tile = MAP[pos.row]?.[pos.col];
     if (tile === 4 || tile === 10 || tile === 11) { // Water, Bridge, Dock
-      setPos({ col: 29, row: 27 }); // Place them right outside the dock
+      setPos({ col: 30, row: 27 }); // Place them right outside the dock
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -509,7 +509,7 @@ export default function VillageScene() {
       let bg = PALETTE.grass[h % PALETTE.grass.length]; // default grass base
       let content = null;
 
-      const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 28, 2));
+      const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 29, 2));
       const dryness = Math.max(0, Math.min(1, 1 - (distToLab - 2) / 7));
       const isDry = (h % 100) / 100 < dryness;
 
@@ -949,10 +949,10 @@ export default function VillageScene() {
                         const teleport = () => {
                           if (isSailing) {
                             setIsSailing(false);
-                            setBoatPos({ col: 27.5, row: 28 });
+                            setBoatPos({ col: 28.5, row: 28 });
                           }
                           if (shop.id === "dock") {
-                            setPos({ col: 29, row: 27 });
+                            setPos({ col: 30, row: 27 });
                           } else {
                             setPos({ col: shop.col, row: shop.row + 1 });
                           }

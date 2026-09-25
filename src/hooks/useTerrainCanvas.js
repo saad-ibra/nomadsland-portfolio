@@ -65,7 +65,7 @@ export function useTerrainCanvas() {
           bg = PALETTE.grass[0]; // house base
         } else {
           // tiles 0, 2, 5, 6, 7 all get grass base on land layer
-          const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 28, 2));
+          const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 29, 2));
           const dryness = Math.max(0, Math.min(1, 1 - (distToLab - 2) / 7));
           const isDry = (h % 100) / 100 < dryness;
           bg = isDry ? PALETTE.dryGrass[h % PALETTE.dryGrass.length] : PALETTE.grass[h % PALETTE.grass.length];
@@ -77,7 +77,7 @@ export function useTerrainCanvas() {
 
         // ── Per-tile details ──
         if (tile === 0 || tile === 6) {
-          const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 28, 2));
+          const distToLab = Math.sqrt(Math.pow(r - 17, 2) + Math.pow(c - 29, 2));
           const dryness = Math.max(0, Math.min(1, 1 - (distToLab - 2) / 7));
           const isDry = (h % 100) / 100 < dryness;
           
