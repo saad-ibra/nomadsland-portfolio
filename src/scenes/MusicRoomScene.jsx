@@ -28,120 +28,9 @@ const MAP = Array.from({ length: MAP_ROWS }, (_, r) =>
 const NPC_POS = { col: 6, row: 8 };
 const DIALOGUE_LINES = [
   "Welcome to the studio.",
-  "I've got an 8-bit cover of 'Follow You' by Bring Me The Horizon playing.",
+  "Got a little 8-bit loop playing in the background.",
   "Take a look around. The mixing desk is visualizing the track right now."
 ];
-
-// =====================================================================
-//  BMTH "FOLLOW YOU" — 8-BIT CHIPTUNE COVER
-//
-//  Key: B major / D#m (original key, enharmonic to Cb/Ebm)
-//  BPM: 89 (actual song tempo)
-//  Chords: B – D#m – C# (= B – Ebm – Db in flat notation)
-//
-//  Structure per loop (24 beats = 8 bars of 3/3):
-//    Bars 1-2 (beats 0-5):   B   — verse feel
-//    Bars 3-4 (beats 6-11):  D#m — verse feel
-//    Bars 5-6 (beats 12-17): C#  — pre-chorus build
-//    Bars 7-8 (beats 18-23): B   — chorus payoff
-//
-//  The melody follows the vocal contour of the chorus:
-//    "So you can drag me through hell / if it meant I could hold your hand
-//     I will follow you / 'cause I'm under your spell"
-// =====================================================================
-
-const N = {
-  // Bass notes
-  "B1": 61.74, "C#2": 69.30, "D#2": 77.78, "F#2": 92.50,
-  // Low
-  "B2": 123.47, "C#3": 138.59, "D#3": 155.56, "E3": 164.81, "F#3": 185.00, "G#3": 207.65,
-  // Mid (melody range)
-  "A3": 220.00, "B3": 246.94, "C#4": 277.18, "D#4": 311.13, "E4": 329.63, "F#4": 369.99, "G#4": 415.30,
-  // High
-  "A4": 440.00, "B4": 493.88, "C#5": 554.37, "D#5": 622.25,
-};
-
-// 24 beats per loop, 96 sixteenth-note steps
-const BEATS = 24;
-const STEPS = BEATS * 4; // 96
-const BPM = 89;
-const BEAT_S = 60 / BPM; // ~0.674s
-const STEP_S = BEAT_S / 4; // ~0.168s
-
-// ── CHORD MAP (which chord is active at each beat) ──
-// B (beats 0-5), D#m (beats 6-11), C# (beats 12-17), B (beats 18-23)
-function getChord(beat) {
-  const b = ((beat % BEATS) + BEATS) % BEATS;
-  if (b < 6)  return { notes: ["B2","D#3","F#3"], bass: "B1", name: "B" };
-  if (b < 12) return { notes: ["D#3","F#3","B3"], bass: "D#2", name: "D#m" };
-  if (b < 18) return { notes: ["C#3","F#3","G#3"], bass: "C#2", name: "C#" };
-  return             { notes: ["B2","D#3","F#3"], bass: "B1", name: "B" };
-}
-
-// ── MELODY ──
-// Mapped to the actual vocal line of Follow You chorus + verse hook
-// t = beat position, l = length in beats, n = note name
-const MELODY = [
-  // Bars 1-2 over B: "My head is haunting me / and my heart feels like a ghost"
-  // Vocal sits on F#4, drops to D#4, B3
-  { n: "F#4", t: 0,    l: 0.75 },
-  { n: "F#4", t: 0.75, l: 0.25 },
-  { n: "F#4", t: 1,    l: 0.5  },
-  { n: "E4",  t: 1.5,  l: 0.5  },
-  { n: "D#4", t: 2,    l: 1    },
-  { n: "D#4", t: 3,    l: 0.5  },
-  { n: "D#4", t: 3.5,  l: 0.5  },
-  { n: "C#4", t: 4,    l: 0.5  },
-  { n: "D#4", t: 4.5,  l: 0.5  },
-  { n: "B3",  t: 5,    l: 1    },
-
-  // Bars 3-4 over D#m: "I need to feel something / 'cause I'm still so far from home"
-  { n: "D#4", t: 6,    l: 0.5  },
-  { n: "D#4", t: 6.5,  l: 0.5  },
-  { n: "F#4", t: 7,    l: 0.5  },
-  { n: "F#4", t: 7.5,  l: 0.5  },
-  { n: "E4",  t: 8,    l: 0.5  },
-  { n: "D#4", t: 8.5,  l: 0.5  },
-  { n: "C#4", t: 9,    l: 0.5  },
-  { n: "D#4", t: 9.5,  l: 0.5  },
-  { n: "B3",  t: 10,   l: 0.5  },
-  { n: "C#4", t: 10.5, l: 0.5  },
-  { n: "D#4", t: 11,   l: 1    },
-
-  // Bars 5-6 over C#: "So you can drag me through hell / if it meant I could hold your hand"
-  // Pre-chorus/chorus vocal climbs up
-  { n: "F#4", t: 12,   l: 0.5  },
-  { n: "G#4", t: 12.5, l: 0.5  },
-  { n: "F#4", t: 13,   l: 0.5  },
-  { n: "F#4", t: 13.5, l: 0.5  },
-  { n: "E4",  t: 14,   l: 0.5  },
-  { n: "D#4", t: 14.5, l: 0.5  },
-  { n: "C#4", t: 15,   l: 1    },
-  { n: "C#4", t: 16,   l: 0.5  },
-  { n: "D#4", t: 16.5, l: 0.5  },
-  { n: "E4",  t: 17,   l: 0.5  },
-  { n: "F#4", t: 17.5, l: 0.5  },
-
-  // Bars 7-8 over B: "I will follow you / 'cause I'm under your spell"
-  // The big hook — soaring on B4 then dropping
-  { n: "F#4", t: 18,   l: 1    },
-  { n: "G#4", t: 19,   l: 0.5  },
-  { n: "F#4", t: 19.5, l: 0.5  },
-  { n: "D#4", t: 20,   l: 1    },
-  { n: "B3",  t: 21,   l: 0.5  },
-  { n: "C#4", t: 21.5, l: 0.5  },
-  { n: "D#4", t: 22,   l: 0.5  },
-  { n: "C#4", t: 22.5, l: 0.5  },
-  { n: "B3",  t: 23,   l: 1    },
-];
-
-// Pre-compute melody into a step lookup for performance
-const MELODY_AT = {};
-MELODY.forEach(m => {
-  const step = Math.round(m.t * 4);
-  MELODY_AT[step] = m;
-});
-
 
 function MusicRoomScene() {
   const { speedMultiplier, isLandscape, isTransitioning, changeScene, isConsoleMinimized, musicPlaying, musicMuted, musicVolume } = useGame();
@@ -152,226 +41,89 @@ function MusicRoomScene() {
   const containerRef = useRef(null);
   const musicRef = useRef({ audioCtx: null, interval: null });
 
-  // === STEP-BASED SYNTH ENGINE ===
-  const playStep = useCallback((idx, vol, muted) => {
+  // === SIMPLE 8-BIT ARPEGGIO (same approach as Library) ===
+  const playStep = useCallback((stepIndex, vol, muted) => {
     if (muted || vol === 0) return;
     try {
       if (!musicRef.current.audioCtx) musicRef.current.audioCtx = getSharedAudioCtx();
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
-      const t = ctx.currentTime;
-      const si = idx % STEPS;         // 0..95
-      const beat = si / 4;            // 0.00..23.75
-      const chord = getChord(Math.floor(beat));
+      // Warm, dreamy studio progression
+      const progression = [
+        [82.41, 123.47, 164.81, 196.00],  // Em7
+        [130.81, 164.81, 196.00, 246.94],  // Cmaj7
+        [98.00, 123.47, 146.83, 185.00],   // Gmaj7
+        [73.42, 110.00, 146.83, 185.00]    // D7
+      ];
 
-      // ── 1. LEAD MELODY (pulse/square wave + lowpass) ──
-      const mel = MELODY_AT[si];
-      if (mel && N[mel.n]) {
+      const chordIdx = Math.floor(stepIndex / 8) % progression.length;
+      const stepIdx = stepIndex % 8;
+      const chord = progression[chordIdx];
+      const time = ctx.currentTime;
+
+      // Bass on step 0 and 4
+      if (stepIdx === 0) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        const filter = ctx.createBiquadFilter();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(chord[0], time);
+        gain.gain.setValueAtTime(vol * 0.12, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.8);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(time);
+        osc.stop(time + 0.8);
+      } else if (stepIdx === 4) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(chord[1], time);
+        gain.gain.setValueAtTime(vol * 0.10, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.6);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(time);
+        osc.stop(time + 0.6);
+      }
 
+      // 8-bit pluck arpeggio melody
+      const pattern = [0, 1, 2, 3, 2, 1, 0, -1];
+      const noteIdx = pattern[stepIdx];
+      if (noteIdx !== -1) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
         osc.type = "square";
-        osc.frequency.setValueAtTime(N[mel.n], t);
-
-        filter.type = "lowpass";
-        filter.frequency.setValueAtTime(2000, t);
-        filter.Q.setValueAtTime(1.5, t);
-
-        const dur = mel.l * BEAT_S;
-        const amp = 0.09 * vol;
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(amp, t + 0.01);
-        // Sustain then release
-        gain.gain.setValueAtTime(amp * 0.7, t + dur * 0.6);
-        gain.gain.linearRampToValueAtTime(0, t + dur);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + dur + 0.01);
-      }
-
-      // ── 2. CHORD PAD (filtered sawtooth, plays once per chord change) ──
-      // Chord changes at beats 0, 6, 12, 18
-      const chordBeats = [0, 6, 12, 18];
-      if (si % 4 === 0 && chordBeats.includes(Math.floor(beat))) {
-        const dur = 6 * BEAT_S; // each chord lasts 6 beats
-        chord.notes.forEach((noteName, i) => {
-          if (!N[noteName]) return;
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          const filter = ctx.createBiquadFilter();
-
-          osc.type = "sawtooth";
-          osc.frequency.setValueAtTime(N[noteName], t);
-          // Slight detune for stereo width feel
-          osc.detune.setValueAtTime((i - 1) * 8, t);
-
-          filter.type = "lowpass";
-          filter.frequency.setValueAtTime(600, t);
-          filter.frequency.exponentialRampToValueAtTime(300, t + dur * 0.8);
-
-          const amp = 0.03 * vol;
-          gain.gain.setValueAtTime(amp, t + 0.02);
-          gain.gain.setValueAtTime(amp, t + dur * 0.7);
-          gain.gain.linearRampToValueAtTime(0, t + dur);
-
-          osc.connect(filter);
-          filter.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t);
-          osc.stop(t + dur + 0.01);
-        });
-      }
-
-      // ── 3. BASS (triangle wave — NES channel 3 style) ──
-      // Root on beat, octave on the "and" (8th note feel)
-      if (si % 4 === 0 && N[chord.bass]) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(N[chord.bass], t);
-
-        const amp = 0.18 * vol;
-        gain.gain.setValueAtTime(amp, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + BEAT_S * 0.85);
-
+        const f = chord[noteIdx] * (stepIdx > 4 ? 2 : 1.5);
+        osc.frequency.setValueAtTime(f, time);
+        gain.gain.setValueAtTime(vol * 0.04, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + BEAT_S);
+        osc.start(time);
+        osc.stop(time + 0.16);
       }
-      // Octave bounce on the "and"
-      if (si % 4 === 2 && N[chord.bass]) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(N[chord.bass] * 2, t);
-
-        const amp = 0.1 * vol;
-        gain.gain.setValueAtTime(amp, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + STEP_S * 1.5);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + STEP_S * 2);
-      }
-
-      // ── 4. ARPEGGIATED SHIMMER (sine, every 16th note) ──
-      {
-        const arpNotes = chord.notes;
-        const arpNote = arpNotes[si % arpNotes.length];
-        if (arpNote && N[arpNote]) {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = "sine";
-          // Play two octaves up for shimmer
-          osc.frequency.setValueAtTime(N[arpNote] * 4, t);
-
-          const amp = 0.015 * vol;
-          gain.gain.setValueAtTime(amp, t);
-          gain.gain.exponentialRampToValueAtTime(0.001, t + STEP_S * 0.8);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(t);
-          osc.stop(t + STEP_S);
-        }
-      }
-
-      // ── 5. DRUMS ──
-      const beatInBar = Math.floor(beat) % 3; // 3-beat bars (6/8 feel like the song)
-
-      // Kick: beat 0 of each bar (every 3 beats)
-      if (si % 4 === 0 && beatInBar === 0) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(150, t);
-        osc.frequency.exponentialRampToValueAtTime(40, t + 0.08);
-        osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.25);
-        gain.gain.setValueAtTime(0.4 * vol, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.3);
-      }
-
-      // Snare: beat 1 of each bar
-      if (si % 4 === 0 && beatInBar === 1) {
-        // Tone body
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(200, t);
-        osc.frequency.exponentialRampToValueAtTime(110, t + 0.06);
-        gain.gain.setValueAtTime(0.18 * vol, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.12);
-
-        // Noise burst
-        const bufSize = Math.floor(ctx.sampleRate * 0.06);
-        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-        const noise = ctx.createBufferSource();
-        noise.buffer = buf;
-        const nf = ctx.createBiquadFilter();
-        nf.type = "highpass";
-        nf.frequency.value = 4000;
-        const ng = ctx.createGain();
-        ng.gain.setValueAtTime(0.12 * vol, t);
-        ng.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-        noise.connect(nf);
-        nf.connect(ng);
-        ng.connect(ctx.destination);
-        noise.start(t);
-        noise.stop(t + 0.06);
-      }
-
-      // Closed hi-hat: every 8th note (every 2 steps)
-      if (si % 2 === 0) {
-        const bufSize = Math.floor(ctx.sampleRate * 0.02);
-        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
-        const noise = ctx.createBufferSource();
-        noise.buffer = buf;
-        const f = ctx.createBiquadFilter();
-        f.type = "highpass";
-        f.frequency.value = 8000;
-        const g = ctx.createGain();
-        const accent = si % 4 === 0 ? 0.05 : 0.025;
-        g.gain.setValueAtTime(accent * vol, t);
-        g.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
-        noise.connect(f);
-        f.connect(g);
-        g.connect(ctx.destination);
-        noise.start(t);
-        noise.stop(t + 0.025);
-      }
-
     } catch (e) {}
   }, []);
 
+  // Sync Audio interval
   useEffect(() => {
     if (!musicPlaying) {
-      if (musicRef.current.interval) clearInterval(musicRef.current.interval);
+      if (musicRef.current.interval) {
+        clearInterval(musicRef.current.interval);
+        musicRef.current.interval = null;
+      }
       return;
     }
     let step = 0;
-    const ms = Math.round(STEP_S * 1000 / speedMultiplier);
+    const ms = Math.round(240 / speedMultiplier);
     musicRef.current.interval = setInterval(() => {
-      playStep(step++, musicVolume, musicMuted);
+      playStep(step, musicVolume, musicMuted);
+      step++;
     }, ms);
-    return () => { if (musicRef.current.interval) clearInterval(musicRef.current.interval); };
+    return () => {
+      if (musicRef.current.interval) clearInterval(musicRef.current.interval);
+    };
   }, [musicPlaying, musicVolume, musicMuted, speedMultiplier, playStep]);
 
 
