@@ -49,12 +49,12 @@ function MusicRoomScene() {
       const ctx = musicRef.current.audioCtx;
       if (ctx.state === "suspended") ctx.resume();
 
-      // Warm, dreamy studio progression
+      // Moody studio progression — Dm9 → Bbmaj7 → Gm7 → Asus4
       const progression = [
-        [82.41, 123.47, 164.81, 196.00],  // Em7
-        [130.81, 164.81, 196.00, 246.94],  // Cmaj7
-        [98.00, 123.47, 146.83, 185.00],   // Gmaj7
-        [73.42, 110.00, 146.83, 185.00]    // D7
+        [73.42, 146.83, 174.61, 220.00],  // Dm9
+        [116.54, 146.83, 174.61, 220.00], // Bbmaj7
+        [98.00, 116.54, 146.83, 174.61],  // Gm7
+        [110.00, 146.83, 164.81, 220.00]  // Asus4
       ];
 
       const chordIdx = Math.floor(stepIndex / 8) % progression.length;
@@ -62,46 +62,46 @@ function MusicRoomScene() {
       const chord = progression[chordIdx];
       const time = ctx.currentTime;
 
-      // Bass on step 0 and 4
+      // Bass — root on beat 0, fifth on beat 4
       if (stepIdx === 0) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "triangle";
         osc.frequency.setValueAtTime(chord[0], time);
-        gain.gain.setValueAtTime(vol * 0.12, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.8);
+        gain.gain.setValueAtTime(vol * 0.13, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.7);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(time);
-        osc.stop(time + 0.8);
+        osc.stop(time + 0.7);
       } else if (stepIdx === 4) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "triangle";
-        osc.frequency.setValueAtTime(chord[1], time);
-        gain.gain.setValueAtTime(vol * 0.10, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.6);
+        osc.frequency.setValueAtTime(chord[2], time);
+        gain.gain.setValueAtTime(vol * 0.09, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.5);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(time);
-        osc.stop(time + 0.6);
+        osc.stop(time + 0.5);
       }
 
-      // 8-bit pluck arpeggio melody
-      const pattern = [0, 1, 2, 3, 2, 1, 0, -1];
+      // 8-bit arpeggio — descending cascade then rising
+      const pattern = [3, 2, 1, 0, 1, 2, 3, -1];
       const noteIdx = pattern[stepIdx];
       if (noteIdx !== -1) {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = "square";
-        const f = chord[noteIdx] * (stepIdx > 4 ? 2 : 1.5);
+        const f = chord[noteIdx] * (stepIdx < 4 ? 2 : 1.5);
         osc.frequency.setValueAtTime(f, time);
-        gain.gain.setValueAtTime(vol * 0.04, time);
-        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.15);
+        gain.gain.setValueAtTime(vol * 0.035, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.13);
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.start(time);
-        osc.stop(time + 0.16);
+        osc.stop(time + 0.14);
       }
     } catch (e) {}
   }, []);
