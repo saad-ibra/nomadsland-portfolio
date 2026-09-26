@@ -429,9 +429,6 @@ const StaticWorld = memo(() => (
     <PixelLantern col={1} row={1} />
     <PixelLantern col={11} row={1} />
     <PixelLantern col={17} row={8} />
-    <WallBookcase col={3} row={1} />
-    <WallBookcase col={9} row={1} flip />
-    <WallBookcase col={14} row={8} />
     <ReadingDesk col={10} row={3} />
     <PixelGlobe col={5} row={7} />
     <PixelChair col={3} row={8} />
